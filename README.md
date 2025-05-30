@@ -7,11 +7,6 @@
 ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝       ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝ ╚═════╝ 
 ```
 <p align="center">
-  <img src="https://github.com/ahsantariq7.png" width="120" height="120" alt="Ahsan Tariq" />
-</p>
-
-<h1 align="center">Ahsan Tariq</h1>
-<p align="center">
   <b>Python Backend | AI Engineer | Data Engineering | Web Scraper | Web Automation | Latex</b><br>
   <a href="mailto:ahsantariq0724@gmail.com">ahsantariq0724@gmail.com</a> • 
   <a href="https://linkedin.com/in/ahsan-tariq-0724-/">LinkedIn</a> • 
