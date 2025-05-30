@@ -249,6 +249,10 @@ if __name__ == "__main__":
 <p align="center"> <img src="https://github-readme-stats.vercel.app/api?username=TariqDreamsTech&show_icons=true&theme=radical" alt="TariqDreamsTech's GitHub stats" /> <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=TariqDreamsTech&layout=compact&theme=radical" alt="Top Languages" /> <img src="https://streak-stats.demolab.com?user=TariqDreamsTech&theme=radical&hide_border=true" alt="GitHub Streak" /> <br> <img src="https://github-profile-trophy.vercel.app/?username=TariqDreamsTech&theme=radical&margin-w=10&margin-h=10" alt="Trophies" /> <br> <img src="https://github-readme-activity-graph.vercel.app/graph?username=TariqDreamsTech&theme=radical" alt="Contribution Graph" /> </p>
 
 
+![World Map](https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/worldmap.svg)
+<sub>🌍 My code is used in 10+ countries!</sub>
+
+
 <p align="center">
   <img src="https://api.qrserver.com/v1/create-qr-code/?data=https://github.com/TariqDreamsTech&size=120x120" alt="QR Code to my GitHub" />
 </p>
