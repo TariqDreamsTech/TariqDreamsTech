@@ -11,7 +11,7 @@
   <a href="mailto:ahsantariq0724@gmail.com">ahsantariq0724@gmail.com</a> • 
   <a href="https://linkedin.com/in/ahsan-tariq-0724-/">LinkedIn</a> • 
   <a href="https://github.com/ahsantariq7">GitHub</a> • 
-  <a href="tel:+923228791599">+92-3228791599</a>
+  <a href="tel:+923228791599">+92-3390879159</a>
 </p>
 
 <p align="center">
