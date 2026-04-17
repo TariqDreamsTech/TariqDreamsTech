@@ -1,204 +1,263 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Current Year for Footer
+
+    // ─── Year ─────────────────────────────────────────
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Custom Cursor
-    const cursor = document.querySelector('.cursor-dot');
-    const outline = document.querySelector('.cursor-outline');
+    // ─── Scroll Progress Bar ──────────────────────────
+    const progressBar = document.getElementById('scroll-progress');
+    window.addEventListener('scroll', () => {
+        const scrolled = window.scrollY;
+        const total = document.documentElement.scrollHeight - window.innerHeight;
+        progressBar.style.width = (scrolled / total * 100) + '%';
+    }, { passive: true });
+
+    // ─── Header shrink on scroll ──────────────────────
+    const header = document.querySelector('.header');
+    window.addEventListener('scroll', () => {
+        header.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    // ─── Custom Cursor ────────────────────────────────
+    const cursorDot = document.querySelector('.cursor-dot');
+    const cursorOutline = document.querySelector('.cursor-outline');
+    let mouseX = 0, mouseY = 0;
+    let outlineX = 0, outlineY = 0;
 
     window.addEventListener('mousemove', (e) => {
-        const posX = e.clientX;
-        const posY = e.clientY;
-
-        cursor.style.left = `${posX}px`;
-        cursor.style.top = `${posY}px`;
-
-        outline.style.left = `${posX}px`;
-        outline.style.top = `${posY}px`;
-
-        // Add trail effect logic if needed
+        mouseX = e.clientX; mouseY = e.clientY;
+        cursorDot.style.left = mouseX + 'px';
+        cursorDot.style.top = mouseY + 'px';
     });
 
-    // Hover effect for cursor
-    const links = document.querySelectorAll('a, button, .btn');
-    links.forEach(link => {
-        link.addEventListener('mouseenter', () => {
-            outline.style.width = '60px';
-            outline.style.height = '60px';
-            outline.style.backgroundColor = 'rgba(92, 201, 196, 0.1)';
+    // Smooth outline with lerp
+    function animateCursor() {
+        outlineX += (mouseX - outlineX) * 0.12;
+        outlineY += (mouseY - outlineY) * 0.12;
+        cursorOutline.style.left = outlineX + 'px';
+        cursorOutline.style.top = outlineY + 'px';
+        requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    document.querySelectorAll('a, button, .btn, .timeline-header, .skill-tags span, .project-card').forEach(el => {
+        el.addEventListener('mouseenter', () => cursorOutline.classList.add('hovered'));
+        el.addEventListener('mouseleave', () => cursorOutline.classList.remove('hovered'));
+    });
+
+    // ─── Mobile Nav ───────────────────────────────────
+    const menuBtn = document.querySelector('.menu-btn');
+    const mobileNav = document.querySelector('.mobile-nav');
+    const navOverlay = document.querySelector('.nav-overlay');
+
+    function toggleNav(open) {
+        menuBtn.classList.toggle('open', open);
+        mobileNav.classList.toggle('open', open);
+        navOverlay.classList.toggle('open', open);
+        document.body.style.overflow = open ? 'hidden' : '';
+    }
+
+    menuBtn.addEventListener('click', () => toggleNav(!mobileNav.classList.contains('open')));
+    navOverlay.addEventListener('click', () => toggleNav(false));
+    mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => toggleNav(false)));
+
+    // ─── Active Nav on Scroll ─────────────────────────
+    const navAnchors = document.querySelectorAll('.nav-links a[href^="#"], .mobile-nav a[href^="#"]');
+    const sectionEls = document.querySelectorAll('section[id]');
+
+    const navObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                navAnchors.forEach(a => {
+                    a.classList.toggle('active', a.getAttribute('href') === '#' + entry.target.id);
+                });
+            }
         });
-        link.addEventListener('mouseleave', () => {
-            outline.style.width = '40px';
-            outline.style.height = '40px';
-            outline.style.backgroundColor = 'transparent';
+    }, { threshold: 0.35 });
+
+    sectionEls.forEach(s => navObserver.observe(s));
+
+    // ─── Typing Animation ─────────────────────────────
+    const roles = [
+        'AI Product Builder',
+        'Founder @ Ranbval',
+        'Senior Python Engineer',
+        'N8N Automation Architect',
+        'Encrypted Infra Engineer',
+    ];
+    const roleEl = document.querySelector('.hero-role');
+    if (roleEl) {
+        roleEl.innerHTML = '<span class="typed-text"></span><span class="typed-cursor">|</span>';
+        const typedText = roleEl.querySelector('.typed-text');
+        let roleIdx = 0, charIdx = 0, deleting = false;
+
+        function type() {
+            const current = roles[roleIdx];
+            typedText.textContent = deleting
+                ? current.slice(0, charIdx--)
+                : current.slice(0, charIdx++);
+
+            let delay = deleting ? 45 : 90;
+            if (!deleting && charIdx === current.length + 1) {
+                delay = 1800; deleting = true;
+            } else if (deleting && charIdx === 0) {
+                deleting = false;
+                roleIdx = (roleIdx + 1) % roles.length;
+                delay = 400;
+            }
+            setTimeout(type, delay);
+        }
+        setTimeout(type, 800);
+    }
+
+    // ─── Timeline Accordion ───────────────────────────
+    const timelineItems = document.querySelectorAll('.timeline-item');
+
+    // Open the first item by default
+    if (timelineItems.length) timelineItems[0].classList.add('open');
+
+    timelineItems.forEach(item => {
+        const header = item.querySelector('.timeline-header');
+        if (!header) return;
+        header.addEventListener('click', () => {
+            const isOpen = item.classList.contains('open');
+            // Close all
+            timelineItems.forEach(i => i.classList.remove('open'));
+            // Toggle clicked
+            if (!isOpen) item.classList.add('open');
         });
     });
 
-    // Fade-in Animation on Scroll
-    const sections = document.querySelectorAll('.section, .hero-section');
+    // ─── Scroll Reveal ────────────────────────────────
+    const revealEls = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry, i) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => entry.target.classList.add('visible'), i * 60);
+                revealObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+    revealEls.forEach(el => revealObserver.observe(el));
 
-    const observerOptions = {
-        root: null,
-        threshold: 0.15,
-        rootMargin: "0px"
-    };
-
-    const observer = new IntersectionObserver((entries, observer) => {
+    // Also reveal timeline items as they scroll into view
+    const tlObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-                observer.unobserve(entry.target);
+                entry.target.style.transform = 'translateX(0)';
+                tlObserver.unobserve(entry.target);
             }
         });
-    }, observerOptions);
+    }, { threshold: 0.08 });
 
-    sections.forEach(section => {
-        section.style.opacity = '0';
-        section.style.transform = 'translateY(30px)';
-        section.style.transition = 'all 0.8s ease-out';
-        observer.observe(section);
+    timelineItems.forEach((item, i) => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateX(-16px)';
+        item.style.transition = `opacity 0.5s ease ${i * 0.04}s, transform 0.5s ease ${i * 0.04}s`;
+        tlObserver.observe(item);
     });
 
-    // Smooth scroll for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
+    // ─── Achievement Counter Animation ────────────────
+    document.querySelectorAll('.achievement-content .highlight').forEach(el => {
+        const text = el.textContent;
+        const num = parseInt(text);
+        if (isNaN(num)) return;
+        const suffix = text.replace(String(num), '');
+        el.textContent = '0' + suffix;
+
+        const counterObserver = new IntersectionObserver(([entry]) => {
+            if (!entry.isIntersecting) return;
+            counterObserver.disconnect();
+            let start = 0;
+            const step = Math.ceil(num / 40);
+            const interval = setInterval(() => {
+                start = Math.min(start + step, num);
+                el.textContent = start + suffix;
+                if (start >= num) clearInterval(interval);
+            }, 40);
+        }, { threshold: 0.5 });
+        counterObserver.observe(el);
+    });
+
+    // ─── Back to Top ──────────────────────────────────
+    const backToTop = document.getElementById('back-to-top');
+    window.addEventListener('scroll', () => {
+        backToTop.classList.toggle('visible', window.scrollY > 500);
+    }, { passive: true });
+    backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    // ─── Smooth Scroll ────────────────────────────────
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', (e) => {
+            const target = document.querySelector(a.getAttribute('href'));
+            if (!target) return;
             e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({
-                behavior: 'smooth'
-            });
+            target.scrollIntoView({ behavior: 'smooth' });
         });
     });
 
-    /* =========================================
-       N8N Style Node Background Animation
-       ========================================= */
+    // ─── Canvas Background ────────────────────────────
     const canvas = document.getElementById('bg-animation');
     const ctx = canvas.getContext('2d');
-
-    let width, height;
-    let particles = [];
-
-    // Configuration
-    const particleCount = 100; // Number of nodes
-    const connectionDistance = 150; // Max distance to connect
-    const flightSpeed = 1.5; // Speed of "flying" forward
+    let W, H, particles = [];
+    const COUNT = 80;
+    const MAX_DIST = 140;
 
     class Particle {
-        constructor() {
-            this.x = Math.random() * width;
-            this.y = Math.random() * height;
-            this.z = Math.random() * width; // Depth for 3D effect
-            this.size = Math.random() * 2 + 1;
-            this.vx = (Math.random() - 0.5) * 0.5;
-            this.vy = (Math.random() - 0.5) * 0.5;
+        constructor() { this.reset(true); }
+        reset(init = false) {
+            this.x = Math.random() * W;
+            this.y = init ? Math.random() * H : (Math.random() > 0.5 ? -5 : H + 5);
+            this.vx = (Math.random() - 0.5) * 0.4;
+            this.vy = (Math.random() - 0.5) * 0.4;
+            this.r = Math.random() * 1.5 + 0.5;
+            this.alpha = Math.random() * 0.5 + 0.2;
         }
-
         update() {
-            // Move particle forward (decrease Z to simulate camera moving forward) or just move in 2D
-            // Let's go with a "Flow" effect where particles move down/forward
-
-            // "Shaheen flying" effect: Camera moves forward through the starfield.
-            // We simulate this by moving particles OUTWARDS from center or simply managing Z.
-
-            // Let's implement pseudo-3D flow for the "Flying" sensation
-            // Z decreases (comes closer)
-            this.z -= flightSpeed;
-
-            // Reset if behind camera
-            if (this.z <= 1) {
-                this.z = width;
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-            }
+            this.x += this.vx; this.y += this.vy;
+            if (this.x < -20 || this.x > W + 20 || this.y < -20 || this.y > H + 20) this.reset();
         }
-
         draw() {
-            // Perspective projection
-            // x2d = (x - center) * (focalLength / z) + center
-            // Simple approach: simpler starfield logic
-
-            // Let's stick to 2D network with drift for "Flow" to ensure N8N style connectivity is visible
-            // Pure 3D starfield often makes connections hard to see as they cross depth.
-            // Hybrid: Particles drift slowly, and we have a "pulse" of movement.
-
-            // Reverting to drifting nodes but with a direction to simulate 'flying' (e.g. diagonal drift)
-            // User asked for "flying" and "pure".
-            // Let's make them flow diagonally up-right or forward?
-            // Let's try "Warp Speed" but slow + Connections.
-
-            // Actually, best "N8N" look is 2D nodes floating.
-            // "Shaheen flying" implies speed.
-            // Let's do a directional flow: Nodes move from right to left significantly (flying forward)
-
-            this.x -= flightSpeed;
-            this.y += this.vy;
-
-            // Wrap around
-            if (this.x < 0) this.x = width;
-            if (this.y < 0) this.y = height;
-            if (this.y > height) this.y = 0;
-
             ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(92, 201, 196, ' + (0.5 + Math.random() * 0.5) + ')'; // Teal
+            ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(99,202,196,${this.alpha})`;
             ctx.fill();
         }
     }
 
-    function init() {
-        resize();
-        for (let i = 0; i < particleCount; i++) {
-            particles.push(new Particle());
-        }
-    }
-
     function resize() {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
     }
 
-    function animate() {
-        ctx.clearRect(0, 0, width, height);
+    function initParticles() {
+        particles = [];
+        for (let i = 0; i < COUNT; i++) particles.push(new Particle());
+    }
 
-        // Update and draw particles
-        particles.forEach(p => {
-            p.update();
-            p.draw();
-        });
-
-        // Draw connections
-        // Optimization: only check nested loop near each other? 
-        // With 100 particles, O(N^2) is fine (10,000 checks)
-        ctx.strokeStyle = 'rgba(92, 201, 196, 0.15)';
-        ctx.lineWidth = 1;
-
+    function drawFrame() {
+        ctx.clearRect(0, 0, W, H);
         for (let i = 0; i < particles.length; i++) {
+            particles[i].update();
+            particles[i].draw();
             for (let j = i + 1; j < particles.length; j++) {
                 const dx = particles[i].x - particles[j].x;
                 const dy = particles[i].y - particles[j].y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-
-                if (dist < connectionDistance) {
+                const d = Math.sqrt(dx * dx + dy * dy);
+                if (d < MAX_DIST) {
                     ctx.beginPath();
                     ctx.moveTo(particles[i].x, particles[i].y);
                     ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.strokeStyle = `rgba(99,202,196,${0.12 * (1 - d / MAX_DIST)})`;
+                    ctx.lineWidth = 1;
                     ctx.stroke();
                 }
             }
         }
-
-        requestAnimationFrame(animate);
+        requestAnimationFrame(drawFrame);
     }
 
-    window.addEventListener('resize', () => {
-        resize();
-        particles = [];
-        for (let i = 0; i < particleCount; i++) {
-            particles.push(new Particle());
-        }
-    });
+    window.addEventListener('resize', () => { resize(); initParticles(); });
+    resize(); initParticles(); drawFrame();
 
-    init();
-    animate();
 });

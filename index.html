@@ -5,21 +5,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-        content="Portfolio of Ahsan Tariq - Senior Python Engineer specializing in backend engineering, AI-driven systems, and data automation.">
-    <title>Ahsan Tariq | Senior Python Engineer</title>
+        content="Portfolio of Ahsan Tariq - AI Product Builder, Founder, and Senior Python Engineer specializing in encrypted infrastructure, AI-powered platforms, and end-to-end automation.">
+    <title>Ahsan Tariq | AI Product Builder & Senior Engineer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
+    <!-- Scroll Progress -->
+    <div id="scroll-progress"></div>
+
     <canvas id="bg-animation"></canvas>
     <div class="cursor-dot"></div>
     <div class="cursor-outline"></div>
+
+    <!-- Nav Overlay (mobile) -->
+    <div class="nav-overlay"></div>
 
     <header class="header">
         <nav class="navbar">
@@ -32,211 +36,616 @@
                 <li><a href="#publications">Publications</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
-            <div class="menu-btn">
-                <div class="menu-btn-burger"></div>
+            <div class="menu-btn" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
             </div>
         </nav>
     </header>
 
+    <!-- Mobile Nav Drawer -->
+    <nav class="mobile-nav">
+        <a href="#about">About</a>
+        <a href="#experience">Experience</a>
+        <a href="#projects">Projects</a>
+        <a href="#skills">Skills</a>
+        <a href="#publications">Publications</a>
+        <a href="#contact">Contact</a>
+    </nav>
+
     <main>
-        <!-- Hero Section -->
+        <!-- Hero -->
         <section id="hero" class="hero-section">
             <div class="container">
                 <div class="hero-content">
                     <div class="profile-img-container">
+                        <div class="profile-ring"></div>
+                        <div class="profile-ring-mask"></div>
                         <img src="prof.jpeg" alt="Ahsan Tariq" class="profile-img">
+                    </div>
+                    <div class="available-badge">
+                        <span class="available-dot"></span>
+                        Available for opportunities
                     </div>
                     <span class="hero-subtitle">Hello, I'm</span>
                     <h1 class="hero-title">Ahsan Tariq</h1>
-                    <h2 class="hero-role">Senior Python Engineer</h2>
+                    <h2 class="hero-role"></h2>
                     <p class="hero-description">
-                        Specializing in <strong>backend engineering</strong>, <strong>AI-driven systems</strong>, and
-                        end-to-end <strong>data automation</strong>.
-                        Proven track record in designing and scaling enterprise-grade platforms using microservice
-                        architectures and robust monolithic frameworks.
+                        Founder of <strong>Ranbval</strong> — building next-generation AI platforms and encrypted
+                        infrastructure. Specializing in <strong>AI-driven product engineering</strong>,
+                        <strong>intelligent workflow automation</strong>, and <strong>secure API ecosystems</strong>.
+                        Architecting systems across FastAPI, N8N, Gemini, React Native, and multi-agent LLMs
+                        that go from zero to production with real-time intelligence at the core.
                     </p>
                     <div class="hero-actions">
-                        <a href="#contact" class="btn btn-primary">Get in Touch</a>
-                        <a href="#experience" class="btn btn-secondary">View Work</a>
+                        <a href="#contact" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Get in Touch</a>
+                        <a href="#experience" class="btn btn-secondary"><i class="fas fa-briefcase"></i> View Work</a>
                     </div>
                     <div class="social-links">
-                        <a href="https://www.linkedin.com/in/ahsan-tariq-comp-engr/" target="_blank" title="LinkedIn"><i
-                                class="fab fa-linkedin-in"></i></a>
-                        <a href="https://github.com/ahsantariq7" target="_blank" title="GitHub"><i
-                                class="fab fa-github"></i></a>
-                        <a href="https://github.com/tariqdreamstech" target="_blank" title="GitHub (Org)"><i
-                                class="fab fa-github-alt"></i></a>
+                        <a href="https://www.linkedin.com/in/ahsan-tariq-comp-engr/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://github.com/ahsantariq7" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+                        <a href="https://github.com/tariqdreamstech" target="_blank" title="GitHub (Org)"><i class="fab fa-github-alt"></i></a>
                         <a href="mailto:ahsantariq0724@gmail.com" title="Email"><i class="fas fa-envelope"></i></a>
                     </div>
                 </div>
+            </div>
+            <div class="scroll-hint">
+                <i class="fas fa-chevron-down"></i>
+                <span>Scroll</span>
+            </div>
         </section>
 
-        <!-- Achievements Section -->
+        <!-- Achievements -->
         <section id="achievements" class="achievements-section section">
             <div class="container">
                 <div class="achievements-wrapper">
-                    <a href="https://leetcode.com/u/ahsantariq7/" target="_blank" class="achievement-card">
-                        <div class="icon-box">
-                            <i class="fas fa-code"></i>
-                        </div>
+                    <a href="https://leetcode.com/u/ahsantariq7/" target="_blank" class="achievement-card reveal">
+                        <div class="icon-box"><i class="fas fa-code"></i></div>
                         <div class="achievement-content">
                             <h3>LeetCode</h3>
                             <span class="highlight">81 Problems Solved</span>
                         </div>
                     </a>
-
-                    <a href="https://www.kaggle.com/engrahsantariq" target="_blank" class="achievement-card">
-                        <div class="icon-box">
-                            <i class="fab fa-kaggle"></i>
-                        </div>
+                    <a href="https://www.kaggle.com/engrahsantariq" target="_blank" class="achievement-card reveal">
+                        <div class="icon-box"><i class="fab fa-kaggle"></i></div>
                         <div class="achievement-content">
                             <h3>Kaggle</h3>
                             <span class="highlight">Expert Rank</span>
                         </div>
                     </a>
+                    <div class="achievement-card reveal">
+                        <div class="icon-box"><i class="fas fa-rocket"></i></div>
+                        <div class="achievement-content">
+                            <h3>Projects Shipped</h3>
+                            <span class="highlight">20+ Systems Built</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- About / Summary Section -->
+        <!-- About -->
         <section id="about" class="section">
             <div class="container">
-                <div class="section-header">
+                <div class="section-header reveal">
                     <h2 class="section-title">Professional Summary</h2>
                     <div class="line"></div>
                 </div>
                 <div class="about-content">
-                    <p>
-                        Senior Python Engineer with 8+ years of experience specializing in backend engineering,
-                        AI-driven systems, and end-to-end data automation. Proven track record in designing and scaling
-                        enterprise-grade platforms using both microservice architectures (FastAPI) and robust monolithic
-                        frameworks (Django).
+                    <p class="reveal">
+                        Founder and AI Product Builder with 8+ years of engineering experience. Creator of
+                        <strong>Ranbval</strong> — a next-generation AI-powered social intelligence platform and a
+                        pioneering encrypted API key infrastructure system that eliminates plain-text secrets and
+                        enables repository-level access control at runtime. Proven track record of taking
+                        zero-to-production systems from concept to shipped product.
                     </p>
-                    <p>
+                    <p class="reveal">
                         Expert in building intelligent, multi-agent AI workflows leveraging LangGraph, LangChain, and
-                        advanced RAG architectures, backed by vector databases such as Pinecone and MongoDB Atlas Vector
-                        Search. Skilled in architecting secure, multi-tenant SaaS systems with RBAC, JWT/SSO
-                        authentication, and seamless integrations across AWS, Azure, and GCP ecosystems.
+                        advanced RAG architectures, backed by vector databases such as Pinecone and MongoDB Atlas.
+                        Skilled in architecting secure, multi-tenant SaaS systems with RBAC, JWT/SSO authentication,
+                        and explicit LLM context caching strategies that cut token costs at scale. Hands-on experience
+                        across AWS, Azure, GCP, and Gemini API ecosystems.
                     </p>
-                    <p>
-                        Extensive experience crafting resilient ETL pipelines using AWS Glue, Lambda, and S3, processing
-                        large-scale structured and unstructured datasets. Adept at real-time, event-driven communication
-                        with WebSockets, and integrating mission-critical services including Stripe, Twilio, and
-                        workflow automation via N8N.
+                    <p class="reveal">
+                        Extensive experience crafting resilient ETL pipelines, asynchronous video processing systems
+                        (FastAPI + Celery), and real-time event-driven communication via WebSockets. Integrates
+                        mission-critical services including Stripe, Twilio, and advanced workflow automation via N8N —
+                        with a focus on cost-efficiency, security, and production-grade reliability.
                     </p>
                 </div>
             </div>
         </section>
 
-        <!-- Experience Section -->
+        <!-- Experience -->
         <section id="experience" class="section">
             <div class="container">
-                <div class="section-header">
+                <div class="section-header reveal">
                     <h2 class="section-title">Experience</h2>
                     <div class="line"></div>
                 </div>
                 <div class="timeline">
-                    <!-- Item 1 -->
+
+                    <!-- Ranbval Encrypted API Key Infrastructure -->
                     <div class="timeline-item">
-                        <div class="timeline-date">Oct 2024 -- Dec 2024</div>
-                        <div class="timeline-content">
-                            <h3>Backend Software Engineer</h3>
-                            <span class="company">LLHAM Project | Remote, USA</span>
-                            <p class="role-desc">AI-Powered Proposal Generation Platform</p>
+                        <div class="timeline-header">
+                            <div class="tl-left">
+                                <div class="tl-meta">
+                                    <span class="timeline-date">Apr 2026 – Present</span>
+                                    <span class="tl-type-badge">Full-time · Founder</span>
+                                </div>
+                                <h3>Creator — Encrypted API Key Infrastructure & SDK</h3>
+                                <span class="company">TariqDreamsTech · Pakistan, On-site</span>
+                            </div>
+                            <div class="tl-toggle"><i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="timeline-body">
+                            <p class="role-desc">API Security & Secret Management</p>
                             <ul>
-                                <li>Architected a dual-repository system: <strong>llham-agents</strong> submodule for
-                                    isolated AI logic with LangGraph orchestration, and
-                                    <strong>backend-management</strong> Django monolith.
-                                </li>
-                                <li>Designed multi-agent workflow with specialized agents (Master Agent, Business
-                                    Analyst, Technical Architect, etc.) powered by OpenAI GPT-4.</li>
-                                <li>Built Master Agent as intelligent router using LLM-based intent analysis and prompt
-                                    engineering.</li>
-                                <li>Implemented streaming responses via WebSockets for real-time agent output.</li>
-                                <li>Engineered document processing with embedding-based retrieval (RAG) and PostgreSQL
-                                    knowledge base.</li>
+                                <li>Invented <strong>Ranbval</strong>, a production-grade API security solution that eliminates plain-text <code>.env</code> files by replacing them with encrypted, repository-bound tokens.</li>
+                                <li>Designed and shipped a token-based encrypted secret system where secure tokens are generated on a centralized platform and validated at runtime via the Ranbval SDK — so exposed keys cannot be misused outside authorized environments.</li>
+                                <li>Built the <strong>Ranbval SDK</strong> from scratch, providing real-time validation and monitoring of every API request with live telemetry and unauthorized-attempt detection.</li>
+                                <li>Implemented <strong>repository-level access control</strong> — API keys are cryptographically bound to approved repositories, enforcing zero-trust by design.</li>
+                                <li>Delivered a centralized monitoring dashboard with full visibility into API usage patterns, access logs, and security events.</li>
                             </ul>
                         </div>
                     </div>
 
-                    <!-- Item 2 -->
+                    <!-- Savvy Programmers – Candidate Screening -->
                     <div class="timeline-item">
-                        <div class="timeline-date">May 2025 -- Present</div>
-                        <div class="timeline-content">
-                            <h3>N8N Engineer</h3>
-                            <span class="company">hddisenos | Remote, Venezuela</span>
-                            <p class="role-desc">Automation Engineering</p>
+                        <div class="timeline-header">
+                            <div class="tl-left">
+                                <div class="tl-meta">
+                                    <span class="timeline-date">Apr 2026 – Present</span>
+                                    <span class="tl-type-badge">Full-time · Remote</span>
+                                </div>
+                                <h3>Automated Candidate Screening & Device Intelligence System</h3>
+                                <span class="company">Savvy Programmers · United States, Remote</span>
+                            </div>
+                            <div class="tl-toggle"><i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="timeline-body">
+                            <p class="role-desc">JotForm Workflow Automation Engineering</p>
                             <ul>
-                                <li>Architected and implemented advanced automation workflows using N8N, reducing manual
-                                    workload by 60%.</li>
-                                <li>Integrated external systems including REST/SOAP APIs, CRMs (HubSpot, Zoho), and
-                                    SQL/NoSQL databases.</li>
-                                <li>Configured conditional branches, loops, and error handling for high reliability.
-                                </li>
+                                <li>Designed and implemented a <strong>multi-step candidate screening system</strong> that unifies application submission, resume upload, and voice-based interview questions into a single seamless form — overcoming JotForm's native platform limitations.</li>
+                                <li>Engineered a <strong>custom BAT-based automation</strong> that silently collects device and system information, then generates a dynamic auto-populated form link — capturing system-generated data alongside user-provided inputs without friction.</li>
+                                <li>Built a <strong>dual-form architecture</strong> to bypass JotForm's first-page-only data population constraint, maintaining full data continuity across multi-step flows.</li>
+                                <li>Implemented <strong>auto data mapping via unique email identifiers</strong> to reliably link candidate application data with device intelligence records.</li>
+                                <li>Delivered a system focused on <strong>scalability, real-time validation, and data consistency</strong> — demonstrating deep expertise in workflow automation and system design under platform constraints.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Ranbval AI Platform -->
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <div class="tl-left">
+                                <div class="tl-meta">
+                                    <span class="timeline-date">Mar 2026 – Present</span>
+                                    <span class="tl-type-badge">Full-time · Founder</span>
+                                </div>
+                                <h3>Founder & Product Engineer — Ranbval AI Social & Life Intelligence Platform</h3>
+                                <span class="company">TariqDreamsTech · Pakistan, On-site</span>
+                            </div>
+                            <div class="tl-toggle"><i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="timeline-body">
+                            <p class="role-desc">React Native · FastAPI · Multi-Agent AI · Encrypted Vaults · WebSockets</p>
+                            <ul>
+                                <li>Founding and architecting <strong>Ranbval</strong>, a next-generation AI-powered social platform combining relationship intelligence, agentic AI companions, gaming, encrypted media vaults, and social content — built on React Native + FastAPI.</li>
+                                <li>Engineered a <strong>Relationship Intelligence System</strong> that detects strong connections, conversation streaks, and interaction patterns to surface behavior-driven insights.</li>
+                                <li>Designed a <strong>Multi-Persona AI Agent system</strong> supporting roles such as friend, mentor, family member, and custom characters — with reminders, conflict management, and religious personalization.</li>
+                                <li>Built an <strong>AI Conversation & Proxy System</strong> that maintains natural conversation flow when users are unavailable, powered by chat history, memories, and personality models.</li>
+                                <li>Developed an <strong>Agent Coordination & Gaming layer</strong> with AI-managed Q&A, drawing, and multiplayer games featuring scoring, leaderboards, and winner selection.</li>
+                                <li>Architected a <strong>Secure Media & Data System</strong>: view-once media, encrypted vaults, a separate secure app/drive, and full user control over export, delete, or data-corruption actions.</li>
+                                <li>Implemented <strong>Safety & Moderation</strong> with blackmail detection, abuse handling, and AI intervention; plus identity verification and fake profile prevention.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Chatbot Engineer N8n -->
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <div class="tl-left">
+                                <div class="tl-meta">
+                                    <span class="timeline-date">Mar 2026</span>
+                                    <span class="tl-type-badge">Contract</span>
+                                </div>
+                                <h3>Chatbot Engineer — AI Sales Intelligence Backend</h3>
+                                <span class="company">Contract · N8n + Gemini API</span>
+                            </div>
+                            <div class="tl-toggle"><i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="timeline-body">
+                            <p class="role-desc">Client Intelligence Automation · N8N · Gemini 2.5 Pro · Postgres</p>
+                            <ul>
+                                <li>Designed and shipped a <strong>fully automated client intelligence backend</strong> on N8n that gives sales reps an always-on, context-aware AI assistant for every prospect — without rebuilding context on every message.</li>
+                                <li>Implemented <strong>explicit LLM context caching</strong> via Google Gemini API's <code>/v1beta/cachedContents</code> endpoint — large static payloads (call transcripts, LinkedIn data, persona reports, CSR reports, action items, framework specs) are uploaded once; all subsequent queries reference the cache name directly, eliminating redundant token processing.</li>
+                                <li>Built a <strong>4-case cache routing engine</strong>: new session (create cache), expired cache (recreate), valid & unchanged (reuse), valid but changed (SHA-256 hash comparison → invalidate & recreate) — ensuring the LLM always has fresh data without unnecessary re-uploads.</li>
+                                <li>Engineered a <strong>single-query data hydration layer</strong> in Postgres pulling all client intelligence in one round-trip before any LLM call.</li>
+                                <li>Enforced a <strong>DB-level usage cap</strong> (75 messages per user-client pair) checked before any compute runs, keeping costs predictable at scale.</li>
+                                <li>Stateless workflow architecture enables horizontal scaling — heavy token processing offloaded to Google's infrastructure with no proportional compute overhead.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- AI Video to Shorts -->
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <div class="tl-left">
+                                <div class="tl-meta">
+                                    <span class="timeline-date">Mar 2026</span>
+                                    <span class="tl-type-badge">Part-time</span>
+                                </div>
+                                <h3>AI-Powered Video to Shorts Automation System</h3>
+                                <span class="company">TariqDreamsTech · Pakistan</span>
+                            </div>
+                            <div class="tl-toggle"><i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="timeline-body">
+                            <p class="role-desc">FastAPI · Celery · FFmpeg · Whisper · Python</p>
+                            <ul>
+                                <li>Designed and developed an <strong>end-to-end AI-powered video processing pipeline</strong> that transforms long-form content into multiple short-form vertical videos (Shorts/Reels) with minimal manual effort.</li>
+                                <li>Built a <strong>scalable asynchronous backend</strong> using FastAPI and Celery, handling multiple concurrent video processing jobs without blocking system performance.</li>
+                                <li>Implemented a <strong>transcription-driven workflow</strong> that generates accurate, time-synchronized English subtitles — enabling context-aware clip segmentation rather than naive time-based splitting.</li>
+                                <li>Engineered a fully automated pipeline: segment long videos → convert to 9:16 vertical format → embed subtitles → generate platform-optimized titles and descriptions.</li>
+                                <li>Reduced manual editing effort by up to <strong>90%</strong> through modular architecture separating ingestion, processing, and output stages — designed for extensibility toward automated publishing and AI-based highlight detection.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Savvy Programmers – N8N Engineer -->
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <div class="tl-left">
+                                <div class="tl-meta">
+                                    <span class="timeline-date">Feb 2026 – Present</span>
+                                    <span class="tl-type-badge">Full-time · Remote</span>
+                                </div>
+                                <h3>N8N Engineer — AI Persona, CSR & Action Item Analysis</h3>
+                                <span class="company">Savvy Programmers · United States, Remote</span>
+                            </div>
+                            <div class="tl-toggle"><i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="timeline-body">
+                            <p class="role-desc">Multi-Agent LLM Pipeline · Gemini 2.5 Pro · Supabase · Scrapin.io</p>
+                            <ul>
+                                <li>Automated client persona, CSR, and action item analysis — transforming raw LinkedIn inputs into actionable AI-driven reports with <strong>90% reduction in manual analysis time</strong>.</li>
+                                <li>Integrated <strong>Scrapin.io API</strong> for LinkedIn profile and post scraping with resilient retry logic (up to 5 attempts, exponential backoff 15–60s) to handle rate limits gracefully.</li>
+                                <li>Orchestrated a <strong>multi-agent LLM pipeline (Gemini 2.5 Pro)</strong> evaluating 50+ psychological attributes across 5 behavioral layers (L1–L5), generating persona, CSR, and action item reports from transcripts and profiles.</li>
+                                <li>Implemented robust error handling (IF nodes for quota/attempt checks), JSON extraction, data flattening, and HTML/Markdown report builders for automated email delivery.</li>
+                                <li>Stored outputs in <strong>Supabase</strong> (clienttranscripts, actionitemhistory tables) with versioning (V1+), status tracking ("In Progress" → "Done"), and zero-downtime processing via webhooks.</li>
+                                <li>Applied FinOps discipline: cost-optimized API call patterns and failure-resilient architecture enabling scalable client onboarding.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- AI Content Automation Architect -->
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <div class="tl-left">
+                                <div class="tl-meta">
+                                    <span class="timeline-date">Feb 2026 – Present</span>
+                                    <span class="tl-type-badge">Full-time · Remote</span>
+                                </div>
+                                <h3>AI Content Automation Architect — Autonomous Publishing System</h3>
+                                <span class="company">Remote</span>
+                            </div>
+                            <div class="tl-toggle"><i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="timeline-body">
+                            <p class="role-desc">AI Workflow Design · SEO Automation · WordPress · YouTube API · GHL</p>
+                            <ul>
+                                <li>Designed and deployed a <strong>fully autonomous AI content production and distribution system</strong> that transforms a single keyword into 30+ SEO-optimized articles, multimedia assets, and multi-platform social posts — with minimal human intervention.</li>
+                                <li>Integrated modular AI agents: Topic Discovery, Atomic Page Planning, Draft Generation, QA Validation, Media Script Creation, Image Prompt Engineering, YouTube Publishing, WordPress REST API Publishing, Schema (JSON-LD) Injection, and Social Distribution via GHL.</li>
+                                <li>Implemented <strong>structured job orchestration</strong> with failure recovery logic ("Fix Needed" loop), concurrency control, database-driven tracking, and automated status progression from ideation through distribution.</li>
+                                <li>Delivered <strong>answer-first SEO architecture</strong> with programmatic internal linking, automated schema generation (Article, FAQ, VideoObject), media-script-to-video workflows, and Sitemap ping + indexing automation for Google & Bing.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Iris CRM / Merchant Onboarding -->
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <div class="tl-left">
+                                <div class="tl-meta">
+                                    <span class="timeline-date">Feb 2026 – Present</span>
+                                    <span class="tl-type-badge">Full-time · Remote</span>
+                                </div>
+                                <h3>N8N Automation Architect — Merchant Onboarding (Iris CRM)</h3>
+                                <span class="company">Transact Ultd · Remote</span>
+                            </div>
+                            <div class="tl-toggle"><i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="timeline-body">
+                            <p class="role-desc">End-to-End Merchant Lifecycle · Iris CRM · Iso Amp · SMTP · Paybright</p>
+                            <ul>
+                                <li>Architected a <strong>fully automated merchant lifecycle system</strong> with Iris CRM as the system of record and n8n as the central automation engine — covering lead intake, activation, training, compliance, and ongoing engagement.</li>
+                                <li>Built monitoring workflows that detect CRM lead creation/updates (status: "Statements Needed"), trigger statement request emails via SMTP, manage document uploads, and integrate with <strong>Iso Amp</strong> for processing statement analysis — writing results back to the CRM automatically.</li>
+                                <li>Engineered dynamic routing of merchant applications to processor systems (Paybright, Card Connect, Maverick, Defyne) with real-time approval/decline CRM status updates.</li>
+                                <li>Delivered <strong>recurring compliance automations</strong>: PCI reminders, follow-ups, training scheduling, equipment shipping logistics, and customer touchpoints — all orchestrated by n8n while Iris CRM remains the single source of truth.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Integration & Automation Engineer -->
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <div class="tl-left">
+                                <div class="tl-meta">
+                                    <span class="timeline-date">Feb 2026 – Present</span>
+                                    <span class="tl-type-badge">Full-time · Remote</span>
+                                </div>
+                                <h3>Integration & Automation Engineer — Digital Operations Transformation</h3>
+                                <span class="company">Remote</span>
+                            </div>
+                            <div class="tl-toggle"><i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="timeline-body">
+                            <p class="role-desc">NetSuite · Combitas · DocuSign · Manus AI · N8N</p>
+                            <ul>
+                                <li>Led the <strong>digital transformation of business operations</strong> by replacing fragmented manual processes with a fully automated, AI-driven system using Manus AI and n8n.</li>
+                                <li>Automated <strong>NetSuite data extraction and synchronization</strong> into centralized real-time workflows; converted Excel-based and paper-driven processes (including Combitas tools) into structured automated pipelines.</li>
+                                <li>Integrated <strong>DocuSign for digital signatures and verification</strong>, reducing approval turnaround from hours/days to minutes across multi-step approval chains.</li>
+                                <li>Built <strong>centralized vendor and product tracking</strong> with automated validations, routing, and notifications — eliminating procurement bottlenecks.</li>
+                                <li>Delivered a <strong>real-time operational dashboard</strong> for the founder with complete KPI visibility and audit-ready, scalable reporting.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Python & AI Automation Engineer (Savvy Programmers) -->
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <div class="tl-left">
+                                <div class="tl-meta">
+                                    <span class="timeline-date">Jan 2026 – Present</span>
+                                    <span class="tl-type-badge">Full-time · On-site</span>
+                                </div>
+                                <h3>Python & AI Automation Engineer</h3>
+                                <span class="company">Savvy Programmers · Lahore, Pakistan</span>
+                            </div>
+                            <div class="tl-toggle"><i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="timeline-body">
+                            <p class="role-desc">Python · N8N · Gemini API · FastAPI · Intelligent Workflow Design</p>
+                            <ul>
+                                <li>Full-time Python and AI automation engineering role spanning multiple concurrent client projects across N8N, Gemini API, FastAPI, and intelligent workflow design — delivering production-ready systems for US-based clients from an on-site Pakistan location.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Qira Project -->
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <div class="tl-left">
+                                <div class="tl-meta">
+                                    <span class="timeline-date">Jan 2026 – Present</span>
+                                    <span class="tl-type-badge">Full-time</span>
+                                </div>
+                                <h3>AI-Driven Service Operations Ecosystem — Qira Project</h3>
+                                <span class="company">Lahore, Punjab, Pakistan</span>
+                            </div>
+                            <div class="tl-toggle"><i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="timeline-body">
+                            <p class="role-desc">FastAPI · MediaPipe · OpenCV · Firebase · Google Cloud Run · JWT</p>
+                            <ul>
+                                <li>Engineered a <strong>high-performance production backend</strong> for photo-based AI analysis, context-aware multilingual services, and real-time AI interactions — deployed on Google Cloud Run via FastAPI and containerized for infinite scale.</li>
+                                <li>Built a <strong>Deep Facial Feature Analysis module</strong> using MediaPipe and OpenCV for granular extraction of 468+ facial landmarks, automating classification of eye/hair color, skin tone, ethnicity, and body type with high precision.</li>
+                                <li>Developed a <strong>specialized bidirectional translation engine</strong> (English/Russian) preserving conversational flow and cultural nuance, integrated with persistent user preference profiles.</li>
+                                <li>Implemented <strong>high-speed Text-to-Speech (TTS)</strong> with 1–2 second response times, intelligent caching (&lt;100ms for repeated requests), and localized voice mapping for 10+ languages.</li>
+                                <li>Architected <strong>enterprise-grade infrastructure</strong> with Firebase Firestore/Storage, JWT authentication, bcrypt password hashing, and strict Pydantic validation for production reliability.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Lead AI Automation Architect -->
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <div class="tl-left">
+                                <div class="tl-meta">
+                                    <span class="timeline-date">Jan 2026 – Present</span>
+                                    <span class="tl-type-badge">Full-time · Remote</span>
+                                </div>
+                                <h3>Lead AI Automation Architect — Zero-Touch Service Business Ops</h3>
+                                <span class="company">Remote</span>
+                            </div>
+                            <div class="tl-toggle"><i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="timeline-body">
+                            <p class="role-desc">N8N · Gemini · Housecall Pro API · OpenPhone · Twilio · Google Cloud</p>
+                            <ul>
+                                <li>Architected a <strong>zero-touch admin ecosystem</strong> managing the complete lifecycle of a service-based business — from AI-driven voice lead intake through automated scheduling, dispatch, and invoicing.</li>
+                                <li>Built an <strong>Intelligent AI Intake Engine</strong> capturing leads from 6+ channels (OpenPhone, Google, Angi, Thumbtack) with LLM-driven normalization of raw call transcripts into structured data (Job Type, Urgency, Customer Info).</li>
+                                <li>Engineered a <strong>proprietary AI Estimate workflow</strong> that processes site visit photos and notes, runs LLM-driven market checks and cost baselines, and auto-calculates labor and material costs — eliminating manual pricing.</li>
+                                <li>Built deep <strong>Housecall Pro API integrations</strong> for automated lead creation, "Wait-and-Confirm" SMS follow-up loops, tech assignment via capability and calendar checks, and real-time job status sync triggering completion events and invoicing.</li>
+                                <li>Implemented <strong>automated revenue loops</strong>: 50% deposit unlock, post-job Google/HCP review automation, weekly performance summaries, and ROI reporting identifying total man-hours saved.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Monday.com & Zapier -->
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <div class="tl-left">
+                                <div class="tl-meta">
+                                    <span class="timeline-date">Jan 2026 – Present</span>
+                                    <span class="tl-type-badge">Full-time · Remote</span>
+                                </div>
+                                <h3>Monday.com & Zapier Automation Specialist — CRM & Marketing Integration</h3>
+                                <span class="company">Remote</span>
+                            </div>
+                            <div class="tl-toggle"><i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="timeline-body">
+                            <p class="role-desc">Filmable Athletes System · Monday.com · Zapier · Slack · Google Sheets</p>
+                            <ul>
+                                <li>Designed a <strong>two-board Monday.com architecture</strong> (CRM as source of truth + "Filmable Athletes" marketing board) enabling therapists to approve patients for filming with a single Yes/No decision — with zero disruption to clinical workflows.</li>
+                                <li>Implemented <strong>deterministic direct field mapping</strong> (Name, Sport, Injury, Status, Therapist, Eval Date) replacing unreliable mirror columns; items trigger creation only when Patient Status = Active and Evaluation Date is populated.</li>
+                                <li>Built a <strong>Slack Notification Engine via Zapier</strong> using a Google Sheets therapist directory for identity resolution — mapping Monday.com users to Slack DMs for accurate, branded workspace alerts with 24-hour follow-up loops that auto-stop on decision.</li>
+                                <li>Engineered <strong>full lifecycle section logic</strong>: items auto-route between Pending Review, Current Filmable, Former Filmable, and Not Filmable based on CRM status changes — maintaining real-time accuracy with zero manual intervention.</li>
+                                <li>Delivered a <strong>compliance-safe architecture</strong>: Marketing receives view-only access to approved clinical data with no backflow, fully deterministic execution logs, and one-way CRM → Marketing data governance.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Voiceflow Chatbot -->
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <div class="tl-left">
+                                <div class="tl-meta">
+                                    <span class="timeline-date">Jan 2026</span>
+                                    <span class="tl-type-badge">Freelance</span>
+                                </div>
+                                <h3>Voiceflow Chatbot Developer & N8N Automation Specialist</h3>
+                                <span class="company">Freelance</span>
+                            </div>
+                            <div class="tl-toggle"><i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="timeline-body">
+                            <p class="role-desc">Voiceflow · N8N · REST APIs · Booking Automation</p>
+                            <ul>
+                                <li>Built a <strong>production-ready booking assistant</strong> integrating Voiceflow with live booking APIs via n8n — delivering 100% deterministic responses and precise booking link mapping.</li>
+                                <li>Engineered <strong>deterministic Voiceflow conversation flows</strong> with strict venue/date resolution logic, real-time date parsing (web search → relative day calculation → YYYY-MM-DD formatting), and venue normalization.</li>
+                                <li>Developed <strong>n8n API orchestration workflows</strong> for data filtering, availability parsing, and dynamic slot aggregation with presentation structured as Category → Product → Time slots with individual [Book now] buttons.</li>
+                                <li>Implemented robust edge-case handling: no availability, API errors, and ambiguous queries — with a clean, scalable architecture ready for production expansion across multiple venues and products.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- LLHAM -->
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <div class="tl-left">
+                                <div class="tl-meta">
+                                    <span class="timeline-date">Oct 2024 – Dec 2024</span>
+                                    <span class="tl-type-badge">Contract · Remote</span>
+                                </div>
+                                <h3>Backend Software Engineer — AI Proposal Generation Platform</h3>
+                                <span class="company">LLHAM Project · Remote, USA</span>
+                            </div>
+                            <div class="tl-toggle"><i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="timeline-body">
+                            <p class="role-desc">LangGraph · Django · OpenAI GPT-4 · WebSockets · RAG · PostgreSQL</p>
+                            <ul>
+                                <li>Architected a dual-repository system: <strong>llham-agents</strong> submodule for isolated AI logic with LangGraph orchestration, and <strong>backend-management</strong> Django monolith.</li>
+                                <li>Designed multi-agent workflow with specialized agents (Master Agent, Business Analyst, Technical Architect, etc.) powered by OpenAI GPT-4.</li>
+                                <li>Built Master Agent as intelligent router using LLM-based intent analysis and prompt engineering.</li>
+                                <li>Implemented streaming responses via WebSockets for real-time agent output.</li>
+                                <li>Engineered document processing with embedding-based retrieval (RAG) and PostgreSQL knowledge base.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- hddisenos N8N -->
+                    <div class="timeline-item">
+                        <div class="timeline-header">
+                            <div class="tl-left">
+                                <div class="tl-meta">
+                                    <span class="timeline-date">May 2025 – Present</span>
+                                    <span class="tl-type-badge">Full-time · Remote</span>
+                                </div>
+                                <h3>N8N Engineer — Advanced Automation Workflows</h3>
+                                <span class="company">hddisenos · Remote, Venezuela</span>
+                            </div>
+                            <div class="tl-toggle"><i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="timeline-body">
+                            <p class="role-desc">N8N · REST/SOAP APIs · HubSpot · Zoho CRM · PostgreSQL</p>
+                            <ul>
+                                <li>Architected and implemented advanced automation workflows using N8N, reducing manual workload by 60%.</li>
+                                <li>Integrated external systems including REST/SOAP APIs, CRMs (HubSpot, Zoho), and SQL/NoSQL databases.</li>
+                                <li>Configured conditional branches, loops, and error handling for high reliability.</li>
                                 <li>Developed custom N8N nodes and leveraged webhooks for event-driven automation.</li>
                             </ul>
                         </div>
                     </div>
 
-                    <!-- Item 3 -->
+                    <!-- InstaMailAI -->
                     <div class="timeline-item">
-                        <div class="timeline-date">Feb 2025 -- Mar 2025</div>
-                        <div class="timeline-content">
-                            <h3>Vectorized Database Software Engineer</h3>
-                            <span class="company">InstaMailAI | Remote, USA</span>
-                            <p class="role-desc">AI Email Intelligence</p>
+                        <div class="timeline-header">
+                            <div class="tl-left">
+                                <div class="tl-meta">
+                                    <span class="timeline-date">Feb 2025 – Mar 2025</span>
+                                    <span class="tl-type-badge">Contract · Remote</span>
+                                </div>
+                                <h3>Vectorized Database Software Engineer — AI Email Intelligence</h3>
+                                <span class="company">InstaMailAI · Remote, USA</span>
+                            </div>
+                            <div class="tl-toggle"><i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="timeline-body">
+                            <p class="role-desc">MongoDB Atlas Vector Search · LangChain · FastAPI · RAG</p>
                             <ul>
-                                <li>Designed and deployed high-performance vector search pipelines using MongoDB Atlas
-                                    Vector Search and Langchain.</li>
+                                <li>Designed and deployed high-performance vector search pipelines using MongoDB Atlas Vector Search and Langchain.</li>
                                 <li>Implemented RAG architecture for real-time email response generation.</li>
-                                <li>Engineered robust backend systems using FastAPI for parsing and filtering emails.
-                                </li>
-                                <li>Optimized MongoDB queries and indexing strategies for low-latency vector similarity
-                                    search.</li>
+                                <li>Engineered robust backend systems using FastAPI for parsing and filtering emails.</li>
+                                <li>Optimized MongoDB queries and indexing strategies for low-latency vector similarity search.</li>
                             </ul>
                         </div>
                     </div>
 
-                    <!-- Item 4 -->
+                    <!-- Seanz Law Firm -->
                     <div class="timeline-item">
-                        <div class="timeline-date">June 2024 -- Aug 2024</div>
-                        <div class="timeline-content">
-                            <h3>Backend Software Engineer</h3>
-                            <span class="company">Seanz Law Firm | Remote, USA</span>
-                            <p class="role-desc">Interview Intelligence System</p>
+                        <div class="timeline-header">
+                            <div class="tl-left">
+                                <div class="tl-meta">
+                                    <span class="timeline-date">June 2024 – Aug 2024</span>
+                                    <span class="tl-type-badge">Contract · Remote</span>
+                                </div>
+                                <h3>Backend Software Engineer — Interview Intelligence System</h3>
+                                <span class="company">Seanz Law Firm · Remote, USA</span>
+                            </div>
+                            <div class="tl-toggle"><i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="timeline-body">
+                            <p class="role-desc">OpenAI GPT-4 · Twilio · WhatsApp API · Google Looker Studio</p>
                             <ul>
-                                <li>Built a multilingual (English/Spanish) AI-powered interview assistant for
-                                    immigration law.</li>
+                                <li>Built a multilingual (English/Spanish) AI-powered interview assistant for immigration law.</li>
                                 <li>Integrated OpenAI GPT-4 and Twilio API for WhatsApp/SMS communication.</li>
                                 <li>Enabled real-time dashboard reporting using Google Looker Studio.</li>
                             </ul>
                         </div>
                     </div>
 
-                    <!-- Item 5 -->
+                    <!-- NVIT -->
                     <div class="timeline-item">
-                        <div class="timeline-date">Jan 2024 -- May 2024</div>
-                        <div class="timeline-content">
-                            <h3>Backend Software Engineer</h3>
-                            <span class="company">NVIT Project | Remote, USA</span>
-                            <p class="role-desc">Secure Multi-Tenant SaaS System</p>
+                        <div class="timeline-header">
+                            <div class="tl-left">
+                                <div class="tl-meta">
+                                    <span class="timeline-date">Jan 2024 – May 2024</span>
+                                    <span class="tl-type-badge">Contract · Remote</span>
+                                </div>
+                                <h3>Backend Software Engineer — Secure Multi-Tenant SaaS</h3>
+                                <span class="company">NVIT Project · Remote, USA</span>
+                            </div>
+                            <div class="tl-toggle"><i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="timeline-body">
+                            <p class="role-desc">Django · JWT · OpenAI GPT · Jira-style Ticketing · jerichoai.io</p>
                             <ul>
-                                <li>Developed a multi-role backend system (Customers, Engineers, Admins) with JWT-based
-                                    Authentication.</li>
+                                <li>Developed a multi-role backend system (Customers, Engineers, Admins) with JWT-based Authentication.</li>
                                 <li>Created dynamic ticketing system with Jira-style duplication.</li>
                                 <li>Integrated OpenAI GPT API for time estimation and recommendations.</li>
-                                <li>Live: <a href="https://jerichoai.io" target="_blank">https://jerichoai.io</a></li>
+                                <li>Live: <a href="https://jerichoai.io" target="_blank">jerichoai.io</a></li>
                             </ul>
                         </div>
                     </div>
 
-                    <!-- Item 6 -->
+                    <!-- 2456.ai -->
                     <div class="timeline-item">
-                        <div class="timeline-date">Aug 2023 -- Dec 2023</div>
-                        <div class="timeline-content">
-                            <h3>Backend Software Engineer</h3>
-                            <span class="company">2456.ai | Remote, USA</span>
-                            <p class="role-desc">AI Workflow Automation Platform</p>
+                        <div class="timeline-header">
+                            <div class="tl-left">
+                                <div class="tl-meta">
+                                    <span class="timeline-date">Aug 2023 – Dec 2023</span>
+                                    <span class="tl-type-badge">Contract · Remote</span>
+                                </div>
+                                <h3>Backend Software Engineer — AI Workflow Automation Platform</h3>
+                                <span class="company">2456.ai · Remote, USA</span>
+                            </div>
+                            <div class="tl-toggle"><i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="timeline-body">
+                            <p class="role-desc">Django · FastAPI · PostgreSQL · Pinecone · Stripe</p>
                             <ul>
                                 <li>Designed backend using Django (Monolith) and FastAPI (Microservices).</li>
                                 <li>Architected dual-database system using PostgreSQL and Pinecone Vector DB.</li>
@@ -245,28 +654,44 @@
                         </div>
                     </div>
 
-                    <!-- Item 7 -->
+                    <!-- Fiverr -->
                     <div class="timeline-item">
-                        <div class="timeline-date">July 2022 -- Present</div>
-                        <div class="timeline-content">
-                            <h3>Python Developer</h3>
-                            <span class="company">Fiverr | Self-employed</span>
-                            <p class="role-desc">Freelancing Platform</p>
+                        <div class="timeline-header">
+                            <div class="tl-left">
+                                <div class="tl-meta">
+                                    <span class="timeline-date">July 2022 – Present</span>
+                                    <span class="tl-type-badge">Self-employed</span>
+                                </div>
+                                <h3>Python Developer — Freelance</h3>
+                                <span class="company">Fiverr · Self-employed</span>
+                            </div>
+                            <div class="tl-toggle"><i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="timeline-body">
+                            <p class="role-desc">Python · Backend Engineering · Client Delivery</p>
                             <ul>
-                                <li>Communicated with clients to facilitate order placements.</li>
-                                <li>Provided post-delivery support and revisions.</li>
-                                <li>Maintained a 5-star rating.</li>
+                                <li>Communicated with clients to facilitate order placements and requirement gathering.</li>
+                                <li>Provided post-delivery support and revisions for production systems.</li>
+                                <li>Maintained a 5-star rating across all delivered projects.</li>
                             </ul>
                         </div>
                     </div>
 
-                    <!-- Item 8 -->
+                    <!-- QPharma -->
                     <div class="timeline-item">
-                        <div class="timeline-date">Mar 2022 -- July 2022</div>
-                        <div class="timeline-content">
-                            <h3>Data Engineer</h3>
-                            <span class="company">QPharma Project | Remote, USA</span>
-                            <p class="role-desc">Data Engineering & Analytics Architecture</p>
+                        <div class="timeline-header">
+                            <div class="tl-left">
+                                <div class="tl-meta">
+                                    <span class="timeline-date">Mar 2022 – July 2022</span>
+                                    <span class="tl-type-badge">Contract · Remote</span>
+                                </div>
+                                <h3>Data Engineer — ETL & Analytics Architecture</h3>
+                                <span class="company">QPharma Project · Remote, USA</span>
+                            </div>
+                            <div class="tl-toggle"><i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="timeline-body">
+                            <p class="role-desc">AWS Glue · S3 · Lambda · Pandas · Excalidraw</p>
                             <ul>
                                 <li>Built scalable ETL pipelines using AWS Glue, S3, and Lambda Functions.</li>
                                 <li>Applied pandas for large-scale data cleaning and feature engineering.</li>
@@ -275,64 +700,107 @@
                         </div>
                     </div>
 
-                    <!-- Item 9 -->
+                    <!-- Hostera -->
                     <div class="timeline-item">
-                        <div class="timeline-date">July 2018 -- June 2020</div>
-                        <div class="timeline-content">
-                            <h3>Beginner Python Developer</h3>
-                            <span class="company">Hostera | Bahawalpur</span>
-                            <p class="role-desc">Web & ML Development</p>
+                        <div class="timeline-header">
+                            <div class="tl-left">
+                                <div class="tl-meta">
+                                    <span class="timeline-date">July 2018 – June 2020</span>
+                                    <span class="tl-type-badge">Full-time</span>
+                                </div>
+                                <h3>Python Developer — Web & ML Engineering</h3>
+                                <span class="company">Hostera · Bahawalpur</span>
+                            </div>
+                            <div class="tl-toggle"><i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="timeline-body">
+                            <p class="role-desc">Django · Docker · Machine Learning · Python</p>
                             <ul>
                                 <li>Developed Machine Learning models as ML Engineer.</li>
                                 <li>Developed a web application using Django and Docker.</li>
                             </ul>
                         </div>
                     </div>
+
                 </div>
             </div>
         </section>
 
-        <!-- Projects Section -->
+        <!-- Projects -->
         <section id="projects" class="section">
             <div class="container">
-                <div class="section-header">
+                <div class="section-header reveal">
                     <h2 class="section-title">Creative Work</h2>
                     <div class="line"></div>
                 </div>
                 <div class="projects-grid">
-                    <!-- Project 1 -->
-                    <div class="project-card">
+                    <div class="project-card reveal">
+                        <div class="project-content">
+                            <h3>Ranbval — Encrypted API Key Infrastructure</h3>
+                            <p class="tech-stack">Python · SDK · Encrypted Tokens · Repository-Level Access Control</p>
+                            <p>A production-grade API secret management system that replaces plain-text .env files with encrypted, repository-bound tokens. The Ranbval SDK validates every request in real-time; even if a key leaks, it cannot be misused outside authorized repositories. Includes a centralized issuance platform and live telemetry dashboard.</p>
+                        </div>
+                    </div>
+                    <div class="project-card reveal">
+                        <div class="project-content">
+                            <h3>Ranbval — AI Social & Life Intelligence Platform</h3>
+                            <p class="tech-stack">React Native · FastAPI · Multi-Agent AI · Encrypted Vaults · WebSockets</p>
+                            <p>Next-generation social platform combining relationship intelligence, multi-persona AI companions, agent-coordinated gaming, encrypted media vaults, identity verification, and blackmail detection — all in one privacy-first ecosystem with real-time agentic AI at its core.</p>
+                        </div>
+                    </div>
+                    <div class="project-card reveal">
+                        <div class="project-content">
+                            <h3>AI Video to Shorts Automation Pipeline</h3>
+                            <p class="tech-stack">FastAPI · Celery · FFmpeg · Whisper · Python</p>
+                            <p>End-to-end asynchronous video processing system that transforms long-form content into platform-optimized vertical Shorts/Reels. Transcription-driven context-aware segmentation, auto-subtitle embedding, and AI-generated titles — reducing manual editing effort by 90%.</p>
+                        </div>
+                    </div>
+                    <div class="project-card reveal">
+                        <div class="project-content">
+                            <h3>Automated Candidate Screening & Device Intelligence</h3>
+                            <p class="tech-stack">JotForm · BAT Automation · Email ID Mapping · Multi-Step Forms</p>
+                            <p>Dual-form architecture bypassing JotForm's native data population limits. A custom BAT automation silently captures device/system intelligence and generates an auto-populated form link. Unique email identifiers link candidate application data with system metadata for complete, consistent hiring intelligence.</p>
+                        </div>
+                    </div>
+                    <div class="project-card reveal">
+                        <div class="project-content">
+                            <h3>Qira AI Module — Avatar Intelligence Backend</h3>
+                            <p class="tech-stack">FastAPI · MediaPipe · OpenCV · Firebase · Google Cloud Run · JWT</p>
+                            <p>Production-grade AI backend for facial landmark analysis (468+ points), bidirectional EN/RU translation, and high-speed TTS with intelligent caching. Deployed on Google Cloud Run; powers dynamic avatar matching and AI-human interaction at scale.</p>
+                        </div>
+                    </div>
+                    <div class="project-card reveal">
+                        <div class="project-content">
+                            <h3>Zero-Touch Service Business Automation</h3>
+                            <p class="tech-stack">N8N · Gemini · Housecall Pro API · OpenPhone · Twilio · Google Cloud</p>
+                            <p>End-to-end automation ecosystem managing a service business from AI voice-to-lead intake across 6 channels, through LLM-driven estimating, tech dispatch, and automated invoicing — with revenue loops driving deposits and post-job reviews entirely without human intervention.</p>
+                        </div>
+                    </div>
+                    <div class="project-card reveal">
+                        <div class="project-content">
+                            <h3>Iris CRM Merchant Onboarding Automation</h3>
+                            <p class="tech-stack">N8N · Iris CRM · Iso Amp · SMTP · Paybright · Card Connect</p>
+                            <p>Fully automated merchant lifecycle system with n8n as the orchestration engine and Iris CRM as the single source of truth. Handles lead intake, statement analysis, processor routing, compliance checks, training scheduling, and recurring engagement — zero manual handoffs.</p>
+                        </div>
+                    </div>
+                    <div class="project-card reveal">
                         <div class="project-content">
                             <h3>ISGC & Emotion Analysis</h3>
-                            <p class="tech-stack">Python, Git</p>
-                            <p>
-                                <strong>ISGC:</strong> A GPA/CGPA calculator CLI tool specifically designed for students
-                                of Islamia University of Bahawalpur.
-                                <br>
-                                <strong>Emotion Analysis:</strong> A Python package leveraging transformer models for
-                                multi-class emotion classification.
-                            </p>
+                            <p class="tech-stack">Python · Transformers · Git</p>
+                            <p><strong>ISGC:</strong> A GPA/CGPA calculator CLI tool for Islamia University of Bahawalpur students. <strong>Emotion Analysis:</strong> A Python package leveraging transformer models for multi-class emotion classification.</p>
                             <div class="project-links">
-                                <a href="https://github.com/ahsantariq7/isgc" target="_blank">View ISGC</a>
-                                <a href="https://github.com/ahsantariq7/emotion_analysis" target="_blank">View Emotion
-                                    Analysis</a>
+                                <a href="https://github.com/ahsantariq7/isgc" target="_blank"><i class="fab fa-github"></i> ISGC</a>
+                                <a href="https://github.com/ahsantariq7/emotion_analysis" target="_blank"><i class="fab fa-github"></i> Emotion Analysis</a>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Project 2 -->
-                    <div class="project-card">
+                    <div class="project-card reveal">
                         <div class="project-content">
                             <h3>Laptop Monitoring System</h3>
-                            <p class="tech-stack">Python, OpenCV, smtplib</p>
-                            <p>
-                                Security-focused Python application that captures user images at login via webcam using
-                                OpenCV, logs events, and sends email alerts through SMTP. Cross-platform (Linux,
-                                Windows).
-                            </p>
+                            <p class="tech-stack">Python · OpenCV · smtplib</p>
+                            <p>Security-focused Python application that captures user images at login via webcam using OpenCV, logs events, and sends email alerts through SMTP. Cross-platform (Linux, Windows).</p>
                             <div class="project-links">
-                                <a href="https://github.com/ahsantariq7/Linux-Monitoring-System" target="_blank">View
-                                    Project</a>
+                                <a href="https://github.com/ahsantariq7/Linux-Monitoring-System" target="_blank"><i class="fab fa-github"></i> View Project</a>
                             </div>
                         </div>
                     </div>
@@ -340,87 +808,89 @@
             </div>
         </section>
 
-        <!-- Skills Section -->
+        <!-- Skills -->
         <section id="skills" class="section">
             <div class="container">
-                <div class="section-header">
+                <div class="section-header reveal">
                     <h2 class="section-title">Technical Skills</h2>
                     <div class="line"></div>
                 </div>
                 <div class="skills-wrapper">
-                    <div class="skill-category">
+                    <div class="skill-category reveal">
                         <h3>Languages</h3>
                         <div class="skill-tags">
                             <span>Python</span><span>SQL</span><span>JavaScript</span><span>HTML/CSS</span><span>Bash</span><span>LaTeX</span>
                         </div>
                     </div>
-                    <div class="skill-category">
+                    <div class="skill-category reveal">
                         <h3>Frameworks & Libraries</h3>
                         <div class="skill-tags">
-                            <span>Django</span><span>FastAPI</span><span>DRF</span><span>Langchain</span><span>LangGraph</span><span>React</span><span>N8N</span>
+                            <span>Django</span><span>FastAPI</span><span>DRF</span><span>LangChain</span><span>LangGraph</span><span>React</span><span>React Native</span><span>Celery</span><span>N8N</span>
                         </div>
                     </div>
-                    <div class="skill-category">
-                        <h3>AI/ML & Data</h3>
+                    <div class="skill-category reveal">
+                        <h3>AI / ML & Data</h3>
                         <div class="skill-tags">
-                            <span>OpenAI API
-                                (GPT-4)</span><span>Pandas</span><span>NumPy</span><span>Scikit-learn</span><span>TensorFlow</span>
+                            <span>OpenAI GPT-4</span><span>Gemini API</span><span>Explicit LLM Caching</span><span>Multi-Agent Systems</span><span>RAG Architectures</span><span>Pandas</span><span>NumPy</span><span>Scikit-learn</span><span>TensorFlow</span>
                         </div>
                     </div>
-                    <div class="skill-category">
+                    <div class="skill-category reveal">
+                        <h3>Security & Infrastructure</h3>
+                        <div class="skill-tags">
+                            <span>Encrypted Token Systems</span><span>Repo-Level Access Control</span><span>JWT / SSO</span><span>RBAC</span><span>SHA-256 Cache Invalidation</span><span>API Key Management</span>
+                        </div>
+                    </div>
+                    <div class="skill-category reveal">
                         <h3>Databases</h3>
                         <div class="skill-tags">
-                            <span>PostgreSQL</span><span>MongoDB</span><span>Pinecone</span><span>Redis</span><span>AWS
-                                S3</span>
+                            <span>PostgreSQL</span><span>MongoDB</span><span>Pinecone</span><span>Redis</span><span>Supabase</span><span>AWS S3</span>
                         </div>
                     </div>
-                    <div class="skill-category">
+                    <div class="skill-category reveal">
+                        <h3>Automation & Integration</h3>
+                        <div class="skill-tags">
+                            <span>N8N</span><span>Zapier</span><span>Monday.com</span><span>Voiceflow</span><span>Manus AI</span><span>Housecall Pro API</span><span>Iris CRM</span><span>DocuSign</span><span>NetSuite</span><span>Scrapin.io</span>
+                        </div>
+                    </div>
+                    <div class="skill-category reveal">
                         <h3>Cloud & DevOps</h3>
                         <div class="skill-tags">
-                            <span>AWS</span><span>Azure</span><span>Docker</span><span>CI/CD</span><span>Git</span>
+                            <span>AWS</span><span>Azure</span><span>GCP</span><span>Google Cloud Run</span><span>Firebase</span><span>Docker</span><span>CI/CD</span><span>Git</span>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Publications Section -->
+        <!-- Publications -->
         <section id="publications" class="section">
             <div class="container">
-                <div class="section-header">
+                <div class="section-header reveal">
                     <h2 class="section-title">Publications</h2>
                     <div class="line"></div>
                 </div>
                 <ul class="publications-list">
-                    <li>
-                        <a href="https://www.researchgate.net/publication/382074586_A_Python_Package_For_Summarizing_University_Student_Examination_Performance"
-                            target="_blank">
+                    <li class="reveal">
+                        <a href="https://www.researchgate.net/publication/382074586_A_Python_Package_For_Summarizing_University_Student_Examination_Performance" target="_blank">
                             A Python Package For Summarizing University Student Examination Performance
                         </a>
-                        <span class="pub-details">ResearchGate | Main Author | 08-07-2024</span>
+                        <span class="pub-details"><i class="fas fa-file-alt"></i> ResearchGate · Main Author · 08-07-2024</span>
                     </li>
-                    <li>
-                        <span>Perception on the Effect of Taxes on the Growth of Micro and Small Enterprises in Selected
-                            Entities</span>
-                        <span class="pub-details">Asian Journal of Economics, Business and Accounting | Peer Review |
-                            11-10-2025</span>
+                    <li class="reveal">
+                        <span>Perception on the Effect of Taxes on the Growth of Micro and Small Enterprises in Selected Entities</span>
+                        <span class="pub-details"><i class="fas fa-book"></i> Asian Journal of Economics, Business and Accounting · Peer Review · 11-10-2025</span>
                     </li>
-                    <li>
+                    <li class="reveal">
                         <span>Identify the Perceived Constraints in the Use of Green Products</span>
-                        <span class="pub-details">Asian Journal of Agricultural Extension, Economics & Sociology | Peer
-                            Review | 27-09-2025</span>
+                        <span class="pub-details"><i class="fas fa-book"></i> Asian Journal of Agricultural Extension, Economics & Sociology · Peer Review · 27-09-2025</span>
                     </li>
-                    <li>
-                        <span>Research on Young People's Credit Enhancement: Exploring Paths for Credit Building and
-                            Risk Management</span>
-                        <span class="pub-details">Asian Journal of Economics, Business and Accounting | Peer Review |
-                            28-01-2025</span>
+                    <li class="reveal">
+                        <span>Research on Young People's Credit Enhancement: Exploring Paths for Credit Building and Risk Management</span>
+                        <span class="pub-details"><i class="fas fa-book"></i> Asian Journal of Economics, Business and Accounting · Peer Review · 28-01-2025</span>
                     </li>
-                    <li>
-                        <span>The effect of Instagram Gen Z’s usage and demographic variables on purchase intention via
-                            nano-influencers</span>
-                        <span class="pub-details">Book of Innovation and Technology for Economic Growth | Peer Review |
-                            25-11-2025</span>
+                    <li class="reveal">
+                        <span>The effect of Instagram Gen Z's usage and demographic variables on purchase intention via nano-influencers</span>
+                        <span class="pub-details"><i class="fas fa-book"></i> Book of Innovation and Technology for Economic Growth · Peer Review · 25-11-2025</span>
                     </li>
                 </ul>
             </div>
@@ -431,26 +901,26 @@
             <div class="container">
                 <div class="grid-2-col">
                     <div class="col">
-                        <div class="section-header">
+                        <div class="section-header reveal">
                             <h2 class="section-title">Education</h2>
                             <div class="line"></div>
                         </div>
-                        <div class="edu-item">
+                        <div class="edu-item reveal">
                             <h3>B.S. in Computer Systems Engineering</h3>
                             <span class="institution">The Islamia University of Bahawalpur, Pakistan</span>
-                            <span class="year">2020 -- 2024</span>
+                            <span class="year">2020 – 2024</span>
                         </div>
                     </div>
                     <div class="col">
-                        <div class="section-header">
+                        <div class="section-header reveal">
                             <h2 class="section-title">Awards & Certifications</h2>
                             <div class="line"></div>
                         </div>
                         <ul class="cert-list">
-                            <li>PMYP Laptop Scheme Selection (Merit)</li>
-                            <li>Data Analysis With Python (FreeCodeCamp)</li>
-                            <li>Intro to SQL, ML, Feature Engineering (Kaggle)</li>
-                            <li>Data Mining And Business Intelligence (Navttc)</li>
+                            <li class="reveal">PMYP Laptop Scheme Selection (Merit)</li>
+                            <li class="reveal">Data Analysis With Python (FreeCodeCamp)</li>
+                            <li class="reveal">Intro to SQL, ML, Feature Engineering (Kaggle)</li>
+                            <li class="reveal">Data Mining And Business Intelligence (Navttc)</li>
                         </ul>
                     </div>
                 </div>
@@ -460,12 +930,11 @@
         <!-- Identifiers -->
         <section class="section" style="padding-top: 0;">
             <div class="container identifiers-container">
-                <div class="sky-badge">
+                <div class="sky-badge reveal">
                     <strong>Web of Science ResearcherID:</strong>
-                    <a href="https://www.webofscience.com/wos/author/record/OMK-7734-2025"
-                        target="_blank">OMK-7734-2025</a>
+                    <a href="https://www.webofscience.com/wos/author/record/OMK-7734-2025" target="_blank">OMK-7734-2025</a>
                 </div>
-                <div class="sky-badge">
+                <div class="sky-badge reveal">
                     <strong>ORCID:</strong>
                     <a href="https://orcid.org/0009-0005-0673-8369" target="_blank">0009-0005-0673-8369</a>
                 </div>
@@ -475,10 +944,10 @@
         <!-- Footer -->
         <footer id="contact" class="footer">
             <div class="container">
-                <h2>Let's Build Something Amazing Together</h2>
+                <h2>Let's Build the Next Extraordinary Thing Together</h2>
                 <div class="contact-card">
-                    <p>Open for opportunities in Backend Engineering, AI, and Automation.</p>
-                    <a href="mailto:ahsantariq0724@gmail.com" class="btn btn-primary">Say Hello</a>
+                    <p>Open for opportunities in AI Product Engineering, Encrypted Infrastructure, and Intelligent Automation.</p>
+                    <a href="mailto:ahsantariq0724@gmail.com" class="btn btn-primary"><i class="fas fa-envelope"></i> Say Hello</a>
                 </div>
                 <div class="footer-bottom">
                     <p>&copy; <span id="year"></span> Ahsan Tariq. All rights reserved.</p>
@@ -486,6 +955,9 @@
             </div>
         </footer>
     </main>
+
+    <!-- Back to Top -->
+    <button id="back-to-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
 
     <script src="script.js"></script>
 </body>
