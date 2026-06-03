@@ -243,7 +243,7 @@ QPharma (AWS data eng) · 2456.ai (FastAPI + Pinecone) · NVIT multi-tenant SaaS
 <div align="center">
 
 <!-- CUSTOM ANIMATED DARK DASHBOARD -->
-<img src="./assets/metrics.svg" alt="Skill proficiency and impact metrics" width="820" />
+<img src="./metrics.svg" alt="Skill proficiency and impact metrics" width="820" />
 
 </div>
 
