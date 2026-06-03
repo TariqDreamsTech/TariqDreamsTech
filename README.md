@@ -1,161 +1,268 @@
+<!-- ╔══════════════════════════════════════════════════════════════════╗ -->
+<!--                       AHSAN TARIQ · README                        -->
+<!-- ╚══════════════════════════════════════════════════════════════════╝ -->
+
 <div align="center">
 
-```
- █████╗ ██╗  ██╗███████╗ █████╗ ███╗   ██╗   ████████╗ █████╗ ██████╗ ██╗ ██████╗ 
-██╔══██╗██║  ██║██╔════╝██╔══██╗████╗  ██║   ╚══██╔══╝██╔══██╗██╔══██╗██║██╔═══██╗
-███████║███████║███████╗███████║██╔██╗ ██║      ██║   ███████║██████╔╝██║██║   ██║
-██╔══██║██╔══██║╚════██║██╔══██║██║╚██╗██║      ██║   ██╔══██║██╔══██╗██║██║   ██║
-██║  ██║██║  ██║███████║██║  ██║██║ ╚████║      ██║   ██║  ██║██║  ██║██║╚██████╔╝
-╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝      ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝ ╚═════╝ 
-```
+<!-- ANIMATED GRADIENT HEADER -->
+<a href="https://github.com/TariqDreamsTech">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=12,2,30&height=240&section=header&text=Ahsan%20Tariq&fontSize=72&fontColor=ffffff&fontAlignY=38&animation=fadeIn&desc=AI%20Architect%20%E2%80%A2%20Backend%20Systems%20%E2%80%A2%20Product%20Builder&descAlignY=58&descSize=18" />
+</a>
 
-### Python Backend Engineer · AI / GenAI · Data Engineering · Automation
+<!-- ANIMATED TYPING TAGLINE -->
+<a href="https://github.com/TariqDreamsTech">
+  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=22&duration=2800&pause=600&color=00F7B5&center=true&vCenter=true&multiline=false&width=720&height=50&lines=Lead+AI+Automation+%26+Backend+Architect;Building+Ranbval+%E2%80%94+the+zero-knowledge+vault;Shipping+multi-agent+LLM+systems+at+scale;%22Automate.+Optimize.+Repeat.%22" />
+</a>
 
+<br/>
+
+<!-- SOCIAL BADGES -->
 <p>
-  <a href="mailto:ahsantariq0724@gmail.com"><img src="https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white"/></a>
-  <a href="https://linkedin.com/in/ahsan-tariq-0724-/"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white"/></a>
-  <a href="https://github.com/TariqDreamsTech"><img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white"/></a>
-  <a href="https://jerichoai.io"><img src="https://img.shields.io/badge/Live_Demo-00C896?style=for-the-badge&logo=vercel&logoColor=white"/></a>
+  <a href="mailto:ahsantariq0724@gmail.com"><img src="https://img.shields.io/badge/-Email-EA4335?style=for-the-badge&logo=gmail&logoColor=white" /></a>
+  <a href="https://linkedin.com/in/ahsan-tariq-0724-/"><img src="https://img.shields.io/badge/-LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" /></a>
+  <a href="https://github.com/TariqDreamsTech"><img src="https://img.shields.io/badge/-GitHub-181717?style=for-the-badge&logo=github&logoColor=white" /></a>
+  <a href="https://ranbval.com"><img src="https://img.shields.io/badge/-Ranbval-7C3AED?style=for-the-badge&logo=keycdn&logoColor=white" /></a>
+  <a href="https://jerichoai.io"><img src="https://img.shields.io/badge/-JerichoAI-00C896?style=for-the-badge&logo=vercel&logoColor=white" /></a>
 </p>
 
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&pause=1000&color=00F700&center=true&vCenter=true&width=600&lines=Building+scalable+Python+backends;Shipping+GenAI+%26+RAG+systems;Automating+the+boring+stuff;Let's+build+the+future+together!" />
-
-<img src="https://komarev.com/ghpvc/?username=TariqDreamsTech&style=for-the-badge&color=brightgreen" alt="Profile views"/>
+<!-- LIVE METRIC BADGES -->
+<p>
+  <img src="https://komarev.com/ghpvc/?username=TariqDreamsTech&style=for-the-badge&color=00F7B5&label=PROFILE+VIEWS" />
+  <img src="https://img.shields.io/badge/Open_to-Senior_AI_%2F_Backend_Roles-00F7B5?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Based_in-Pakistan_%F0%9F%87%B5%F0%9F%87%B0-blue?style=for-the-badge" />
+</p>
 
 </div>
 
 ---
 
-## 👋 About Me
+## <img src="https://media.giphy.com/media/hvRJCLFzcasrR4ia7z/giphy.gif" width="28"> &nbsp;Who I Am
 
-I'm a Python engineer who turns messy problems into clean, scalable systems — backends, data pipelines, and AI-driven workflows. Currently building **RAG pipelines and vector search infrastructure** for production AI products, with a track record across **Django, FastAPI, AWS, and LangChain** ecosystems.
+```yaml
+name:       Ahsan Tariq
+role:       Lead AI Automation & Backend Systems Architect
+current:    Building production-grade AI products end-to-end
+focus:      [ Multi-Agent LLMs, Vector Search, Zero-Knowledge Systems, Cloud-Native Backends ]
+location:   Pakistan  →  building for the world  🌍
+motto:      "First solve the problem. Then write the code."
+```
 
-- 🔭 Currently working on **vectorized email intelligence** at InstaMailAI (USA)
-- 🧠 Deep into **GenAI, RAG, agents, and LLM ops**
-- 🌱 Always learning — currently exploring **LLM evaluation & multi-agent systems**
-- 💬 Ask me about **Python, FastAPI, Django, LangChain, AWS, or data pipelines**
-- ⚡ Fun fact: I write Python packages for things that probably don't need packages
+I architect AI systems that survive production traffic — multi-agent LLM pipelines, vector search infrastructure, zero-knowledge encryption platforms, and the boring-but-critical glue that holds them all together. I'm equally at home in **FastAPI**, **LangGraph**, **Cloud Run**, and a 4 AM debugging session.
 
 ---
 
-## 🧰 Tech Stack
+## <img src="https://media.giphy.com/media/QssGEmpkyEOhBCb7e1/giphy.gif" width="28"> &nbsp;My Products
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### 🔐 [Ranbval — Secrets Vault](https://ranbval.com)
+*Zero-knowledge API key & password manager*
+
+```diff
++ AES-256-GCM encryption at rest
++ Universal secure proxy engine
++ Git origin / domain binding policies
++ Python + JavaScript SDKs
++ Real-time telemetry & audit logs
+```
+<sub>**📦 SDKs:** `ranbval-sdk` on [npm](https://www.npmjs.com/) + [PyPI](https://pypi.org/) · **🔒** 100K+ keys secured · **⚡** <10ms decryption</sub>
+
+</td>
+<td width="50%" valign="top">
+
+### 🧠 [Ranbval Social](https://ranbval.com)
+*AI-native social platform with relationship intelligence*
+
+```diff
++ Multi-persona AI agents w/ memory
++ Real-time chat / voice / video (E2EE)
++ Gaming + leaderboards layer
++ View-once media & data vault
++ Behavioral analytics engine
+```
+<sub>**👥** 10K+ beta users · **💬** 50K+ daily interactions · **🛰** WebSockets @ <50ms</sub>
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+### 👁 Qira — AI Service Ops
+*Facial analytics + multilingual avatar AI*
+
+```diff
++ 468-landmark facial analysis (MediaPipe)
++ EN↔RU context-aware translation
++ OpenAI TTS w/ Redis cache (<100ms repeat)
++ Firebase real-time backbone
+```
+<sub>**🎯** 98% attribute accuracy · **🌐** 1M+ translations · **⚙** FastAPI on Cloud Run</sub>
+
+</td>
+<td width="50%" valign="top">
+
+### 📝 LLHAM — Proposal AI
+*Multi-agent proposal generation platform*
+
+```diff
++ LangGraph state-based orchestration
++ Master / BA / Architect / PM agents
++ RAG over PostgreSQL vector store
++ Streaming WebSocket responses
+```
+<sub>**🤖** 5 specialised agents · **💼** 1K+ proposals · **🔻** -40% token usage</sub>
+
+</td>
+</tr>
+</table>
+
+#### Open-Source & Personal
+
+| Project | What it does | Stack |
+|---|---|---|
+| **ISGC** | GPA/CGPA calculator CLI for IUB students | Python |
+| **Emotion Analysis** | PyPI package — transformer-based emotion classifier with FRNN + OWA weighting | Python · Transformers · NLP |
+| **Laptop Monitoring System** | Captures intruder image on login, emails alert via SMTP | Python · OpenCV |
+
+---
+
+## <img src="https://media.giphy.com/media/iY8CRBdQXODJSCERIr/giphy.gif" width="28"> &nbsp;Tech Stack
 
 <div align="center">
 
 **Languages**
 
-![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
-![SQL](https://img.shields.io/badge/SQL-4479A1?style=flat-square&logo=postgresql&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
-![LaTeX](https://img.shields.io/badge/LaTeX-008080?style=flat-square&logo=latex&logoColor=white)
+<img src="https://skillicons.dev/icons?i=python,typescript,javascript,bash,latex,html,css&theme=dark" />
 
-**Backend & Frameworks**
+**Backend · AI · Frameworks**
 
-![Django](https://img.shields.io/badge/Django-092E20?style=flat-square&logo=django&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)
-![DRF](https://img.shields.io/badge/DRF-A30000?style=flat-square&logo=django&logoColor=white)
-![LangChain](https://img.shields.io/badge/LangChain-1C3C3C?style=flat-square&logo=chainlink&logoColor=white)
-![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
+<img src="https://skillicons.dev/icons?i=fastapi,django,flask,react,nodejs&theme=dark" />
+<img src="https://img.shields.io/badge/LangChain-1C3C3C?style=for-the-badge&logo=chainlink&logoColor=white" />
+<img src="https://img.shields.io/badge/LangGraph-FF6B35?style=for-the-badge&logo=graphql&logoColor=white" />
+<img src="https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white" />
+<img src="https://img.shields.io/badge/n8n-EA4B71?style=for-the-badge&logo=n8n&logoColor=white" />
 
-**AI / Data**
+**Databases & Vector Stores**
 
-![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=flat-square&logo=openai&logoColor=white)
-![Pinecone](https://img.shields.io/badge/Pinecone-000000?style=flat-square&logo=pinecone&logoColor=white)
-![pandas](https://img.shields.io/badge/pandas-150458?style=flat-square&logo=pandas&logoColor=white)
-![NumPy](https://img.shields.io/badge/NumPy-013243?style=flat-square&logo=numpy&logoColor=white)
-![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?style=flat-square&logo=scikit-learn&logoColor=white)
-![TensorFlow](https://img.shields.io/badge/TensorFlow-FF6F00?style=flat-square&logo=tensorflow&logoColor=white)
+<img src="https://skillicons.dev/icons?i=postgres,mongodb,mysql,sqlite,redis&theme=dark" />
+<img src="https://img.shields.io/badge/Pinecone-000000?style=for-the-badge&logo=pinecone&logoColor=white" />
+<img src="https://img.shields.io/badge/Mongo_Atlas_Vector-13AA52?style=for-the-badge&logo=mongodb&logoColor=white" />
 
-**Cloud, DB & DevOps**
+**Cloud & DevOps**
 
-![AWS](https://img.shields.io/badge/AWS-232F3E?style=flat-square&logo=amazon-aws&logoColor=white)
-![Azure](https://img.shields.io/badge/Azure-0078D4?style=flat-square&logo=microsoft-azure&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=flat-square&logo=postgresql&logoColor=white)
-![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
-![Git](https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white)
+<img src="https://skillicons.dev/icons?i=aws,gcp,azure,docker,git,github,githubactions&theme=dark" />
+
+**Tools**
+
+<img src="https://skillicons.dev/icons?i=vscode,postman,vim,linux&theme=dark" />
 
 </div>
 
 ---
 
-## 💼 Experience
+## <img src="https://media.giphy.com/media/SWoSkN6DxTszqIKEqv/giphy.gif" width="28"> &nbsp;Career Journey
 
-**🔹 Vectorized Database Engineer** — *InstaMailAI (USA)* · 2025–Present
-Designing vector search pipelines on MongoDB Atlas + LangChain. Built RAG workflows with OpenAI for real-time email processing, normalization, and intelligent response generation.
-
-**🔹 Backend Software Engineer** — *Artilence* · 2024–Present
-- **Qpharma** — AWS data pipelines (S3 · Lambda · Glue), API extraction (Twitter, YouTube, LinkedIn), JupyterHub analytics
-- **2456.ai** — AI workflow automation with Pinecone, PostgreSQL, Django, FastAPI, Stripe; code quality via Ruff & pre-commit
-- **NVIT** — Full backend: auth, SSO, RBAC, OpenAI integration, multi-cloud connectors, Azure storage
-- **Seanz Firm** — Automated expert interviews (GPT-4), multi-language, integrated with Sheets, MongoDB, Twilio, Looker
-
-**🔹 Freelance Python Developer** — *Fiverr* · 2022–Present · ⭐ 5-star rating
-
-**🔹 Junior Python Developer** — *Hostera* · 2021–2023
-ML models, Django web apps, Dockerized deployments.
+<table>
+<tr>
+<td width="160" valign="top"><b>2026 — Now</b><br/><sub>Lahore · Onsite</sub></td>
+<td>
+<b>🚀 Lead AI Automation & Backend Systems Architect</b> · <i>Savvy Programmers</i><br/>
+Leading <b>Qira</b>, n8n + Gemini automation ecosystems, Monday.com + Zapier CRM governance, Voiceflow booking AI, and multi-agent LinkedIn intelligence pipelines.
+</td>
+</tr>
+<tr>
+<td valign="top"><b>2026 — Now</b><br/><sub>Global · Self-Initiated</sub></td>
+<td>
+<b>🛠 Product Engineer</b> · <i>TariqDreamsTech (Ranbval)</i><br/>
+Designed, built, and shipped <b>Ranbval Secrets Manager</b> and <b>Ranbval Social Platform</b> end-to-end. Architecture, backend, SDKs, deployment — solo.
+</td>
+</tr>
+<tr>
+<td valign="top"><b>2025 — 2026</b><br/><sub>Remote</sub></td>
+<td>
+<b>⚡ AI Engineer · Backend & DevOps</b> · <i>Ambica International</i><br/>
+Architected a multi-tenant FastAPI enterprise portal on GCP Cloud Run — 37 modules, 10K+ DAU, live NetSuite ERP sync, DocuSign + MS Graph + OAuth integrations, full CI/CD.
+</td>
+</tr>
+<tr>
+<td valign="top"><b>2024 — 2025</b><br/><sub>USA · Remote</sub></td>
+<td>
+<b>🔧 Backend Software Engineer</b> · <i>Artilence</i><br/>
+QPharma (AWS data eng) · 2456.ai (FastAPI + Pinecone) · NVIT multi-tenant SaaS · Seanz Firm interview AI.
+</td>
+</tr>
+<tr>
+<td valign="top"><b>2025</b><br/><sub>Venezuela · Remote</sub></td>
+<td>
+<b>🔁 n8n Engineer</b> · <i>hddisenos</i><br/>
+1M+ events/month automation pipelines across HubSpot, Zoho, Sheets, SOAP/REST APIs.
+</td>
+</tr>
+<tr>
+<td valign="top"><b>2025</b><br/><sub>USA · Remote</sub></td>
+<td>
+<b>🧬 Vectorized Database Engineer</b> · <i>InstaMailAI</i><br/>
+5M+ emails indexed at <50ms — Mongo Atlas Vector + RAG + FastAPI.
+</td>
+</tr>
+<tr>
+<td valign="top"><b>2022 — Now</b></td>
+<td>
+<b>⭐ Freelance Python Developer</b> · <i>Fiverr</i> · 5-star rating · 50+ projects
+</td>
+</tr>
+</table>
 
 ---
 
-## 🚀 Featured Projects
-
-| Project | Description | Stack |
-|---|---|---|
-| **InstaMailAI** | Vectorized email intelligence with RAG | LangChain · MongoDB Atlas · OpenAI |
-| **2456.ai** | AI workflow automation platform | FastAPI · Pinecone · Stripe |
-| **Emotion Analysis** | PyPI package — transformer-based emotion detection with FRNN + OWA weights | Python · Transformers |
-| **ISGC** | GPA/CGPA calculator for Islamia University students | Python |
-| **Laptop Monitoring System** | Security app: captures image + email alerts on unauthorized access | Python · OpenCV |
-
----
-
-## 🎓 Education & Credentials
-
-- **BSc Computer Systems Engineering** — The Islamia University Bahawalpur (2020–2024)
-- 🏆 Merit Selection, PMYP Laptop Scheme (Govt. of Pakistan)
-- 📜 Data Analysis with Python — FreeCodeCamp
-- 📜 SQL, ML, Data Viz, Feature Engineering — Kaggle
-- 📜 Data Mining & Business Intelligence — Navttc
-
-**📝 Publications**
-- *A Python Package For Summarizing University Student Examination Performance* — Main Author (2024)
-- Reviewer — *Asian Journal of Economics, Business and Accounting* (Certificate of Excellence, 2025)
-
----
-
-## 📊 GitHub Stats
+## <img src="https://media.giphy.com/media/du3J3cXyzhj75IOgvA/giphy.gif" width="28"> &nbsp;By The Numbers
 
 <div align="center">
 
-<img height="165" src="https://github-readme-stats.vercel.app/api?username=TariqDreamsTech&show_icons=true&theme=tokyonight&hide_border=true&count_private=true" />
-<img height="165" src="https://github-readme-stats.vercel.app/api/top-langs/?username=TariqDreamsTech&layout=compact&theme=tokyonight&hide_border=true&langs_count=8" />
-
-<img src="https://streak-stats.demolab.com?user=TariqDreamsTech&theme=tokyonight&hide_border=true" />
-
-<img src="https://github-profile-trophy.vercel.app/?username=TariqDreamsTech&theme=tokyonight&no-frame=true&margin-w=10&row=1&column=7" />
-
-<img src="https://github-readme-activity-graph.vercel.app/graph?username=TariqDreamsTech&theme=tokyo-night&hide_border=true&area=true" />
+| 🔐 Keys Secured | 📨 Emails Indexed | 🤖 AI Calls Served | 👥 Users Reached | 💰 Revenue Influenced |
+|:---:|:---:|:---:|:---:|:---:|
+| **100K+** | **5M+** | **5M+/mo** | **10K+ DAU** | **$5M+** |
 
 </div>
 
 ---
 
-## 🤝 Community & Volunteering
+## <img src="https://media.giphy.com/media/jpVnC65DmYeyRl3WGv/giphy.gif" width="28"> &nbsp;Publications & Identifiers
 
-- Executive Member — Robotics & Cybernetics Society (IEEE)
-- University Admission Guidance — IMS
-- IT Manager — *Everything is Possoblee*
+- 📄 **Main Author** — *A Python Package For Summarizing University Student Examination Performance* (ResearchGate, 2024)
+- 📋 **Peer Reviewer** — Asian Journal of Economics, Business and Accounting · Asian Journal of Agricultural Extension · Book of Innovation and Technology for Economic Growth
+- 🪪 **ORCID:** `0009-0005-0673-8369` · **Web of Science:** `OMK-7734-2025`
+- 💡 **LeetCode:** 81 problems · **Kaggle:** Expert
 
 ---
 
+## <img src="https://media.giphy.com/media/LnQjpWaON8nhr21vNW/giphy.gif" width="28"> &nbsp;GitHub at a Glance
+
 <div align="center">
 
-### 📬 Let's Build Something
+<img height="180" src="https://github-readme-stats.vercel.app/api?username=TariqDreamsTech&show_icons=true&theme=tokyonight&hide_border=true&include_all_commits=true&count_private=true&bg_color=0d1117&title_color=00f7b5&icon_color=00f7b5&text_color=c9d1d9" />
+<img height="180" src="https://github-readme-stats.vercel.app/api/top-langs/?username=TariqDreamsTech&layout=compact&theme=tokyonight&hide_border=true&bg_color=0d1117&title_color=00f7b5&text_color=c9d1d9&langs_count=8" />
 
-If you're hiring, collaborating, or just want to chat about Python, AI, or scaling backends — my inbox is open.
+</div>
 
-<a href="mailto:ahsantariq0724@gmail.com"><img src="https://img.shields.io/badge/Get_in_Touch-00C896?style=for-the-badge&logo=minutemailer&logoColor=white"/></a>
+---
 
-<sub><i>"First, solve the problem. Then, write the code." — John Johnson</i></sub>
+## <img src="https://media.giphy.com/media/2sZSCqMRYx7y0/giphy.gif" width="28"> &nbsp;Let's Connect
+
+<div align="center">
+
+If you're hiring, building something ambitious, or just want to argue about LangGraph vs vanilla agents — my inbox is open.
+
+<a href="mailto:ahsantariq0724@gmail.com"><img src="https://img.shields.io/badge/Reach_Out-EA4335?style=for-the-badge&logo=gmail&logoColor=white" /></a>
+<a href="https://linkedin.com/in/ahsan-tariq-0724-/"><img src="https://img.shields.io/badge/Connect_on_LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" /></a>
+<a href="https://ranbval.com"><img src="https://img.shields.io/badge/Try_Ranbval-7C3AED?style=for-the-badge&logo=keycdn&logoColor=white" /></a>
+
+<br/><br/>
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=12,2,30&height=120&section=footer" />
+
+<sub><i>Crafted with too much coffee and a strong opinion on production-grade Python ☕</i></sub>
 
 </div>
