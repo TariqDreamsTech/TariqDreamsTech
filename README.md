@@ -238,6 +238,17 @@ QPharma (AWS data eng) · 2456.ai (FastAPI + Pinecone) · NVIT multi-tenant SaaS
 
 ---
 
+## <img src="https://media.giphy.com/media/W5euZ2H4dPHm7Dn3bC/giphy.gif" width="28"> &nbsp;Proficiency & Impact
+
+<div align="center">
+
+<!-- CUSTOM ANIMATED DARK DASHBOARD -->
+<img src="./assets/metrics.svg" alt="Skill proficiency and impact metrics" width="820" />
+
+</div>
+
+---
+
 ## <img src="https://media.giphy.com/media/LnQjpWaON8nhr21vNW/giphy.gif" width="28"> &nbsp;GitHub at a Glance
 
 <div align="center">
@@ -245,7 +256,144 @@ QPharma (AWS data eng) · 2456.ai (FastAPI + Pinecone) · NVIT multi-tenant SaaS
 <img height="180" src="https://github-readme-stats.vercel.app/api?username=TariqDreamsTech&show_icons=true&theme=tokyonight&hide_border=true&include_all_commits=true&count_private=true&bg_color=0d1117&title_color=00f7b5&icon_color=00f7b5&text_color=c9d1d9" />
 <img height="180" src="https://github-readme-stats.vercel.app/api/top-langs/?username=TariqDreamsTech&layout=compact&theme=tokyonight&hide_border=true&bg_color=0d1117&title_color=00f7b5&text_color=c9d1d9&langs_count=8" />
 
+<br/><br/>
+
+<!-- DARK PROFILE SUMMARY CARDS -->
+<img src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=TariqDreamsTech&theme=github_dark" width="98%" />
+
+<img src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=TariqDreamsTech&theme=github_dark" height="200" />
+<img src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=TariqDreamsTech&theme=github_dark" height="200" />
+
+<img src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=TariqDreamsTech&theme=github_dark" height="200" />
+<img src="https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=TariqDreamsTech&theme=github_dark&utcOffset=5" height="200" />
+
 </div>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="520" viewBox="0 0 820 520" fill="none" role="img" aria-label="Ahsan Tariq skill proficiency and impact metrics">
+  <defs>
+    <linearGradient id="neon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#00F7B5"/>
+      <stop offset="55%" stop-color="#22D3EE"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+    <linearGradient id="neon2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#7C3AED"/>
+      <stop offset="100%" stop-color="#22D3EE"/>
+    </linearGradient>
+    <linearGradient id="bgcard" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0d1117"/>
+      <stop offset="100%" stop-color="#161b29"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3.2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softglow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect x="0" y="0" width="820" height="520" rx="18" fill="url(#bgcard)" stroke="#1f2a3d" stroke-width="1"/>
+  <rect x="0" y="0" width="820" height="520" rx="18" fill="none" stroke="#00F7B5" stroke-width="1" opacity="0.10"/>
+
+  <!-- top accent line -->
+  <rect x="0" y="0" width="820" height="4" rx="2" fill="url(#neon)" opacity="0.9">
+    <animate attributeName="opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- Header -->
+  <text x="36" y="56" fill="#E6EDF3" font-family="'Segoe UI',Helvetica,Arial,sans-serif" font-size="24" font-weight="700">Core Proficiency</text>
+  <circle cx="190" cy="49" r="4" fill="#00F7B5" filter="url(#glow)">
+    <animate attributeName="opacity" values="0.3;1;0.3" dur="1.6s" repeatCount="indefinite"/>
+  </circle>
+  <text x="36" y="78" fill="#7d8590" font-family="'Segoe UI',Helvetica,Arial,sans-serif" font-size="13">// where I spend my keystrokes</text>
+
+  <!-- ===== SKILL BARS ===== -->
+  <!-- row template: label, track, fill(animated), pct -->
+
+  <!-- 1 Python / FastAPI -->
+  <text x="36" y="120" fill="#c9d1d9" font-family="'Segoe UI',Arial,sans-serif" font-size="14" font-weight="600">Python · FastAPI · Django</text>
+  <rect x="320" y="108" width="430" height="14" rx="7" fill="#21262d"/>
+  <rect x="320" y="108" width="408" height="14" rx="7" fill="url(#neon)" filter="url(#softglow)">
+    <animate attributeName="width" from="0" to="408" dur="1.4s" begin="0.1s" fill="freeze" calcMode="spline" keySplines="0.25 0.8 0.25 1" keyTimes="0;1" values="0;408"/>
+  </rect>
+  <text x="762" y="120" fill="#00F7B5" font-family="'Segoe UI',Arial,sans-serif" font-size="13" font-weight="700">96%</text>
+
+  <!-- 2 GenAI / LangGraph -->
+  <text x="36" y="158" fill="#c9d1d9" font-family="'Segoe UI',Arial,sans-serif" font-size="14" font-weight="600">GenAI · LangChain · LangGraph</text>
+  <rect x="320" y="146" width="430" height="14" rx="7" fill="#21262d"/>
+  <rect x="320" y="146" width="395" height="14" rx="7" fill="url(#neon)" filter="url(#softglow)">
+    <animate attributeName="width" from="0" to="395" dur="1.4s" begin="0.25s" fill="freeze" calcMode="spline" keySplines="0.25 0.8 0.25 1" keyTimes="0;1" values="0;395"/>
+  </rect>
+  <text x="762" y="158" fill="#00F7B5" font-family="'Segoe UI',Arial,sans-serif" font-size="13" font-weight="700">93%</text>
+
+  <!-- 3 Backend & System Design -->
+  <text x="36" y="196" fill="#c9d1d9" font-family="'Segoe UI',Arial,sans-serif" font-size="14" font-weight="600">Backend &amp; System Design</text>
+  <rect x="320" y="184" width="430" height="14" rx="7" fill="#21262d"/>
+  <rect x="320" y="184" width="382" height="14" rx="7" fill="url(#neon)" filter="url(#softglow)">
+    <animate attributeName="width" from="0" to="382" dur="1.4s" begin="0.4s" fill="freeze" calcMode="spline" keySplines="0.25 0.8 0.25 1" keyTimes="0;1" values="0;382"/>
+  </rect>
+  <text x="762" y="196" fill="#00F7B5" font-family="'Segoe UI',Arial,sans-serif" font-size="13" font-weight="700">90%</text>
+
+  <!-- 4 Vector DB / RAG -->
+  <text x="36" y="234" fill="#c9d1d9" font-family="'Segoe UI',Arial,sans-serif" font-size="14" font-weight="600">Vector DB · RAG · Embeddings</text>
+  <rect x="320" y="222" width="430" height="14" rx="7" fill="#21262d"/>
+  <rect x="320" y="222" width="374" height="14" rx="7" fill="url(#neon)" filter="url(#softglow)">
+    <animate attributeName="width" from="0" to="374" dur="1.4s" begin="0.55s" fill="freeze" calcMode="spline" keySplines="0.25 0.8 0.25 1" keyTimes="0;1" values="0;374"/>
+  </rect>
+  <text x="762" y="234" fill="#00F7B5" font-family="'Segoe UI',Arial,sans-serif" font-size="13" font-weight="700">88%</text>
+
+  <!-- 5 Cloud / DevOps -->
+  <text x="36" y="272" fill="#c9d1d9" font-family="'Segoe UI',Arial,sans-serif" font-size="14" font-weight="600">Cloud · GCP · AWS · Docker</text>
+  <rect x="320" y="260" width="430" height="14" rx="7" fill="#21262d"/>
+  <rect x="320" y="260" width="361" height="14" rx="7" fill="url(#neon)" filter="url(#softglow)">
+    <animate attributeName="width" from="0" to="361" dur="1.4s" begin="0.7s" fill="freeze" calcMode="spline" keySplines="0.25 0.8 0.25 1" keyTimes="0;1" values="0;361"/>
+  </rect>
+  <text x="762" y="272" fill="#00F7B5" font-family="'Segoe UI',Arial,sans-serif" font-size="13" font-weight="700">85%</text>
+
+  <!-- 6 Automation n8n -->
+  <text x="36" y="310" fill="#c9d1d9" font-family="'Segoe UI',Arial,sans-serif" font-size="14" font-weight="600">Automation · n8n · Multi-agent</text>
+  <rect x="320" y="298" width="430" height="14" rx="7" fill="#21262d"/>
+  <rect x="320" y="298" width="386" height="14" rx="7" fill="url(#neon)" filter="url(#softglow)">
+    <animate attributeName="width" from="0" to="386" dur="1.4s" begin="0.85s" fill="freeze" calcMode="spline" keySplines="0.25 0.8 0.25 1" keyTimes="0;1" values="0;386"/>
+  </rect>
+  <text x="762" y="310" fill="#00F7B5" font-family="'Segoe UI',Arial,sans-serif" font-size="13" font-weight="700">91%</text>
+
+  <!-- divider -->
+  <line x1="36" y1="346" x2="784" y2="346" stroke="#21262d" stroke-width="1"/>
+
+  <!-- ===== IMPACT METRICS ===== -->
+  <text x="36" y="384" fill="#E6EDF3" font-family="'Segoe UI',Arial,sans-serif" font-size="20" font-weight="700">Impact in Production</text>
+
+  <!-- metric cards -->
+  <g font-family="'Segoe UI',Arial,sans-serif">
+    <!-- card 1 -->
+    <rect x="36" y="404" width="172" height="86" rx="12" fill="#0d1117" stroke="#22D3EE" stroke-width="1" opacity="0.95"/>
+    <text x="122" y="448" fill="#22D3EE" font-size="30" font-weight="800" text-anchor="middle" filter="url(#glow)">100K+</text>
+    <text x="122" y="472" fill="#7d8590" font-size="12" text-anchor="middle">API keys secured</text>
+
+    <!-- card 2 -->
+    <rect x="220" y="404" width="172" height="86" rx="12" fill="#0d1117" stroke="#00F7B5" stroke-width="1" opacity="0.95"/>
+    <text x="306" y="448" fill="#00F7B5" font-size="30" font-weight="800" text-anchor="middle" filter="url(#glow)">5M+</text>
+    <text x="306" y="472" fill="#7d8590" font-size="12" text-anchor="middle">emails vectorized</text>
+
+    <!-- card 3 -->
+    <rect x="404" y="404" width="172" height="86" rx="12" fill="#0d1117" stroke="#7C3AED" stroke-width="1" opacity="0.95"/>
+    <text x="490" y="448" fill="#a78bfa" font-size="30" font-weight="800" text-anchor="middle" filter="url(#glow)">37</text>
+    <text x="490" y="472" fill="#7d8590" font-size="12" text-anchor="middle">enterprise modules</text>
+
+    <!-- card 4 -->
+    <rect x="588" y="404" width="196" height="86" rx="12" fill="#0d1117" stroke="#22D3EE" stroke-width="1" opacity="0.95"/>
+    <text x="686" y="448" fill="#22D3EE" font-size="30" font-weight="800" text-anchor="middle" filter="url(#glow)">$5M+</text>
+    <text x="686" y="472" fill="#7d8590" font-size="12" text-anchor="middle">revenue influenced</text>
+  </g>
+
+  <!-- pulsing corner dots -->
+  <circle cx="784" cy="49" r="3" fill="#7C3AED">
+    <animate attributeName="opacity" values="0.2;1;0.2" dur="2.2s" repeatCount="indefinite"/>
+  </circle>
+</svg>
 
 ---
 
