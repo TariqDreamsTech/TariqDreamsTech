@@ -53,78 +53,249 @@ I architect AI systems that survive production traffic — multi-agent LLM pipel
 
 ## <img src="https://media.giphy.com/media/QssGEmpkyEOhBCb7e1/giphy.gif" width="28"> &nbsp;My Products
 
+<div align="center">
+
+### 🌐 The Ranbval Ecosystem
+*An intentional constellation of AI-native products — each solves one hard problem, and every one runs live in production.*
+
+<a href="https://ranbval.com"><img src="https://img.shields.io/badge/ranbval.com-7C3AED?style=for-the-badge&logo=vercel&logoColor=white" /></a>
+<img src="https://img.shields.io/badge/8_LIVE_PRODUCTS-00F7B5?style=for-the-badge" />
+<img src="https://img.shields.io/badge/BUILT_SOLO-FF6B35?style=for-the-badge" />
+
+</div>
+
+<br/>
+
+<!-- ═══════════ FLAGSHIP PRODUCTS ═══════════ -->
+
 <table>
 <tr>
 <td width="50%" valign="top">
 
 ### 🔐 [Ranbval — Secrets Vault](https://ranbval.com)
-*Zero-knowledge API key & password manager*
+*Zero-knowledge API key & password manager. A leaked key is useless outside its bound environment.*
 
 ```diff
 + AES-256-GCM encryption at rest
 + Universal secure proxy engine
 + Git origin / domain binding policies
-+ Python + JavaScript SDKs
-+ Real-time telemetry & audit logs
++ MFA + session revocation & governance
++ Python + JavaScript SDKs (PyPI + npm)
++ Real-time telemetry & audit dashboard
 ```
-<sub>**📦 SDKs:** `ranbval-sdk` on [npm](https://www.npmjs.com/) + [PyPI](https://pypi.org/) · **🔒** 100K+ keys secured · **⚡** <10ms decryption</sub>
+<sub>**📦** [`ranbval-sdk`](https://pypi.org/project/ranbval-sdk/) on npm + PyPI · **🔒** 100K+ keys secured · **⚡** <10ms decryption</sub>
 
 </td>
 <td width="50%" valign="top">
 
-### 🧠 [Ranbval Social](https://ranbval.com)
-*AI-native social platform with relationship intelligence*
+### 🏥 [Ranbval Health](https://health.ranbval.com)
+*AI Operating System for Healthcare — automating the entire patient journey.*
+
+```diff
++ AI voice appointment booking (24/7)
++ Digital check-in + centralized profile
++ Ask-the-AI case assistant on records
++ AI pre-visit briefings for doctors
++ Smart e-prescriptions + allergy checks
++ Labs, billing & follow-ups in one flow
+```
+<sub>**👨‍⚕️** Doctors · Clinics · Labs · Pharmacies · Hospitals · **🔐** End-to-end encrypted · **Founder & CEO**</sub>
+
+</td>
+</tr>
+
+<tr>
+<td width="50%" valign="top">
+
+### 🧠 [Ranbval Social](https://socialapp.ranbval.com)
+*"The Living Network" — AI-native social super-app with relationship intelligence.*
 
 ```diff
 + Multi-persona AI agents w/ memory
 + Real-time chat / voice / video (E2EE)
-+ Gaming + leaderboards layer
-+ View-once media & data vault
-+ Behavioral analytics engine
++ Relationship intelligence engine
++ Gaming layer + AI leaderboards
++ View-once media & secure data vault
++ Trust & moderation w/ AI intervention
 ```
 <sub>**👥** 10K+ beta users · **💬** 50K+ daily interactions · **🛰** WebSockets @ <50ms</sub>
 
 </td>
+<td width="50%" valign="top">
+
+### 📄 [Ranbval Resume Shortlister](https://resume.ranbval.com)
+*AI hiring engine + student career coach — dual-mode intelligence.*
+
+```diff
++ JD-grounded strict scoring w/ evidence
++ 8-dimension per-requirement scorecard
++ AI "who to interview" tie-breaker
++ Queue-based concurrent scoring pipeline
++ Gap analysis + tailored resume rewrite
++ Auto-extract contacts + admin dashboard
+```
+<sub>**⚙** FastAPI · Supabase · OpenAI · Vercel serverless · **📊** Hundreds screened / batch</sub>
+
+</td>
 </tr>
+
+<tr>
+<td width="50%" valign="top">
+
+### 🎬 [Ranbval Discovery](https://discovery.ranbval.com)
+*Content Intelligence OS — AI video analysis & clip extraction at scale.*
+
+```diff
++ Deepgram transcription pipeline
++ OpenAI-powered highlight ranking
++ FFmpeg clip extraction engine
++ Searchable transcript indexing
++ FastAPI async orchestration
+```
+<sub>**🎥** Long-form → ranked highlights · **🔎** Full-text search across every frame</sub>
+
+</td>
+<td width="50%" valign="top">
+
+### 💬 [Ranbval Conversations](https://conversations.ranbval.com)
+*Unified client-communications inbox — every channel, one platform.*
+
+```diff
++ Multi-channel message aggregation
++ AI-assisted triage & smart replies
++ Unified thread history & context
++ Team collaboration on threads
++ One inbox, zero switching cost
+```
+<sub>**📥** Email · SMS · WhatsApp · Web · **🤖** AI drafts replies you actually send</sub>
+
+</td>
+</tr>
+
+<tr>
+<td width="50%" valign="top">
+
+### ⚡ [24n8n](https://24n8n.ranbval.com)
+*Productized, always-on n8n + LLM automation services.*
+
+```diff
++ 24/7 managed workflow hosting
++ Pre-built automation templates
++ LLM integration out of the box
++ SLA-backed uptime guarantees
++ Custom workflow engineering
+```
+<sub>**🔁** For teams tired of babysitting n8n · **⏱** Deploy in hours, not weeks</sub>
+
+</td>
+<td width="50%" valign="top">
+
+### 🚀 [Volvexer](https://volvexer.site)
+*Enterprise automation & workflow services — bespoke integrations.*
+
+```diff
++ Custom n8n + Zapier architectures
++ Multi-system data orchestration
++ AI-powered business process design
++ End-to-end delivery + support
+```
+<sub>**🏢** For enterprises · **🛠** From consultation to production</sub>
+
+</td>
+</tr>
+</table>
+
+<!-- ═══════════ CLIENT / ENTERPRISE WORK ═══════════ -->
+
+<div align="center">
+
+### 💼 Enterprise Systems I've Built
+
+*Production-grade platforms shipped for clients — architecture, backend, and AI systems.*
+
+</div>
+
+<table>
 <tr>
 <td width="50%" valign="top">
 
 ### 👁 Qira — AI Service Ops
-*Facial analytics + multilingual avatar AI*
+*Facial analytics + multilingual avatar AI on Cloud Run.*
 
 ```diff
 + 468-landmark facial analysis (MediaPipe)
 + EN↔RU context-aware translation
 + OpenAI TTS w/ Redis cache (<100ms repeat)
 + Firebase real-time backbone
++ 1000+ concurrent requests @ <50ms
 ```
-<sub>**🎯** 98% attribute accuracy · **🌐** 1M+ translations · **⚙** FastAPI on Cloud Run</sub>
+<sub>**🎯** 98% attribute accuracy · **🌐** 1M+ translations · **⚙** FastAPI on GCP Cloud Run</sub>
 
 </td>
 <td width="50%" valign="top">
 
 ### 📝 LLHAM — Proposal AI
-*Multi-agent proposal generation platform*
+*Multi-agent proposal generation platform.*
 
 ```diff
 + LangGraph state-based orchestration
 + Master / BA / Architect / PM agents
 + RAG over PostgreSQL vector store
 + Streaming WebSocket responses
++ 100K+ documents indexed (<100ms search)
 ```
-<sub>**🤖** 5 specialised agents · **💼** 1K+ proposals · **🔻** -40% token usage</sub>
+<sub>**🤖** 5 specialised agents · **💼** 1K+ proposals · **🔻** -40% token usage, -80% latency</sub>
+
+</td>
+</tr>
+
+<tr>
+<td width="50%" valign="top">
+
+### 🏢 Ambica — Enterprise Ops Portal
+*Multi-tenant FastAPI portal on GCP — 37 modules across HR, Finance & Ops.*
+
+```diff
++ Live NetSuite ERP data pipeline (Celery)
++ 3-layer OTP security framework
++ DocuSign + MS Graph + Google OAuth
++ Cloud Build CI/CD w/ pre-commit gates
++ Finance Intelligence: P&L, AR, Cashflow
+```
+<sub>**⚙** GCP Cloud Run · PostgreSQL 18 · **📊** Live NetSuite-synced KPIs</sub>
+
+</td>
+<td width="50%" valign="top">
+
+### 🧬 InstaMailAI — Vector Search
+*Semantic email understanding at scale.*
+
+```diff
++ MongoDB Atlas Vector Search + RAG
++ FastAPI email processing pipeline
++ 500+ emails/minute throughput
++ Hybrid metadata + vector filtering
++ 70% query latency reduction
+```
+<sub>**📧** 5M+ emails indexed · **⚡** <50ms similarity search · **🧠** LangChain + OpenAI</sub>
 
 </td>
 </tr>
 </table>
 
-#### Open-Source & Personal
+<!-- ═══════════ OPEN SOURCE ═══════════ -->
+
+<div align="center">
+
+### 🌱 Open Source & Personal
+
+</div>
 
 | Project | What it does | Stack |
 |---|---|---|
-| **ISGC** | GPA/CGPA calculator CLI for IUB students | Python |
-| **Emotion Analysis** | PyPI package — transformer-based emotion classifier with FRNN + OWA weighting | Python · Transformers · NLP |
-| **Laptop Monitoring System** | Captures intruder image on login, emails alert via SMTP | Python · OpenCV |
+| **[ISGC](https://github.com/ahsantariq7/isgc)** | GPA/CGPA calculator CLI for IUB students — handles variable credit hours | `Python` |
+| **[Emotion Analysis](https://github.com/ahsantariq7/emotion_analysis)** | PyPI package — transformer-based multi-class emotion classifier with FRNN + OWA weighting, NLP preprocessing, word clouds | `Python` · `Transformers` · `NLP` |
+| **[Laptop Monitoring System](https://github.com/ahsantariq7/Linux-Monitoring-System)** | Captures intruder image on login via webcam, emails alert via SMTP — cross-platform | `Python` · `OpenCV` · `smtplib` |
 
 ---
 
@@ -175,8 +346,8 @@ Leading <b>Qira</b>, n8n + Gemini automation ecosystems, Monday.com + Zapier CRM
 <tr>
 <td valign="top"><b>2026 — Now</b><br/><sub>Global · Self-Initiated</sub></td>
 <td>
-<b>🛠 Product Engineer</b> · <i>TariqDreamsTech (Ranbval)</i><br/>
-Designed, built, and shipped <b>Ranbval Secrets Manager</b> and <b>Ranbval Social Platform</b> end-to-end. Architecture, backend, SDKs, deployment — solo.
+<b>🛠 Founder & Product Engineer</b> · <i>TariqDreamsTech (Ranbval)</i><br/>
+Designed, built, and shipped <b>Ranbval Health, Secrets Vault, Social, Resume Shortlister, Discovery, Conversations, 24n8n & Volvexer</b> end-to-end. Architecture, backend, SDKs, deployment — solo.
 </td>
 </tr>
 <tr>
@@ -190,7 +361,7 @@ Architected a multi-tenant FastAPI enterprise portal on GCP Cloud Run — 37 mod
 <td valign="top"><b>2024 — 2025</b><br/><sub>USA · Remote</sub></td>
 <td>
 <b>🔧 Backend Software Engineer</b> · <i>Artilence</i><br/>
-QPharma (AWS data eng) · 2456.ai (FastAPI + Pinecone) · NVIT multi-tenant SaaS · Seanz Firm interview AI.
+QPharma (AWS data eng) · 2456.ai (FastAPI + Pinecone) · NVIT multi-tenant SaaS · Seanz Firm interview AI · LLHAM multi-agent proposal AI.
 </td>
 </tr>
 <tr>
@@ -268,132 +439,6 @@ QPharma (AWS data eng) · 2456.ai (FastAPI + Pinecone) · NVIT multi-tenant SaaS
 <img src="https://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=TariqDreamsTech&theme=github_dark&utcOffset=5" height="200" />
 
 </div>
-
-<svg xmlns="http://www.w3.org/2000/svg" width="820" height="520" viewBox="0 0 820 520" fill="none" role="img" aria-label="Ahsan Tariq skill proficiency and impact metrics">
-  <defs>
-    <linearGradient id="neon" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#00F7B5"/>
-      <stop offset="55%" stop-color="#22D3EE"/>
-      <stop offset="100%" stop-color="#7C3AED"/>
-    </linearGradient>
-    <linearGradient id="neon2" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#7C3AED"/>
-      <stop offset="100%" stop-color="#22D3EE"/>
-    </linearGradient>
-    <linearGradient id="bgcard" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#0d1117"/>
-      <stop offset="100%" stop-color="#161b29"/>
-    </linearGradient>
-    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="3.2" result="b"/>
-      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-    <filter id="softglow" x="-60%" y="-60%" width="220%" height="220%">
-      <feGaussianBlur stdDeviation="6" result="b"/>
-      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-  </defs>
-
-  <rect x="0" y="0" width="820" height="520" rx="18" fill="url(#bgcard)" stroke="#1f2a3d" stroke-width="1"/>
-  <rect x="0" y="0" width="820" height="520" rx="18" fill="none" stroke="#00F7B5" stroke-width="1" opacity="0.10"/>
-
-  <!-- top accent line -->
-  <rect x="0" y="0" width="820" height="4" rx="2" fill="url(#neon)" opacity="0.9">
-    <animate attributeName="opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite"/>
-  </rect>
-
-  <!-- Header -->
-  <text x="36" y="56" fill="#E6EDF3" font-family="'Segoe UI',Helvetica,Arial,sans-serif" font-size="24" font-weight="700">Core Proficiency</text>
-  <circle cx="190" cy="49" r="4" fill="#00F7B5" filter="url(#glow)">
-    <animate attributeName="opacity" values="0.3;1;0.3" dur="1.6s" repeatCount="indefinite"/>
-  </circle>
-  <text x="36" y="78" fill="#7d8590" font-family="'Segoe UI',Helvetica,Arial,sans-serif" font-size="13">// where I spend my keystrokes</text>
-
-  <!-- ===== SKILL BARS ===== -->
-  <!-- row template: label, track, fill(animated), pct -->
-
-  <!-- 1 Python / FastAPI -->
-  <text x="36" y="120" fill="#c9d1d9" font-family="'Segoe UI',Arial,sans-serif" font-size="14" font-weight="600">Python · FastAPI · Django</text>
-  <rect x="320" y="108" width="430" height="14" rx="7" fill="#21262d"/>
-  <rect x="320" y="108" width="408" height="14" rx="7" fill="url(#neon)" filter="url(#softglow)">
-    <animate attributeName="width" from="0" to="408" dur="1.4s" begin="0.1s" fill="freeze" calcMode="spline" keySplines="0.25 0.8 0.25 1" keyTimes="0;1" values="0;408"/>
-  </rect>
-  <text x="762" y="120" fill="#00F7B5" font-family="'Segoe UI',Arial,sans-serif" font-size="13" font-weight="700">96%</text>
-
-  <!-- 2 GenAI / LangGraph -->
-  <text x="36" y="158" fill="#c9d1d9" font-family="'Segoe UI',Arial,sans-serif" font-size="14" font-weight="600">GenAI · LangChain · LangGraph</text>
-  <rect x="320" y="146" width="430" height="14" rx="7" fill="#21262d"/>
-  <rect x="320" y="146" width="395" height="14" rx="7" fill="url(#neon)" filter="url(#softglow)">
-    <animate attributeName="width" from="0" to="395" dur="1.4s" begin="0.25s" fill="freeze" calcMode="spline" keySplines="0.25 0.8 0.25 1" keyTimes="0;1" values="0;395"/>
-  </rect>
-  <text x="762" y="158" fill="#00F7B5" font-family="'Segoe UI',Arial,sans-serif" font-size="13" font-weight="700">93%</text>
-
-  <!-- 3 Backend & System Design -->
-  <text x="36" y="196" fill="#c9d1d9" font-family="'Segoe UI',Arial,sans-serif" font-size="14" font-weight="600">Backend &amp; System Design</text>
-  <rect x="320" y="184" width="430" height="14" rx="7" fill="#21262d"/>
-  <rect x="320" y="184" width="382" height="14" rx="7" fill="url(#neon)" filter="url(#softglow)">
-    <animate attributeName="width" from="0" to="382" dur="1.4s" begin="0.4s" fill="freeze" calcMode="spline" keySplines="0.25 0.8 0.25 1" keyTimes="0;1" values="0;382"/>
-  </rect>
-  <text x="762" y="196" fill="#00F7B5" font-family="'Segoe UI',Arial,sans-serif" font-size="13" font-weight="700">90%</text>
-
-  <!-- 4 Vector DB / RAG -->
-  <text x="36" y="234" fill="#c9d1d9" font-family="'Segoe UI',Arial,sans-serif" font-size="14" font-weight="600">Vector DB · RAG · Embeddings</text>
-  <rect x="320" y="222" width="430" height="14" rx="7" fill="#21262d"/>
-  <rect x="320" y="222" width="374" height="14" rx="7" fill="url(#neon)" filter="url(#softglow)">
-    <animate attributeName="width" from="0" to="374" dur="1.4s" begin="0.55s" fill="freeze" calcMode="spline" keySplines="0.25 0.8 0.25 1" keyTimes="0;1" values="0;374"/>
-  </rect>
-  <text x="762" y="234" fill="#00F7B5" font-family="'Segoe UI',Arial,sans-serif" font-size="13" font-weight="700">88%</text>
-
-  <!-- 5 Cloud / DevOps -->
-  <text x="36" y="272" fill="#c9d1d9" font-family="'Segoe UI',Arial,sans-serif" font-size="14" font-weight="600">Cloud · GCP · AWS · Docker</text>
-  <rect x="320" y="260" width="430" height="14" rx="7" fill="#21262d"/>
-  <rect x="320" y="260" width="361" height="14" rx="7" fill="url(#neon)" filter="url(#softglow)">
-    <animate attributeName="width" from="0" to="361" dur="1.4s" begin="0.7s" fill="freeze" calcMode="spline" keySplines="0.25 0.8 0.25 1" keyTimes="0;1" values="0;361"/>
-  </rect>
-  <text x="762" y="272" fill="#00F7B5" font-family="'Segoe UI',Arial,sans-serif" font-size="13" font-weight="700">85%</text>
-
-  <!-- 6 Automation n8n -->
-  <text x="36" y="310" fill="#c9d1d9" font-family="'Segoe UI',Arial,sans-serif" font-size="14" font-weight="600">Automation · n8n · Multi-agent</text>
-  <rect x="320" y="298" width="430" height="14" rx="7" fill="#21262d"/>
-  <rect x="320" y="298" width="386" height="14" rx="7" fill="url(#neon)" filter="url(#softglow)">
-    <animate attributeName="width" from="0" to="386" dur="1.4s" begin="0.85s" fill="freeze" calcMode="spline" keySplines="0.25 0.8 0.25 1" keyTimes="0;1" values="0;386"/>
-  </rect>
-  <text x="762" y="310" fill="#00F7B5" font-family="'Segoe UI',Arial,sans-serif" font-size="13" font-weight="700">91%</text>
-
-  <!-- divider -->
-  <line x1="36" y1="346" x2="784" y2="346" stroke="#21262d" stroke-width="1"/>
-
-  <!-- ===== IMPACT METRICS ===== -->
-  <text x="36" y="384" fill="#E6EDF3" font-family="'Segoe UI',Arial,sans-serif" font-size="20" font-weight="700">Impact in Production</text>
-
-  <!-- metric cards -->
-  <g font-family="'Segoe UI',Arial,sans-serif">
-    <!-- card 1 -->
-    <rect x="36" y="404" width="172" height="86" rx="12" fill="#0d1117" stroke="#22D3EE" stroke-width="1" opacity="0.95"/>
-    <text x="122" y="448" fill="#22D3EE" font-size="30" font-weight="800" text-anchor="middle" filter="url(#glow)">100K+</text>
-    <text x="122" y="472" fill="#7d8590" font-size="12" text-anchor="middle">API keys secured</text>
-
-    <!-- card 2 -->
-    <rect x="220" y="404" width="172" height="86" rx="12" fill="#0d1117" stroke="#00F7B5" stroke-width="1" opacity="0.95"/>
-    <text x="306" y="448" fill="#00F7B5" font-size="30" font-weight="800" text-anchor="middle" filter="url(#glow)">5M+</text>
-    <text x="306" y="472" fill="#7d8590" font-size="12" text-anchor="middle">emails vectorized</text>
-
-    <!-- card 3 -->
-    <rect x="404" y="404" width="172" height="86" rx="12" fill="#0d1117" stroke="#7C3AED" stroke-width="1" opacity="0.95"/>
-    <text x="490" y="448" fill="#a78bfa" font-size="30" font-weight="800" text-anchor="middle" filter="url(#glow)">37</text>
-    <text x="490" y="472" fill="#7d8590" font-size="12" text-anchor="middle">enterprise modules</text>
-
-    <!-- card 4 -->
-    <rect x="588" y="404" width="196" height="86" rx="12" fill="#0d1117" stroke="#22D3EE" stroke-width="1" opacity="0.95"/>
-    <text x="686" y="448" fill="#22D3EE" font-size="30" font-weight="800" text-anchor="middle" filter="url(#glow)">$5M+</text>
-    <text x="686" y="472" fill="#7d8590" font-size="12" text-anchor="middle">revenue influenced</text>
-  </g>
-
-  <!-- pulsing corner dots -->
-  <circle cx="784" cy="49" r="3" fill="#7C3AED">
-    <animate attributeName="opacity" values="0.2;1;0.2" dur="2.2s" repeatCount="indefinite"/>
-  </circle>
-</svg>
 
 ---
 
