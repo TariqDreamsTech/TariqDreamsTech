@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     animateCursor();
 
-    document.querySelectorAll('a, button, .btn, .timeline-header, .skill-tags span, .project-card').forEach(el => {
+    document.querySelectorAll('a, button, .btn, .exp-card-cell, .exp-nav-btn, .exp-page-pill, .skill-tags span, .project-card, .field-card, .field-competencies span, .about-highlight-card, .lightbox-trigger').forEach(el => {
         el.addEventListener('mouseenter', () => cursorOutline.classList.add('hovered'));
         el.addEventListener('mouseleave', () => cursorOutline.classList.remove('hovered'));
     });
@@ -109,23 +109,105 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(type, 800);
     }
 
-    // ─── Timeline Accordion ───────────────────────────
-    const timelineItems = document.querySelectorAll('.timeline-item');
+    // ─── Experience Grid Pagination (9 per page) ──────
+    const expCells = document.querySelectorAll('.experience-grid .exp-card-cell');
+    const expPrevBtn = document.getElementById('exp-prev-btn');
+    const expNextBtn = document.getElementById('exp-next-btn');
+    const expPagePills = document.querySelectorAll('.exp-page-pill');
+    const expPageRange = document.getElementById('exp-page-range');
+    const expTotalCount = document.getElementById('exp-total-count');
 
-    // Open the first item by default
-    if (timelineItems.length) timelineItems[0].classList.add('open');
+    if (expCells.length && expPrevBtn && expNextBtn) {
+        const itemsPerPage = 9;
+        const totalItems = expCells.length;
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        let currentPage = 1;
 
-    timelineItems.forEach(item => {
-        const header = item.querySelector('.timeline-header');
-        if (!header) return;
-        header.addEventListener('click', () => {
-            const isOpen = item.classList.contains('open');
-            // Close all
-            timelineItems.forEach(i => i.classList.remove('open'));
-            // Toggle clicked
-            if (!isOpen) item.classList.add('open');
+        if (expTotalCount) expTotalCount.textContent = totalItems;
+
+        function renderExpPage(page, shouldScroll) {
+            currentPage = page;
+            const start = (page - 1) * itemsPerPage;
+            const end = Math.min(start + itemsPerPage, totalItems);
+
+            expCells.forEach((cell, index) => {
+                if (index >= start && index < end) {
+                    cell.style.display = 'block';
+                    setTimeout(() => {
+                        cell.classList.add('visible');
+                        cell.style.opacity = '1';
+                        cell.style.transform = 'translateY(0)';
+                    }, (index - start) * 35);
+                } else {
+                    cell.style.display = 'none';
+                    cell.classList.remove('visible');
+                    cell.style.opacity = '0';
+                    cell.style.transform = 'translateY(16px)';
+                    cell.classList.remove('is-expanded');
+                }
+            });
+
+            if (expPageRange) {
+                expPageRange.textContent = `${start + 1}–${end}`;
+            }
+
+            if (expPrevBtn) expPrevBtn.disabled = (currentPage === 1);
+            if (expNextBtn) expNextBtn.disabled = (currentPage === totalPages);
+
+            expPagePills.forEach(pill => {
+                const pageNum = parseInt(pill.getAttribute('data-page'), 10);
+                if (pageNum === currentPage) {
+                    pill.classList.add('active');
+                } else {
+                    pill.classList.remove('active');
+                }
+            });
+
+            if (shouldScroll) {
+                const expSec = document.getElementById('experience');
+                if (expSec) {
+                    expSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        }
+
+        expPrevBtn.addEventListener('click', () => {
+            if (currentPage > 1) renderExpPage(currentPage - 1, true);
         });
-    });
+
+        expNextBtn.addEventListener('click', () => {
+            if (currentPage < totalPages) renderExpPage(currentPage + 1, true);
+        });
+
+        expPagePills.forEach(pill => {
+            pill.addEventListener('click', () => {
+                const page = parseInt(pill.getAttribute('data-page'), 10);
+                if (page && page !== currentPage) {
+                    renderExpPage(page, true);
+                }
+            });
+        });
+
+        // Tap/click to toggle expanded state on touch/mobile
+        expCells.forEach(cell => {
+            cell.addEventListener('click', (e) => {
+                // If user clicks a link inside, let it navigate
+                if (e.target.tagName === 'A' || e.target.closest('a')) return;
+                const wasExpanded = cell.classList.contains('is-expanded');
+                expCells.forEach(c => {
+                    if (c !== cell) c.classList.remove('is-expanded');
+                });
+                if (!wasExpanded) {
+                    cell.classList.add('is-expanded');
+                } else {
+                    cell.classList.remove('is-expanded');
+                }
+            });
+        });
+
+        // Initialize Page 1
+        renderExpPage(1, false);
+    }
 
     // ─── Scroll Reveal ────────────────────────────────
     const revealEls = document.querySelectorAll('.reveal');
@@ -138,24 +220,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, { threshold: 0.1 });
     revealEls.forEach(el => revealObserver.observe(el));
-
-    // Also reveal timeline items as they scroll into view
-    const tlObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateX(0)';
-                tlObserver.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.08 });
-
-    timelineItems.forEach((item, i) => {
-        item.style.opacity = '0';
-        item.style.transform = 'translateX(-16px)';
-        item.style.transition = `opacity 0.5s ease ${i * 0.04}s, transform 0.5s ease ${i * 0.04}s`;
-        tlObserver.observe(item);
-    });
 
     // ─── Achievement Counter Animation ────────────────
     document.querySelectorAll('.achievement-content .highlight').forEach(el => {
@@ -177,6 +241,44 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 40);
         }, { threshold: 0.5 });
         counterObserver.observe(el);
+    });
+
+    // ─── Image Lightbox ───────────────────────────────
+    const lightboxOverlay = document.getElementById('lightbox-overlay');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxCaption = document.getElementById('lightbox-caption');
+    const lightboxClose = lightboxOverlay.querySelector('.lightbox-close');
+
+    document.querySelectorAll('.lightbox-trigger').forEach(el => {
+        el.style.cursor = 'zoom-in';
+        el.addEventListener('click', (e) => {
+            const imgEl = el.tagName === 'IMG' ? el : el.querySelector('img');
+            if (!imgEl) return;
+            lightboxImg.src = imgEl.src;
+            lightboxImg.alt = imgEl.alt;
+            const caption = imgEl.getAttribute('data-caption') || imgEl.alt || '';
+            if (lightboxCaption) {
+                lightboxCaption.textContent = caption;
+                lightboxCaption.style.display = caption ? 'block' : 'none';
+            }
+            lightboxOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+    });
+
+    function closeLightbox() {
+        lightboxOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+        lightboxImg.src = '';
+        if (lightboxCaption) lightboxCaption.textContent = '';
+    }
+
+    if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+    lightboxOverlay.addEventListener('click', (e) => {
+        if (e.target === lightboxOverlay || e.target === lightboxImg) closeLightbox();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && lightboxOverlay.classList.contains('active')) closeLightbox();
     });
 
     // ─── Back to Top ──────────────────────────────────
@@ -211,7 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
             this.vx = (Math.random() - 0.5) * 0.4;
             this.vy = (Math.random() - 0.5) * 0.4;
             this.r = Math.random() * 1.5 + 0.5;
-            this.alpha = Math.random() * 0.5 + 0.2;
+            this.alpha = Math.random() * 0.4 + 0.15;
         }
         update() {
             this.x += this.vx; this.y += this.vy;
@@ -220,7 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
         draw() {
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(99,202,196,${this.alpha})`;
+            ctx.fillStyle = `rgba(255,186,73,${this.alpha})`;
             ctx.fill();
         }
     }
@@ -248,7 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ctx.beginPath();
                     ctx.moveTo(particles[i].x, particles[i].y);
                     ctx.lineTo(particles[j].x, particles[j].y);
-                    ctx.strokeStyle = `rgba(99,202,196,${0.12 * (1 - d / MAX_DIST)})`;
+                    ctx.strokeStyle = `rgba(255,186,73,${0.08 * (1 - d / MAX_DIST)})`;
                     ctx.lineWidth = 1;
                     ctx.stroke();
                 }

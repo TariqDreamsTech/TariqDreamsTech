@@ -1,0 +1,112 @@
+# ==============================================================================
+# .gitignore — TariqDreamsTech Portfolio
+# ==============================================================================
+
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDE & Editor Settings
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+
+# Python Caches & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+.env
+.env.*
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook Caches
+.ipynb_checkpoints
+
+# Logs & Temporary Files
+*.log
+*.tmp
+*.bak
+*.pid
+tmp/
+temp/
+
+# Node.js & Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ==============================================================================
+# Unused Research Manuscripts, Figures & Assets
+# (Ignore all unreferenced raw files while preserving active website assets)
+# ==============================================================================
+
+# Ignore all files in Research Projects by default
+Research Projects/**
+!Research Projects/
+!Research Projects/**/
+
+# Explicitly whitelist active figures used in index.html:
+!Research Projects/ANOVA F-Test Feature Selection for Machine Learning-Based Network Intrusion Detection on the UNSW-NB15 Dataset/Images/image1.png
+!Research Projects/ANOVA F-Test Feature Selection for Machine Learning-Based Network Intrusion Detection on the UNSW-NB15 Dataset/Images/image2.png
+!Research Projects/ANOVA F-Test Feature Selection for Machine Learning-Based Network Intrusion Detection on the UNSW-NB15 Dataset/Images/image7.png
+!Research Projects/ANOVA F-Test Feature Selection for Machine Learning-Based Network Intrusion Detection on the UNSW-NB15 Dataset/Images/image9.png
+!Research Projects/ANOVA F-Test Feature Selection for Machine Learning-Based Network Intrusion Detection on the UNSW-NB15 Dataset/Images/image11.png
+!Research Projects/ANOVA F-Test Feature Selection for Machine Learning-Based Network Intrusion Detection on the UNSW-NB15 Dataset/Images/image15.jpg
+!Research Projects/ANOVA F-Test Feature Selection for Machine Learning-Based Network Intrusion Detection on the UNSW-NB15 Dataset/Images/image18.jpg
+
+!Research Projects/Trust as a Gate, Not a Weight: Robust Federated Aggregation for Safety-Critical Perception under Natural Heterogeneity/Images/image1.png
+!Research Projects/Trust as a Gate, Not a Weight: Robust Federated Aggregation for Safety-Critical Perception under Natural Heterogeneity/Images/image2.png
+!Research Projects/Trust as a Gate, Not a Weight: Robust Federated Aggregation for Safety-Critical Perception under Natural Heterogeneity/Images/image5.png
+!Research Projects/Trust as a Gate, Not a Weight: Robust Federated Aggregation for Safety-Critical Perception under Natural Heterogeneity/Images/image7.png
+!Research Projects/Trust as a Gate, Not a Weight: Robust Federated Aggregation for Safety-Critical Perception under Natural Heterogeneity/Images/image9.png
+
+!Research Projects/Three Paradigms, One Benchmark: A Negative-Result Study of Zero-Shot CLIP, Supervised FPN–Attention and Autoencoder-Based Defect Localisation on MVTec AD/Images/Figure_1.jpg
+!Research Projects/Three Paradigms, One Benchmark: A Negative-Result Study of Zero-Shot CLIP, Supervised FPN–Attention and Autoencoder-Based Defect Localisation on MVTec AD/Images/Figure_5.jpg
+!Research Projects/Three Paradigms, One Benchmark: A Negative-Result Study of Zero-Shot CLIP, Supervised FPN–Attention and Autoencoder-Based Defect Localisation on MVTec AD/Images/Figure_11.jpg
+!Research Projects/Three Paradigms, One Benchmark: A Negative-Result Study of Zero-Shot CLIP, Supervised FPN–Attention and Autoencoder-Based Defect Localisation on MVTec AD/Images/Figure_13.jpg
+
+!Research Projects/ISGC/Images/Fig_5_Remark_Wise_Subjects_Count_Plot.png
+!Research Projects/ISGC/Images/Fig_6_Official_Transcript_1_Ahsan_Tariq.png
+!Research Projects/ISGC/Images/Fig_9_Student1_Tabular_Transcript_Output.png
+!Research Projects/ISGC/Images/Fig_10_Student1_SGPA_Progression_Plot.png
+
+!Research Projects/FUZZY ROUGH NEAREST NEIGHBOURS APPROACHES FOR EMOTION DETECTION IN TWEETS/plots/Anger/combined_train/anger_combined_train_wordcloud.png
+!Research Projects/FUZZY ROUGH NEAREST NEIGHBOURS APPROACHES FOR EMOTION DETECTION IN TWEETS/plots/Joy/combined_train/joy_combined_train_wordcloud.png
+!Research Projects/FUZZY ROUGH NEAREST NEIGHBOURS APPROACHES FOR EMOTION DETECTION IN TWEETS/plots/Sadness/combined_train/sadness_combined_train_wordcloud.png
+!Research Projects/FUZZY ROUGH NEAREST NEIGHBOURS APPROACHES FOR EMOTION DETECTION IN TWEETS/plots/statistic/dataset_statistics_plot.png
