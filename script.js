@@ -281,6 +281,36 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Escape' && lightboxOverlay.classList.contains('active')) closeLightbox();
     });
 
+    // ─── Coursework & Transcript Modal ─────────────
+    const courseworkModal = document.getElementById('coursework-modal');
+    const openCourseworkBtn = document.getElementById('open-coursework-modal');
+    const closeCourseworkBtn = document.getElementById('close-coursework-modal');
+
+    function closeCoursework() {
+        if (!courseworkModal) return;
+        courseworkModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    if (openCourseworkBtn && courseworkModal) {
+        openCourseworkBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            courseworkModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+    }
+    if (closeCourseworkBtn) closeCourseworkBtn.addEventListener('click', closeCoursework);
+    if (courseworkModal) {
+        courseworkModal.addEventListener('click', (e) => {
+            if (e.target === courseworkModal) closeCoursework();
+        });
+    }
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && courseworkModal && courseworkModal.classList.contains('active')) {
+            closeCoursework();
+        }
+    });
+
     // ─── Back to Top ──────────────────────────────────
     const backToTop = document.getElementById('back-to-top');
     window.addEventListener('scroll', () => {
