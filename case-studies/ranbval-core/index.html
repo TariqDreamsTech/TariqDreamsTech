@@ -1,0 +1,2079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ranbval-Core Case Study | Enterprise Microservices Platform Architecture — Ahsan Tariq</title>
+    <meta name="description" content="A comprehensive deep dive into Ranbval-Core: the shared Python framework, zero-trust security engine, payload encryption, distributed tracing, and contract-driven microservices backbone engineered by Ahsan Tariq.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+
+    <style>
+        :root {
+            --bg: #030303;
+            --bg-card: #0b0c10;
+            --bg-card-hover: #12141a;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-accent: rgba(255, 186, 73, 0.4);
+            --text: #f0f0f5;
+            --text-muted: #9aa0a6;
+            --text-dim: rgba(255, 255, 255, 0.4);
+            --accent: #ffba49;
+            --accent-2: #ff6b6b;
+            --accent-cyan: #4ecdc4;
+            --accent-purple: #a78bfa;
+            --accent-glow: rgba(255, 186, 73, 0.18);
+            --gradient: linear-gradient(135deg, #ffba49 0%, #ff6b6b 100%);
+            --gradient-accent: linear-gradient(135deg, #ffba49 0%, #4ecdc4 100%);
+            --font-h: 'Outfit', sans-serif;
+            --font-b: 'Space Grotesk', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+            --radius: 16px;
+            --radius-sm: 8px;
+            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.6);
+            --shadow-glow: 0 0 50px rgba(255, 186, 73, 0.12);
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-b);
+            line-height: 1.7;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(255, 186, 73, 0.04) 0%, transparent 40%),
+                radial-gradient(circle at 85% 65%, rgba(255, 107, 107, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 50% 90%, rgba(78, 205, 196, 0.03) 0%, transparent 50%);
+        }
+
+        /* Top Progress Bar */
+        #read-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            width: 0%;
+            background: var(--gradient);
+            z-index: 9999;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 12px rgba(255, 186, 73, 0.8);
+        }
+
+        /* Navigation Header */
+        .case-nav {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            background: rgba(3, 3, 3, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+
+        .container {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+        }
+
+        .nav-logo-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-family: var(--font-h);
+            font-weight: 800;
+            font-size: 1.2rem;
+        }
+
+        .nav-titles {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-title-main {
+            font-family: var(--font-h);
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text);
+            letter-spacing: -0.3px;
+        }
+
+        .nav-title-sub {
+            font-size: 0.75rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.55rem 1.2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.25s ease;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 186, 73, 0.15);
+            border-color: var(--border-accent);
+            color: var(--accent);
+            transform: translateX(-3px);
+        }
+
+        .btn-portfolio {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.55rem 1.2rem;
+            background: var(--gradient);
+            border: none;
+            border-radius: var(--radius-sm);
+            color: #000;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.25s ease;
+        }
+
+        .btn-portfolio:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 186, 73, 0.4);
+        }
+
+        /* Hero Header */
+        .hero-case {
+            padding: 5rem 0 3.5rem;
+            position: relative;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.35rem 0.9rem;
+            border-radius: 50px;
+            background: rgba(255, 186, 73, 0.1);
+            border: 1px solid rgba(255, 186, 73, 0.3);
+            color: var(--accent);
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+
+        .badge-pill i {
+            font-size: 0.75rem;
+        }
+
+        .hero-title {
+            font-family: var(--font-h);
+            font-size: 3.25rem;
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -1.5px;
+            margin-bottom: 1.25rem;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 40%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            max-width: 900px;
+            margin-bottom: 2.5rem;
+            font-weight: 400;
+        }
+
+        /* Metadata Grid */
+        .meta-strip {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.25rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 3rem;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .meta-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            font-weight: 600;
+        }
+
+        .meta-val {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .meta-val.accent {
+            color: var(--accent);
+        }
+
+        /* Key Metrics Banner */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.75rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gradient);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-accent);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .metric-card:hover::before {
+            opacity: 1;
+        }
+
+        .metric-num {
+            font-family: var(--font-h);
+            font-size: 2.6rem;
+            font-weight: 800;
+            color: var(--accent);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: baseline;
+            gap: 0.2rem;
+        }
+
+        .metric-label {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.35rem;
+        }
+
+        .metric-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Layout Structure: Content + Sticky ToC */
+        .case-body-wrapper {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 3.5rem;
+            padding: 4rem 0;
+            align-items: start;
+        }
+
+        /* Sticky Table of Contents */
+        .case-toc {
+            position: sticky;
+            top: 6rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            max-height: calc(100vh - 8rem);
+            overflow-y: auto;
+        }
+
+        .toc-header {
+            font-family: var(--font-h);
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toc-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .toc-link {
+            display: block;
+            padding: 0.45rem 0.75rem;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            line-height: 1.35;
+        }
+
+        .toc-link:hover, .toc-link.active {
+            color: var(--accent);
+            background: rgba(255, 186, 73, 0.08);
+            transform: translateX(4px);
+        }
+
+        /* Main Content Typography */
+        .case-content {
+            min-width: 0;
+        }
+
+        .section-block {
+            margin-bottom: 4.5rem;
+            scroll-margin-top: 6.5rem;
+        }
+
+        .section-tag {
+            font-family: var(--font-h);
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .section-heading {
+            font-family: var(--font-h);
+            font-size: 2.2rem;
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: -0.5px;
+            color: var(--text);
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-heading i {
+            color: var(--accent);
+            font-size: 1.7rem;
+        }
+
+        .paragraph {
+            color: #d1d5db;
+            font-size: 1.05rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .paragraph strong {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* Highlight Callout Box */
+        .callout-box {
+            background: rgba(255, 186, 73, 0.05);
+            border-left: 4px solid var(--accent);
+            border-top: 1px solid rgba(255, 186, 73, 0.15);
+            border-right: 1px solid rgba(255, 186, 73, 0.15);
+            border-bottom: 1px solid rgba(255, 186, 73, 0.15);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            padding: 1.5rem 1.75rem;
+            margin: 2rem 0;
+        }
+
+        .callout-title {
+            font-family: var(--font-h);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .callout-body {
+            color: #e5e7eb;
+            font-size: 0.98rem;
+            line-height: 1.7;
+        }
+
+        /* Pillars 3-Column Grid */
+        .pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .pillar-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        .pillar-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--border-accent);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .pillar-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            background: rgba(255, 186, 73, 0.1);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.25rem;
+            border: 1px solid rgba(255, 186, 73, 0.25);
+        }
+
+        .pillar-title {
+            font-family: var(--font-h);
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.75rem;
+        }
+
+        .pillar-text {
+            color: var(--text-muted);
+            font-size: 0.92rem;
+            line-height: 1.6;
+            margin-bottom: 1.25rem;
+            flex-grow: 1;
+        }
+
+        .pillar-bullets {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .pillar-bullets li {
+            font-size: 0.85rem;
+            color: #e2e8f0;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .pillar-bullets li i {
+            color: var(--accent);
+            font-size: 0.75rem;
+            margin-top: 0.3rem;
+        }
+
+        /* Architecture Visual Display */
+        .arch-display {
+            background: #060709;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2.5rem;
+            margin: 2.5rem 0;
+            box-shadow: var(--shadow-card);
+        }
+
+        .arch-layers {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .arch-layer-box {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            position: relative;
+        }
+
+        .arch-layer-box.edge { border-color: rgba(78, 205, 196, 0.35); background: rgba(78, 205, 196, 0.03); }
+        .arch-layer-box.middleware { border-color: rgba(255, 186, 73, 0.35); background: rgba(255, 186, 73, 0.03); }
+        .arch-layer-box.security { border-color: rgba(255, 107, 107, 0.35); background: rgba(255, 107, 107, 0.03); }
+        .arch-layer-box.ops { border-color: rgba(167, 139, 250, 0.35); background: rgba(167, 139, 250, 0.03); }
+
+        .arch-layer-title {
+            font-family: var(--font-h);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .arch-layer-box.edge .arch-layer-title { color: var(--accent-cyan); }
+        .arch-layer-box.middleware .arch-layer-title { color: var(--accent); }
+        .arch-layer-box.security .arch-layer-title { color: var(--accent-2); }
+        .arch-layer-box.ops .arch-layer-title { color: var(--accent-purple); }
+
+        .arch-nodes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 0.85rem;
+        }
+
+        .arch-node {
+            background: #0f1117;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.9rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            transition: all 0.2s ease;
+        }
+
+        .arch-node:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .arch-node-name {
+            font-family: var(--font-code);
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .arch-node-desc {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            line-height: 1.3;
+        }
+
+        .flow-arrow-down {
+            text-align: center;
+            color: var(--accent);
+            font-size: 1.2rem;
+            padding: 0.2rem 0;
+            opacity: 0.6;
+        }
+
+        /* Comparison Table */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            margin: 2rem 0;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--bg-card);
+        }
+
+        .comp-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .comp-table th {
+            background: #11131a;
+            padding: 1.1rem 1.25rem;
+            font-family: var(--font-h);
+            font-weight: 700;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .comp-table td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #d1d5db;
+            line-height: 1.5;
+            vertical-align: top;
+        }
+
+        .comp-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comp-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .comp-feature {
+            font-weight: 700;
+            color: #ffffff;
+            font-size: 0.92rem;
+        }
+
+        .comp-bad {
+            color: #f87171;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .comp-good {
+            color: #34d399;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* Silicon Valley IDP 14 Hardening Grid */
+        .idp-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin: 2.5rem 0;
+        }
+
+        .idp-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.75rem;
+            transition: all 0.25s ease;
+            position: relative;
+        }
+
+        .idp-card:hover {
+            border-color: var(--border-accent);
+            transform: translateY(-3px);
+            background: var(--bg-card-hover);
+        }
+
+        .idp-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .idp-badge-num {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: rgba(255, 186, 73, 0.12);
+            color: var(--accent);
+            font-family: var(--font-h);
+            font-weight: 800;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 186, 73, 0.3);
+        }
+
+        .idp-title {
+            font-family: var(--font-h);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .idp-desc {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .idp-code-tag {
+            display: inline-block;
+            font-family: var(--font-code);
+            font-size: 0.75rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            padding: 0.2rem 0.5rem;
+            color: var(--accent);
+        }
+
+        /* Pre-commit Matrix Grid */
+        .hooks-category {
+            margin-bottom: 2rem;
+        }
+
+        .hooks-cat-title {
+            font-family: var(--font-h);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .hook-item {
+            background: #0d0f15;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .hook-id {
+            font-family: var(--font-code);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .hook-id i {
+            color: var(--accent);
+            font-size: 0.8rem;
+        }
+
+        .hook-purpose {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+
+        /* Code Block Container */
+        .code-box {
+            background: #080a0f;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin: 2rem 0;
+            overflow: hidden;
+        }
+
+        .code-header {
+            background: #11141c;
+            padding: 0.75rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-title {
+            font-family: var(--font-code);
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .code-title span.dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .code-title span.dot.red { background: #ef4444; }
+        .code-title span.dot.yellow { background: #f59e0b; }
+        .code-title span.dot.green { background: #10b981; }
+
+        .btn-copy {
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-muted);
+            padding: 0.25rem 0.6rem;
+            font-size: 0.75rem;
+            font-family: var(--font-b);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-copy:hover {
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        pre code {
+            display: block;
+            padding: 1.5rem;
+            font-family: var(--font-code);
+            font-size: 0.85rem;
+            line-height: 1.65;
+            color: #d1d5db;
+            overflow-x: auto;
+        }
+
+        .c-kw { color: #f43f5e; font-weight: 600; }
+        .c-fn { color: #38bdf8; }
+        .c-str { color: #34d399; }
+        .c-num { color: #fbbf24; }
+        .c-cmt { color: #6b7280; font-style: italic; }
+        .c-cls { color: #a78bfa; font-weight: 600; }
+
+        /* Repo Tree Layout */
+        .tree-box {
+            background: #090b10;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem 2rem;
+            font-family: var(--font-code);
+            font-size: 0.85rem;
+            line-height: 1.7;
+            color: #e2e8f0;
+            margin: 2rem 0;
+            overflow-x: auto;
+        }
+
+        .tree-dir { color: var(--accent); font-weight: 600; }
+        .tree-file { color: #94a3b8; }
+        .tree-note { color: #64748b; font-style: italic; }
+
+        /* References Box */
+        .ref-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.75rem;
+            margin: 2rem 0;
+        }
+
+        .ref-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .ref-item:last-child {
+            border-bottom: none;
+        }
+
+        .ref-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .ref-info i {
+            color: var(--accent);
+            font-size: 1.1rem;
+        }
+
+        .ref-title {
+            font-weight: 600;
+            color: #ffffff;
+            font-size: 0.95rem;
+        }
+
+        .ref-tag {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            background: rgba(255, 186, 73, 0.1);
+            color: var(--accent);
+        }
+
+        /* Bottom Author / Footer CTA */
+        .case-footer {
+            background: #07080b;
+            border-top: 1px solid var(--border);
+            padding: 4.5rem 0 3rem;
+            margin-top: 5rem;
+        }
+
+        .footer-cta-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-accent);
+            border-radius: var(--radius);
+            padding: 3rem;
+            text-align: center;
+            box-shadow: var(--shadow-glow);
+            margin-bottom: 3.5rem;
+        }
+
+        .footer-cta-title {
+            font-family: var(--font-h);
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+
+        .footer-cta-desc {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 650px;
+            margin: 0 auto 2rem;
+        }
+
+        .footer-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-credits {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .case-body-wrapper {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .case-toc {
+                display: none;
+            }
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .pillars-grid {
+                grid-template-columns: 1fr;
+            }
+            .idp-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero-title {
+                font-size: 2.4rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav-actions .btn-back span {
+                display: none;
+            }
+            .hero-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Scroll Progress -->
+    <div id="read-progress"></div>
+
+    <!-- Navigation Bar -->
+    <header class="case-nav">
+        <div class="container">
+            <div class="nav-inner">
+                <a href="../../index.html" class="nav-brand">
+                    <div class="nav-logo-badge">AT</div>
+                    <div class="nav-titles">
+                        <span class="nav-title-main">Ahsan Tariq</span>
+                        <span class="nav-title-sub">Architecture Case Study</span>
+                    </div>
+                </a>
+                <div class="nav-actions">
+                    <a href="../../index.html" class="btn-back">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Back to Portfolio</span>
+                    </a>
+                    <a href="../../index.html#case-studies" class="btn-portfolio">
+                        <i class="fas fa-layer-group"></i>
+                        <span>All Studies</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Header -->
+    <section class="hero-case">
+        <div class="container">
+            <div class="badge-pill">
+                <i class="fas fa-shield-halved"></i>
+                Silicon Valley Grade Distributed Systems Architecture
+            </div>
+            
+            <h1 class="hero-title">
+                Ranbval-Core: Enterprise Microservices Security Backbone &amp; Platform Framework
+            </h1>
+            
+            <p class="hero-subtitle">
+                How we unified fragmented microservices into a high-throughput, zero-trust shared runtime with end-to-end payload encryption, ASGI auto-decryption, correlation-traced observability, and CI contract drift prevention.
+            </p>
+
+            <!-- Metadata Strip -->
+            <div class="meta-strip">
+                <div class="meta-item">
+                    <span class="meta-label">Architect &amp; Author</span>
+                    <span class="meta-val">Ahsan Tariq (Lead Architect)</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Platform Role</span>
+                    <span class="meta-val accent">Shared Internal Framework (IDP)</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Production Scope</span>
+                    <span class="meta-val">Chat, Auth, Secrets &amp; Media</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Target Runtime</span>
+                    <span class="meta-val">Python 3.12+ · FastAPI · ASGI · Redis</span>
+                </div>
+            </div>
+
+            <!-- Key Metrics Grid -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-num">100<span style="font-size:1.5rem">%</span></div>
+                    <div class="metric-label">CI Test &amp; Branch Coverage</div>
+                    <div class="metric-desc">Hard CI failure if test coverage or branch execution falls below 100%.</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-num">0<span style="font-size:1.5rem">Plain</span></div>
+                    <div class="metric-label">Plaintext Wire Exposure</div>
+                    <div class="metric-desc">Zero-trust AES-GCM / ChaCha20 encrypted payload envelopes on all APIs.</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-num">10<span style="font-size:1.5rem">x</span></div>
+                    <div class="metric-label">Developer Scaffolding Speed</div>
+                    <div class="metric-desc">New microservices bootstrap in seconds via <code>ranbval create</code> CLI.</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-num">0<span style="font-size:1.5rem">Drift</span></div>
+                    <div class="metric-label">Schema Regression Defense</div>
+                    <div class="metric-desc">Automated CI contract checking stops breaking API field modifications.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Layout with Sticky Sidebar -->
+    <div class="container">
+        <div class="case-body-wrapper">
+            
+            <!-- Sticky Navigation TOC -->
+            <aside class="case-toc">
+                <div class="toc-header">
+                    <i class="fas fa-list-check"></i>
+                    Architecture Index
+                </div>
+                <ul class="toc-list">
+                    <li><a href="#introduction" class="toc-link active">1. Ecosystem Genesis &amp; Core Challenge</a></li>
+                    <li><a href="#why-ranbval-core" class="toc-link">2. Why Ranbval-Core? (3 Pillars)</a></li>
+                    <li><a href="#mvp-lessons" class="toc-link">3. MVP Reality &amp; Bottlenecks</a></li>
+                    <li><a href="#architecture-deep-dive" class="toc-link">4. Architectural Breakdown</a></li>
+                    <li><a href="#mvp-vs-core" class="toc-link">5. What's New: Core vs MVP</a></li>
+                    <li><a href="#precommit-quality" class="toc-link">6. Pre-Commit &amp; Code Hygiene</a></li>
+                    <li><a href="#enterprise-hardening" class="toc-link">7. SV 10/10 IDP Hardening</a></li>
+                    <li><a href="#code-in-action" class="toc-link">8. Code in Action &amp; Schemas</a></li>
+                    <li><a href="#package-layout" class="toc-link">9. Repository &amp; Package Layout</a></li>
+                    <li><a href="#impact-vision" class="toc-link">10. Business Impact &amp; Roadmap</a></li>
+                </ul>
+            </aside>
+
+            <!-- Case Content Body -->
+            <main class="case-content">
+
+                <!-- 1. Introduction: Ecosystem Genesis & Core Challenge -->
+                <section class="section-block" id="introduction">
+                    <span class="section-tag">Section 01 / The Genesis</span>
+                    <h2 class="section-heading">
+                        <i class="fas fa-network-wired"></i>
+                        Ecosystem Genesis &amp; The Distributed Sprawl Problem
+                    </h2>
+                    
+                    <p class="paragraph">
+                        <strong>Ranbval is not just a single application; it is an entire hyperscale microservices ecosystem.</strong> In our production landscape, Ranbval orchestrates distributed modules including the <strong>Ranbval Conversation Engine</strong> (high-concurrency real-time WebSocket and HTTP messaging), the <strong>Ranbval Secrets Manager</strong> (zero-knowledge credential custody), the <strong>Followers &amp; Social Graph Service</strong>, and the <strong>Content Delivery Pipeline</strong>.
+                    </p>
+
+                    <div class="callout-box">
+                        <div class="callout-title">
+                            <i class="fas fa-triangle-exclamation"></i>
+                            The Critical Realization During the MVP Phase
+                        </div>
+                        <div class="callout-body">
+                            While the initial MVP successfully proved market validation, user engagement, and core functionality, rapid iterative development exposed an architectural vulnerability: 
+                            <br><br>
+                            <em>“Every microservice was independently writing its own boilerplate for configuration management, JWT parsing, password hashing, encryption ciphers, error serialization, and rate limiting.”</em>
+                        </div>
+                    </div>
+
+                    <p class="paragraph">
+                        This scattered microservice design created severe operational hazards:
+                    </p>
+                    <ul class="pillar-bullets" style="margin-bottom: 1.5rem; gap: 0.75rem;">
+                        <li>
+                            <i class="fas fa-times-circle" style="color: #f87171;"></i>
+                            <span><strong>Asymmetric Security Enforcement:</strong> One microservice enforced strict HMAC signature checking, while another used loose token decoding. A security bug fixed in the Auth repo remained wide open in the Chat repo.</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-times-circle" style="color: #f87171;"></i>
+                            <span><strong>Plaintext API Vulnerabilities:</strong> Inter-service and client-to-service payloads traveled in raw JSON. A compromised reverse proxy, logging drain, or internal hop could expose sensitive user messages.</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-times-circle" style="color: #f87171;"></i>
+                            <span><strong>Observability Blackout:</strong> Requests traversing multiple microservices lacked unified correlation IDs. When an incident occurred at scale, engineers spent hours grepping disparate log formats.</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-times-circle" style="color: #f87171;"></i>
+                            <span><strong>Massive Code Duplication:</strong> Over 40% of each repository was repetitive infrastructure boilerplate rather than domain business logic.</span>
+                        </li>
+                    </ul>
+
+                    <p class="paragraph">
+                        <strong>Ranbval-Core was engineered to eliminate this fragmentation permanently.</strong> Instead of treating each microservice as an isolated silo, Ranbval-Core is a single, enterprise-hardened Python framework and package (<code>pip install ranbval-core</code>) that acts as the shared nervous system and single source of truth across all Ranbval microservices.
+                    </p>
+                </section>
+
+                <!-- 2. Why Ranbval Core? (The 3 Foundational Pillars) -->
+                <section class="section-block" id="why-ranbval-core">
+                    <span class="section-tag">Section 02 / Strategic Vision</span>
+                    <h2 class="section-heading">
+                        <i class="fas fa-cubes"></i>
+                        Why Ranbval-Core? (The 3 Non-Negotiable Pillars)
+                    </h2>
+                    
+                    <p class="paragraph">
+                        Ranbval-Core was designed around three foundational architectural principles engineered to support tens of millions of concurrent users without security compromises:
+                    </p>
+
+                    <div class="pillars-grid">
+                        <!-- Pillar 1 -->
+                        <div class="pillar-card">
+                            <div class="pillar-icon">
+                                <i class="fas fa-shield-halved"></i>
+                            </div>
+                            <h3 class="pillar-title">1. Security First</h3>
+                            <p class="pillar-text">
+                                Complete zero-trust security baked into the foundation. No microservice can ever run with loose security defaults.
+                            </p>
+                            <ul class="pillar-bullets">
+                                <li><i class="fas fa-check"></i> <span>AES-256-GCM &amp; ChaCha20Poly1305 payload encryption.</span></li>
+                                <li><i class="fas fa-check"></i> <span>JWT with <code>jti</code> revocation tracking via Redis.</span></li>
+                                <li><i class="fas fa-check"></i> <span>Anti-replay defense (cryptographic nonce + timestamps).</span></li>
+                                <li><i class="fas fa-check"></i> <span>Centralized key rotation &amp; envelope encryption.</span></li>
+                            </ul>
+                        </div>
+
+                        <!-- Pillar 2 -->
+                        <div class="pillar-card">
+                            <div class="pillar-icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <h3 class="pillar-title">2. Developer Velocity</h3>
+                            <p class="pillar-text">
+                                Eradicate boilerplate so domain teams focus 100% of their energy on business logic and customer features.
+                            </p>
+                            <ul class="pillar-bullets">
+                                <li><i class="fas fa-check"></i> <span>Instant CLI scaffolding: <code>ranbval create</code>.</span></li>
+                                <li><i class="fas fa-check"></i> <span>FastAPI factory: <code>app = create_app()</code> in 2 lines.</span></li>
+                                <li><i class="fas fa-check"></i> <span>Transparent ASGI decryption middleware.</span></li>
+                                <li><i class="fas fa-check"></i> <span>Unified BaseRequest &amp; BaseResponse models.</span></li>
+                            </ul>
+                        </div>
+
+                        <!-- Pillar 3 -->
+                        <div class="pillar-card">
+                            <div class="pillar-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3 class="pillar-title">3. Quality &amp; Scale</h3>
+                            <p class="pillar-text">
+                                Bulletproof reliability standards inherited automatically by any microservice importing the core package.
+                            </p>
+                            <ul class="pillar-bullets">
+                                <li><i class="fas fa-check"></i> <span>Enforced 100% test &amp; branch coverage in CI.</span></li>
+                                <li><i class="fas fa-check"></i> <span>Schema Registry &amp; backward-compatibility gates.</span></li>
+                                <li><i class="fas fa-check"></i> <span>OpenTelemetry distributed tracing propagation.</span></li>
+                                <li><i class="fas fa-check"></i> <span>Load shedding &amp; circuit breakers for fault isolation.</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. Lessons from MVP -->
+                <section class="section-block" id="mvp-lessons">
+                    <span class="section-tag">Section 03 / Engineering Retrospective</span>
+                    <h2 class="section-heading">
+                        <i class="fas fa-graduation-cap"></i>
+                        Lessons from the MVP (The Path to Platformization)
+                    </h2>
+                    
+                    <p class="paragraph">
+                        During the MVP phase, we proved market demand for encrypted communication and distributed services. However, operating multi-repo microservices under heavy test loads surfaced four critical bottlenecks:
+                    </p>
+
+                    <div style="display: flex; flex-direction: column; gap: 1rem; margin: 1.5rem 0;">
+                        <div class="arch-node" style="padding: 1.25rem;">
+                            <span class="arch-node-name" style="color: var(--accent); font-size: 0.95rem;">
+                                <i class="fas fa-key" style="margin-right: 0.5rem;"></i> The Token Invalidation Dilemma
+                            </span>
+                            <p class="arch-node-desc" style="font-size: 0.85rem; margin-top: 0.4rem; color: #d1d5db;">
+                                In MVP, JWTs were verified purely via signature and expiration timestamp. When a user clicked "Log Out" or reported a compromised session, the token remained valid until expiration because there was no shared state or distributed revocation denylist. Ranbval-Core introduced deterministic unique JWT identifiers (<code>jti</code>) mapped to a shared, high-speed Redis cluster, enabling sub-millisecond global session revocation.
+                            </p>
+                        </div>
+
+                        <div class="arch-node" style="padding: 1.25rem;">
+                            <span class="arch-node-name" style="color: var(--accent); font-size: 0.95rem;">
+                                <i class="fas fa-lock" style="margin-right: 0.5rem;"></i> The Plaintext Channel Fallacy
+                            </span>
+                            <p class="arch-node-desc" style="font-size: 0.85rem; margin-top: 0.4rem; color: #d1d5db;">
+                                Relying solely on TLS (HTTPS) protects packets in transit between hops, but leaves payloads vulnerable at edge proxies, ingress controllers, API gateways, and internal mesh networks. Ranbval-Core mandated application-layer payload encryption (<code>EnvelopeV1</code>) with ephemeral nonces, ensuring payloads are only decipherable at the exact application boundary.
+                            </p>
+                        </div>
+
+                        <div class="arch-node" style="padding: 1.25rem;">
+                            <span class="arch-node-name" style="color: var(--accent); font-size: 0.95rem;">
+                                <i class="fas fa-code-compare" style="margin-right: 0.5rem;"></i> Silent Breaking Contract Drift
+                            </span>
+                            <p class="arch-node-desc" style="font-size: 0.85rem; margin-top: 0.4rem; color: #d1d5db;">
+                                When one developer changed a response key name from <code>user_id</code> to <code>userId</code>, client apps crashed in staging. Without an automated schema compatibility check, API drift was caught only at runtime. Ranbval-Core instituted a committed Schema Registry with an automated compatibility verifier in CI that fails builds on any non-backward-compatible change.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. Architecture Deep Dive -->
+                <section class="section-block" id="architecture-deep-dive">
+                    <span class="section-tag">Section 04 / Deep Architectural Tour</span>
+                    <h2 class="section-heading">
+                        <i class="fas fa-sitemap"></i>
+                        Ranbval-Core Architecture (Layer-by-Layer)
+                    </h2>
+
+                    <p class="paragraph">
+                        Ranbval-Core is structured as a plug-and-play microservices platform. Below is the end-to-end architectural flow illustrating how a client request traverses from the external network, through the Edge Gateway and ASGI middleware, down to the security engine and ops infrastructure:
+                    </p>
+
+                    <!-- Interactive Visual Architecture Map -->
+                    <div class="arch-display">
+                        <div class="arch-layers">
+                            
+                            <!-- Layer 1: Edge & Ingress -->
+                            <div class="arch-layer-box edge">
+                                <div class="arch-layer-title">
+                                    <i class="fas fa-door-open"></i>
+                                    Layer 1: Edge Gateway &amp; Ingress (FastAPI / ASGI)
+                                </div>
+                                <div class="arch-nodes-grid">
+                                    <div class="arch-node">
+                                        <span class="arch-node-name">create_gateway_app()</span>
+                                        <span class="arch-node-desc">Reverse proxy routing prefixes (/auth/*, /chat/*) to microservice pods.</span>
+                                    </div>
+                                    <div class="arch-node">
+                                        <span class="arch-node-name">create_app()</span>
+                                        <span class="arch-node-desc">FastAPI microservice factory with pre-wired security &amp; observability defaults.</span>
+                                    </div>
+                                    <div class="arch-node">
+                                        <span class="arch-node-name">SlowAPI RateLimiter</span>
+                                        <span class="arch-node-desc">Multi-key throttling (by Tenant, User JTI, or Client IP) preventing DDoS.</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flow-arrow-down"><i class="fas fa-arrow-down"></i></div>
+
+                            <!-- Layer 2: ASGI Middleware Stack -->
+                            <div class="arch-layer-box middleware">
+                                <div class="arch-layer-title">
+                                    <i class="fas fa-filter"></i>
+                                    Layer 2: High-Performance ASGI Middleware Pipeline
+                                </div>
+                                <div class="arch-nodes-grid">
+                                    <div class="arch-node">
+                                        <span class="arch-node-name">LoadSheddingMiddleware</span>
+                                        <span class="arch-node-desc">Concurrency guard: rejects excess traffic with HTTP 503 during sudden traffic spikes.</span>
+                                    </div>
+                                    <div class="arch-node">
+                                        <span class="arch-node-name">CorrelationIdMiddleware</span>
+                                        <span class="arch-node-desc">Extracts or injects X-Correlation-ID for cross-service request tracing.</span>
+                                    </div>
+                                    <div class="arch-node">
+                                        <span class="arch-node-name">ReplayValidationMiddleware</span>
+                                        <span class="arch-node-desc">Validates cryptographic nonce + timestamp within sliding skew window.</span>
+                                    </div>
+                                    <div class="arch-node">
+                                        <span class="arch-node-name">PayloadDecryptMiddleware</span>
+                                        <span class="arch-node-desc">Pure ASGI stream deciphering: turns EnvelopeV1 into plain JSON dict seamlessly.</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flow-arrow-down"><i class="fas fa-arrow-down"></i></div>
+
+                            <!-- Layer 3: Security & Cryptography -->
+                            <div class="arch-layer-box security">
+                                <div class="arch-layer-title">
+                                    <i class="fas fa-shield-virus"></i>
+                                    Layer 3: Zero-Trust Security &amp; Cryptographic Engine
+                                </div>
+                                <div class="arch-nodes-grid">
+                                    <div class="arch-node">
+                                        <span class="arch-node-name">PayloadCipher (AES/ChaCha)</span>
+                                        <span class="arch-node-desc">Authenticated 256-bit AES-GCM and ChaCha20-Poly1305 encryption.</span>
+                                    </div>
+                                    <div class="arch-node">
+                                        <span class="arch-node-name">JWT Engine &amp; JTI Revocation</span>
+                                        <span class="arch-node-desc">User session &amp; Service M2M tokens verified against Redis blacklist.</span>
+                                    </div>
+                                    <div class="arch-node">
+                                        <span class="arch-node-name">LocalKeyManager (KMS)</span>
+                                        <span class="arch-node-desc">Envelope encryption: Data Encryption Keys (DEK) sealed under Master Keys.</span>
+                                    </div>
+                                    <div class="arch-node">
+                                        <span class="arch-node-name">Bcrypt &amp; TOTP 2FA</span>
+                                        <span class="arch-node-desc">Work-factored password hashing + time-based OTP for sensitive actions.</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flow-arrow-down"><i class="fas fa-arrow-down"></i></div>
+
+                            <!-- Layer 4: Ops, Resilience & Data -->
+                            <div class="arch-layer-box ops">
+                                <div class="arch-layer-title">
+                                    <i class="fas fa-database"></i>
+                                    Layer 4: Distributed Operations, Observability &amp; Resilience
+                                </div>
+                                <div class="arch-nodes-grid">
+                                    <div class="arch-node">
+                                        <span class="arch-node-name">OpenTelemetry OTLP</span>
+                                        <span class="arch-node-desc">Distributed trace propagation across Kafka, HTTP, and internal RPC boundaries.</span>
+                                    </div>
+                                    <div class="arch-node">
+                                        <span class="arch-node-name">CircuitBreaker &amp; Retry</span>
+                                        <span class="arch-node-desc">Fast-fail downstream outage protection with exponential backoff &amp; jitter.</span>
+                                    </div>
+                                    <div class="arch-node">
+                                        <span class="arch-node-name">Idempotency Engine</span>
+                                        <span class="arch-node-desc">Distributed cache locking preventing duplicate financial &amp; write requests.</span>
+                                    </div>
+                                    <div class="arch-node">
+                                        <span class="arch-node-name">PII Guard &amp; DLQ Sink</span>
+                                        <span class="arch-node-desc">Automated log redaction and dead-letter queue buffering for poisoned messages.</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Detailed Technical Modules -->
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2.5rem;">
+                        <h3 style="font-family: var(--font-h); font-size: 1.4rem; color: #ffffff;">Technical Subsystem Breakdown</h3>
+
+                        <div class="arch-node" style="padding: 1.5rem;">
+                            <h4 style="color: var(--accent); font-family: var(--font-h); font-size: 1.1rem; margin-bottom: 0.5rem;">
+                                A. Configuration &amp; Fail-Fast Environment (<code>config/settings.py</code>)
+                            </h4>
+                            <p style="color: #cbd5e1; font-size: 0.92rem; line-height: 1.6;">
+                                Powered by Pydantic Settings V2 with strict type validation. Every configuration key requires the <code>RANBVAL_*</code> prefix. If an engineer provides an AES key of 20 bytes instead of 32 bytes, the service <strong>refuses to boot</strong> during startup rather than failing catastrophically in production. Includes <code>reload_runtime_config()</code> for hot-clearing caches after secret rotation without container restarts.
+                            </p>
+                        </div>
+
+                        <div class="arch-node" style="padding: 1.5rem;">
+                            <h4 style="color: var(--accent); font-family: var(--font-h); font-size: 1.1rem; margin-bottom: 0.5rem;">
+                                B. Pure ASGI Payload Decryption (<code>middleware/payload_decrypt.py</code>)
+                            </h4>
+                            <p style="color: #cbd5e1; font-size: 0.92rem; line-height: 1.6;">
+                                Standard Starlette <code>BaseHTTPMiddleware</code> buffers request streams in ways that cause deadlocks or corrupt multipart uploads. Ranbval-Core implements a low-level, pure ASGI middleware that intercepts the <code>http.request</code> event stream, decrypts the ciphertext payload using the configured cipher, re-encodes the decrypted dict into the ASGI stream, and delivers pristine JSON directly to route parameters.
+                            </p>
+                        </div>
+
+                        <div class="arch-node" style="padding: 1.5rem;">
+                            <h4 style="color: var(--accent); font-family: var(--font-h); font-size: 1.1rem; margin-bottom: 0.5rem;">
+                                C. Schema Registry &amp; Contract Drift Defense (<code>schemas/</code> &amp; <code>scripts/</code>)
+                            </h4>
+                            <p style="color: #cbd5e1; font-size: 0.92rem; line-height: 1.6;">
+                                Microservice contracts are declared via versioned Pydantic schemas (e.g. <code>register_schema("chat.v1.Message", Model)</code>). The CLI tool <code>ranbval export-schemas</code> generates a committed JSON snapshot (<code>contracts/ranbval-core-v1.json</code>). In CI, <code>check_contract_compat.py</code> verifies that no existing field has been removed, renamed, or made incompatible, blocking pull requests before breaking clients.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. What's New: Core vs MVP -->
+                <section class="section-block" id="mvp-vs-core">
+                    <span class="section-tag">Section 05 / Quantitative Improvements</span>
+                    <h2 class="section-heading">
+                        <i class="fas fa-arrows-split-up-and-left"></i>
+                        What's New in Ranbval-Core vs MVP
+                    </h2>
+
+                    <p class="paragraph">
+                        The transformation from MVP to Ranbval-Core represents a monumental leap in architectural maturity, security posture, and developer velocity:
+                    </p>
+
+                    <div class="table-responsive">
+                        <table class="comp-table">
+                            <thead>
+                                <tr>
+                                    <th>Capability</th>
+                                    <th>MVP Implementation</th>
+                                    <th>Ranbval-Core Framework</th>
+                                    <th>Systemic Benefit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="comp-feature">Authentication &amp; Sessions</td>
+                                    <td><span class="comp-bad"><i class="fas fa-circle-xmark"></i> Loose JWTs, no revocation</span></td>
+                                    <td><span class="comp-good"><i class="fas fa-circle-check"></i> JTI tracking + Redis denylist</span></td>
+                                    <td>Instant worldwide token revoking on logout or breach.</td>
+                                </tr>
+                                <tr>
+                                    <td class="comp-feature">Payload Protection</td>
+                                    <td><span class="comp-bad"><i class="fas fa-circle-xmark"></i> Raw plaintext JSON endpoints</span></td>
+                                    <td><span class="comp-good"><i class="fas fa-circle-check"></i> AES-GCM &amp; ChaCha20 envelopes</span></td>
+                                    <td>Zero data leakage even through compromised proxies.</td>
+                                </tr>
+                                <tr>
+                                    <td class="comp-feature">Service Identity (M2M)</td>
+                                    <td><span class="comp-bad"><i class="fas fa-circle-xmark"></i> Reused user tokens for S2S</span></td>
+                                    <td><span class="comp-good"><i class="fas fa-circle-check"></i> Dedicated M2M tokens + mTLS</span></td>
+                                    <td>Strict principle of least privilege across services.</td>
+                                </tr>
+                                <tr>
+                                    <td class="comp-feature">Replay Defense</td>
+                                    <td><span class="comp-bad"><i class="fas fa-circle-xmark"></i> None (vulnerable to re-POST)</span></td>
+                                    <td><span class="comp-good"><i class="fas fa-circle-check"></i> Cryptographic Nonce + TS skew</span></td>
+                                    <td>Defeats replay attacks and duplicate message injections.</td>
+                                </tr>
+                                <tr>
+                                    <td class="comp-feature">API Contracts</td>
+                                    <td><span class="comp-bad"><i class="fas fa-circle-xmark"></i> Inconsistent dict return types</span></td>
+                                    <td><span class="comp-good"><i class="fas fa-circle-check"></i> BaseRequest &amp; BaseResponse</span></td>
+                                    <td>Predictable client SDK parsing and type guarantees.</td>
+                                </tr>
+                                <tr>
+                                    <td class="comp-feature">Distributed Tracing</td>
+                                    <td><span class="comp-bad"><i class="fas fa-circle-xmark"></i> Missing correlation headers</span></td>
+                                    <td><span class="comp-good"><i class="fas fa-circle-check"></i> OpenTelemetry + Correlation IDs</span></td>
+                                    <td>End-to-end request tracing across all microservice hops.</td>
+                                </tr>
+                                <tr>
+                                    <td class="comp-feature">Quality Assurance</td>
+                                    <td><span class="comp-bad"><i class="fas fa-circle-xmark"></i> Inconsistent manual checks</span></td>
+                                    <td><span class="comp-good"><i class="fas fa-circle-check"></i> 14+ automated pre-commit tools</span></td>
+                                    <td>Zero lint, security, or coverage regressions committed.</td>
+                                </tr>
+                                <tr>
+                                    <td class="comp-feature">Microservice Onboarding</td>
+                                    <td><span class="comp-bad"><i class="fas fa-circle-xmark"></i> 3+ days copying boilerplate</span></td>
+                                    <td><span class="comp-good"><i class="fas fa-circle-check"></i> 30 seconds via CLI scaffolding</span></td>
+                                    <td>10x faster service incubation and team scalability.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 6. Pre-Commit Hooks & Quality Matrix -->
+                <section class="section-block" id="precommit-quality">
+                    <span class="section-tag">Section 06 / Quality Engineering Matrix</span>
+                    <h2 class="section-heading">
+                        <i class="fas fa-shield-cat"></i>
+                        Pre-Commit Hooks &amp; Code Quality Enforcement
+                    </h2>
+
+                    <p class="paragraph">
+                        Ranbval-Core enforces automated Silicon Valley engineering standards directly at the developer workstation and in GitHub Actions CI. Every single commit must pass the rigorous multi-stage pipeline detailed below:
+                    </p>
+
+                    <!-- Category A: Core Git Hooks -->
+                    <div class="hooks-category">
+                        <div class="hooks-cat-title"><i class="fas fa-code-commit"></i> A. Core Pre-Commit Git Hygiene</div>
+                        <div class="hook-item">
+                            <span class="hook-id"><i class="fas fa-check"></i> trailing-whitespace</span>
+                            <span class="hook-purpose">Trims unwanted whitespace characters from line endings automatically.</span>
+                        </div>
+                        <div class="hook-item">
+                            <span class="hook-id"><i class="fas fa-check"></i> end-of-file-fixer</span>
+                            <span class="hook-purpose">Ensures consistent POSIX-compliant trailing newlines across all files.</span>
+                        </div>
+                        <div class="hook-item">
+                            <span class="hook-id"><i class="fas fa-check"></i> check-yaml / check-toml / check-json</span>
+                            <span class="hook-purpose">Validates syntactical correctness of configuration files and CI/CD pipelines.</span>
+                        </div>
+                        <div class="hook-item">
+                            <span class="hook-id"><i class="fas fa-check"></i> check-ast</span>
+                            <span class="hook-purpose">Parses Python syntax trees to catch unparseable code before commit.</span>
+                        </div>
+                        <div class="hook-item">
+                            <span class="hook-id"><i class="fas fa-check"></i> check-added-large-files (--maxkb=500)</span>
+                            <span class="hook-purpose">Prevents accidental check-in of binary blobs or datasets exceeding 500KB.</span>
+                        </div>
+                        <div class="hook-item">
+                            <span class="hook-id"><i class="fas fa-check"></i> check-merge-conflict</span>
+                            <span class="hook-purpose">Blocks commits containing unresolved git merge conflict markers.</span>
+                        </div>
+                        <div class="hook-item">
+                            <span class="hook-id"><i class="fas fa-check"></i> detect-private-key</span>
+                            <span class="hook-purpose">Scans every staged diff to prevent leaking SSH keys, RSA private keys, or certificates.</span>
+                        </div>
+                        <div class="hook-item">
+                            <span class="hook-id"><i class="fas fa-check"></i> debug-statements</span>
+                            <span class="hook-purpose">Blocks commits containing leftover breakpoint(), pdb, or debugging hooks.</span>
+                        </div>
+                    </div>
+
+                    <!-- Category B: Python Formatting & Linting -->
+                    <div class="hooks-category">
+                        <div class="hooks-cat-title"><i class="fas fa-wand-magic-sparkles"></i> B. Python Formatting, Modernization &amp; Linting</div>
+                        <div class="hook-item">
+                            <span class="hook-id"><i class="fas fa-check"></i> black (--line-length=79)</span>
+                            <span class="hook-purpose">Deterministic PEP8 code formatting with strict 79-character line bounds.</span>
+                        </div>
+                        <div class="hook-item">
+                            <span class="hook-id"><i class="fas fa-check"></i> isort (--profile=black)</span>
+                            <span class="hook-purpose">Alphabetical and categorical import sorting preventing merge churn.</span>
+                        </div>
+                        <div class="hook-item">
+                            <span class="hook-id"><i class="fas fa-check"></i> ruff (--fix)</span>
+                            <span class="hook-purpose">Lightning-fast Rust-based static linter fixing common code defects.</span>
+                        </div>
+                        <div class="hook-item">
+                            <span class="hook-id"><i class="fas fa-check"></i> flake8</span>
+                            <span class="hook-purpose">Style enforcement catching complexity and style rule transgressions.</span>
+                        </div>
+                        <div class="hook-item">
+                            <span class="hook-id"><i class="fas fa-check"></i> pyupgrade (--py312-plus)</span>
+                            <span class="hook-purpose">Automatically modernizes legacy syntax to Python 3.12+ idiomatic idioms.</span>
+                        </div>
+                        <div class="hook-item">
+                            <span class="hook-id"><i class="fas fa-check"></i> pylint (manual/CI stage)</span>
+                            <span class="hook-purpose">Comprehensive semantic static analysis against deep project dependencies.</span>
+                        </div>
+                    </div>
+
+                    <!-- Category C: Type Safety & Security -->
+                    <div class="hooks-category">
+                        <div class="hooks-cat-title"><i class="fas fa-user-shield"></i> C. Strict Static Typing, Security &amp; Test Coverage</div>
+                        <div class="hook-item">
+                            <span class="hook-id"><i class="fas fa-check"></i> mypy (strict mode)</span>
+                            <span class="hook-purpose">Enforces 100% type safety with type-stubs (types-passlib, types-redis, types-requests).</span>
+                        </div>
+                        <div class="hook-item">
+                            <span class="hook-id"><i class="fas fa-check"></i> bandit</span>
+                            <span class="hook-purpose">AST-based security vulnerability scanner detecting unsafe eval, crypto, or file calls.</span>
+                        </div>
+                        <div class="hook-item">
+                            <span class="hook-id"><i class="fas fa-check"></i> safety</span>
+                            <span class="hook-purpose">Dependency scanner checking PyPI dependencies against known CVE databases.</span>
+                        </div>
+                        <div class="hook-item">
+                            <span class="hook-id"><i class="fas fa-check"></i> pytest + pytest-cov (100% Line Coverage)</span>
+                            <span class="hook-purpose">Automated test runner failing builds if any line or branch lacks test coverage.</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 7. Silicon Valley 10/10 IDP Hardening -->
+                <section class="section-block" id="enterprise-hardening">
+                    <span class="section-tag">Section 07 / Internal Developer Platform (IDP)</span>
+                    <h2 class="section-heading">
+                        <i class="fas fa-building-columns"></i>
+                        Silicon Valley 10/10 Platform Hardening Checklist
+                    </h2>
+
+                    <p class="paragraph">
+                        To match the resilience and security posture of tech giants (Netflix, Stripe, Uber), Ranbval-Core implements the 14 advanced platform capabilities that differentiate enterprise software from standard CRUD APIs:
+                    </p>
+
+                    <div class="idp-grid">
+                        
+                        <!-- 1 -->
+                        <div class="idp-card">
+                            <div class="idp-header">
+                                <div class="idp-badge-num">01</div>
+                                <h4 class="idp-title">KMS Envelope Encryption</h4>
+                            </div>
+                            <p class="idp-desc">
+                                Implements <code>LocalKeyManager</code> pattern: sensitive records are encrypted using ephemeral Data Encryption Keys (DEK), which are sealed under a rotating Master Key.
+                            </p>
+                            <span class="idp-code-tag">ranbval_core.security.kms</span>
+                        </div>
+
+                        <!-- 2 -->
+                        <div class="idp-card">
+                            <div class="idp-header">
+                                <div class="idp-badge-num">02</div>
+                                <h4 class="idp-title">mTLS &amp; S2S Authentication</h4>
+                            </div>
+                            <p class="idp-desc">
+                                Asymmetric mutual TLS client factory for httpx (<code>create_mtls_async_client</code>) and scoped machine-to-machine JWT tokens separating human users from internal services.
+                            </p>
+                            <span class="idp-code-tag">ranbval_core.http.mtls</span>
+                        </div>
+
+                        <!-- 3 -->
+                        <div class="idp-card">
+                            <div class="idp-header">
+                                <div class="idp-badge-num">03</div>
+                                <h4 class="idp-title">Anti-Replay Protection</h4>
+                            </div>
+                            <p class="idp-desc">
+                                Cryptographic Nonce tracking paired with configurable timestamp sliding skew windows, guaranteeing identical request payloads cannot be intercepted and replayed.
+                            </p>
+                            <span class="idp-code-tag">ranbval_core.security.replay</span>
+                        </div>
+
+                        <!-- 4 -->
+                        <div class="idp-card">
+                            <div class="idp-header">
+                                <div class="idp-badge-num">04</div>
+                                <h4 class="idp-title">OpenTelemetry Tracing</h4>
+                            </div>
+                            <p class="idp-desc">
+                                Distributed context propagation wiring OTLP gRPC exporters. Correlates traces across Gateway &rarr; Auth &rarr; Chat &rarr; Secrets into a single visualization tree.
+                            </p>
+                            <span class="idp-code-tag">ranbval_core.observability</span>
+                        </div>
+
+                        <!-- 5 -->
+                        <div class="idp-card">
+                            <div class="idp-header">
+                                <div class="idp-badge-num">05</div>
+                                <h4 class="idp-title">Schema Registry &amp; Drift Checks</h4>
+                            </div>
+                            <p class="idp-desc">
+                                Centralized registration of Pydantic models with automated CI schema backward-compatibility checks, prohibiting accidental breaking modifications to API contracts.
+                            </p>
+                            <span class="idp-code-tag">ranbval_core.schemas</span>
+                        </div>
+
+                        <!-- 6 -->
+                        <div class="idp-card">
+                            <div class="idp-header">
+                                <div class="idp-badge-num">06</div>
+                                <h4 class="idp-title">Distributed Idempotency</h4>
+                            </div>
+                            <p class="idp-desc">
+                                Support for <code>Idempotency-Key</code> HTTP headers backed by Redis cache stores. Eliminates double-charges, duplicate messages, and duplicate database writes.
+                            </p>
+                            <span class="idp-code-tag">ranbval_core.http.idempotency</span>
+                        </div>
+
+                        <!-- 7 -->
+                        <div class="idp-card">
+                            <div class="idp-header">
+                                <div class="idp-badge-num">07</div>
+                                <h4 class="idp-title">Dynamic Feature Flags</h4>
+                            </div>
+                            <p class="idp-desc">
+                                Decoupled feature rollout engine (<code>FeatureFlags</code>) allowing instant toggling of beta services, experimental routes, and canary features without code deploys.
+                            </p>
+                            <span class="idp-code-tag">ranbval_core.features</span>
+                        </div>
+
+                        <!-- 8 -->
+                        <div class="idp-card">
+                            <div class="idp-header">
+                                <div class="idp-badge-num">08</div>
+                                <h4 class="idp-title">Multi-Tenancy Context</h4>
+                            </div>
+                            <p class="idp-desc">
+                                Request context injection of <code>X-Tenant-ID</code> ensuring database query scoping and resource segregation in multi-tenant B2B environments.
+                            </p>
+                            <span class="idp-code-tag">ranbval_core.tenancy</span>
+                        </div>
+
+                        <!-- 9 -->
+                        <div class="idp-card">
+                            <div class="idp-header">
+                                <div class="idp-badge-num">09</div>
+                                <h4 class="idp-title">PII Masking &amp; Data Privacy</h4>
+                            </div>
+                            <p class="idp-desc">
+                                Automatic log scrubbing utilities and <code>@pii_field</code> schema metadata tags ensuring emails, phone numbers, and keys are masked in application logs.
+                            </p>
+                            <span class="idp-code-tag">ranbval_core.privacy</span>
+                        </div>
+
+                        <!-- 10 -->
+                        <div class="idp-card">
+                            <div class="idp-header">
+                                <div class="idp-badge-num">10</div>
+                                <h4 class="idp-title">Multi-Tier TTL Caching</h4>
+                            </div>
+                            <p class="idp-desc">
+                                High-performance <code>@ttl_cache</code> decorator preventing database thundering herds on frequently queried read paths.
+                            </p>
+                            <span class="idp-code-tag">ranbval_core.cache</span>
+                        </div>
+
+                        <!-- 11 -->
+                        <div class="idp-card">
+                            <div class="idp-header">
+                                <div class="idp-badge-num">11</div>
+                                <h4 class="idp-title">Edge API Gateway Pattern</h4>
+                            </div>
+                            <p class="idp-desc">
+                                Factory (<code>create_gateway_app</code>) creating reverse proxy ingress routing prefix paths to upstream origin pods with unified rate limits and tracing.
+                            </p>
+                            <span class="idp-code-tag">ranbval_core.gateway</span>
+                        </div>
+
+                        <!-- 12 -->
+                        <div class="idp-card">
+                            <div class="idp-header">
+                                <div class="idp-badge-num">12</div>
+                                <h4 class="idp-title">Load Shedding &amp; Degradation</h4>
+                            </div>
+                            <p class="idp-desc">
+                                Active concurrency limiter (<code>LoadSheddingMiddleware</code>) that sheds non-critical load with HTTP 503 rather than crashing whole clusters during brownouts.
+                            </p>
+                            <span class="idp-code-tag">ranbval_core.middleware.load_shedding</span>
+                        </div>
+
+                        <!-- 13 -->
+                        <div class="idp-card">
+                            <div class="idp-header">
+                                <div class="idp-badge-num">13</div>
+                                <h4 class="idp-title">Async Resilience &amp; DLQ Sink</h4>
+                            </div>
+                            <p class="idp-desc">
+                                Circuit breakers, jittered exponential retry helpers, and Dead Letter Queue (<code>InMemoryDeadLetterQueue</code>) interfaces to capture unprocessable event streams safely.
+                            </p>
+                            <span class="idp-code-tag">ranbval_core.ops &amp; resilience</span>
+                        </div>
+
+                        <!-- 14 -->
+                        <div class="idp-card">
+                            <div class="idp-header">
+                                <div class="idp-badge-num">14</div>
+                                <h4 class="idp-title">Cost Tracking &amp; Chaos Injection</h4>
+                            </div>
+                            <p class="idp-desc">
+                                Built-in request compute cost counters and <code>RANBVAL_CHAOS_LATENCY_MS</code> hooks to test timeouts and verify fault tolerance before real outages strike.
+                            </p>
+                            <span class="idp-code-tag">ranbval_core.ops.chaos</span>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- 8. Code in Action & Schemas -->
+                <section class="section-block" id="code-in-action">
+                    <span class="section-tag">Section 08 / Implementation Details</span>
+                    <h2 class="section-heading">
+                        <i class="fas fa-terminal"></i>
+                        Code in Action: Eradicating Boilerplate
+                    </h2>
+
+                    <p class="paragraph">
+                        With Ranbval-Core, building an enterprise-compliant, encrypted, rate-limited, and observable microservice requires less than 10 lines of code:
+                    </p>
+
+                    <!-- Code Snippet 1 -->
+                    <div class="code-box">
+                        <div class="code-header">
+                            <div class="code-title">
+                                <span class="dot red"></span>
+                                <span class="dot yellow"></span>
+                                <span class="dot green"></span>
+                                <span>services/chat_service/main.py — Production Bootstrap</span>
+                            </div>
+                            <button class="btn-copy" onclick="navigator.clipboard.writeText(this.closest('.code-box').querySelector('code').innerText); this.innerText='Copied!'; setTimeout(()=>this.innerText='Copy', 2000);">Copy</button>
+                        </div>
+                        <pre><code><span class="c-kw">from</span> ranbval_core.web.factory <span class="c-kw">import</span> create_app
+<span class="c-kw">from</span> ranbval_core.schemas <span class="c-kw">import</span> BaseResponse
+
+<span class="c-cmt"># Instantiates FastAPI with ASGI decryption, correlation tracing, rate limits, and error sanitization</span>
+app = create_app(
+    title=<span class="c-str">"ranbval-conversation-service"</span>,
+    encrypted_middleware=<span class="c-kw">True</span>,      <span class="c-cmt"># Transparently decrypts BaseRequest.data</span>
+    rate_limit=<span class="c-kw">True</span>                  <span class="c-cmt"># Enforces SlowAPI limits by Tenant/User/IP</span>
+)
+
+<span class="c-kw">@app</span>.<span class="c-fn">post</span>(<span class="c-str">"/api/v1/conversations/send"</span>, response_model=BaseResponse)
+<span class="c-kw">async def</span> <span class="c-fn">send_message</span>(body: <span class="c-cls">dict</span>):
+    <span class="c-cmt"># 'body' is already decrypted into a clean Python dictionary by the ASGI middleware pipeline</span>
+    message_content = body.get(<span class="c-str">"message"</span>)
+    <span class="c-kw">return</span> BaseResponse(status=<span class="c-str">"success"</span>, data={<span class="c-str">"delivered"</span>: <span class="c-kw">True</span>})
+</code></pre>
+                    </div>
+
+                    <p class="paragraph">
+                        On the network wire, every payload is protected inside an <code>EnvelopeV1</code> schema, preventing unauthorized eyes, proxies, or packet sniffers from deciphering contents:
+                    </p>
+
+                    <!-- Code Snippet 2 -->
+                    <div class="code-box">
+                        <div class="code-header">
+                            <div class="code-title">
+                                <span class="dot red"></span>
+                                <span class="dot yellow"></span>
+                                <span class="dot green"></span>
+                                <span>Network Wire Format — EnvelopeV1 (Cryptographically Sealed)</span>
+                            </div>
+                            <button class="btn-copy" onclick="navigator.clipboard.writeText(this.closest('.code-box').querySelector('code').innerText); this.innerText='Copied!'; setTimeout(()=>this.innerText='Copy', 2000);">Copy</button>
+                        </div>
+                        <pre><code>{
+  <span class="c-str">"nonce"</span>: <span class="c-str">"f47ac10b-58cc-4372-a567-0e02b2c3d479"</span>,
+  <span class="c-str">"ts"</span>: <span class="c-num">1710002845</span>,
+  <span class="c-str">"tenant_id"</span>: <span class="c-str">"enterprise-tenant-alpha"</span>,
+  <span class="c-str">"data"</span>: {
+    <span class="c-str">"v"</span>: <span class="c-num">1</span>,
+    <span class="c-str">"alg"</span>: <span class="c-str">"aes-gcm-256"</span>,
+    <span class="c-str">"payload"</span>: <span class="c-str">"7B8F9A1...AQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyA="</span>
+  }
+}
+</code></pre>
+                    </div>
+                </section>
+
+                <!-- 9. Package Layout -->
+                <section class="section-block" id="package-layout">
+                    <span class="section-tag">Section 09 / Repository Layout</span>
+                    <h2 class="section-heading">
+                        <i class="fas fa-folder-tree"></i>
+                        Ranbval-Core Package Architecture &amp; Modular Structure
+                    </h2>
+
+                    <p class="paragraph">
+                        The repository adheres to strict separation of concerns, ensuring each package responsibility is cleanly isolated:
+                    </p>
+
+                    <div class="tree-box">
+<span class="tree-dir">ranbval-core/</span>
+├── <span class="tree-dir">src/ranbval_core/</span>
+│   ├── <span class="tree-dir">config/</span>             <span class="tree-note"># Pydantic Settings, RANBVAL_* typed environment loader & runtime reload</span>
+│   ├── <span class="tree-dir">security/</span>           <span class="tree-note"># JWT jti, AES/ChaCha PayloadCipher, LocalKeyManager (KMS), ReplayGuard, Bcrypt</span>
+│   ├── <span class="tree-dir">middleware/</span>         <span class="tree-note"># Pure ASGI decryptor, replay nonce verifier, correlation ID, load shedding</span>
+│   ├── <span class="tree-dir">web/</span>                <span class="tree-note"># create_app() microservice factory with pre-configured defaults</span>
+│   ├── <span class="tree-dir">gateway/</span>            <span class="tree-note"># create_gateway_app() reverse proxy routing prefixes to upstream pods</span>
+│   ├── <span class="tree-dir">http/</span>               <span class="tree-note"># Idempotency cache store & httpx mTLS client factory</span>
+│   ├── <span class="tree-dir">schemas/</span>            <span class="tree-note"># BaseRequest, BaseResponse, EnvelopeV1 & Schema Registry</span>
+│   ├── <span class="tree-dir">observability/</span>      <span class="tree-note"># Structured JSON logging, OpenTelemetry tracing setup & cost counters</span>
+│   ├── <span class="tree-dir">resilience/</span>         <span class="tree-note"># CircuitBreaker & async bounded retry with exponential jitter</span>
+│   ├── <span class="tree-dir">tenancy/</span>            <span class="tree-note"># X-Tenant-ID context manager & isolation helpers</span>
+│   ├── <span class="tree-dir">features/</span>           <span class="tree-note"># Dynamic string-based runtime feature toggles</span>
+│   ├── <span class="tree-dir">privacy/</span>            <span class="tree-note"># PII field metadata & email/phone masking for logs</span>
+│   ├── <span class="tree-dir">cache/</span>              <span class="tree-note"># In-memory & Redis @ttl_cache decorators</span>
+│   ├── <span class="tree-dir">ops/</span>                <span class="tree-note"># Dead Letter Queue (DLQ), chaos latency injector, abuse recorder</span>
+│   └── <span class="tree-dir">cli/</span>                <span class="tree-note"># 'ranbval create' service bootstrapper & schema exporter</span>
+├── <span class="tree-dir">contracts/</span>              <span class="tree-note"># Committed JSON schema snapshot (ranbval-core-v1.json)</span>
+├── <span class="tree-dir">scripts/</span>                <span class="tree-note"># check_contract_compat.py, export_schemas.py, link-shared-pre-commit.sh</span>
+├── <span class="tree-dir">tests/</span>                  <span class="tree-note"># 100% line coverage test suite (unit, integration, resilience, crypto)</span>
+└── <span class="tree-file">pyproject.toml</span>          <span class="tree-note"># Hatch build configuration, lint rules, and dependency specs</span>
+                    </div>
+                </section>
+
+                <!-- 10. Business Impact, Vision & Notion Docs -->
+                <section class="section-block" id="impact-vision">
+                    <span class="section-tag">Section 10 / Impact &amp; Roadmap</span>
+                    <h2 class="section-heading">
+                        <i class="fas fa-chart-line"></i>
+                        Business Impact, Future Vision &amp; Architecture References
+                    </h2>
+
+                    <p class="paragraph">
+                        Engineering Ranbval-Core transformed the engineering culture and operational reliability across the Ranbval organization:
+                    </p>
+
+                    <div class="pillars-grid" style="margin-bottom: 2rem;">
+                        <div class="pillar-card">
+                            <h4 style="color: var(--accent); font-family: var(--font-h); font-size: 1.1rem; margin-bottom: 0.5rem;">Massive Scalability</h4>
+                            <p class="pillar-text">Standardized non-blocking async ASGI middleware easily supports millions of active WebSocket and HTTP sessions.</p>
+                        </div>
+                        <div class="pillar-card">
+                            <h4 style="color: var(--accent); font-family: var(--font-h); font-size: 1.1rem; margin-bottom: 0.5rem;">Zero Security Regressions</h4>
+                            <p class="pillar-text">No service can deploy without passing security AST analysis (Bandit) and dependency vulnerability checks.</p>
+                        </div>
+                        <div class="pillar-card">
+                            <h4 style="color: var(--accent); font-family: var(--font-h); font-size: 1.1rem; margin-bottom: 0.5rem;">Frictionless Growth</h4>
+                            <p class="pillar-text">New developers onboard in 30 minutes. Launching a new microservice requires one CLI command without copy-pasting code.</p>
+                        </div>
+                    </div>
+
+                    <h3 style="font-family: var(--font-h); font-size: 1.3rem; color: #ffffff; margin-bottom: 1rem;">
+                        Vision Moving Forward
+                    </h3>
+                    <p class="paragraph">
+                        Ranbval-Core forms the foundation for the next chapter of our platform evolution:
+                    </p>
+                    <ul class="pillar-bullets" style="margin-bottom: 2.5rem; gap: 0.85rem;">
+                        <li><i class="fas fa-arrow-right"></i> <span><strong>Encrypted Media Streaming:</strong> Extending envelope encryption to chunked binary video/audio streams with zero-knowledge keys.</span></li>
+                        <li><i class="fas fa-arrow-right"></i> <span><strong>Autonomous AI Agent Framework:</strong> Providing sandboxed, authenticated execution wrappers for LLM agents interacting with Ranbval APIs.</span></li>
+                        <li><i class="fas fa-arrow-right"></i> <span><strong>Multi-Region Active-Active Mesh:</strong> Seamless Redis replication and distributed key rotation across worldwide geographic regions.</span></li>
+                    </ul>
+
+                    <!-- Architecture References Mentioned in Requirements -->
+                    <h3 style="font-family: var(--font-h); font-size: 1.3rem; color: #ffffff; margin-bottom: 1rem;">
+                        Related Architecture Documentation
+                    </h3>
+                    <div class="ref-box">
+                        <div class="ref-item">
+                            <div class="ref-info">
+                                <i class="fas fa-book"></i>
+                                <div>
+                                    <div class="ref-title">Ranbval Authentication System Architecture</div>
+                                    <span style="font-size: 0.8rem; color: var(--text-muted);">Deep dive into distributed JTI revocation, OAuth2, and session lifecycle.</span>
+                                </div>
+                            </div>
+                            <span class="ref-tag">Architecture Doc</span>
+                        </div>
+                        <div class="ref-item">
+                            <div class="ref-info">
+                                <i class="fas fa-code"></i>
+                                <div>
+                                    <div class="ref-title">Ranbval Project: Progress, Code in Action</div>
+                                    <span style="font-size: 0.8rem; color: var(--text-muted);">Benchmarking reports, load testing graphs, and real-world deployment telemetry.</span>
+                                </div>
+                            </div>
+                            <span class="ref-tag">Engineering Telemetry</span>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Case Study Footer & CTA -->
+    <footer class="case-footer">
+        <div class="container">
+            <div class="footer-cta-card">
+                <h3 class="footer-cta-title">Looking for High-Scale Distributed Systems Architecture?</h3>
+                <p class="footer-cta-desc">
+                    Engineered by Ahsan Tariq. Designed to handle enterprise security, zero-trust cryptographic boundaries, and hyperscale developer velocity.
+                </p>
+                <div class="footer-actions">
+                    <a href="../../index.html#contact" class="btn-portfolio" style="padding: 0.75rem 1.8rem; font-size: 0.95rem;">
+                        <i class="fas fa-envelope"></i> Discuss Architecture &amp; Opportunities
+                    </a>
+                    <a href="../../index.html" class="btn-back" style="padding: 0.75rem 1.8rem; font-size: 0.95rem;">
+                        <i class="fas fa-house"></i> View Full Portfolio
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-credits">
+                <span>&copy; 2026 Ahsan Tariq. All Rights Reserved. Ranbval-Core Platform Architecture.</span>
+                <span>Lead Systems Architect &amp; Software Engineer</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Scripts -->
+    <script>
+        // Reading Progress Indicator
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('read-progress').style.width = scrolled + '%';
+
+            // Active TOC link highlighter
+            const sections = document.querySelectorAll('.section-block');
+            const tocLinks = document.querySelectorAll('.toc-link');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 120;
+                if (winScroll >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            tocLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

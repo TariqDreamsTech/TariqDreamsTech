@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Engineering &amp; Architecture Case Studies — Ahsan Tariq</title>
+    <meta name="description" content="Deep dive case studies into Ranbval's autonomous AI social super-system and the Ranbval-Core microservices platform architecture by Ahsan Tariq.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+
+    <style>
+        :root {
+            --bg: #030303;
+            --bg-card: #0b0c10;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-accent: rgba(255, 186, 73, 0.4);
+            --text: #f0f0f5;
+            --text-muted: #9aa0a6;
+            --accent: #ffba49;
+            --accent-2: #ff6b6b;
+            --gradient: linear-gradient(135deg, #ffba49 0%, #ff6b6b 100%);
+            --font-h: 'Outfit', sans-serif;
+            --font-b: 'Space Grotesk', sans-serif;
+            --radius: 16px;
+            --radius-sm: 8px;
+            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.6);
+            --shadow-glow: 0 0 50px rgba(255, 186, 73, 0.12);
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-b);
+            line-height: 1.6;
+            padding: 3rem 1.5rem;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .header-box {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.35rem 0.9rem;
+            border-radius: 50px;
+            background: rgba(255, 186, 73, 0.1);
+            border: 1px solid rgba(255, 186, 73, 0.3);
+            color: var(--accent);
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 1.25rem;
+        }
+
+        h1 {
+            font-family: var(--font-h);
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1.15rem;
+            max-width: 720px;
+            margin: 0 auto 2rem;
+        }
+
+        .btn-back-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.4rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.25s ease;
+        }
+
+        .btn-back-home:hover {
+            background: rgba(255, 186, 73, 0.15);
+            border-color: var(--border-accent);
+            color: var(--accent);
+            transform: translateX(-3px);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2.25rem;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 4px; height: 100%;
+            background: var(--gradient);
+            opacity: 0.8;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--border-accent);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .card-tag {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-title {
+            font-family: var(--font-h);
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .card-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.65;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .pill {
+            font-size: 0.75rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 0.25rem 0.6rem;
+            color: #d1d5db;
+        }
+
+        .btn-read {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--gradient);
+            color: #000;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            transition: all 0.25s ease;
+        }
+
+        .btn-read:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 186, 73, 0.4);
+        }
+
+        @media (max-width: 600px) {
+            .grid { grid-template-columns: 1fr; }
+            h1 { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-box">
+            <div class="badge"><i class="fas fa-microchip"></i> Architectural Index</div>
+            <h1>Engineering Case Studies</h1>
+            <p class="subtitle">
+                Comprehensive technical and product breakdowns of production platforms, autonomous AI agencies, cryptographic backbones, and distributed systems engineered by Ahsan Tariq.
+            </p>
+            <a href="../index.html" class="btn-back-home">
+                <i class="fas fa-arrow-left"></i> Return to Main Portfolio
+            </a>
+        </div>
+
+        <div class="grid">
+            <!-- Case Study 1: Ranbval Social Super-System -->
+            <div class="card">
+                <div class="card-tag">
+                    <i class="fas fa-brain"></i> Flagship Super-App Architecture
+                </div>
+                <h2 class="card-title">Ranbval: The Next-Gen AI Social Super-Platform</h2>
+                <p class="card-desc">
+                    An all-in-one ecosystem uniting Google-caliber scale, Microsoft-level productivity, and next-gen AI agency—where human relationships, multi-persona AI proxies, autonomous social gaming, decentralized milestone freelancing, life memories, and zero-trust cryptographic vaults live under a single unified platform.
+                </p>
+                <div class="pills">
+                    <span class="pill">30-Day Connection Engine</span>
+                    <span class="pill">AI Voice &amp; Chat Proxy</span>
+                    <span class="pill">Group Game Master</span>
+                    <span class="pill">In-Chat Milestone Jobs</span>
+                    <span class="pill">Emergency Kill-Switch</span>
+                    <span class="pill">Life Narrative Engine</span>
+                </div>
+                <a href="ranbval-social/index.html" class="btn-read">
+                    Read Super-App Case Study <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <!-- Case Study 2: Ranbval-Core Architecture -->
+            <div class="card">
+                <div class="card-tag">
+                    <i class="fas fa-shield-halved"></i> Internal Developer Platform (IDP)
+                </div>
+                <h2 class="card-title">Ranbval-Core: Enterprise Microservices Security Backbone</h2>
+                <p class="card-desc">
+                    How we solved microservice sprawl, fragmented security logic, and contract regressions across the Ranbval ecosystem. Engineered as a centralized Python runtime featuring pure ASGI payload auto-decryption (AES-GCM / ChaCha20), distributed JWT revocation via Redis, anti-replay guards, OpenTelemetry tracing, and 100% CI coverage enforcement across 14+ automated pre-commit tools.
+                </p>
+                <div class="pills">
+                    <span class="pill">100% Line Coverage</span>
+                    <span class="pill">AES-256-GCM / ChaCha20</span>
+                    <span class="pill">Redis JTI Revocation</span>
+                    <span class="pill">OpenTelemetry Tracing</span>
+                    <span class="pill">14+ Pre-Commit Gates</span>
+                    <span class="pill">KMS Envelope Encryption</span>
+                </div>
+                <a href="ranbval-core/index.html" class="btn-read">
+                    Read Platform Core Case Study <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
