@@ -110,3 +110,7 @@ Research Projects/**
 !Research Projects/FUZZY ROUGH NEAREST NEIGHBOURS APPROACHES FOR EMOTION DETECTION IN TWEETS/plots/Joy/combined_train/joy_combined_train_wordcloud.png
 !Research Projects/FUZZY ROUGH NEAREST NEIGHBOURS APPROACHES FOR EMOTION DETECTION IN TWEETS/plots/Sadness/combined_train/sadness_combined_train_wordcloud.png
 !Research Projects/FUZZY ROUGH NEAREST NEIGHBOURS APPROACHES FOR EMOTION DETECTION IN TWEETS/plots/statistic/dataset_statistics_plot.png
+
+
+# Embedded local repositories
+ranbval-core/

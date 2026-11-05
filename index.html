@@ -27,6 +27,7 @@
 <li><a href="#about">About</a></li>
 <li><a href="#clients">Clients</a></li>
 <li><a href="#experience">Experience</a></li>
+<li><a href="#case-studies">Case Studies</a></li>
 <li><a href="#products">Products</a></li>
 <li><a href="#fields">Fields</a></li>
 <li><a href="#skills">Skills</a></li>
@@ -46,6 +47,7 @@
 <a href="#about">About</a>
 <a href="#clients">Clients</a>
 <a href="#experience">Experience</a>
+<a href="#case-studies">Case Studies</a>
 <a href="#products">Products</a>
 <a href="#fields">Fields</a>
 <a href="#skills">Skills</a>
@@ -862,6 +864,76 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 </div>
 </div>
 </section>
+<!-- Case Studies -->
+<section class="case-studies-section section" id="case-studies">
+<div class="container">
+<div class="section-header reveal">
+<span class="section-tag"><i class="fas fa-microchip"></i> Distributed Systems &amp; Architecture</span>
+<h2 class="section-title">Case Studies</h2>
+<div class="line"></div>
+<p class="section-subtitle">
+Deep architectural deep-dives into production platforms, cryptographic backbones, zero-trust microservice runtimes, and engineering frameworks engineered for hyperscale reliability.
+</p>
+</div>
+<div class="case-studies-grid">
+<!-- Featured Flagship: Ranbval-Core -->
+<div class="case-study-feature-card reveal">
+<div class="case-card-header">
+<div class="case-badge-pill">
+<i class="fas fa-shield-halved"></i>
+<span>Flagship Architecture · Silicon Valley Grade</span>
+</div>
+<span class="case-read-time"><i class="far fa-clock"></i> 8 Min Deep Dive</span>
+</div>
+<div class="case-card-content">
+<h3 class="case-title">
+<a href="case-studies/ranbval-core/index.html">Ranbval-Core: Enterprise Microservices Security Backbone &amp; Platform Framework</a>
+</h3>
+<p class="case-desc">
+How we solved microservice sprawl, fragmented security logic, and contract regressions across the Ranbval ecosystem. Engineered as a centralized Python runtime (<code>ranbval-core</code>) featuring pure ASGI payload auto-decryption (AES-GCM-256 / ChaCha20), distributed JWT revocation via Redis, anti-replay guards, OpenTelemetry tracing, and 100% CI coverage enforcement across 14+ automated pre-commit tools.
+</p>
+<!-- Key architectural metrics -->
+<div class="case-stats-row">
+<div class="case-stat-item">
+<span class="case-stat-val">100%</span>
+<span class="case-stat-lbl">CI Test Coverage</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">0 Plaintext</span>
+<span class="case-stat-lbl">Zero-Trust Envelope</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">10x</span>
+<span class="case-stat-lbl">Faster Scaffolding</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">14+</span>
+<span class="case-stat-lbl">Pre-Commit Gates</span>
+</div>
+</div>
+<!-- Tech stack tags -->
+<div class="case-tags">
+<span class="case-tag"><i class="fab fa-python"></i> Python 3.12+</span>
+<span class="case-tag"><i class="fas fa-bolt"></i> FastAPI / ASGI</span>
+<span class="case-tag"><i class="fas fa-lock"></i> AES-256-GCM</span>
+<span class="case-tag"><i class="fas fa-shield-alt"></i> ChaCha20-Poly1305</span>
+<span class="case-tag"><i class="fas fa-server"></i> Redis Revocation</span>
+<span class="case-tag"><i class="fas fa-diagram-project"></i> OpenTelemetry</span>
+<span class="case-tag"><i class="fas fa-code-commit"></i> Schema Contracts</span>
+</div>
+<div class="case-actions">
+<a class="btn btn-primary" href="case-studies/ranbval-core/index.html">
+<i class="fas fa-book-open"></i> Read Architecture Case Study
+</a>
+<a class="btn btn-secondary" href="case-studies/ranbval-core/index.html#architecture-deep-dive">
+<i class="fas fa-sitemap"></i> View System Diagram
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
 <!-- My Products (Ranbval Ecosystem) -->
 <section class="products-section section" id="products">
 <div class="container">
@@ -887,10 +959,13 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
                             "One Platform, Infinite Capabilities." A unified privacy-first ecosystem bridging encrypted secret management, proactive healthcare companions, multi-agent social intelligence, autonomous literature discovery, conversational memory, and verifiable dynamic resumes.
                         </p>
 </div>
-<div class="root-banner-right">
+<div class="root-banner-right" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
 <a class="btn btn-primary" href="https://ranbval.com" target="_blank">
 <i class="fas fa-external-link-alt"></i> Explore ranbval.com
-                        </a>
+</a>
+<a class="btn btn-secondary" href="case-studies/ranbval-core/index.html">
+<i class="fas fa-shield-halved"></i> Architecture Case Study
+</a>
 </div>
 </div>
 <!-- Products Showcase Grid (Highlighting All Ranbval Products, Excluding n8n) -->
