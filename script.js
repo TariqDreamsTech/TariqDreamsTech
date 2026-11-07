@@ -84,14 +84,62 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.add('pdf-mode');
     }
 
-    // ─── Typing Animation ─────────────────────────────
-    const roles = [
+    // ─── View Mode Toggle (Technical vs Plain English) ───
+    const techRoles = [
         'AI Product Builder',
         'Founder @ Ranbval',
         'Senior Python Engineer',
         'N8N Automation Architect',
         'Encrypted Infra Engineer',
     ];
+    const ntRoles = [
+        'AI Problem Solver',
+        'Business Automation Expert',
+        'Company Founder & Product Builder',
+        'Zero-Touch System Architect',
+    ];
+
+    let currentMode = 'tech';
+    try {
+        currentMode = localStorage.getItem('portfolio_view_mode') || 'tech';
+    } catch (e) {}
+
+    let currentRoles = currentMode === 'nt' ? ntRoles : techRoles;
+
+    function setViewMode(mode) {
+        currentMode = mode;
+        const isNT = mode === 'nt';
+        document.body.classList.toggle('nt-mode', isNT);
+        try {
+            localStorage.setItem('portfolio_view_mode', mode);
+        } catch (e) {}
+
+        currentRoles = isNT ? ntRoles : techRoles;
+
+        document.querySelectorAll('.vt-btn').forEach(btn => {
+            const btnMode = btn.getAttribute('data-mode');
+            if (btnMode === mode) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    }
+
+    document.querySelectorAll('.vt-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const mode = btn.getAttribute('data-mode');
+            if (mode && mode !== currentMode) {
+                setViewMode(mode);
+            }
+        });
+    });
+
+    // Apply saved mode on start
+    setViewMode(currentMode);
+
+    // ─── Typing Animation ─────────────────────────────
     const roleEl = document.querySelector('.hero-role');
     if (roleEl) {
         if (isPdfMode) {
@@ -102,7 +150,8 @@ document.addEventListener('DOMContentLoaded', () => {
             let roleIdx = 0, charIdx = 0, deleting = false;
 
             function type() {
-                const current = roles[roleIdx];
+                const list = currentRoles || techRoles;
+                const current = list[roleIdx % list.length];
                 typedText.textContent = deleting
                     ? current.slice(0, charIdx--)
                     : current.slice(0, charIdx++);
@@ -112,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     delay = 1800; deleting = true;
                 } else if (deleting && charIdx === 0) {
                     deleting = false;
-                    roleIdx = (roleIdx + 1) % roles.length;
+                    roleIdx = (roleIdx + 1) % list.length;
                     delay = 400;
                 }
                 setTimeout(type, delay);

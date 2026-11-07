@@ -3500,3 +3500,171 @@ img { max-width: 100%; display: block; }
         grid-template-columns: 1fr !important;
     }
 }
+
+/* ============================================================
+   TECHNICAL / PLAIN ENGLISH TOGGLE
+   ============================================================ */
+
+/* Toggle pill container */
+.view-toggle-pill {
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 50px;
+  padding: 3px;
+  gap: 2px;
+  margin-right: 1rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  flex-shrink: 0;
+}
+
+.vt-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 50px;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.5);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.vt-btn i { font-size: 0.72rem; }
+
+.vt-btn:hover {
+  color: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.08);
+}
+
+.vt-btn.active {
+  background: var(--accent, #ffba49);
+  color: #000;
+  font-weight: 600;
+  box-shadow: 0 2px 12px rgba(255,186,73,0.35);
+}
+
+/* When NT mode is active, flip the active button */
+body.nt-mode .vt-btn[data-mode="nt"] {
+  background: #38bdf8;
+  color: #000;
+  font-weight: 600;
+  box-shadow: 0 2px 12px rgba(56,189,248,0.35);
+}
+body.nt-mode .vt-btn[data-mode="tech"] {
+  background: transparent;
+  color: rgba(255,255,255,0.5);
+  box-shadow: none;
+  font-weight: 500;
+}
+
+/* Mobile: smaller pill */
+@media (max-width: 768px) {
+  .view-toggle-pill {
+    margin-right: 0.5rem;
+    padding: 2px;
+  }
+  .vt-btn {
+    padding: 5px 9px;
+    font-size: 0.7rem;
+    gap: 4px;
+  }
+  .vt-btn span { display: none; }
+}
+
+/* ============================================================
+   SHOW / HIDE LOGIC
+   Technical content: shown by default, hidden in nt-mode
+   NT content: hidden by default, shown in nt-mode
+   ============================================================ */
+
+/* Default: tech content visible, nt-only hidden */
+.nt-only { display: none !important; }
+.tech-only { display: initial; }
+
+/* When body has nt-mode class, flip everything */
+body.nt-mode .nt-only {
+  display: initial !important;
+}
+body.nt-mode .tech-only {
+  display: none !important;
+}
+
+/* Block-level NT elements */
+body.nt-mode p.nt-only,
+body.nt-mode h2.nt-only,
+body.nt-mode h3.nt-only {
+  display: block !important;
+}
+
+body.nt-mode span.nt-only {
+  display: inline-block !important;
+}
+
+body.nt-mode ul.exp-bullets.nt-only {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.6rem;
+}
+
+body.nt-mode .achievement-content.nt-only {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+body.nt-mode .skills-wrapper.nt-only {
+  display: grid !important;
+}
+
+body.nt-mode .about-highlights.nt-only {
+  display: grid !important;
+}
+
+/* NT mode: accent color shifts to crisp sky blue to visually clarify mode */
+body.nt-mode .section-title { 
+  background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* NT mode banner */
+.nt-mode-banner {
+  display: none;
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  color: #38bdf8;
+  padding: 0.6rem 1.4rem;
+  border-radius: 50px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  z-index: 9999;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px rgba(56,189,248,0.25);
+  animation: fadeInUp 0.4s ease;
+}
+
+body.nt-mode .nt-mode-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
