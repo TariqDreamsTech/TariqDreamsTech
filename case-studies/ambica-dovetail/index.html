@@ -797,15 +797,15 @@
                 </div>
                 <div class="meta-item">
                     <span class="meta-label">Domain</span>
-                    <span class="meta-val accent">Healthcare Logistics &amp; ERP Infrastructure</span>
+                    <span class="meta-val accent">Healthcare Logistics &amp; Hybrid ERP Infrastructure</span>
                 </div>
                 <div class="meta-item">
                     <span class="meta-label">Core Architecture</span>
                     <span class="meta-val">FastAPI · React (TS) · PostgreSQL 18 · Redis · Cloud Run</span>
                 </div>
                 <div class="meta-item">
-                    <span class="meta-label">Integrations</span>
-                    <span class="meta-val">NetSuite SuiteQL · FleetGPS · PeopleHRIS · DocuSign</span>
+                    <span class="meta-label">Hybrid &amp; Enterprise Storage</span>
+                    <span class="meta-val">Physical Server Edge Bridge · Azure · SharePoint · NetSuite</span>
                 </div>
             </div>
 
@@ -848,9 +848,9 @@
                     <li><a href="#solution" class="toc-link">3. The Dovetail Solution Architecture</a></li>
                     <li><a href="#telematics" class="toc-link">4. Multi-Modal Fleet &amp; Flight Tracking</a></li>
                     <li><a href="#netsuite" class="toc-link">5. NetSuite ERP SuiteQL Pipeline</a></li>
-                    <li><a href="#docusign" class="toc-link">6. Paperless Flow &amp; Digital Signatures</a></li>
+                    <li><a href="#docusign" class="toc-link">6. Paperless Flow, Micro-Approvals &amp; Meetings</a></li>
                     <li><a href="#rag-ai" class="toc-link">7. Role-Based Multi-Tenant RAG</a></li>
-                    <li><a href="#security" class="toc-link">8. 3-Layer OTP Cryptographic Vault</a></li>
+                    <li><a href="#security" class="toc-link">8. 3-Layer OTP, Azure SharePoint &amp; Server Bridge</a></li>
                     <li><a href="#founder" class="toc-link">9. Founder Real-Time Glass Cockpit</a></li>
                     <li><a href="#infrastructure" class="toc-link">10. Cloud Run, Docker &amp; CI/CD</a></li>
                     <li><a href="#outcomes" class="toc-link">11. Quantified Business Impact</a></li>
@@ -929,6 +929,21 @@
                                     <td><strong>Communication &amp; Tasks</strong></td>
                                     <td><span class="status-badge status-before"><i class="fas fa-times"></i> Siloed WhatsApp / Gmail</span><br/>Urgent supplier updates and order changes buried in scattered WhatsApp chats and personal mailboxes.</td>
                                     <td><span class="status-badge status-after"><i class="fas fa-check"></i> AI EOI Connector</span><br/>Claude LLM parses whitelisted WhatsApp webhooks &amp; emails into 12+ risk-tiered actionable tasks.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Micro-Approvals &amp; Requisitions</strong></td>
+                                    <td><span class="status-badge status-before"><i class="fas fa-times"></i> 3–5 Days Stalled</span><br/>Every tiny internal request (bike fuel allowances, packaging tape, technician overtime, emergency medicine restocking) required physical paper forms and chasing supervisors for wet-ink initials.</td>
+                                    <td><span class="status-badge status-after"><i class="fas fa-check"></i> Instant Micro-Approvals (&lt;60s)</span><br/>1-click automated mobile/email micro-approvals with dynamic threshold matrices, automated escalation timeouts, and zero paper chits.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Physical Server &amp; Cloud Storage</strong></td>
+                                    <td><span class="status-badge status-before"><i class="fas fa-times"></i> Isolated Local Disks</span><br/>Historical files, lab test sheets, and batch certificates trapped on on-premise physical servers inside warehouse basements, completely unreachable for remote teams.</td>
+                                    <td><span class="status-badge status-after"><i class="fas fa-check"></i> Hybrid Edge Bridge + Azure</span><br/>Direct encrypted reverse-tunnel gateway to on-premise physical servers + automated cloud sync directly to Microsoft SharePoint &amp; Azure Blob Storage.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Meetings &amp; Coordination</strong></td>
+                                    <td><span class="status-badge status-before"><i class="fas fa-times"></i> In-Person Travel Required</span><br/>Department heads had to physically travel between warehouses for weekly syncs; meeting agendas and notes scattered across paper notebooks with zero task accountability.</td>
+                                    <td><span class="status-badge status-after"><i class="fas fa-check"></i> Integrated Virtual Meetings</span><br/>Integrated Microsoft Teams &amp; Outlook calendar scheduling via MS Graph API with automatic agenda distribution and post-meeting AI action-item assignment.</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Executive Visibility</strong></td>
@@ -1177,6 +1192,78 @@
                             The transition to automated DocuSign webhooks reduced document completion time from an average of <strong>4.2 business days down to 14 minutes</strong>. Dynamic signed PDFs and cryptographic certificates of completion are archived automatically to encrypted Cloud Storage buckets.
                         </div>
                     </div>
+
+                    <!-- Instant Micro-Approvals & Rapid Requisitions -->
+                    <div style="margin-top: 3rem;">
+                        <h3 style="font-family: var(--font-h); font-size: 1.45rem; font-weight: 700; color: #ffffff; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.6rem;">
+                            <i class="fas fa-bolt" style="color: var(--accent);"></i> Instant Micro-Approvals: Eliminating Small-Request Bottlenecks
+                        </h3>
+                        <p class="paragraph">
+                            One of the most insidious productivity drains in Ambica was not the multi-million-dollar contracts, but the <strong>hundreds of small, everyday operational micro-requests</strong>: a courier bike driver needing an urgent fuel allowance, a warehouse packer requesting additional cold-chain dry ice, an engineer requisitioning spare conveyor parts, or a branch supervisor requesting 2 hours of technician overtime.
+                        </p>
+                        <p class="paragraph">
+                            Previously, each of these trivial requests required printing a paper requisition slip, walking it to a manager's office, waiting in line, and often waiting days if the manager was in another facility. Operations frequently stalled over $20 fuel vouchers.
+                        </p>
+
+                        <div class="feature-two-col">
+                            <div class="feature-box">
+                                <div class="feature-header">
+                                    <div class="feature-icon-badge">
+                                        <i class="fas fa-mobile-screen"></i>
+                                    </div>
+                                    <div class="feature-title">1-Click Multi-Channel Approvals</div>
+                                </div>
+                                <div class="feature-text">
+                                    Employees submit micro-requests directly from mobile or desktop in under 15 seconds. Supervisors receive actionable push notifications with direct <strong>[Approve] / [Reject]</strong> buttons via email and WhatsApp without logging into complex portals.
+                                </div>
+                            </div>
+                            <div class="feature-box">
+                                <div class="feature-header">
+                                    <div class="feature-icon-badge emerald">
+                                        <i class="fas fa-hourglass-start"></i>
+                                    </div>
+                                    <div class="feature-title">Dynamic Escalation &amp; Quota Rules</div>
+                                </div>
+                                <div class="feature-text">
+                                    Configured smart financial quotas: pre-approved allowances under predetermined thresholds auto-clear instantly, while unapproved items escalate automatically to higher department heads if unanswered after 15 minutes.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Online Meetings & Calendar Sync -->
+                    <div style="margin-top: 2.5rem;">
+                        <h3 style="font-family: var(--font-h); font-size: 1.45rem; font-weight: 700; color: #ffffff; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.6rem;">
+                            <i class="fas fa-video" style="color: var(--accent-cyan);"></i> Integrated Online Meetings &amp; Outlook/Teams Sync (MS Graph API)
+                        </h3>
+                        <p class="paragraph">
+                            Cross-warehouse collaboration previously required managers and logisticians to physically travel hours between hubs for operational alignment meetings. Dovetail integrates directly with <strong>Microsoft Graph API (`Calendars.ReadWrite`, `OnlineMeetings.ReadWrite`)</strong> to transform operational communication:
+                        </p>
+                        <div class="feature-two-col">
+                            <div class="feature-box">
+                                <div class="feature-header">
+                                    <div class="feature-icon-badge cyan">
+                                        <i class="fas fa-calendar-plus"></i>
+                                    </div>
+                                    <div class="feature-title">1-Click Operational Virtual Meetings</div>
+                                </div>
+                                <div class="feature-text">
+                                    Dispatchers and department heads can launch and schedule Microsoft Teams / Outlook video meetings directly from any shipment, warehouse incident, or PO thread with pre-populated attendee rosters and synchronized calendar invites.
+                                </div>
+                            </div>
+                            <div class="feature-box">
+                                <div class="feature-header">
+                                    <div class="feature-icon-badge">
+                                        <i class="fas fa-clipboard-check"></i>
+                                    </div>
+                                    <div class="feature-title">Automated Meeting Agendas &amp; Action Items</div>
+                                </div>
+                                <div class="feature-text">
+                                    Meeting agendas auto-generate from live portal data (e.g., delayed shipments, pending POs), and post-meeting action items convert automatically into trackable Dovetail operational tasks with assigned owners and due dates.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </section>
 
                 <!-- 7. Role-Based Multi-Tenant RAG & AI -->
@@ -1307,6 +1394,107 @@
                         </div>
                         <div class="callout-body">
                             Even if an unauthorized person sits at an authenticated employee's unlocked laptop, they cannot export financial spreadsheets, download supplier contracts, or access payroll data without access to the employee's secondary secure email challenge.
+                        </div>
+                    </div>
+
+                    <!-- Dovetail Edge Bridge: Physical Server Direct Access Gateway -->
+                    <div style="margin-top: 3.5rem;">
+                        <h3 style="font-family: var(--font-h); font-size: 1.45rem; font-weight: 700; color: #ffffff; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.6rem;">
+                            <i class="fas fa-server" style="color: var(--accent);"></i> Dovetail Edge Bridge: Secure Direct Access to Physical On-Premise Servers
+                        </h3>
+                        <p class="paragraph">
+                            A major architectural hurdle at Ambica was their <strong>massive on-premise physical file servers and network-attached storage (NAS)</strong> housed locally inside warehouse server rooms. These physical servers stored terabytes of historical lab test certificates, cold-chain temperature logs, regulatory compliance archives, and legacy accounting backups. Migrating terabytes of data over commercial lines was cost-prohibitive, yet remote executives and warehouse dispatchers needed instant, reliable access.
+                        </p>
+                        <p class="paragraph">
+                            I architected the <strong>Dovetail Edge Bridge</strong> — an enterprise hybrid gateway:
+                        </p>
+
+                        <div class="diagram-container">
+                            <div class="diagram-title">
+                                <i class="fas fa-shield-halved"></i> Hybrid On-Premise Server Direct Access Gateway Flow
+                            </div>
+                            <div class="diagram-grid">
+                                <div class="diagram-node">
+                                    <i class="fas fa-desktop"></i>
+                                    <div class="diagram-node-title">1. Portal Request</div>
+                                    <div class="diagram-node-sub">User requests file from physical warehouse server via Dovetail UI.</div>
+                                </div>
+                                <div class="diagram-node cyan">
+                                    <i class="fas fa-key"></i>
+                                    <div class="diagram-node-title">2. OTP Challenge</div>
+                                    <div class="diagram-node-sub">Server enforces 3-Layer 6-digit OTP verification before authorization.</div>
+                                </div>
+                                <div class="diagram-node emerald">
+                                    <i class="fas fa-network-wired"></i>
+                                    <div class="diagram-node-title">3. TLS Reverse Tunnel</div>
+                                    <div class="diagram-node-sub">Outbound-only secure agent tunnel to physical server (zero open firewall ports).</div>
+                                </div>
+                                <div class="diagram-node">
+                                    <i class="fas fa-file-shield"></i>
+                                    <div class="diagram-node-title">4. Encrypted Stream</div>
+                                    <div class="diagram-node-sub">File streamed directly to user in-browser with complete cryptographic audit logging.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="feature-two-col">
+                            <div class="feature-box">
+                                <div class="feature-header">
+                                    <div class="feature-icon-badge">
+                                        <i class="fas fa-lock"></i>
+                                    </div>
+                                    <div class="feature-title">Zero Inbound Attack Surface</div>
+                                </div>
+                                <div class="feature-text">
+                                    The on-premise physical server agent establishes an outbound encrypted TLS/WebSocket tunnel to Dovetail on Cloud Run. No inbound firewall ports are opened, protecting warehouse infrastructure from external internet probes.
+                                </div>
+                            </div>
+                            <div class="feature-box">
+                                <div class="feature-header">
+                                    <div class="feature-icon-badge emerald">
+                                        <i class="fas fa-bolt"></i>
+                                    </div>
+                                    <div class="feature-title">High-Speed Direct File Streaming</div>
+                                </div>
+                                <div class="feature-text">
+                                    Chunked byte streaming allows users to preview 100MB+ pharmaceutical lab reports and historical PDFs in under 1.5 seconds without downloading the entire file to the cloud portal first.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Azure & Microsoft 365 / SharePoint Direct Storage Pipeline -->
+                    <div style="margin-top: 2.5rem;">
+                        <h3 style="font-family: var(--font-h); font-size: 1.45rem; font-weight: 700; color: #ffffff; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.6rem;">
+                            <i class="fab fa-microsoft" style="color: var(--accent-cyan);"></i> Azure &amp; Microsoft 365 / SharePoint Direct Enterprise Storage Pipeline
+                        </h3>
+                        <p class="paragraph">
+                            For modern active documentation, Dovetail is deeply configured with <strong>Microsoft Azure Cloud Storage and Microsoft 365 SharePoint document libraries</strong> via Microsoft Graph API. Instead of storing sensitive enterprise documents in isolated silos:
+                        </p>
+
+                        <div class="feature-two-col">
+                            <div class="feature-box">
+                                <div class="feature-header">
+                                    <div class="feature-icon-badge cyan">
+                                        <i class="fas fa-folder-tree"></i>
+                                    </div>
+                                    <div class="feature-title">Direct SharePoint Document Sync</div>
+                                </div>
+                                <div class="feature-text">
+                                    Every approved vendor contract, signed DocuSign PDF, and financial ledger automatically streams directly into structured SharePoint document libraries, organized by <code>/Department/Year/Vendor/</code> with automated metadata tagging.
+                                </div>
+                            </div>
+                            <div class="feature-box">
+                                <div class="feature-header">
+                                    <div class="feature-icon-badge emerald">
+                                        <i class="fas fa-cloud-arrow-up"></i>
+                                    </div>
+                                    <div class="feature-title">Azure Blob Storage &amp; Co-Authoring</div>
+                                </div>
+                                <div class="feature-text">
+                                    Large binary assets and live spreadsheets are synced directly to Azure Blob Storage, allowing multi-departmental teams to co-author Word and Excel files in real-time through embedded Microsoft 365 interfaces.
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>

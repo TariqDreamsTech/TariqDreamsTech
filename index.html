@@ -554,6 +554,10 @@ I've worked with over <strong>23 companies</strong> across the US, UK, and Europ
 <li><strong>Integrated multi-system data layer</strong> with FleetGPS (real-time vehicle tracking, route optimization, driver telematics), PeopleHRIS (attendance, leave, payroll, employee lifecycle), and Trello (task boards, project workflows) for unified operational visibility across ERP, fleet, HR and PM systems.</li>
 <li><strong>Built EOI Connector (AI Ops-Intelligence)</strong> — monitoring whitelisted WhatsApp groups and Gmail inboxes (including CC/BCC recipients) via secured webhooks; Claude LLM classifies each message into tasks, follow-ups, verifications, and 12+ risk-tiered alerts cross-referenced against NetSuite, FleetGPS, and PeopleHRIS data before surfacing to management in real time.</li>
 <li><strong>3-Layer OTP Security:</strong> email-verified 6-digit codes, 10-minute expiry, 3-attempt lockout, and server-side verification enforced on every sensitive approval.</li>
+<li><strong>Instant Micro-Approvals Pipeline:</strong> 1-click multi-tiered mobile/email approvals for small daily requisitions (fuel allowances, cold-chain supplies, technician overtime) — slashing small-item turnaround from 3–5 days to &lt;60s with dynamic escalation rules.</li>
+<li><strong>Dovetail Edge Bridge (Physical Server Gateway):</strong> Zero-inbound TLS reverse tunnel enabling remote browser streaming of terabytes of lab certificates and historical records directly from warehouse on-premise physical servers without public firewall exposure.</li>
+<li><strong>Azure Cloud &amp; Microsoft SharePoint Sync:</strong> Direct pipeline archiving signed contracts and ledgers to Microsoft 365 SharePoint libraries with automated metadata tagging and Azure Blob Storage co-authoring.</li>
+<li><strong>Virtual Meetings &amp; Calendar Sync:</strong> Microsoft Graph API integration enabling 1-click Teams meeting creation from operational threads, automated agenda distribution, and post-meeting AI action-item assignment.</li>
 <li><strong>Integrated DocuSign REST API:</strong> multi-recipient e-signatures, real-time webhook status sync, embedded signing, resend controls, and dynamic signed PDF generation.</li>
 <li><strong>Enterprise Auth &amp; Microsoft Graph:</strong> Google OAuth 2.0 + Microsoft Entra ID auth (domain whitelisting, JWT HttpOnly cookies, remote revocation); MS Graph API (Mail.Read/Send) for mailbox, transactional email, and Outlook Calendar synchronization.</li>
 <li><strong>CI/CD via Cloud Build + Docker:</strong> multi-stage builds, ARG secret injection, pre-commit gates (Ruff, Pylint, Bandit, Mypy, Safety, Pytest) — reducing deployment time from hours to minutes.</li>
@@ -565,6 +569,9 @@ I've worked with over <strong>23 companies</strong> across the US, UK, and Europ
 <li>I added a feature where the company's AI assistant reads WhatsApp messages and emails, figures out what action is needed (like 'approve this purchase'), and assigns it to the right person automatically — no more things getting lost in messages.</li>
 <li>I built a system where contracts and approvals are signed digitally. Instead of printing, signing, and scanning documents back and forth, everything happens in seconds with one click.</li>
 <li>I added strong security so that only the right people can approve sensitive actions — using a 6-digit one-time code sent to their email, which expires in 10 minutes. This prevents unauthorized decisions.</li>
+<li>Previously, even tiny requests like bike fuel money or packaging supplies took days of walking paper slips around. I built instant 1-click approvals on phone and email, so requests that took days now get approved in under a minute.</li>
+<li>The company had old physical computer servers sitting in warehouse basements with important files that nobody could access remotely. I built a secure bridge so employees can safely open and view files from these physical warehouse servers from anywhere, protected by a 1-time secure code.</li>
+<li>I connected the system directly to Microsoft Azure and SharePoint so company files are organized automatically, and set up online video meetings that can be scheduled with 1 click directly inside the platform.</li>
 <li>I built financial reports (profit/loss, cash flow, budgets) that update live from the company's real data — so the CEO can see the company's real financial health at any moment, not just at month-end.</li>
 </ul>
 </div>
@@ -1126,10 +1133,10 @@ These are my largest, most ambitious projects — explained in full detail so an
 <a href="case-studies/ambica-dovetail/index.html">Ambica International (Dovetail): Autonomous Operations Portal &amp; Real-Time Logistics Backbone</a>
 </h3>
 <p class="case-desc tech-only">
-Transforming a nationwide healthcare distribution enterprise from manual paper clipboards and siloed spreadsheets into an autonomous, 100% digital operations ecosystem on GCP Cloud Run. Features live NetSuite SuiteQL mirroring via Celery Beat &amp; Redis, sub-second multi-modal fleet telematics (motorcycles, vans, trucks, air cargo), DocuSign digital signatures, 3-layer OTP cryptographic security, and role-based agentic RAG.
+Transforming a nationwide healthcare distribution enterprise from manual paper clipboards into an autonomous, 100% digital operations ecosystem on GCP Cloud Run. Features live NetSuite SuiteQL mirroring via Celery Beat &amp; Redis, sub-second multi-modal fleet &amp; air telematics, 1-click micro-approvals (&lt;60s), Azure &amp; SharePoint direct document sync, secure hybrid on-premise physical server gateway, and role-based agentic RAG.
 </p>
 <p class="case-desc nt-only" style="display:none;">
-A major healthcare and medicine distribution company was running their entire business on paper clipboards and slow spreadsheets. I designed and built an all-in-one digital system from scratch. Now everything happens on computers: delivery bikes, trucks, and cargo flights are tracked in real time, approvals happen in minutes instead of days, and the founder can see the entire company's sales and profit live on one screen.
+A major healthcare company was running on slow paper clipboards where even tiny approvals (fuel, supplies) took days, and files were trapped on physical office servers. I designed and built an all-in-one digital system from scratch. Now all requests get approved in seconds, delivery bikes, trucks, and cargo flights are tracked live, meetings happen online, and staff can securely open files from physical warehouse servers remotely with a 1-time code.
 </p>
 <!-- Key architectural metrics -->
 <div class="case-stats-row">
@@ -1142,8 +1149,8 @@ A major healthcare and medicine distribution company was running their entire bu
 <span class="case-stat-lbl">Paperless Transition</span>
 </div>
 <div class="case-stat-item">
-<span class="case-stat-val" style="color: #10b981;">14 Min</span>
-<span class="case-stat-lbl">DocuSign Velocity Avg</span>
+<span class="case-stat-val" style="color: #10b981;">&lt;60s</span>
+<span class="case-stat-lbl">Micro-Approvals Velocity</span>
 </div>
 <div class="case-stat-item">
 <span class="case-stat-val" style="color: #10b981;">0 Leaks</span>
@@ -1158,6 +1165,9 @@ A major healthcare and medicine distribution company was running their entire bu
 <span class="case-tag"><i class="fas fa-truck-fast"></i> FleetGPS Telematics</span>
 <span class="case-tag"><i class="fas fa-plane"></i> Flight Tracking</span>
 <span class="case-tag"><i class="fas fa-file-signature"></i> DocuSign REST</span>
+<span class="case-tag"><i class="fab fa-microsoft"></i> Azure &amp; SharePoint</span>
+<span class="case-tag"><i class="fas fa-server"></i> Physical Server Bridge</span>
+<span class="case-tag"><i class="fas fa-bolt"></i> Instant Micro-Approvals</span>
 <span class="case-tag"><i class="fas fa-brain"></i> Role-Based RAG</span>
 <span class="case-tag"><i class="fas fa-cloud"></i> GCP Cloud Run</span>
 </div>
