@@ -76,6 +76,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     sectionEls.forEach(s => navObserver.observe(s));
 
+    // Check for PDF or Print generation mode
+    const urlParams = new URLSearchParams(window.location.search);
+    const isPdfMode = urlParams.has('pdf') || urlParams.has('print');
+    if (isPdfMode) {
+        document.documentElement.classList.add('pdf-mode');
+        document.body.classList.add('pdf-mode');
+    }
+
     // ─── Typing Animation ─────────────────────────────
     const roles = [
         'AI Product Builder',
@@ -86,27 +94,31 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
     const roleEl = document.querySelector('.hero-role');
     if (roleEl) {
-        roleEl.innerHTML = '<span class="typed-text"></span><span class="typed-cursor">|</span>';
-        const typedText = roleEl.querySelector('.typed-text');
-        let roleIdx = 0, charIdx = 0, deleting = false;
+        if (isPdfMode) {
+            roleEl.textContent = 'AI Systems Architect · Founder @ Ranbval · Co-Founder @ Volvexer';
+        } else {
+            roleEl.innerHTML = '<span class="typed-text"></span><span class="typed-cursor">|</span>';
+            const typedText = roleEl.querySelector('.typed-text');
+            let roleIdx = 0, charIdx = 0, deleting = false;
 
-        function type() {
-            const current = roles[roleIdx];
-            typedText.textContent = deleting
-                ? current.slice(0, charIdx--)
-                : current.slice(0, charIdx++);
+            function type() {
+                const current = roles[roleIdx];
+                typedText.textContent = deleting
+                    ? current.slice(0, charIdx--)
+                    : current.slice(0, charIdx++);
 
-            let delay = deleting ? 45 : 90;
-            if (!deleting && charIdx === current.length + 1) {
-                delay = 1800; deleting = true;
-            } else if (deleting && charIdx === 0) {
-                deleting = false;
-                roleIdx = (roleIdx + 1) % roles.length;
-                delay = 400;
+                let delay = deleting ? 45 : 90;
+                if (!deleting && charIdx === current.length + 1) {
+                    delay = 1800; deleting = true;
+                } else if (deleting && charIdx === 0) {
+                    deleting = false;
+                    roleIdx = (roleIdx + 1) % roles.length;
+                    delay = 400;
+                }
+                setTimeout(type, delay);
             }
-            setTimeout(type, delay);
+            setTimeout(type, 800);
         }
-        setTimeout(type, 800);
     }
 
     // ─── Experience Grid Pagination (9 per page) ──────
@@ -117,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const expPageRange = document.getElementById('exp-page-range');
     const expTotalCount = document.getElementById('exp-total-count');
 
-    if (expCells.length && expPrevBtn && expNextBtn) {
+    if (expCells.length) {
         const itemsPerPage = 9;
         const totalItems = expCells.length;
         const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -171,42 +183,70 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        expPrevBtn.addEventListener('click', () => {
-            if (currentPage > 1) renderExpPage(currentPage - 1, true);
-        });
-
-        expNextBtn.addEventListener('click', () => {
-            if (currentPage < totalPages) renderExpPage(currentPage + 1, true);
-        });
-
-        expPagePills.forEach(pill => {
-            pill.addEventListener('click', () => {
-                const page = parseInt(pill.getAttribute('data-page'), 10);
-                if (page && page !== currentPage) {
-                    renderExpPage(page, true);
-                }
+        if (isPdfMode) {
+            // PDF Generation Mode: Display ALL 23 experiences simultaneously
+            expCells.forEach(cell => {
+                cell.style.display = 'flex';
+                cell.style.opacity = '1';
+                cell.style.transform = 'none';
+                cell.classList.add('visible');
             });
-        });
-
-        // Tap/click to toggle expanded state on touch/mobile
-        expCells.forEach(cell => {
-            cell.addEventListener('click', (e) => {
-                // If user clicks a link inside, let it navigate
-                if (e.target.tagName === 'A' || e.target.closest('a')) return;
-                const wasExpanded = cell.classList.contains('is-expanded');
-                expCells.forEach(c => {
-                    if (c !== cell) c.classList.remove('is-expanded');
+            const expPagination = document.querySelector('.exp-pagination-container');
+            if (expPagination) expPagination.style.display = 'none';
+        } else {
+            // Normal Browser View: Enable 9-item pagination
+            if (expPrevBtn) {
+                expPrevBtn.addEventListener('click', () => {
+                    if (currentPage > 1) renderExpPage(currentPage - 1, true);
                 });
-                if (!wasExpanded) {
-                    cell.classList.add('is-expanded');
-                } else {
-                    cell.classList.remove('is-expanded');
-                }
+            }
+            if (expNextBtn) {
+                expNextBtn.addEventListener('click', () => {
+                    if (currentPage < totalPages) renderExpPage(currentPage + 1, true);
+                });
+            }
+            expPagePills.forEach(pill => {
+                pill.addEventListener('click', () => {
+                    const page = parseInt(pill.getAttribute('data-page'), 10);
+                    if (page && page !== currentPage) {
+                        renderExpPage(page, true);
+                    }
+                });
             });
+
+            // Tap/click to toggle expanded state on touch/mobile
+            expCells.forEach(cell => {
+                cell.addEventListener('click', (e) => {
+                    if (e.target.tagName === 'A' || e.target.closest('a')) return;
+                    const wasExpanded = cell.classList.contains('is-expanded');
+                    expCells.forEach(c => {
+                        if (c !== cell) c.classList.remove('is-expanded');
+                    });
+                    if (!wasExpanded) {
+                        cell.classList.add('is-expanded');
+                    } else {
+                        cell.classList.remove('is-expanded');
+                    }
+                });
+            });
+
+            // Initialize Page 1
+            renderExpPage(1, false);
+        }
+
+        // Print preparation: Show all 23 experiences on print
+        window.addEventListener('beforeprint', () => {
+            expCells.forEach(cell => {
+                cell.style.display = 'flex';
+                cell.style.opacity = '1';
+                cell.style.transform = 'none';
+            });
+            document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
         });
 
-        // Initialize Page 1
-        renderExpPage(1, false);
+        window.addEventListener('afterprint', () => {
+            if (!isPdfMode) renderExpPage(currentPage, false);
+        });
     }
 
     // ─── Scroll Reveal ────────────────────────────────

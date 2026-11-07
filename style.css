@@ -188,14 +188,22 @@ img { max-width: 100%; display: block; }
     display: flex;
     align-items: center;
     gap: 0.15rem;
+    white-space: nowrap;
+}
+.nav-links li {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 .nav-links a {
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: var(--text-muted);
-    padding: 0.4rem 0.6rem;
+    padding: 0.38rem 0.55rem;
     border-radius: 99px;
     white-space: nowrap;
+    display: inline-block;
     transition: color 0.2s, background 0.2s;
 }
 .nav-links a:hover,
@@ -3113,11 +3121,11 @@ img { max-width: 100%; display: block; }
 }
 
 /* ─── Responsive ─────────────────────────────────── */
-@media (max-width: 1240px) {
+@media (max-width: 1280px) {
     .nav-links { gap: 0.1rem; }
-    .nav-links a { font-size: 0.77rem; padding: 0.35rem 0.48rem; }
+    .nav-links a { font-size: 0.76rem; padding: 0.32rem 0.45rem; }
 }
-@media (max-width: 1080px) {
+@media (max-width: 1140px) {
     .nav-links { display: none; }
     .menu-btn { display: flex; }
 }
@@ -3315,5 +3323,180 @@ img { max-width: 100%; display: block; }
     }
     .case-study-feature-card {
         padding: 1.5rem;
+    }
+}
+
+
+/* ─── Print & PDF Optimization ───────────────────── */
+.pdf-mode .reveal,
+.pdf-mode .reveal.visible,
+@media print {
+    .reveal, .reveal.visible {
+        opacity: 1 !important;
+        transform: none !important;
+        visibility: visible !important;
+        transition: none !important;
+    }
+}
+
+.pdf-mode .experience-grid,
+@media print {
+    .experience-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 1.25rem !important;
+    }
+}
+
+.pdf-mode .experience-grid .exp-card-cell,
+@media print {
+    .experience-grid .exp-card-cell {
+        display: flex !important;
+        flex-direction: column !important;
+        opacity: 1 !important;
+        transform: none !important;
+        visibility: visible !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        height: auto !important;
+        margin-bottom: 0 !important;
+    }
+    .experience-grid .exp-card {
+        height: auto !important;
+        max-height: none !important;
+    }
+    .experience-grid .exp-card-body {
+        overflow: visible !important;
+        mask-image: none !important;
+        -webkit-mask-image: none !important;
+        padding-bottom: 1.25rem !important;
+    }
+    .exp-card-hint {
+        display: none !important;
+    }
+}
+
+.pdf-mode .exp-pagination-container,
+.pdf-mode .exp-pagination-actions,
+.pdf-mode .exp-page-pill,
+.pdf-mode .exp-nav-btn,
+.pdf-mode .exp-pagination-info,
+.pdf-mode .cursor-dot,
+.pdf-mode .cursor-outline,
+.pdf-mode .menu-btn,
+.pdf-mode .mobile-nav,
+.pdf-mode .nav-overlay,
+.pdf-mode #scroll-progress,
+.pdf-mode #back-to-top,
+.pdf-mode .lightbox,
+.pdf-mode #coursework-modal,
+.pdf-mode .modal-backdrop,
+.pdf-mode .course-details-toggle,
+@media print {
+    .exp-pagination-container,
+    .exp-pagination-actions,
+    .exp-page-pill,
+    .exp-nav-btn,
+    .exp-pagination-info,
+    .cursor-dot,
+    .cursor-outline,
+    .menu-btn,
+    .mobile-nav,
+    .nav-overlay,
+    #scroll-progress,
+    #back-to-top,
+    .lightbox,
+    #coursework-modal,
+    .modal-backdrop,
+    .course-details-toggle {
+        display: none !important;
+        visibility: hidden !important;
+    }
+}
+
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 12mm 10mm 14mm 10mm;
+    }
+
+    /* Force background colors and gradients */
+    *, *::before, *::after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+        box-sizing: border-box !important;
+    }
+
+    html, body {
+        background-color: #000000 !important;
+        background-image: none !important;
+        color: #ffffff !important;
+        width: 100% !important;
+        overflow: visible !important;
+        font-size: 13.5px !important;
+        cursor: auto !important;
+    }
+
+    /* Header in print: static and clean */
+    header.header {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        background: transparent !important;
+        border-bottom: 1px solid var(--border) !important;
+        padding: 1rem 0 !important;
+    }
+    .header .nav-links,
+    .header .menu-btn {
+        display: none !important;
+    }
+    .navbar {
+        max-width: 100% !important;
+        padding: 0 1rem !important;
+        justify-content: center !important;
+    }
+
+    /* Section padding */
+    .section {
+        padding: 2.5rem 0 !important;
+        page-break-inside: auto;
+    }
+
+    /* Prevent awkward card slicing across pages */
+    .achievement-card,
+    .exp-card-cell,
+    .case-study-feature-card,
+    .product-showcase-card,
+    .ranbval-root-banner,
+    .field-card,
+    .pub-card,
+    .reviewer-card,
+    .research-card,
+    .cert-category-card,
+    .about-highlight-card,
+    .grant-feature-box,
+    .freelance-card,
+    .stat-card,
+    .section-header {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
+    /* Grid adjustments for print readability */
+    .achievements-wrapper {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    .products-showcase-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    .fields-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    .reviewer-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    .research-grid {
+        grid-template-columns: 1fr !important;
     }
 }
