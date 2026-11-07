@@ -132,12 +132,55 @@ document.addEventListener('DOMContentLoaded', () => {
             const mode = btn.getAttribute('data-mode');
             if (mode && mode !== currentMode) {
                 setViewMode(mode);
+                try {
+                    localStorage.setItem('portfolio_view_mode_chosen', 'true');
+                } catch (e) {}
             }
         });
     });
 
     // Apply saved mode on start
     setViewMode(currentMode);
+
+    // ─── Welcome Mode Selection Modal ─────────────────
+    const modeModal = document.getElementById('modeModalOverlay');
+    let hasChosenMode = false;
+    try {
+        hasChosenMode = localStorage.getItem('portfolio_view_mode_chosen') === 'true';
+    } catch (e) {}
+
+    function openModeModal() {
+        if (!modeModal) return;
+        modeModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModeModal() {
+        if (!modeModal) return;
+        modeModal.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+
+    if (!hasChosenMode && modeModal && !isPdfMode) {
+        openModeModal();
+    } else if (modeModal) {
+        closeModeModal();
+    }
+
+    if (modeModal) {
+        modeModal.querySelectorAll('[data-select-mode]').forEach(card => {
+            card.addEventListener('click', (e) => {
+                const selectedMode = card.getAttribute('data-select-mode');
+                if (selectedMode) {
+                    setViewMode(selectedMode);
+                    try {
+                        localStorage.setItem('portfolio_view_mode_chosen', 'true');
+                    } catch (e) {}
+                    closeModeModal();
+                }
+            });
+        });
+    }
 
     // ─── Typing Animation ─────────────────────────────
     const roleEl = document.querySelector('.hero-role');

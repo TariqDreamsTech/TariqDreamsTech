@@ -20,6 +20,69 @@
 <div class="cursor-outline"></div>
 <!-- Nav Overlay (mobile) -->
 <div class="nav-overlay"></div>
+
+<!-- Welcome View Mode Selection Modal -->
+<div class="mode-modal-overlay" id="modeModalOverlay">
+  <div class="mode-modal-card">
+    <div class="mode-modal-badge">
+      <i class="fas fa-sparkles"></i> Customize Your Experience
+    </div>
+    <h2 class="mode-modal-title">Welcome to Ahsan Tariq's Portfolio</h2>
+    <p class="mode-modal-subtitle">
+      How would you like to explore this portfolio? Choose the version that best matches your background.
+    </p>
+
+    <div class="mode-modal-options">
+      <!-- Option 1: Technical Mode -->
+      <div class="mode-option-card" data-select-mode="tech">
+        <div class="mode-option-header">
+          <div class="mode-icon-circle tech-icon">
+            <i class="fas fa-code"></i>
+          </div>
+          <span class="mode-tag tech-tag">For Engineers &amp; CTOs</span>
+        </div>
+        <h3>Technical &amp; Architecture</h3>
+        <p class="mode-option-desc">
+          Full technical breakdowns, system architectures, Python/FastAPI/ROS2 codebases, database schemas, and AI benchmarks.
+        </p>
+        <ul class="mode-option-bullets">
+          <li><i class="fas fa-check"></i> Microservices &amp; Multi-Agent Workflows</li>
+          <li><i class="fas fa-check"></i> Code stacks, libraries &amp; APIs</li>
+          <li><i class="fas fa-check"></i> Research papers &amp; security proofs</li>
+        </ul>
+        <button class="mode-select-btn tech-btn" type="button">
+          Select Technical Mode <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+
+      <!-- Option 2: Plain English Mode -->
+      <div class="mode-option-card" data-select-mode="nt">
+        <div class="mode-option-header">
+          <div class="mode-icon-circle nt-icon">
+            <i class="fas fa-user-friends"></i>
+          </div>
+          <span class="mode-tag nt-tag">For Founders &amp; Non-Coders</span>
+        </div>
+        <h3>Plain English &amp; Business</h3>
+        <p class="mode-option-desc">
+          Simple human explanations of real-world problems solved, manual time eliminated, and automated business results.
+        </p>
+        <ul class="mode-option-bullets">
+          <li><i class="fas fa-check"></i> Zero coding jargon or technical terms</li>
+          <li><i class="fas fa-check"></i> Focus on problems solved &amp; time saved</li>
+          <li><i class="fas fa-check"></i> Easy to read for anyone without tech background</li>
+        </ul>
+        <button class="mode-select-btn nt-btn" type="button">
+          Select Plain English Mode <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="mode-modal-footer">
+      <i class="fas fa-info-circle"></i> You can change this anytime using the toggle button in the top navigation bar.
+    </div>
+  </div>
+</div>
 <header class="header">
 <nav class="navbar">
 <a class="logo" href="#">AT.</a>
