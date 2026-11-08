@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ambica International (Dovetail) | Enterprise Healthcare Logistics &amp; ERP Architecture — Ahsan Tariq</title>
-    <meta name="description" content="In-depth case study of Ambica International (Dovetail): An autonomous healthcare logistics &amp; ERP operations platform by Ahsan Tariq. Uniting NetSuite ERP, multi-modal fleet telematics (bikes, vans, trucks, air cargo), DocuSign, 3-layer OTP, Azure SharePoint, and physical server edge bridge.">
+    <title>Ambica International (Project Dovetail) | Enterprise Healthcare Logistics &amp; ERP Architecture — Ahsan Tariq</title>
+    <meta name="description" content="Comprehensive case study of Ambica International (Project Dovetail): An autonomous healthcare logistics &amp; ERP ecosystem by Ahsan Tariq. Live telematics for 102 fleet vehicles, 20-stream NetSuite SuiteQL sync, $141.3M Trello shipment pipeline, 3-layer OTP physical server vault, and Claude LLM EOI connector.">
     
     <!-- Google Fonts: Plus Jakarta Sans, Outfit, JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
@@ -17,17 +17,21 @@
     <style>
         :root {
             --bg-main: #060709;
-            --bg-card: #0e1117;
-            --bg-card-hover: #151922;
+            --bg-surface: #0a0d13;
+            --bg-card: #0e1219;
+            --bg-card-hover: #141a24;
             --border-subtle: rgba(255, 255, 255, 0.07);
             --border-highlight: rgba(16, 185, 129, 0.35);
             --text-primary: #ffffff;
             --text-secondary: #94a3b8;
             --text-muted: #64748b;
             --emerald: #10b981;
-            --emerald-glow: rgba(16, 185, 129, 0.16);
+            --emerald-glow: rgba(16, 185, 129, 0.18);
             --cyan: #38bdf8;
-            --amber: #ffba49;
+            --cyan-glow: rgba(56, 189, 248, 0.16);
+            --amber: #f59e0b;
+            --amber-glow: rgba(245, 158, 11, 0.16);
+            --rose: #f43f5e;
             --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             --font-display: 'Outfit', sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
@@ -35,7 +39,7 @@
             --radius-lg: 16px;
             --radius-md: 12px;
             --radius-sm: 8px;
-            --container-max: 1240px;
+            --container-max: 1260px;
         }
 
         *, *::before, *::after {
@@ -58,1340 +62,1944 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Reading Progress */
-        #read-progress {
+        /* Ambient Glow & Canvas */
+        .ambient-glow {
             position: fixed;
             top: 0;
-            left: 0;
-            height: 3px;
-            width: 0%;
-            background: linear-gradient(90deg, var(--emerald) 0%, var(--cyan) 50%, var(--amber) 100%);
-            z-index: 10000;
-            transition: width 0.1s linear;
-            box-shadow: 0 0 14px rgba(16, 185, 129, 0.8);
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            height: 600px;
+            background: radial-gradient(circle 800px at 50% -100px, rgba(16, 185, 129, 0.12), rgba(56, 189, 248, 0.04), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
         }
 
-        /* Container Layout */
-        .wrapper {
-            max-width: var(--container-max);
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        /* Border Section Separator */
-        .section-separator {
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        /* Navigation */
-        .site-nav {
+        /* Top Nav */
+        .case-nav {
             position: sticky;
             top: 0;
-            width: 100%;
+            z-index: 1000;
             background: rgba(6, 7, 9, 0.85);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
+            backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border-subtle);
-            z-index: 999;
-            padding: 1.1rem 0;
+            padding: 1rem 0;
         }
-
         .nav-inner {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 1.5rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
-
-        .nav-logo {
-            display: flex;
+        .nav-back {
+            display: inline-flex;
             align-items: center;
-            gap: 0.85rem;
+            gap: 0.6rem;
+            color: var(--text-secondary);
             text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s ease, transform 0.2s ease;
         }
-
-        .logo-box {
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, var(--emerald) 0%, var(--cyan) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #040807;
-            font-family: var(--font-display);
-            font-weight: 900;
-            font-size: 1.15rem;
+        .nav-back:hover {
+            color: var(--emerald);
+            transform: translateX(-3px);
         }
-
-        .logo-text {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .logo-title {
+        .nav-brand {
             font-family: var(--font-display);
             font-weight: 800;
             font-size: 1.05rem;
-            color: #fff;
-            letter-spacing: -0.3px;
-        }
-
-        .logo-subtitle {
-            font-size: 0.72rem;
-            color: var(--emerald);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 700;
-        }
-
-        .nav-links {
+            letter-spacing: -0.02em;
+            color: #ffffff;
             display: flex;
             align-items: center;
-            gap: 1.5rem;
+            gap: 0.5rem;
         }
-
-        .nav-link {
-            font-size: 0.88rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: color 0.2s ease;
-        }
-        .nav-link:hover { color: #fff; }
-
-        .btn-header-cta {
-            padding: 0.55rem 1.3rem;
-            border-radius: 50px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #fff;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.25s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .btn-header-cta:hover {
-            background: var(--emerald);
-            border-color: var(--emerald);
-            color: #040807;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 18px var(--emerald-glow);
-        }
-
-        /* ============================================================
-           HERO SECTION
-           ============================================================ */
-        .hero-section {
-            padding: 5.5rem 0 4.5rem;
-            position: relative;
-            background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 65%);
-        }
-
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 0.45rem 1.15rem;
-            border-radius: 50px;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
+        .nav-brand span {
             color: var(--emerald);
-            font-size: 0.82rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 1.75rem;
+        }
+        .nav-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            padding: 0.35rem 0.8rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--emerald);
+            font-weight: 600;
+        }
+        .nav-status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--emerald);
+            box-shadow: 0 0 8px var(--emerald);
+            animation: pulseNav 2s infinite;
+        }
+        @keyframes pulseNav {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
         }
 
+        /* Container & Layout */
+        .wrapper {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        .section-separator {
+            padding: 5rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        /* TheHexaTown Signature Typography & Tags */
+        .eyebrow-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            color: var(--emerald);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.4rem 1rem;
+            border-radius: 9999px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Hero */
+        .hero-section {
+            padding: 4.5rem 0 3.5rem;
+        }
         .hero-h1 {
             font-family: var(--font-display);
-            font-size: clamp(2.5rem, 6vw, 4.2rem);
+            font-size: clamp(2.4rem, 5vw, 4.2rem);
             font-weight: 900;
-            line-height: 1.1;
-            letter-spacing: -1.5px;
+            line-height: 1.08;
+            letter-spacing: -0.035em;
             color: #ffffff;
             margin-bottom: 1.25rem;
-            max-width: 1050px;
         }
-
         .hero-tagline {
             font-family: var(--font-display);
-            font-size: clamp(1.4rem, 3vw, 2rem);
-            font-weight: 700;
-            color: var(--emerald);
-            margin-bottom: 1.75rem;
-            letter-spacing: -0.5px;
-        }
-
-        .hero-desc {
-            font-size: clamp(1.05rem, 1.8vw, 1.22rem);
+            font-size: clamp(1.2rem, 2.3vw, 1.65rem);
+            font-weight: 500;
+            line-height: 1.35;
             color: var(--text-secondary);
+            margin-bottom: 1.75rem;
+        }
+        .hero-desc {
+            font-size: 1.12rem;
             line-height: 1.75;
+            color: var(--text-secondary);
             max-width: 980px;
             margin-bottom: 2.75rem;
         }
+        .hero-desc strong {
+            color: #ffffff;
+            font-weight: 600;
+        }
 
-        /* Project Meta Grid */
+        /* Meta Grid */
         .meta-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 1.5rem;
-            padding: 1.5rem 1.75rem;
-            background: var(--bg-card);
+            padding: 1.5rem;
+            background: var(--bg-surface);
             border: 1px solid var(--border-subtle);
             border-radius: var(--radius-lg);
             margin-bottom: 3.5rem;
         }
-
         .meta-col {
             display: flex;
             flex-direction: column;
             gap: 0.35rem;
         }
-
         .meta-title {
-            font-size: 0.75rem;
-            font-weight: 700;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.08em;
             color: var(--text-muted);
         }
-
         .meta-value {
-            font-size: 0.96rem;
-            font-weight: 700;
-            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #ffffff;
         }
-        .meta-value.accent { color: var(--emerald); }
+        .meta-value.accent {
+            color: var(--emerald);
+        }
 
-        /* Hero Showcase Mockup */
-        .hero-mockup-wrapper {
-            background: #090c12;
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-xl);
-            padding: 1.5rem;
-            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.7), 0 0 50px rgba(16, 185, 129, 0.05);
-            position: relative;
+        /* Browser Mockup System */
+        .browser-mockup {
+            background: #0d1117;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
             overflow: hidden;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.04);
+            margin: 2rem 0;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
         }
-
-        .mockup-header-bar {
+        .browser-mockup:hover {
+            border-color: rgba(16, 185, 129, 0.3);
+            box-shadow: 0 30px 70px -15px rgba(16, 185, 129, 0.15), 0 0 0 1px rgba(16, 185, 129, 0.2);
+        }
+        .browser-bar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding-bottom: 1.25rem;
-            border-bottom: 1px solid var(--border-subtle);
-            margin-bottom: 1.5rem;
+            padding: 0.75rem 1.25rem;
+            background: #161b22;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            gap: 0.75rem;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            overflow: hidden;
+            box-sizing: border-box;
         }
-
-        .mockup-dots {
+        .browser-dots {
             display: flex;
             gap: 6px;
+            align-items: center;
+            flex-shrink: 0;
         }
-        .m-dot { width: 11px; height: 11px; border-radius: 50%; }
-        .dot-red { background: #ef4444; }
-        .dot-yellow { background: #f59e0b; }
-        .dot-green { background: #10b981; }
-
-        .mockup-title {
+        .browser-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+        .browser-url {
+            background: #090d13;
+            padding: 0.35rem 0.85rem;
+            border-radius: 6px;
             font-family: var(--font-mono);
-            font-size: 0.82rem;
-            color: var(--text-muted);
+            font-size: 0.76rem;
+            color: #94a3b8;
+            flex: 1 1 0%;
+            min-width: 0;
+            max-width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            box-sizing: border-box;
         }
-
-        .mockup-grid-inner {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1.25rem;
+        .browser-url i { color: var(--emerald); font-size: 0.7rem; flex-shrink: 0; }
+        .browser-url span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
+            min-width: 0;
+            flex: 1 1 0%;
         }
-
-        .mockup-card-stat {
-            background: rgba(255, 255, 255, 0.025);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-md);
-            padding: 1.25rem;
-        }
-
-        .stat-icon {
-            font-size: 1.3rem;
-            color: var(--emerald);
-            margin-bottom: 0.6rem;
-        }
-        .stat-icon.cyan { color: var(--cyan); }
-        .stat-icon.amber { color: var(--amber); }
-
-        .stat-num {
-            font-family: var(--font-display);
-            font-size: 1.85rem;
-            font-weight: 800;
-            color: #fff;
-            line-height: 1;
-            margin-bottom: 0.25rem;
-        }
-
-        .stat-label {
-            font-size: 0.78rem;
-            color: var(--text-secondary);
+        .browser-badge {
+            font-size: 0.72rem;
             font-weight: 600;
+            color: var(--emerald);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 0.25rem 0.65rem;
+            border-radius: 20px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .browser-badge.pulse::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--emerald);
+            box-shadow: 0 0 8px var(--emerald);
+            animation: pulseGlow 2s infinite;
+            flex-shrink: 0;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+        .browser-screen {
+            position: relative;
+            cursor: zoom-in;
+            overflow: hidden;
+            background: #07090e;
+            line-height: 0;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+        .browser-screen img {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+            box-sizing: border-box;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .browser-screen:hover img {
+            transform: scale(1.015);
+        }
+        .browser-screen .zoom-hint {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            background: rgba(10, 14, 22, 0.88);
+            backdrop-filter: blur(8px);
+            color: #cbd5e1;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.4rem 0.85rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .browser-screen:hover .zoom-hint {
+            opacity: 1;
+            transform: translateY(0);
         }
 
-        /* ============================================================
-           HIGHLIGHT STATEMENT BANNER (HexaTown Signature)
-           ============================================================ */
+        /* Statement Banner (TheHexaTown Big Typography) */
         .statement-banner {
-            padding: 4.5rem 0;
-            background: #08090d;
-            text-align: center;
+            padding: 5rem 0;
+            border-top: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border-subtle);
+            background: linear-gradient(180deg, rgba(16, 185, 129, 0.03) 0%, transparent 100%);
         }
-
         .statement-h2 {
             font-family: var(--font-display);
-            font-size: clamp(1.8rem, 4vw, 2.9rem);
+            font-size: clamp(1.75rem, 3.4vw, 2.75rem);
             font-weight: 800;
-            line-height: 1.3;
-            letter-spacing: -0.8px;
+            line-height: 1.25;
+            letter-spacing: -0.025em;
             color: #ffffff;
-            max-width: 1050px;
+            max-width: 1100px;
             margin: 0 auto;
-        }
-
-        .statement-h2 .gradient-text {
-            background: linear-gradient(135deg, var(--emerald) 0%, var(--cyan) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        /* ============================================================
-           FEATURE SPOTLIGHT SECTION (Two-Col HexaTown Style)
-           ============================================================ */
-        .spotlight-section {
-            padding: 5.5rem 0;
-        }
-
-        .spotlight-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: center;
-        }
-
-        .section-kicker {
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--emerald);
-            margin-bottom: 0.75rem;
-            display: block;
-        }
-
-        .spotlight-h2 {
-            font-family: var(--font-display);
-            font-size: clamp(2rem, 3.5vw, 2.8rem);
-            font-weight: 800;
-            line-height: 1.2;
-            letter-spacing: -0.8px;
-            color: #fff;
-            margin-bottom: 1.25rem;
-        }
-
-        .spotlight-p {
-            font-size: 1.05rem;
-            color: var(--text-secondary);
-            line-height: 1.8;
-            margin-bottom: 2rem;
-        }
-
-        /* Multi-Modal Transit Grid (Cards Showcase) */
-        .transit-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.25rem;
-        }
-
-        .transit-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
-            transition: all 0.25s ease;
-        }
-        .transit-card:hover {
-            border-color: var(--border-highlight);
-            transform: translateY(-3px);
-            background: var(--bg-card-hover);
-        }
-
-        .transit-icon-badge {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            background: rgba(16, 185, 129, 0.12);
-            color: var(--emerald);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-        .transit-icon-badge.plane {
-            background: rgba(56, 189, 248, 0.12);
-            color: var(--cyan);
-            border-color: rgba(56, 189, 248, 0.3);
-        }
-        .transit-icon-badge.bike {
-            background: rgba(255, 186, 73, 0.12);
-            color: var(--amber);
-            border-color: rgba(255, 186, 73, 0.3);
-        }
-
-        .transit-title {
-            font-family: var(--font-display);
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 0.35rem;
-        }
-
-        .transit-desc {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            line-height: 1.55;
-        }
-
-        /* ============================================================
-           PROBLEM & SOLUTION SECTIONS (HexaTown Dual Focus)
-           ============================================================ */
-        .content-split-section {
-            padding: 5.5rem 0;
-        }
-
-        .content-split-grid {
-            display: grid;
-            grid-template-columns: 1fr 1.3fr;
-            gap: 4rem;
-        }
-
-        .split-sticky-header {
-            position: sticky;
-            top: 6rem;
-            height: fit-content;
-        }
-
-        .split-h2 {
-            font-family: var(--font-display);
-            font-size: clamp(2.4rem, 4.5vw, 3.5rem);
-            font-weight: 900;
-            line-height: 1.1;
-            letter-spacing: -1px;
-            color: #fff;
-            margin-bottom: 1rem;
-        }
-
-        .split-tagline {
-            font-size: 1.1rem;
-            color: var(--emerald);
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-        }
-
-        .problem-card {
-            background: rgba(239, 68, 68, 0.04);
-            border: 1px solid rgba(239, 68, 68, 0.18);
-            border-left: 4px solid #ef4444;
-            border-radius: var(--radius-md);
-            padding: 1.5rem 1.75rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .problem-card-title {
-            font-family: var(--font-display);
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: #f87171;
-            margin-bottom: 0.4rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .problem-card-desc {
-            font-size: 0.94rem;
-            color: #d1d5db;
-            line-height: 1.65;
-        }
-
-        .solution-card {
-            background: rgba(16, 185, 129, 0.04);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            border-left: 4px solid var(--emerald);
-            border-radius: var(--radius-md);
-            padding: 1.5rem 1.75rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .solution-card-title {
-            font-family: var(--font-display);
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: var(--emerald);
-            margin-bottom: 0.4rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .solution-card-desc {
-            font-size: 0.94rem;
-            color: #d1d5db;
-            line-height: 1.65;
-        }
-
-        /* ============================================================
-           TECHNOLOGY STACK GRID (HexaTown Style)
-           ============================================================ */
-        .tech-stack-section {
-            padding: 5.5rem 0;
-            background: #08090d;
-        }
-
-        .section-header-center {
             text-align: center;
-            max-width: 750px;
-            margin: 0 auto 3.5rem;
+        }
+        .statement-h2 span {
+            color: var(--emerald);
         }
 
-        .section-title-center {
-            font-family: var(--font-display);
-            font-size: clamp(2.2rem, 4vw, 3.2rem);
-            font-weight: 800;
-            letter-spacing: -1px;
-            color: #fff;
-            margin-bottom: 0.75rem;
-        }
-
-        .section-subtitle-center {
-            font-size: 1.05rem;
-            color: var(--text-secondary);
-            line-height: 1.65;
-        }
-
-        .tech-grid {
+        /* Executive Metrics Grid */
+        .exec-metrics-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 1.5rem;
+            margin: 3.5rem 0;
         }
-
-        .tech-card {
+        .exec-metric-card {
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
             border-radius: var(--radius-lg);
             padding: 1.75rem 1.5rem;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .exec-metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--emerald), transparent);
+            opacity: 0.5;
+        }
+        .exec-metric-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-highlight);
+        }
+        .exec-num {
+            font-family: var(--font-display);
+            font-size: 2.3rem;
+            font-weight: 800;
+            line-height: 1.1;
+            color: #ffffff;
+            margin-bottom: 0.4rem;
+        }
+        .exec-num.emerald { color: var(--emerald); }
+        .exec-num.cyan { color: var(--cyan); }
+        .exec-num.amber { color: var(--amber); }
+        .exec-label {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 0.35rem;
+        }
+        .exec-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Showcase Split Section */
+        .showcase-block {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+            gap: 3.5rem;
+            align-items: center;
+            margin: 4.5rem 0;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+        .showcase-block.reverse {
+            grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+        }
+        .showcase-block.reverse .showcase-text-col {
+            order: 2;
+        }
+        .showcase-block.reverse .showcase-media-col {
+            order: 1;
+        }
+        .showcase-block.full-width {
+            grid-template-columns: minmax(0, 1fr);
+            gap: 2rem;
+        }
+        .showcase-text-col,
+        .showcase-media-col {
+            min-width: 0;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .showcase-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--emerald);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+        }
+        .showcase-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 2.5vw, 2.3rem);
+            font-weight: 800;
+            line-height: 1.22;
+            color: #ffffff;
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.02em;
+        }
+        .showcase-desc {
+            color: var(--text-secondary);
+            font-size: 1.02rem;
+            line-height: 1.72;
+            margin-bottom: 1.5rem;
+        }
+        .showcase-feature-list {
+            list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
-            transition: all 0.25s ease;
-        }
-        .tech-card:hover {
-            border-color: var(--border-highlight);
-            transform: translateY(-4px);
-            background: var(--bg-card-hover);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-        }
-
-        .tech-card-header {
-            display: flex;
-            align-items: center;
             gap: 0.85rem;
+            margin: 1.5rem 0;
         }
-
-        .tech-icon-circle {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.05);
+        .showcase-feature-list li {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+        .showcase-feature-list li i {
             color: var(--emerald);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .tech-name {
-            font-family: var(--font-display);
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #fff;
-        }
-
-        .tech-role-tag {
-            font-size: 0.72rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--emerald);
-        }
-
-        .tech-detail {
+            margin-top: 0.25rem;
             font-size: 0.85rem;
+        }
+        .showcase-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1.25rem;
+        }
+        .showcase-tag {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #cbd5e1;
+            padding: 0.35rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.76rem;
+            font-family: var(--font-mono);
+            font-weight: 500;
+        }
+
+        /* 20 Data Stream Grid Table */
+        .sync-table-wrapper {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            max-height: 520px;
+            overflow-y: auto;
+            margin: 1.5rem 0;
+        }
+        .sync-table-wrapper::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .sync-table-wrapper::-webkit-scrollbar-thumb {
+            background: #2a3447;
+            border-radius: 3px;
+        }
+        .sync-grid-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            font-family: var(--font-mono);
+        }
+        .sync-grid-table th {
+            background: #121721;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            padding: 0.75rem 1rem;
+            text-align: left;
             color: var(--text-muted);
-            line-height: 1.55;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .sync-grid-table td {
+            padding: 0.65rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: #cbd5e1;
+        }
+        .sync-grid-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .sync-status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.72rem;
+            color: var(--emerald);
+            background: rgba(16, 185, 129, 0.1);
+            padding: 0.15rem 0.5rem;
+            border-radius: 9999px;
+            font-weight: 600;
         }
 
-        /* ============================================================
-           KEY DELIVERABLES & MVP SECTION (HexaTown Feature Boxes)
-           ============================================================ */
-        .mvp-section {
-            padding: 5.5rem 0;
+        /* Problem & Solution Cards (TheHexaTown Format) */
+        .split-header-row {
+            margin-bottom: 2.5rem;
         }
-
-        .mvp-grid {
+        .split-h2 {
+            font-family: var(--font-display);
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+        .split-sub {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            max-width: 800px;
+        }
+        .problem-grid, .solution-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 1.5rem;
         }
-
-        .mvp-card {
+        .problem-card, .solution-card {
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
             border-radius: var(--radius-lg);
             padding: 2rem 1.75rem;
-            transition: all 0.25s ease;
-            position: relative;
-            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            transition: transform 0.25s ease, border-color 0.25s ease;
         }
-        .mvp-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--emerald), var(--cyan));
-            opacity: 0.7;
-        }
-        .mvp-card:hover {
-            border-color: var(--border-highlight);
+        .problem-card:hover {
             transform: translateY(-4px);
+            border-color: rgba(244, 63, 94, 0.35);
         }
-
-        .mvp-card-num {
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            font-weight: 700;
+        .solution-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-highlight);
+        }
+        .card-icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            margin-bottom: 0.5rem;
+        }
+        .card-icon-box.rose {
+            background: rgba(244, 63, 94, 0.12);
+            color: var(--rose);
+            border: 1px solid rgba(244, 63, 94, 0.25);
+        }
+        .card-icon-box.emerald {
+            background: rgba(16, 185, 129, 0.12);
             color: var(--emerald);
-            margin-bottom: 1rem;
+            border: 1px solid rgba(16, 185, 129, 0.25);
         }
-
-        .mvp-card-title {
+        .card-title {
             font-family: var(--font-display);
-            font-size: 1.35rem;
+            font-size: 1.18rem;
             font-weight: 700;
-            color: #fff;
-            margin-bottom: 0.65rem;
+            color: #ffffff;
+            line-height: 1.3;
         }
-
-        .mvp-card-desc {
+        .card-desc {
             font-size: 0.92rem;
             color: var(--text-secondary);
             line-height: 1.65;
         }
 
-        /* ============================================================
-           TEAM SIZE & OWNERSHIP SECTION (HexaTown Big Stats)
-           ============================================================ */
-        .team-section {
-            padding: 5.5rem 0;
-            background: #08090d;
-        }
-
-        .team-grid {
+        /* Tech Stack Card Grid */
+        .tech-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 2rem;
-            text-align: center;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 2.5rem;
         }
-
-        .team-stat-card {
+        .tech-card {
             background: var(--bg-card);
             border: 1px solid var(--border-subtle);
             border-radius: var(--radius-lg);
-            padding: 2.5rem 1.75rem;
+            padding: 1.75rem;
+            transition: transform 0.25s ease, border-color 0.25s ease;
         }
-
-        .team-num {
-            font-family: var(--font-display);
-            font-size: clamp(2.8rem, 5vw, 4rem);
-            font-weight: 900;
+        .tech-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-highlight);
+        }
+        .tech-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+        .tech-header i {
             color: var(--emerald);
-            line-height: 1;
-            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
         }
-
-        .team-role {
+        .tech-header h3 {
             font-family: var(--font-display);
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             font-weight: 700;
-            color: #fff;
-            margin-bottom: 0.35rem;
+            color: #ffffff;
+        }
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .tech-pill {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #cbd5e1;
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-family: var(--font-mono);
         }
 
-        .team-sub {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            line-height: 1.45;
+        /* Project Ownership & Impact */
+        .ownership-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(56, 189, 248, 0.04) 100%);
+            border: 1px solid var(--border-highlight);
+            border-radius: var(--radius-xl);
+            padding: 3rem;
+            margin: 3rem 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
         }
-
-        /* ============================================================
-           BOTTOM CTA BANNER (HexaTown "Let's code the future")
-           ============================================================ */
-        .cta-section {
-            padding: 6rem 0;
-            background: radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.12) 0%, #060709 70%);
-            text-align: center;
-        }
-
-        .cta-h2 {
+        .ownership-title {
             font-family: var(--font-display);
-            font-size: clamp(2.2rem, 4.5vw, 3.6rem);
-            font-weight: 900;
-            letter-spacing: -1px;
-            color: #fff;
+            font-size: 2.2rem;
+            font-weight: 800;
+            line-height: 1.2;
+            color: #ffffff;
             margin-bottom: 1rem;
         }
+        .ownership-desc {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+        .ownership-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        .o-stat {
+            background: rgba(10, 14, 22, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+        }
+        .o-stat-num {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--emerald);
+            margin-bottom: 0.25rem;
+        }
+        .o-stat-label {
+            font-size: 0.82rem;
+            color: #cbd5e1;
+            line-height: 1.4;
+        }
 
-        .cta-p {
+        /* CTA Section */
+        .cta-section {
+            padding: 6rem 0;
+            text-align: center;
+        }
+        .cta-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2.2rem, 4vw, 3.5rem);
+            font-weight: 900;
+            line-height: 1.15;
+            color: #ffffff;
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.03em;
+        }
+        .cta-desc {
             font-size: 1.15rem;
             color: var(--text-secondary);
             max-width: 650px;
             margin: 0 auto 2.5rem;
+            line-height: 1.6;
         }
-
-        .cta-actions {
+        .cta-btn-row {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 1.25rem;
-            flex-wrap: wrap;
         }
-
-        .btn-cta-primary {
-            padding: 0.9rem 2.2rem;
-            border-radius: 50px;
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
             background: var(--emerald);
-            color: #040807;
-            font-family: var(--font-main);
-            font-size: 1rem;
+            color: #04100c;
+            padding: 0.9rem 2rem;
+            border-radius: 9999px;
             font-weight: 700;
-            text-decoration: none;
-            transition: all 0.25s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .btn-cta-primary:hover {
-            background: #34d399;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.4);
-        }
-
-        .btn-cta-secondary {
-            padding: 0.9rem 2.2rem;
-            border-radius: 50px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #fff;
-            font-family: var(--font-main);
             font-size: 1rem;
-            font-weight: 600;
             text-decoration: none;
-            transition: all 0.25s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.35);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.5);
+            background: #0ea372;
+        }
+        .btn-secondary {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 0.6rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 0.9rem 2rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: transform 0.2s ease, background 0.2s ease;
         }
-        .btn-cta-secondary:hover {
-            background: rgba(255, 255, 255, 0.15);
+        .btn-secondary:hover {
             transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        /* Footer Credits */
-        .footer-bottom {
-            padding: 2rem 0;
-            border-top: 1px solid var(--border-subtle);
-            display: flex;
-            justify-content: space-between;
+        /* Lightbox Modal */
+        .lightbox-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(3, 5, 8, 0.95);
+            backdrop-filter: blur(12px);
+            z-index: 999999;
+            display: none;
             align-items: center;
-            font-size: 0.85rem;
-            color: var(--text-muted);
+            justify-content: center;
+            padding: 2rem;
+            box-sizing: border-box;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .lightbox-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        .lightbox-container {
+            max-width: 95vw;
+            max-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .lightbox-container img {
+            max-width: 92vw;
+            max-height: 82vh;
+            object-fit: contain;
+            border-radius: 10px;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+        .lightbox-caption {
+            margin-top: 1rem;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            font-family: var(--font-mono);
+            background: rgba(15, 23, 42, 0.8);
+            padding: 0.5rem 1.25rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .lightbox-close {
+            position: absolute;
+            top: -2.5rem;
+            right: 0;
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+        .lightbox-close:hover {
+            color: var(--emerald);
+            transform: scale(1.15);
         }
 
         /* Responsive Breakpoints */
-        @media (max-width: 992px) {
-            .meta-grid { grid-template-columns: repeat(2, 1fr); }
-            .mockup-grid-inner { grid-template-columns: repeat(2, 1fr); }
-            .spotlight-grid { grid-template-columns: 1fr; gap: 2.5rem; }
-            .content-split-grid { grid-template-columns: 1fr; gap: 2rem; }
-            .split-sticky-header { position: static; }
-            .tech-grid { grid-template-columns: repeat(2, 1fr); }
-            .mvp-grid { grid-template-columns: 1fr; }
-            .team-grid { grid-template-columns: repeat(2, 1fr); }
+        @media (max-width: 1024px) {
+            .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .exec-metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .showcase-block, .showcase-block.reverse {
+                grid-template-columns: minmax(0, 1fr) !important;
+                gap: 2rem;
+            }
+            .showcase-block.reverse .showcase-text-col { order: 1; }
+            .showcase-block.reverse .showcase-media-col { order: 2; }
+            .compare-row { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+            .compare-arrow-box { transform: rotate(90deg); margin: 0.5rem auto; }
+            .tech-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .ownership-box { grid-template-columns: minmax(0, 1fr); }
         }
 
-        @media (max-width: 600px) {
-            .meta-grid { grid-template-columns: 1fr; }
-            .mockup-grid-inner { grid-template-columns: 1fr; }
-            .transit-grid { grid-template-columns: 1fr; }
-            .tech-grid { grid-template-columns: 1fr; }
-            .team-grid { grid-template-columns: 1fr; }
-            .nav-links { display: none; }
-            .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+        @media (max-width: 768px) {
+            .browser-bar {
+                padding: 0.55rem 0.85rem;
+                gap: 0.5rem;
+            }
+            .browser-badge {
+                display: none; /* Hide badge on mobile to prevent overflow */
+            }
+            .browser-url {
+                font-size: 0.7rem;
+                padding: 0.25rem 0.55rem;
+            }
+            .browser-dots {
+                gap: 4px;
+            }
+            .browser-dot {
+                width: 8px;
+                height: 8px;
+            }
+            .interactive-comparison-wrapper {
+                padding: 1.5rem;
+            }
+            .comparison-controls {
+                flex-direction: column;
+                gap: 0.6rem;
+            }
+            .compare-toggle-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .meta-grid { grid-template-columns: minmax(0, 1fr); }
+            .exec-metrics-grid { grid-template-columns: minmax(0, 1fr); }
+            .problem-grid, .solution-grid, .tech-grid { grid-template-columns: minmax(0, 1fr); }
+            .ownership-stats { grid-template-columns: minmax(0, 1fr); }
+            .cta-btn-row { flex-direction: column; }
+            .statement-h2 { font-size: 1.45rem; }
+            .hero-h1 { font-size: 2.2rem; }
         }
     </style>
 </head>
 <body>
-    <div id="read-progress"></div>
 
-    <!-- Navigation -->
-    <header class="site-nav">
-        <div class="wrapper">
-            <div class="nav-inner">
-                <a href="../../index.html" class="nav-logo">
-                    <div class="logo-box">AT</div>
-                    <div class="logo-text">
-                        <span class="logo-title">Ahsan Tariq</span>
-                        <span class="logo-subtitle">Case Study · Dovetail</span>
-                    </div>
-                </a>
+    <!-- Ambient Glow Background -->
+    <div class="ambient-glow"></div>
 
-                <div class="nav-links">
-                    <a href="#problem" class="nav-link">Problem</a>
-                    <a href="#solution" class="nav-link">Solution</a>
-                    <a href="#telematics" class="nav-link">Logistics &amp; Fleet</a>
-                    <a href="#tech-stack" class="nav-link">Tech Stack</a>
-                    <a href="#mvp" class="nav-link">Deliverables</a>
-                </div>
-
-                <div class="nav-actions">
-                    <a href="../../index.html" class="btn-header-cta">
-                        <i class="fas fa-arrow-left"></i> Portfolio
-                    </a>
-                </div>
+    <!-- Navigation Bar -->
+    <nav class="case-nav">
+        <div class="nav-inner">
+            <a href="../index.html" class="nav-back">
+                <i class="fas fa-arrow-left"></i> Back to Case Studies
+            </a>
+            <div class="nav-brand">
+                <span>Tariq</span>DreamsTech
+            </div>
+            <div class="nav-status">
+                <span class="nav-status-dot"></span> LIVE PROD · CLOUD RUN
             </div>
         </div>
-    </header>
+    </nav>
 
     <!-- Hero Section -->
-    <section class="hero-section section-separator">
+    <section class="hero-section">
         <div class="wrapper">
-            <div class="hero-badge">
+            <div class="eyebrow-badge">
                 <i class="fas fa-hospital-user"></i> Enterprise Healthcare Logistics &amp; ERP Architecture
             </div>
 
-            <h1 class="hero-h1">Ambica International (Dovetail)</h1>
+            <h1 class="hero-h1">Ambica International (Project Dovetail)</h1>
             <div class="hero-tagline">“Autonomous Operations: Where Zero Paperwork Meets Real-Time Intelligence”</div>
 
             <p class="hero-desc">
-                How a multi-tenant healthcare enterprise running on manual paper clipboards, fragmented spreadsheets, and siloed software transformed into an autonomous, 100% digital operations ecosystem on Google Cloud Run — uniting NetSuite ERP, multi-modal fleet telematics (bikes, vans, trucks, air cargo), DocuSign micro-approvals, 3-layer OTP security, Azure SharePoint, and on-premise physical server bridge.
+                How a multi-tenant healthcare enterprise running on manual paper clipboards, fragmented spreadsheets, and siloed software transformed into an autonomous, 100% digital operations ecosystem on Google Cloud Run — uniting <strong>NetSuite ERP</strong>, multi-modal fleet telematics (bikes, vans, trucks, air cargo), <strong>DocuSign</strong> micro-approvals, 3-layer OTP security, <strong>Azure SharePoint</strong>, and on-premise physical server edge bridge.
             </p>
 
             <!-- Meta Strip -->
             <div class="meta-grid">
                 <div class="meta-col">
                     <span class="meta-title">Client</span>
-                    <span class="meta-value">Ambica International (USA / Healthcare)</span>
+                    <span class="meta-value">Ambica International (Healthcare Distribution)</span>
                 </div>
                 <div class="meta-col">
-                    <span class="meta-title">Role</span>
-                    <span class="meta-value accent">Lead Systems Architect (Solo Build)</span>
+                    <span class="meta-title">Architecture Ownership</span>
+                    <span class="meta-value accent">Lead Systems Architect (Solo Build — Ahsan Tariq)</span>
                 </div>
                 <div class="meta-col">
-                    <span class="meta-title">Timeline</span>
+                    <span class="meta-title">Deployment Status</span>
                     <span class="meta-value">Production Deployed (2025–2026)</span>
                 </div>
                 <div class="meta-col">
-                    <span class="meta-title">Core Stack</span>
-                    <span class="meta-value">FastAPI · React TS · NetSuite · Cloud Run</span>
+                    <span class="meta-title">Core Tech Stack</span>
+                    <span class="meta-value">FastAPI · React TS · NetSuite · Cartrack · GCP</span>
                 </div>
             </div>
 
-            <!-- Dashboard Mockup Showcase -->
-            <div class="hero-mockup-wrapper">
-                <div class="mockup-header-bar">
-                    <div class="mockup-dots">
-                        <span class="m-dot dot-red"></span>
-                        <span class="m-dot dot-yellow"></span>
-                        <span class="m-dot dot-green"></span>
+            <!-- Hero Live Device Mockup -->
+            <div class="browser-mockup">
+                <div class="browser-bar">
+                    <div class="browser-dots">
+                        <span class="browser-dot dot-red"></span>
+                        <span class="browser-dot dot-yellow"></span>
+                        <span class="browser-dot dot-green"></span>
                     </div>
-                    <span class="mockup-title">dovetail.ambicainternational.com/ops-portal/live-telemetry</span>
-                    <span style="font-size:0.75rem; color:var(--emerald); font-weight:700;"><i class="fas fa-circle-check"></i> System Operational</span>
+                    <div class="browser-url">
+                        <i class="fas fa-lock"></i>
+                        <span>https://dovetail-frontend-89373824464.europe-west1.run.app/command/morning-brief</span>
+                    </div>
+                    <div class="browser-badge pulse">
+                        ● LIVE NETSUITE &amp; CARTRACK SYNC
+                    </div>
                 </div>
-
-                <div class="mockup-grid-inner">
-                    <div class="mockup-card-stat">
-                        <div class="stat-icon"><i class="fas fa-layer-group"></i></div>
-                        <div class="stat-num">37</div>
-                        <div class="stat-label">Enterprise Modules Active</div>
-                    </div>
-                    <div class="mockup-card-stat">
-                        <div class="stat-icon cyan"><i class="fas fa-file-signature"></i></div>
-                        <div class="stat-num">&lt;60s</div>
-                        <div class="stat-label">Instant Micro-Approvals</div>
-                    </div>
-                    <div class="mockup-card-stat">
-                        <div class="stat-icon amber"><i class="fas fa-plane-departure"></i></div>
-                        <div class="stat-num">100%</div>
-                        <div class="stat-label">Fleet &amp; Air Freight Tracked</div>
-                    </div>
-                    <div class="mockup-card-stat">
-                        <div class="stat-icon"><i class="fas fa-shield-halved"></i></div>
-                        <div class="stat-num">0</div>
-                        <div class="stat-label">Data Leaks / Zero-Trust OTP</div>
-                    </div>
+                <div class="browser-screen" onclick="openLightbox('images/01-morning-brief-dashboard.jpg', 'Morning Brief Dashboard: Live Weather, 1,254 Pending Approvals, IQVIA Pharma Intel & MTD Revenue')">
+                    <img src="images/01-morning-brief-dashboard.jpg" alt="Ambica Dovetail Morning Brief Command Center" />
+                    <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect 1080p full screen</div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Statement Banner (TheHexaTown Signature) -->
-    <section class="statement-banner section-separator">
+    <section class="statement-banner">
         <div class="wrapper">
             <h2 class="statement-h2">
-                Using an autonomous cloud architecture to eliminate paper-bound friction, <span class="gradient-text">this platform cut approval delays by 94%</span> and brought warehouses, fleets, and finance onto a single live pane of glass.
+                “From <span>7-day paper approval stalls</span> to sub-60-second digital execution: <span>102 fleet vehicles</span>, <span>51,462 invoices</span>, 20 real-time NetSuite sync streams, and <span>$141.3M in active shipments</span> running autonomously under one roof.”
             </h2>
         </div>
     </section>
 
-    <!-- Spotlight 1: Monitors Logistics in Real-Time -->
-    <section class="spotlight-section section-separator" id="telematics">
+    <!-- Executive Production Metrics Grid -->
+    <section class="section-separator">
         <div class="wrapper">
-            <div class="spotlight-grid">
-                <div>
-                    <span class="section-kicker">Real-Time Logistics Engine</span>
-                    <h2 class="spotlight-h2">Monitors Your Entire Supply Chain in Real-Time</h2>
-                    <p class="spotlight-p">
-                        In healthcare distribution, temperature-sensitive vaccines, insulin, and emergency medical supplies cannot afford blind transit windows. Dovetail unifies multi-modal dispatchers, warehouse controllers, and airport ground teams into one continuous real-time coordination loop.
-                    </p>
-                    <p class="spotlight-p" style="margin-bottom:0;">
-                        Every transit asset — from rapid inner-city delivery motorcycles to nationwide line-haul refrigerated trucks and scheduled air cargo flights ("jahanz") — streams sub-second coordinates, automated departure/ETA timers, and temperature integrity telemetry.
-                    </p>
+            <div class="exec-metrics-grid">
+                <div class="exec-metric-card">
+                    <div class="exec-num emerald">$141.3M</div>
+                    <div class="exec-label">Active Cargo Pipeline Value</div>
+                    <div class="exec-sub">1,466 Total Shipments · 1,356 Active in Transit · Integrated via Live Trello Engine</div>
                 </div>
+                <div class="exec-metric-card">
+                    <div class="exec-num cyan">102 Units</div>
+                    <div class="exec-label">Multi-Modal Fleet Telematics</div>
+                    <div class="exec-sub">Delivery Bikes, Refrigerated Vans &amp; Line Trucks · 92.7K km in 30D · Cartrack Live GPS</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="exec-num emerald">51,462</div>
+                    <div class="exec-label">Invoices Mirrored in Real-Time</div>
+                    <div class="exec-sub">35,935 Sales Orders · 24,634 POs · 5,173 Suppliers · 20 Parallel SuiteQL Sync Streams</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="exec-num amber">3-Second</div>
+                    <div class="exec-label">NetSuite Continuous P&amp;L Tick</div>
+                    <div class="exec-sub">Real-time Gross Margin (99.9%) · 8-Week Forward Cash Flow Forecast · AR Risk Alerts</div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                <div class="transit-grid">
-                    <div class="transit-card">
-                        <div class="transit-icon-badge bike">
-                            <i class="fas fa-motorcycle"></i>
-                        </div>
-                        <h3 class="transit-title">Delivery Bikes</h3>
-                        <p class="transit-desc">Sub-60 minute rapid inner-city drops for urgent prescriptions with live rider coordinates and recipient ETA alerts.</p>
+    <!-- Feature Showcase 1: Multi-Modal Fleet Telematics & Shipments Radar -->
+    <section class="section-separator" id="telematics" data-section="fleet-telematics">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-satellite-dish"></i> LIVE TELEMATICS &amp; CARGO RADAR</div>
+                    <h2 class="showcase-h2">Real-Time Visibility From Last-Mile Courier Bikes to Trans-Pacific Air Cargo</h2>
+                    <p class="showcase-desc">
+                        Prior to Dovetail, Ambica had zero visibility once inventory departed the warehouse. Dispatchers relied on delayed phone calls, and international freight was tracked across disparate spreadsheets. We engineered a unified multi-modal telematics hub integrating Cartrack IoT GPS and Trello.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <strong>102 Active Fleet Vehicles:</strong> Real-time telematics tracking 9 moving, 1 idling, and 92 parked vehicles across delivery bikes (e.g. Honda Click 125 at 42 km/h) and temperature-controlled refrigerated vans.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Automated Driver Safety &amp; Risk Scoring:</strong> Detected 1,151 harsh events over 92,700 km, triggering automatic safety reviews for high-risk driver behavior (e.g., driver safety alert score 59).</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>$141.3M Cargo Pipeline (Trello):</strong> Live radar tracking 1,356 shipments in transit, providing founders and operations heads with instant transit milestone notifications.</li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">Cartrack IoT API</span>
+                        <span class="showcase-tag">Trello Webhooks</span>
+                        <span class="showcase-tag">Driver Safety AI</span>
+                        <span class="showcase-tag">92.7K km Logged</span>
                     </div>
-
-                    <div class="transit-card">
-                        <div class="transit-icon-badge">
-                            <i class="fas fa-van-shuttle"></i>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-lock"></i>
+                                <span>https://dovetail-frontend-89373824464.europe-west1.run.app/fleet/radar</span>
+                            </div>
+                            <div class="browser-badge pulse">● LIVE - CARTRACK</div>
                         </div>
-                        <h3 class="transit-title">Refrigerated Vans</h3>
-                        <p class="transit-desc">Daily hospital route distribution with cold-chain sensor monitoring and geofenced digital delivery proof.</p>
+                        <div class="browser-screen" onclick="openLightbox('images/02-fleet-shipments-pl.jpg', 'Fleet Radar: 102 Vehicles, $141.3M Trello Shipments Pipeline & NetSuite P&L')">
+                            <img src="images/02-fleet-shipments-pl.jpg" alt="Cartrack Fleet & Trello Shipments" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect</div>
+                        </div>
                     </div>
+                </div>
+            </div>
 
-                    <div class="transit-card">
-                        <div class="transit-icon-badge">
-                            <i class="fas fa-truck-moving"></i>
-                        </div>
-                        <h3 class="transit-title">Line-Haul Trucks</h3>
-                        <p class="transit-desc">Large warehouse-to-warehouse transfers with continuous driver telematics, route optimization, and speed compliance.</p>
+            <!-- Full Width Fleet GPS Map -->
+            <div class="browser-mockup">
+                <div class="browser-bar">
+                    <div class="browser-dots">
+                        <span class="browser-dot dot-red"></span>
+                        <span class="browser-dot dot-yellow"></span>
+                        <span class="browser-dot dot-green"></span>
                     </div>
+                    <div class="browser-url">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <span>https://dovetail-frontend-89373824464.europe-west1.run.app/supply-chain/fleet-gps</span>
+                    </div>
+                    <div class="browser-badge pulse">● 102 VEHICLES LIVE MAPPED</div>
+                </div>
+                <div class="browser-screen" onclick="openLightbox('images/07-live-fleet-cartrack-gps.jpg', 'Live Cartrack Fleet GPS Map: Active Couriers, Moving Status, Vehicle Reg & Telematics Speed')">
+                    <img src="images/07-live-fleet-cartrack-gps.jpg" alt="Live Fleet GPS Cartrack Telematics Map" />
+                    <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect full 1080p live tracking screen</div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                    <div class="transit-card">
-                        <div class="transit-icon-badge plane">
-                            <i class="fas fa-plane-departure"></i>
+    <!-- Feature Showcase 2: Continuous NetSuite SuiteQL Synchronization (The 20-Stream Mirror Engine) -->
+    <section class="section-separator" id="netsuite-sync">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-network-wired"></i> DATA PIPELINE ARCHITECTURE</div>
+                    <h2 class="showcase-h2">Eliminating NetSuite API Bottlenecks With a 20-Stream Local PostgreSQL Mirror</h2>
+                    <p class="showcase-desc">
+                        NetSuite's standard SuiteTalk and REST APIs suffered from strict concurrency limits and sluggish multi-second latency. To power real-time dashboards for hundreds of healthcare executives simultaneously without crashing ERP bandwidth, we architected a continuous 20-stream bidirectional ETL synchronization engine.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <strong>20 Concurrent Data Streams:</strong> High-frequency transactions sync every 2 minutes; master catalogs and organizational hierarchies refresh every 2 hours.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Zero NetSuite Concurrency Blocks:</strong> Local Cloud SQL PostgreSQL database serves all portal reads in &lt;15ms, completely isolating the ERP from traffic spikes.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Massive Record Volume:</strong> Mirrors 51,462 Invoices, 35,935 Sales Orders, 24,634 Purchase Orders, 5,173 Suppliers, 5,063 SKUs, and 740 PeoplesHR employee records flawlessly.</li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">FastAPI Background Tasks</span>
+                        <span class="showcase-tag">SuiteQL Incremental CDC</span>
+                        <span class="showcase-tag">Cloud SQL PostgreSQL</span>
+                        <span class="showcase-tag">Redis Cache</span>
+                    </div>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-database"></i>
+                                <span>https://dovetail-frontend-89373824464.europe-west1.run.app/admin/data-sync</span>
+                            </div>
+                            <div class="browser-badge pulse">● ALL 20 STREAMS HEALTHY</div>
                         </div>
-                        <h3 class="transit-title">Air Cargo Flights</h3>
-                        <p class="transit-desc">National flight cargo tracking: departure stamps, flight duration calculators, runway delay alerts, and ground sync.</p>
+                        <div class="browser-screen" onclick="openLightbox('images/03-data-sync-grid-20-streams.jpg', 'NetSuite Data Sync Grid: All 20 Streams Active (51,462 Invoices, 35,935 SOs, 24,634 POs, 5,173 Suppliers)')">
+                            <img src="images/03-data-sync-grid-20-streams.jpg" alt="NetSuite 20-Stream Sync Dashboard" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Synchronized Streams Table -->
+            <div class="sync-table-wrapper">
+                <table class="sync-grid-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Stream Entity</th>
+                            <th>Mirrored Records</th>
+                            <th>Sync Cadence</th>
+                            <th>Target Source</th>
+                            <th>System Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>01</td>
+                            <td><strong>Invoices &amp; Billing</strong></td>
+                            <td>51,462 Invoices</td>
+                            <td>Every 2 Hours</td>
+                            <td>NetSuite SuiteQL</td>
+                            <td><span class="sync-status-pill"><i class="fas fa-check"></i> Healthy (Synced)</span></td>
+                        </tr>
+                        <tr>
+                            <td>02</td>
+                            <td><strong>Sales Orders &amp; Fulfillment</strong></td>
+                            <td>35,935 Orders</td>
+                            <td>Every 2 Hours</td>
+                            <td>NetSuite SuiteQL</td>
+                            <td><span class="sync-status-pill"><i class="fas fa-check"></i> Healthy (Synced)</span></td>
+                        </tr>
+                        <tr>
+                            <td>03</td>
+                            <td><strong>Purchase Orders (POs)</strong></td>
+                            <td>24,634 Records</td>
+                            <td>Every 2 Hours</td>
+                            <td>NetSuite SuiteQL</td>
+                            <td><span class="sync-status-pill"><i class="fas fa-check"></i> Healthy (Synced)</span></td>
+                        </tr>
+                        <tr>
+                            <td>04</td>
+                            <td><strong>Fleet Trips &amp; Telematics</strong></td>
+                            <td>12,958 Trips (102 Vehicles)</td>
+                            <td>Every 2 Minutes</td>
+                            <td>Cartrack GPS IoT API</td>
+                            <td><span class="sync-status-pill"><i class="fas fa-check"></i> Healthy (Synced)</span></td>
+                        </tr>
+                        <tr>
+                            <td>05</td>
+                            <td><strong>Suppliers &amp; Vendor Catalog</strong></td>
+                            <td>5,173 Suppliers</td>
+                            <td>Every 2 Hours</td>
+                            <td>NetSuite SuiteQL</td>
+                            <td><span class="sync-status-pill"><i class="fas fa-check"></i> Healthy (Synced)</span></td>
+                        </tr>
+                        <tr>
+                            <td>06</td>
+                            <td><strong>Inventory SKUs &amp; Catalog</strong></td>
+                            <td>5,063 Active SKUs</td>
+                            <td>Every 2 Hours</td>
+                            <td>NetSuite SuiteQL</td>
+                            <td><span class="sync-status-pill"><i class="fas fa-check"></i> Healthy (Synced)</span></td>
+                        </tr>
+                        <tr>
+                            <td>07</td>
+                            <td><strong>Customer Accounts</strong></td>
+                            <td>3,383 Accounts</td>
+                            <td>Every 2 Hours</td>
+                            <td>NetSuite SuiteQL</td>
+                            <td><span class="sync-status-pill"><i class="fas fa-check"></i> Healthy (Synced)</span></td>
+                        </tr>
+                        <tr>
+                            <td>08</td>
+                            <td><strong>Active Global Shipments</strong></td>
+                            <td>1,466 Shipments ($141.3M)</td>
+                            <td>Every 2 Hours</td>
+                            <td>Trello Board API</td>
+                            <td><span class="sync-status-pill"><i class="fas fa-check"></i> Healthy (Synced)</span></td>
+                        </tr>
+                        <tr>
+                            <td>09</td>
+                            <td><strong>Pending Approvals Queue</strong></td>
+                            <td>1,191 Approvals</td>
+                            <td>Every 2 Hours</td>
+                            <td>NetSuite SuiteQL</td>
+                            <td><span class="sync-status-pill"><i class="fas fa-check"></i> Healthy (Synced)</span></td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td><strong>Return Authorizations (RMAs)</strong></td>
+                            <td>1,115 Returns</td>
+                            <td>Every 2 Hours</td>
+                            <td>NetSuite SuiteQL</td>
+                            <td><span class="sync-status-pill"><i class="fas fa-check"></i> Healthy (Synced)</span></td>
+                        </tr>
+                        <tr>
+                            <td>11</td>
+                            <td><strong>Fixed Asset Register</strong></td>
+                            <td>972 Assets</td>
+                            <td>Every 2 Hours</td>
+                            <td>NetSuite SuiteQL</td>
+                            <td><span class="sync-status-pill"><i class="fas fa-check"></i> Healthy (Synced)</span></td>
+                        </tr>
+                        <tr>
+                            <td>12</td>
+                            <td><strong>HR &amp; Payroll Employees</strong></td>
+                            <td>740 Staff</td>
+                            <td>Every 2 Hours</td>
+                            <td>PeoplesHR REST API</td>
+                            <td><span class="sync-status-pill"><i class="fas fa-check"></i> Healthy (Synced)</span></td>
+                        </tr>
+                        <tr>
+                            <td>13</td>
+                            <td><strong>NetSuite System Users</strong></td>
+                            <td>481 Users (471 Active)</td>
+                            <td>Every 2 Hours</td>
+                            <td>NetSuite SuiteQL</td>
+                            <td><span class="sync-status-pill"><i class="fas fa-check"></i> Healthy (Synced)</span></td>
+                        </tr>
+                        <tr>
+                            <td>14</td>
+                            <td><strong>Mirrored NetSuite Employees</strong></td>
+                            <td>471 Employees</td>
+                            <td>Every 2 Hours</td>
+                            <td>NetSuite SuiteQL</td>
+                            <td><span class="sync-status-pill"><i class="fas fa-check"></i> Healthy (Synced)</span></td>
+                        </tr>
+                        <tr>
+                            <td>15</td>
+                            <td><strong>Business Operating Units</strong></td>
+                            <td>180 Units</td>
+                            <td>Every 2 Hours</td>
+                            <td>NetSuite SuiteQL</td>
+                            <td><span class="sync-status-pill"><i class="fas fa-check"></i> Healthy (Synced)</span></td>
+                        </tr>
+                        <tr>
+                            <td>16</td>
+                            <td><strong>Live Delivery Fleet (Cartrack)</strong></td>
+                            <td>102 Vehicles (Bikes &amp; Vans)</td>
+                            <td>Every 2 Minutes</td>
+                            <td>Cartrack GPS IoT API</td>
+                            <td><span class="sync-status-pill"><i class="fas fa-check"></i> Healthy (Synced)</span></td>
+                        </tr>
+                        <tr>
+                            <td>17</td>
+                            <td><strong>Customer Detail Portfolios</strong></td>
+                            <td>100 Records</td>
+                            <td>Every 2 Hours</td>
+                            <td>NetSuite SuiteQL</td>
+                            <td><span class="sync-status-pill"><i class="fas fa-check"></i> Healthy (Synced)</span></td>
+                        </tr>
+                        <tr>
+                            <td>18</td>
+                            <td><strong>Enterprise Roles &amp; Permissions</strong></td>
+                            <td>79 Roles / 750 Perms</td>
+                            <td>Every 2 Hours</td>
+                            <td>NetSuite SuiteQL</td>
+                            <td><span class="sync-status-pill"><i class="fas fa-check"></i> Healthy (Synced)</span></td>
+                        </tr>
+                        <tr>
+                            <td>19</td>
+                            <td><strong>Financial Management Reports</strong></td>
+                            <td>50 Reports</td>
+                            <td>Every 2 Hours</td>
+                            <td>NetSuite SuiteQL</td>
+                            <td><span class="sync-status-pill"><i class="fas fa-check"></i> Healthy (Synced)</span></td>
+                        </tr>
+                        <tr>
+                            <td>20</td>
+                            <td><strong>Subsidiaries &amp; Treasury</strong></td>
+                            <td>9 Entities / 4 Reports</td>
+                            <td>Every 2 Hours</td>
+                            <td>NetSuite SuiteQL</td>
+                            <td><span class="sync-status-pill"><i class="fas fa-check"></i> Healthy (Synced)</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feature Showcase 3: Commercial Distribution & Pharmaceutical SKU Catalog -->
+    <section class="section-separator" id="commercial-distribution">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-pills"></i> COMMERCIAL COMMAND CENTER</div>
+                    <h2 class="showcase-h2">₱208.65M Commercial Pipeline, Hospital Accounts &amp; SKU Traceability</h2>
+                    <p class="showcase-desc">
+                        Pharmaceutical logistics require strict batch control, cold-chain regulatory compliance (FDA CPR certifications), and credit limit oversight across hundreds of hospitals and drug distributors. Dovetail unifies order processing, receivables aging, and SKU lifecycle tracking into one real-time console.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <strong>₱186.29M Net Open Orders:</strong> Automated processing of ₱208.65M gross commercial orders across leading Philippine hospital chains including Manila Medical Services, Recuenco General Hospital, and HLM Pharmaceutical.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>End-to-End Pharma SKU Intelligence:</strong> Deep procurement specifications tracking FDA CPR numbers (e.g. CPR DRP-5025-22), shelf-life expiry, batch packaging, and international supplier contracts (e.g. Rainbow Life Sciences Pvt Ltd).</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>IQVIA Market Data Ingestion:</strong> Automated ingestion of quarterly pharmaceutical intelligence spreadsheets to benchmark market share against national drug distribution indices.</li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">5,063 SKUs</span>
+                        <span class="showcase-tag">₱208.65M Gross Pipeline</span>
+                        <span class="showcase-tag">FDA CPR Regulatory Radar</span>
+                        <span class="showcase-tag">IQVIA Analytics</span>
+                    </div>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-hospital"></i>
+                                <span>https://dovetail-frontend-89373824464.europe-west1.run.app/commercial/customers</span>
+                            </div>
+                            <div class="browser-badge pulse">● 841 CUSTOMERS LIVE</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/05-commercial-orders-distribution.jpg', 'Commercial Orders & Distribution: ₱186.29M Open Orders, Hospital Delivery Status & Territory Receivables')">
+                            <img src="images/05-commercial-orders-distribution.jpg" alt="Commercial Customers & Distribution" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SKU Detail Showcase Mockup -->
+            <div class="browser-mockup">
+                <div class="browser-bar">
+                    <div class="browser-dots">
+                        <span class="browser-dot dot-red"></span>
+                        <span class="browser-dot dot-yellow"></span>
+                        <span class="browser-dot dot-green"></span>
+                    </div>
+                    <div class="browser-url">
+                        <i class="fas fa-barcode"></i>
+                        <span>https://dovetail-frontend-89373824464.europe-west1.run.app/supply-chain/skus/PO-AIC-0019343</span>
+                    </div>
+                    <div class="browser-badge">● SKU SPECIFICATION &amp; BATCH TRACKING</div>
+                </div>
+                <div class="browser-screen" onclick="openLightbox('images/06-pharma-skus-procurement.jpg', 'Pharma SKU Specification: Omeprazole Sodium (OMEFIL WFI 40mg), Rainbow Life Sciences Pvt Ltd, PO Details & Trello Sync')">
+                    <img src="images/06-pharma-skus-procurement.jpg" alt="Pharma SKU Spec & PO Details" />
+                    <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect 1080p full screen</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feature Showcase 4: Live P&L, Predictive Cash Flow & Financial Risk Intelligence -->
+    <section class="section-separator" id="finance-intelligence">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-chart-line"></i> EXECUTIVE FINANCIAL TELEMETRY</div>
+                    <h2 class="showcase-h2">P&amp;L Ticking Every 3 Seconds &amp; 8-Week Forward Cash Flow Protection</h2>
+                    <p class="showcase-desc">
+                        In standard enterprise setups, closing the monthly books requires 10 to 14 days of manual ledger consolidation. Dovetail turns financial accounting into live telemetry: revenue, COGS, and gross margin tick every 3 seconds directly from NetSuite SuiteQL, supported by an 8-week predictive cash flow radar.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <strong>Continuous 3-Second P&amp;L Ticking:</strong> Live calculation of November 2026 revenue, COGS (₱67.96), and gross margin (>99.9%) with dynamic period adjustments for audit reviews.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>8-Week Predictive Cash Flow Engine:</strong> Machine-assisted forecast highlighting prospective negative cash balance weeks in advance, enabling leadership to pre-fund credit lines or trigger collection sprints before liquidity shortages hit.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Automated AR Risk Radar:</strong> Tracks 152 active financial intelligence flags (₱1,173.46M flagged amount), flagging critical credit limit breaches (e.g. Unilab Inc. at 377% limit utilization, DSO 365 days, ₱75.37M held for review).</li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">3s SuiteQL Ticking</span>
+                        <span class="showcase-tag">8-Week Cash Projection</span>
+                        <span class="showcase-tag">₱1,173.46M Risk Flagged</span>
+                        <span class="showcase-tag">DSO Anomaly Detection</span>
+                    </div>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-coins"></i>
+                                <span>https://dovetail-frontend-89373824464.europe-west1.run.app/finance/live-pl</span>
+                            </div>
+                            <div class="browser-badge pulse">● TICKS EVERY ~3 SECONDS</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/08-live-finance-pl-cashflow.jpg', 'Live P&L Dashboard: NetSuite Base vs Adjustment Reconciliation & Departmental Budget vs Actual')">
+                            <img src="images/08-live-finance-pl-cashflow.jpg" alt="Live P&L & NetSuite Adjustment Console" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Finance Intel Risk Flags Showcase Mockup -->
+            <div class="browser-mockup">
+                <div class="browser-bar">
+                    <div class="browser-dots">
+                        <span class="browser-dot dot-red"></span>
+                        <span class="browser-dot dot-yellow"></span>
+                        <span class="browser-dot dot-green"></span>
+                    </div>
+                    <div class="browser-url">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>https://dovetail-frontend-89373824464.europe-west1.run.app/finance/intelligence-flags</span>
+                    </div>
+                    <div class="browser-badge pulse">● 87 CRITICAL ANOMALIES FLAGGED</div>
+                </div>
+                <div class="browser-screen" onclick="openLightbox('images/09-finance-intelligence-risk-flags.jpg', 'Finance Intelligence: 8-Week Cash Flow Projection, 152 Active Flags (₱1,173.46M Flagged), Unilab AR Risk Hold')">
+                    <img src="images/09-finance-intelligence-risk-flags.jpg" alt="Finance Intelligence & AR Risk Flags" />
+                    <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect 1080p full screen</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feature Showcase 5: Workflow Automation, Digital Signatures & Room Bookings -->
+    <section class="section-separator" id="workflow-automation">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-tasks"></i> ZERO-PAPERWORK AUTOMATION</div>
+                    <h2 class="showcase-h2">From 7-Day Paper Stalls to Under 60 Seconds: 10 Core Workflows</h2>
+                    <p class="showcase-desc">
+                        Everyday internal requests — warehouse supply withdrawals, office room bookings, inventory replenishment, and legal approvals — historically traveled across paper forms requiring multiple physical executive signatures. Dovetail replaced paper trails with automated digital state machines.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <strong>WF-01 Supply Withdrawal Request:</strong> 100% automated multi-level warehouse requisition workflow with 36 active live runs.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>WF-02 Room Booking Request:</strong> Seamlessly integrated with Microsoft Azure Calendar and Outlook to automatically reserve conference rooms and send meeting invites without human admin intervention.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>WF-03 Inventory Reorder Alert:</strong> Autonomous stock monitoring that triggered 500 replenishment alerts when critical pharmaceutical stock dipped below safety thresholds.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>WF-08 Legal E-Signature Queue:</strong> DocuSign REST integration that queues legal contracts, routes them by authorization matrix, and validates digital signatures with timestamp audit logging.</li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">10 Custom Workflows</span>
+                        <span class="showcase-tag">Azure Calendar OAuth</span>
+                        <span class="showcase-tag">DocuSign REST</span>
+                        <span class="showcase-tag">&lt;60s Resolution Time</span>
+                    </div>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-project-diagram"></i>
+                                <span>https://dovetail-frontend-89373824464.europe-west1.run.app/workflows/active</span>
+                            </div>
+                            <div class="browser-badge pulse">● 270 TOTAL WORKFLOW RUNS</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/10-workflow-automation-queue.jpg', 'Portal Workflows: Supply Withdrawals (WF-01), Room Bookings (WF-02), Inventory Reorder (WF-03), E-Signature Queue (WF-08)')">
+                            <img src="images/10-workflow-automation-queue.jpg" alt="Portal Workflows & Automation Engine" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Azure Room Bookings Showcase Mockup -->
+            <div class="browser-mockup">
+                <div class="browser-bar">
+                    <div class="browser-dots">
+                        <span class="browser-dot dot-red"></span>
+                        <span class="browser-dot dot-yellow"></span>
+                        <span class="browser-dot dot-green"></span>
+                    </div>
+                    <div class="browser-url">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>https://dovetail-frontend-89373824464.europe-west1.run.app/workflows/room-bookings</span>
+                    </div>
+                    <div class="browser-badge">● AZURE CALENDAR INTEGRATED</div>
+                </div>
+                <div class="browser-screen" onclick="openLightbox('images/12-azure-room-bookings.jpg', 'Meeting Room Bookings: Automated Scheduling, Room Approvals & Azure Enterprise Integration')">
+                    <img src="images/12-azure-room-bookings.jpg" alt="Azure Room Bookings Console" />
+                    <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect 1080p full screen</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feature Showcase 6: Zero-Trust Security, Hybrid Server Bridge & Immutable Audit Trail -->
+    <section class="section-separator" id="security-audit">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-user-shield"></i> ENTERPRISE SECURITY &amp; COMPLIANCE</div>
+                    <h2 class="showcase-h2">Bridging On-Premise Physical Servers, Azure SharePoint &amp; 3-Layer OTP Vault</h2>
+                    <p class="showcase-desc">
+                        Ambica stored sensitive regulatory files (FDA CPR filings, formulation chemistry, executive contracts) on isolated physical on-premise servers and Microsoft SharePoint. We engineered a hybrid edge bridge combining bank-grade Role-Based Access Control (RBAC), 3-layer OTP authentication, and forensic audit logging.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <strong>79 Roles &amp; 750 Permission Scopes:</strong> 9,400 role links mirroring NetSuite user provisioning with instant global session revocation across all connected devices.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Secure Physical Server Bridge:</strong> Lightweight daemon running on on-premise hardware that streams confidential documents to authenticated cloud users with zero port forwarding or firewall exposure.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Forensic Audit Logging (1,246+ Entries):</strong> Immutable ledger capturing every write event, OTP generation, login, logout, and document inspection (e.g. <span style="font-family:var(--font-mono); font-size:0.8rem; color:var(--emerald);">LEGAL_WORKING_DOCUMENT_VIEWED</span>) with IP and timestamp verification.</li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">79 NetSuite Roles</span>
+                        <span class="showcase-tag">3-Layer OTP Verification</span>
+                        <span class="showcase-tag">Physical Server Edge Daemon</span>
+                        <span class="showcase-tag">1,246 Audit Trail Entries</span>
+                    </div>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-users-cog"></i>
+                                <span>https://dovetail-frontend-89373824464.europe-west1.run.app/admin/manage-roles</span>
+                            </div>
+                            <div class="browser-badge pulse">● 79 ROLES · 750 PERMISSIONS</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/11-admin-rbac-netsuite-provisioning.jpg', 'Admin Actions & RBAC: NetSuite User Provisioning, 79 Enterprise Roles, Global Session Revocation')">
+                            <img src="images/11-admin-rbac-netsuite-provisioning.jpg" alt="Admin Actions & RBAC Console" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Audit Trail Showcase Mockup -->
+            <div class="browser-mockup">
+                <div class="browser-bar">
+                    <div class="browser-dots">
+                        <span class="browser-dot dot-red"></span>
+                        <span class="browser-dot dot-yellow"></span>
+                        <span class="browser-dot dot-green"></span>
+                    </div>
+                    <div class="browser-url">
+                        <i class="fas fa-history"></i>
+                        <span>https://dovetail-frontend-89373824464.europe-west1.run.app/audit-trail/action-logs</span>
+                    </div>
+                    <div class="browser-badge pulse">● IMMUTABLE ACTION LOG (1,246 ENTRIES)</div>
+                </div>
+                <div class="browser-screen" onclick="openLightbox('images/13-audit-trail-security-vault.jpg', 'Immutable Audit Trail: Action Logs (1,246 entries), OTP Dispatches, Legal Document Views & User Authentications')">
+                    <img src="images/13-audit-trail-security-vault.jpg" alt="Action Logs & Audit Trail" />
+                    <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect 1080p full screen</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feature Showcase 7: AI EOI Connector (Claude LLM, Microsoft Outlook & WhatsApp) -->
+    <section class="section-separator" id="eoi-connector">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-brain"></i> CONVERSATIONAL INTELLIGENCE</div>
+                    <h2 class="showcase-h2">Autonomous Task Detection Across Outlook Mailboxes &amp; WhatsApp Chats</h2>
+                    <p class="showcase-desc">
+                        Critical procurement requests, delivery emergencies, and supplier follow-ups frequently get lost in long email chains and fast-moving WhatsApp messaging threads. We built the AI EOI (Expression of Interest) Connector powered by Anthropic Claude LLM and Microsoft Graph OAuth.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <strong>Microsoft Graph Mailbox Sync:</strong> Secure one-time consent OAuth connection that reads inbound emails without storing sensitive credentials or sending unapproved messages.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>WhatsApp Enterprise Webhook:</strong> Real-time event streaming capturing hospital pharmacist requests, order inquiries, and dispatch confirmations.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Autonomous Task Extraction:</strong> Anthropic Claude parses chaotic conversations, extracts actionable commitments, determines assigned owners, and schedules deadlines automatically.</li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">Anthropic Claude LLM</span>
+                        <span class="showcase-tag">MS Graph API OAuth</span>
+                        <span class="showcase-tag">WhatsApp Webhooks</span>
+                        <span class="showcase-tag">Auto Task Extraction</span>
+                    </div>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-envelope-open-text"></i>
+                                <span>https://dovetail-frontend-89373824464.europe-west1.run.app/command/eoi-connector</span>
+                            </div>
+                            <div class="browser-badge pulse">● MS GRAPH OAUTH CONNECTED</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/04-eoi-connector-intelligence.png', 'EOI Connector: Outlook Mailbox OAuth, WhatsApp Live Stream, AI Conversation Task Extraction')">
+                            <img src="images/04-eoi-connector-intelligence.png" alt="AI EOI Connector Dashboard" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Problem Section (TheHexaTown Layout) -->
-    <section class="content-split-section section-separator" id="problem">
+    <!-- Problem vs Solution (TheHexaTown 6x6 Grid) -->
+        <!-- ANIMATED DEDICATED PROBLEM VS SOLUTION SECTION (SUPER EASY FOR NON-TECHNICAL READERS) -->
+    <section class="section-separator" id="problem-solution">
         <div class="wrapper">
-            <div class="content-split-grid">
-                <div class="split-sticky-header">
-                    <span class="section-kicker">High-Stakes Healthcare Bottlenecks</span>
-                    <h2 class="split-h2">Problem</h2>
-                    <div class="split-tagline">No margin for error in life-critical medicine delivery.</div>
-                    <p style="color:var(--text-secondary); font-size:1rem; line-height:1.7;">
-                        Before Dovetail, Ambica was paralyzed by legacy paper workflows and disconnected software silos that caused delivery delays, lost orders, and blind transit windows.
-                    </p>
-                </div>
-
-                <div>
-                    <div class="problem-card">
-                        <h3 class="problem-card-title"><i class="fas fa-clock"></i> 4–7 Day Signature Delays</h3>
-                        <p class="problem-card-desc">Every purchase order, invoice approval, and capital expenditure required physical paper printouts hand-carried across offices. If an approving director was traveling, shipments sat idle for days.</p>
-                    </div>
-
-                    <div class="problem-card">
-                        <h3 class="problem-card-title"><i class="fas fa-hourglass-half"></i> Stalled Everyday Micro-Requests</h3>
-                        <p class="problem-card-desc">Even tiny operational requests — a courier needing a fuel voucher, warehouse staff requesting packing dry ice, or 2 hours of technician overtime — required printed slips and days of supervisor chasing.</p>
-                    </div>
-
-                    <div class="problem-card">
-                        <h3 class="problem-card-title"><i class="fas fa-truck-ramp-box"></i> Blind Transit Windows</h3>
-                        <p class="problem-card-desc">Dispatchers had no live visibility into trucks, delivery bikes, or scheduled cargo flights. When a hospital asked when emergency medicine would arrive, staff had to manually call drivers on mobile phones.</p>
-                    </div>
-
-                    <div class="problem-card">
-                        <h3 class="problem-card-title"><i class="fas fa-server"></i> Trapped On-Premise Physical Servers</h3>
-                        <p class="problem-card-desc">Historical lab test certificates, batch sheets, and compliance documents were trapped on physical on-premise servers inside warehouse basements, completely unreachable for remote executives.</p>
-                    </div>
-
-                    <div class="problem-card">
-                        <h3 class="problem-card-title"><i class="fas fa-file-excel"></i> Out-of-Sync Spreadsheets &amp; ERP</h3>
-                        <p class="problem-card-desc">NetSuite ERP data was exported manually into Excel files. Departments worked on conflicting versions, leaving the Founder with outdated financial figures until month-end reconciliation.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Solution Section (TheHexaTown Layout) -->
-    <section class="content-split-section section-separator" id="solution">
-        <div class="wrapper">
-            <div class="content-split-grid">
-                <div class="split-sticky-header">
-                    <span class="section-kicker">Complete Digital Transformation</span>
-                    <h2 class="split-h2">Solution</h2>
-                    <div class="split-tagline">“Knowing is better than hoping.”</div>
-                    <p style="color:var(--text-secondary); font-size:1rem; line-height:1.7;">
-                        As the Sole Systems Architect, I designed and engineered <strong>Dovetail</strong> from the ground up: an autonomous, cloud-native Enterprise Operations Portal on Google Cloud Run that converted 37 manual paper processes into real-time digital workflows.
-                    </p>
-                </div>
-
-                <div>
-                    <div class="solution-card">
-                        <h3 class="solution-card-title"><i class="fas fa-bolt"></i> Instant 1-Click Micro-Approvals (&lt;60s)</h3>
-                        <p class="solution-card-desc">Engineered an automated micro-approval pipeline: small daily requests (fuel vouchers, supplies, overtime) route directly to supervisors via push notifications and 1-click email/WhatsApp action buttons, clearing in under 60 seconds.</p>
-                    </div>
-
-                    <div class="solution-card">
-                        <h3 class="solution-card-title"><i class="fas fa-file-signature"></i> DocuSign REST Multi-Recipient Automation</h3>
-                        <p class="solution-card-desc">Integrated DocuSign webhooks with sequential signing hierarchies (Requester &rarr; Dept Head &rarr; Controller &rarr; CEO). Slashed contract approval turnaround from 4.2 business days down to 14 minutes with exact time-to-sign audit logging.</p>
-                    </div>
-
-                    <div class="solution-card">
-                        <h3 class="solution-card-title"><i class="fas fa-network-wired"></i> NetSuite SuiteQL Continuous Pipeline</h3>
-                        <p class="solution-card-desc">Bypassed NetSuite rate limits by architecting a Celery Beat + Redis ingestion engine mirroring 10+ core domains (Inventory, POs, Vendors, Customers) into an indexed PostgreSQL 18 read mirror (<18ms queries).</p>
-                    </div>
-
-                    <div class="solution-card">
-                        <h3 class="solution-card-title"><i class="fas fa-hard-drive"></i> Dovetail Edge Bridge (Physical Server Gateway)</h3>
-                        <p class="solution-card-desc">Built a secure hybrid gateway connecting Cloud Run directly to warehouse on-premise physical servers via encrypted outbound TLS reverse tunnels (zero open firewall ports), allowing instant in-browser streaming of terabytes of historical files.</p>
-                    </div>
-
-                    <div class="solution-card">
-                        <h3 class="solution-card-title"><i class="fab fa-microsoft"></i> Azure Cloud &amp; SharePoint Direct Storage</h3>
-                        <p class="solution-card-desc">Direct cloud archiving into Microsoft SharePoint document libraries with automated metadata classification, versioning, and Azure Blob Storage co-authoring for live multi-user Excel and Word workflows.</p>
-                    </div>
-
-                    <div class="solution-card">
-                        <h3 class="solution-card-title"><i class="fas fa-shield-halved"></i> 3-Layer OTP Server Security Vault</h3>
-                        <p class="solution-card-desc">Guards every sensitive file download, payroll export, and vendor contract behind an email-verified 6-digit cryptographic OTP (10-min TTL, 3-attempt lockout) — achieving zero security leaks in production.</p>
-                    </div>
-
-                    <div class="solution-card">
-                        <h3 class="solution-card-title"><i class="fas fa-video"></i> Integrated Online Meetings &amp; Teams Sync</h3>
-                        <p class="solution-card-desc">Integrated Microsoft Graph API for 1-click Microsoft Teams video meeting creation from operational threads, with automated meeting agenda distribution and post-meeting AI action-item assignment.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Technology Stack Section (HexaTown Grid Style) -->
-    <section class="tech-stack-section section-separator" id="tech-stack">
-        <div class="wrapper">
-            <div class="section-header-center">
-                <span class="section-kicker">Engineered for Hyperscale Reliability</span>
-                <h2 class="section-title-center">Technology Stack</h2>
-                <p class="section-subtitle-center">
-                    A production-tested modern engineering stack selected for ultra-low latency, deterministic execution, and zero-downtime reliability.
+            <div class="split-header-row" style="text-align:center;">
+                <div class="eyebrow-badge"><i class="fas fa-scale-balanced"></i> Crystal-Clear Non-Technical Breakdown</div>
+                <h2 class="split-h2">The Transformation: Before vs After Dovetail</h2>
+                <p class="split-sub" style="margin:0 auto;">
+                    A simple, human-readable comparison of the agonizing manual paper delays versus the autonomous digital speed engineered by Ahsan Tariq.
                 </p>
+            </div>
+
+            <div class="interactive-comparison-wrapper">
+                <!-- Interactive Filter Controls -->
+                <div class="comparison-controls">
+                    <button class="compare-toggle-btn active" id="btnAmbicaBoth" onclick="filterComparisonAmbica('both')">
+                        <i class="fas fa-arrow-right-arrow-left"></i> Side-by-Side View
+                    </button>
+                    <button class="compare-toggle-btn" id="btnAmbicaProblem" onclick="filterComparisonAmbica('problem')">
+                        <i class="fas fa-triangle-exclamation"></i> The Old Paper Nightmare (Before)
+                    </button>
+                    <button class="compare-toggle-btn" id="btnAmbicaSolution" onclick="filterComparisonAmbica('solution')">
+                        <i class="fas fa-circle-check"></i> The Autonomous Speed (After)
+                    </button>
+                </div>
+
+                <!-- Animated Comparison Rows -->
+                <div class="comparison-cards-grid" id="compareGridAmbica">
+                    <!-- Row 1: Signatures -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label before"><i class="fas fa-circle-xmark"></i> BEFORE (4–7 DAY PAPER STALLS)</div>
+                            <h3 class="side-title">Life-Saving Medicines Trapped Waiting For Signatures</h3>
+                            <p class="side-desc">
+                                An urgent shipment of medicine was packed and ready on Monday. But because the director was visiting a distant regional branch, the physical paper clipboard couldn't get signed. The box sat on a warehouse floor for 5 days while patients waited.
+                            </p>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label after"><i class="fas fa-circle-check"></i> AFTER (&lt;60 SECONDS MOBILE APPROVAL)</div>
+                            <h3 class="side-title">Instant 1-Click Digital Signatures Anywhere</h3>
+                            <p class="side-desc">
+                                The moment the warehouse packs the medicine, the director receives a secure push alert on their phone. With one quick tap on DocuSign, the approval is verified in 45 seconds, and the delivery bike leaves immediately.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Fleet Visibility -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label before"><i class="fas fa-circle-xmark"></i> BEFORE (BLIND ROADWAY TRANSIT)</div>
+                            <h3 class="side-title">Zero Idea Where 102 Delivery Vehicles Were</h3>
+                            <p class="side-desc">
+                                When a major hospital called asking, <em>&ldquo;Where is our insulin shipment?&rdquo;</em>, staff had to make 10 frantic phone calls to drivers who were stuck in traffic or couldn't answer their phones. Delays were completely blind.
+                            </p>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label after"><i class="fas fa-circle-check"></i> AFTER (100% LIVE CARTRACK GPS RADAR)</div>
+                            <h3 class="side-title">Real-Time Vehicle Speeds &amp; Minute-Accurate Arrival</h3>
+                            <p class="side-desc">
+                                The live radar shows all 102 delivery bikes, vans, and trucks on a live map. Dispatchers see exact speeds (e.g. 42 km/h), vehicle battery/fuel status, driver safety scores, and can tell the hospital the exact minute of arrival.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Row 3: Physical Servers -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label before"><i class="fas fa-circle-xmark"></i> BEFORE (LOCKED IN AN IT ROOM)</div>
+                            <h3 class="side-title">Files Trapped on Physical Office Hard Drives</h3>
+                            <p class="side-desc">
+                                Vital government health certifications (FDA CPRs) and supplier contracts were stored on old physical desktop servers inside a locked central IT room. If an inspector asked for proof at 8 PM, someone had to drive to the office in traffic.
+                            </p>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label after"><i class="fas fa-circle-check"></i> AFTER (ZERO-TRUST 3-LAYER OTP CLOUD VAULT)</div>
+                            <h3 class="side-title">Secure 1-Time Code Access from Anywhere</h3>
+                            <p class="side-desc">
+                                Authorized executives can safely view confidential compliance files from home or on the road using a 3-layer one-time password (OTP) sent to their phone, securely streaming files from physical servers with zero hacking risk.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Row 4: NetSuite Lag -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label before"><i class="fas fa-circle-xmark"></i> BEFORE (15-SECOND SPINNING WHEELS)</div>
+                            <h3 class="side-title">NetSuite Freezes &amp; "Rate Limit Exceeded" Errors</h3>
+                            <p class="side-desc">
+                                Every time an accountant tried to open a financial report during month-end closing, NetSuite froze or threw rate limit errors because 100 people were clicking at once. Morning dispatch was delayed by hours.
+                            </p>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label after"><i class="fas fa-circle-check"></i> AFTER (20-STREAM CONTINUOUS LOCAL MIRROR)</div>
+                            <h3 class="side-title">51,462 Invoices Mirrored in &lt;15ms Response</h3>
+                            <p class="side-desc">
+                                A custom background engine synchronizes 51,462 invoices and 35,935 sales orders continuously. Reports open instantly in under 15 milliseconds without touching NetSuite's bandwidth or causing a single slowdown.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Row 5: Global Cargo Pipeline -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label before"><i class="fas fa-circle-xmark"></i> BEFORE (MILLIONS IN FRAGMENTED SPREADSHEETS)</div>
+                            <h3 class="side-title">Managing $140M in Freight on Scattered Excel Files</h3>
+                            <p class="side-desc">
+                                Over $140 Million worth of international pharmaceutical shipments flying across air cargo and container ships were tracked across disorganized personal Excel sheets. Different departments had different numbers.
+                            </p>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label after"><i class="fas fa-circle-check"></i> AFTER ($141.3M LIVE TRELLO PIPELINE RADAR)</div>
+                            <h3 class="side-title">Unified Global Shipment Radar With Live Alerts</h3>
+                            <p class="side-desc">
+                                1,466 global shipments ($141.3M active value) are tracked with automated milestone cards and real-time status updates from international port dispatch to hospital delivery.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+<section class="section-separator" id="tech-stack">
+        <div class="wrapper">
+            <div class="split-header-row" style="text-align:center;">
+                <div class="eyebrow-badge"><i class="fas fa-microchip"></i> System Anatomy</div>
+                <h2 class="split-h2">Enterprise Technology Stack</h2>
+                <p class="split-sub" style="margin:0 auto;">Engineered for high-throughput scalability, sub-millisecond responsiveness, and enterprise-grade reliability.</p>
             </div>
 
             <div class="tech-grid">
                 <div class="tech-card">
-                    <div class="tech-card-header">
-                        <div class="tech-icon-circle"><i class="fab fa-python"></i></div>
-                        <div>
-                            <div class="tech-name">FastAPI</div>
-                            <span class="tech-role-tag">Python 3.12 Core</span>
-                        </div>
+                    <div class="tech-header">
+                        <i class="fas fa-server"></i>
+                        <h3>Core Backend</h3>
                     </div>
-                    <p class="tech-detail">Asynchronous microservices backend, Pydantic v2 data contracts, and async SQLAlchemy connection pooling.</p>
+                    <div class="tech-tags">
+                        <span class="tech-pill">Python 3.11</span>
+                        <span class="tech-pill">FastAPI</span>
+                        <span class="tech-pill">SQLAlchemy 2.0</span>
+                        <span class="tech-pill">Pydantic v2</span>
+                        <span class="tech-pill">Celery Workers</span>
+                        <span class="tech-pill">Redis In-Memory</span>
+                    </div>
                 </div>
 
                 <div class="tech-card">
-                    <div class="tech-card-header">
-                        <div class="tech-icon-circle"><i class="fab fa-react"></i></div>
-                        <div>
-                            <div class="tech-name">React + TS</div>
-                            <span class="tech-role-tag">Frontend Portal</span>
-                        </div>
+                    <div class="tech-header">
+                        <i class="fab fa-react"></i>
+                        <h3>Frontend Architecture</h3>
                     </div>
-                    <p class="tech-detail">High-performance responsive portal built with TypeScript, Vite, Tailwind CSS, and Server-Sent Events (SSE).</p>
+                    <div class="tech-tags">
+                        <span class="tech-pill">React 18</span>
+                        <span class="tech-pill">TypeScript</span>
+                        <span class="tech-pill">Vite Bundler</span>
+                        <span class="tech-pill">Tailwind CSS</span>
+                        <span class="tech-pill">Recharts</span>
+                        <span class="tech-pill">Lucide Icons</span>
+                    </div>
                 </div>
 
                 <div class="tech-card">
-                    <div class="tech-card-header">
-                        <div class="tech-icon-circle"><i class="fas fa-database"></i></div>
-                        <div>
-                            <div class="tech-name">PostgreSQL 18</div>
-                            <span class="tech-role-tag">Cloud SQL Mirror</span>
-                        </div>
+                    <div class="tech-header">
+                        <i class="fab fa-google"></i>
+                        <h3>Cloud Infrastructure</h3>
                     </div>
-                    <p class="tech-detail">Read-optimized relational mirror indexing millions of NetSuite ERP, fleet, and HR records for sub-18ms queries.</p>
+                    <div class="tech-tags">
+                        <span class="tech-pill">GCP Cloud Run</span>
+                        <span class="tech-pill">Cloud SQL PostgreSQL</span>
+                        <span class="tech-pill">Google Cloud Storage</span>
+                        <span class="tech-pill">Cloud Build CI/CD</span>
+                        <span class="tech-pill">Docker Containers</span>
+                    </div>
                 </div>
 
                 <div class="tech-card">
-                    <div class="tech-card-header">
-                        <div class="tech-icon-circle"><i class="fas fa-bolt"></i></div>
-                        <div>
-                            <div class="tech-name">Redis 7</div>
-                            <span class="tech-role-tag">Broker &amp; Caching</span>
-                        </div>
+                    <div class="tech-header">
+                        <i class="fas fa-network-wired"></i>
+                        <h3>ERP &amp; Telematics</h3>
                     </div>
-                    <p class="tech-detail">High-speed cache for live OTP tokens, Celery task scheduling, and sub-100ms RAG embedding queries.</p>
+                    <div class="tech-tags">
+                        <span class="tech-pill">Oracle NetSuite SuiteQL</span>
+                        <span class="tech-pill">Cartrack GPS IoT API</span>
+                        <span class="tech-pill">Trello API / Webhooks</span>
+                        <span class="tech-pill">PeoplesHR REST API</span>
+                        <span class="tech-pill">IQVIA Pharma Intel</span>
+                    </div>
                 </div>
 
                 <div class="tech-card">
-                    <div class="tech-card-header">
-                        <div class="tech-icon-circle"><i class="fas fa-clock"></i></div>
-                        <div>
-                            <div class="tech-name">Celery Beat</div>
-                            <span class="tech-role-tag">ETL Schedulers</span>
-                        </div>
+                    <div class="tech-header">
+                        <i class="fas fa-shield-halved"></i>
+                        <h3>Security &amp; Enterprise</h3>
                     </div>
-                    <p class="tech-detail">Asynchronous background workers continuously pulling NetSuite SuiteQL data and external telematics feeds.</p>
+                    <div class="tech-tags">
+                        <span class="tech-pill">Microsoft Graph API</span>
+                        <span class="tech-pill">Azure SharePoint</span>
+                        <span class="tech-pill">DocuSign eSign API</span>
+                        <span class="tech-pill">3-Layer OTP Auth</span>
+                        <span class="tech-pill">RBAC (79 Roles)</span>
+                    </div>
                 </div>
 
                 <div class="tech-card">
-                    <div class="tech-card-header">
-                        <div class="tech-icon-circle"><i class="fas fa-file-invoice-dollar"></i></div>
-                        <div>
-                            <div class="tech-name">NetSuite SuiteQL</div>
-                            <span class="tech-role-tag">ERP Integration</span>
-                        </div>
+                    <div class="tech-header">
+                        <i class="fas fa-brain"></i>
+                        <h3>AI &amp; Natural Language</h3>
                     </div>
-                    <p class="tech-detail">Deep bi-directional integration syncing inventory, vendors, purchase orders, sales orders, and pricing tiers.</p>
-                </div>
-
-                <div class="tech-card">
-                    <div class="tech-card-header">
-                        <div class="tech-icon-circle"><i class="fas fa-location-crosshairs"></i></div>
-                        <div>
-                            <div class="tech-name">FleetGPS API</div>
-                            <span class="tech-role-tag">Telematics Engine</span>
-                        </div>
+                    <div class="tech-tags">
+                        <span class="tech-pill">Anthropic Claude 3.5</span>
+                        <span class="tech-pill">LangChain Core</span>
+                        <span class="tech-pill">Conversation Parser</span>
+                        <span class="tech-pill">Task Classification</span>
+                        <span class="tech-pill">Predictive Cash Flow</span>
                     </div>
-                    <p class="tech-detail">Real-time driver tracking, geofence triggers, vehicle diagnostics, route adherence, and ETA calculators.</p>
-                </div>
-
-                <div class="tech-card">
-                    <div class="tech-card-header">
-                        <div class="tech-icon-circle"><i class="fas fa-file-signature"></i></div>
-                        <div>
-                            <div class="tech-name">DocuSign REST</div>
-                            <span class="tech-role-tag">E-Signature API</span>
-                        </div>
-                    </div>
-                    <p class="tech-detail">Multi-recipient sequential digital signing, webhook status sync, and cryptographic certificate archiving.</p>
-                </div>
-
-                <div class="tech-card">
-                    <div class="tech-card-header">
-                        <div class="tech-icon-circle"><i class="fab fa-microsoft"></i></div>
-                        <div>
-                            <div class="tech-name">Azure &amp; SharePoint</div>
-                            <span class="tech-role-tag">Enterprise Cloud</span>
-                        </div>
-                    </div>
-                    <p class="tech-detail">Direct cloud archiving into SharePoint libraries with automated metadata tagging and Azure Blob Storage co-authoring.</p>
-                </div>
-
-                <div class="tech-card">
-                    <div class="tech-card-header">
-                        <div class="tech-icon-circle"><i class="fas fa-server"></i></div>
-                        <div>
-                            <div class="tech-name">Edge Bridge</div>
-                            <span class="tech-role-tag">Physical Server Gate</span>
-                        </div>
-                    </div>
-                    <p class="tech-detail">Secure outbound TLS reverse-tunnel agent accessing warehouse on-premise physical servers without open firewall ports.</p>
-                </div>
-
-                <div class="tech-card">
-                    <div class="tech-card-header">
-                        <div class="tech-icon-circle"><i class="fab fa-docker"></i></div>
-                        <div>
-                            <div class="tech-name">Docker &amp; CI/CD</div>
-                            <span class="tech-role-tag">Cloud Build</span>
-                        </div>
-                    </div>
-                    <p class="tech-detail">Multi-stage container builds with automated pre-commit quality gates (Ruff, Pylint, Bandit, Mypy, Pytest).</p>
-                </div>
-
-                <div class="tech-card">
-                    <div class="tech-card-header">
-                        <div class="tech-icon-circle"><i class="fas fa-cloud"></i></div>
-                        <div>
-                            <div class="tech-name">GCP Cloud Run</div>
-                            <span class="tech-role-tag">Serverless Container</span>
-                        </div>
-                    </div>
-                    <p class="tech-detail">Auto-scaling container runtime providing zero-downtime rolling deploys and automatic traffic management.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Minimum Viable Product & Deliverables Section (HexaTown MVP Style) -->
-    <section class="mvp-section section-separator" id="mvp">
+    <!-- Project Ownership & Impact -->
+    <section class="section-separator" id="ownership-impact">
         <div class="wrapper">
-            <div class="section-header-center">
-                <span class="section-kicker">Pushed Live to Production</span>
-                <h2 class="section-title-center">Core System Pillars</h2>
-                <p class="section-subtitle-center">
-                    Delivered on schedule and scaled across multiple regional warehouses, fleets, and executive boards.
-                </p>
-            </div>
-
-            <div class="mvp-grid">
-                <div class="mvp-card">
-                    <div class="mvp-card-num">01 / CAPABILITY</div>
-                    <h3 class="mvp-card-title">Automating &amp; Monitoring</h3>
-                    <p class="mvp-card-desc">37 enterprise operational modules covering Human Resources, Finance, Warehousing, Procurement, Fleet Telematics, and Regulatory Compliance.</p>
+            <div class="ownership-box">
+                <div class="ownership-text-col">
+                    <div class="eyebrow-badge"><i class="fas fa-crown"></i> Project Leadership</div>
+                    <h2 class="ownership-title">01 Lead Systems Architect (Solo Build)</h2>
+                    <p class="ownership-desc">
+                        Conceived, designed, and deployed end-to-end by <strong>Ahsan Tariq</strong> as the sole architect and principal engineer. From initial database schema modeling, SuiteQL reverse engineering, and Cartrack GPS integration to Dockerized Cloud Run deployment and founder-level financial telemetry.
+                    </p>
                 </div>
-
-                <div class="mvp-card">
-                    <div class="mvp-card-num">02 / CAPABILITY</div>
-                    <h3 class="mvp-card-title">Multi-Modal Logistics</h3>
-                    <p class="mvp-card-desc">Sub-second tracking across delivery bikes, refrigerated vans, inter-city line-haul trucks, and national air cargo flights ("jahanz").</p>
-                </div>
-
-                <div class="mvp-card">
-                    <div class="mvp-card-num">03 / CAPABILITY</div>
-                    <h3 class="mvp-card-title">Instant Micro-Approvals</h3>
-                    <p class="mvp-card-desc">Small daily requests (petty cash, fuel, cold-chain replenishment, overtime) cleared in under 60 seconds with 1-click mobile/email actions.</p>
-                </div>
-
-                <div class="mvp-card">
-                    <div class="mvp-card-num">04 / CAPABILITY</div>
-                    <h3 class="mvp-card-title">Hybrid Server Bridge</h3>
-                    <p class="mvp-card-desc">Direct high-speed streaming of terabytes of historical test certificates from on-premise physical servers inside warehouse basements.</p>
-                </div>
-
-                <div class="mvp-card">
-                    <div class="mvp-card-num">05 / CAPABILITY</div>
-                    <h3 class="mvp-card-title">Role-Based RAG AI</h3>
-                    <p class="mvp-card-desc">RBAC-filtered semantic search guaranteeing that warehouse staff, HR, procurement, and executives only retrieve authorized information.</p>
-                </div>
-
-                <div class="mvp-card">
-                    <div class="mvp-card-num">06 / CAPABILITY</div>
-                    <h3 class="mvp-card-title">Founder Glass Cockpit</h3>
-                    <p class="mvp-card-desc">Real-time P&amp;L by category, 13-week cashflow forecasting, AR aging (30/60/90+ days), and BIR tax calendars on one live dashboard.</p>
+                <div class="ownership-stats">
+                    <div class="o-stat">
+                        <div class="o-stat-num">99.8%</div>
+                        <div class="o-stat-label">Approval Acceleration (4–7 Days ➔ &lt;60 Seconds)</div>
+                    </div>
+                    <div class="o-stat">
+                        <div class="o-stat-num">100%</div>
+                        <div class="o-stat-label">Live Telematics (102 Vehicles &amp; Cargo Tracked)</div>
+                    </div>
+                    <div class="o-stat">
+                        <div class="o-stat-num">20 Streams</div>
+                        <div class="o-stat-label">Zero-Lag NetSuite Continuous Sync Mirror</div>
+                    </div>
+                    <div class="o-stat">
+                        <div class="o-stat-num">Zero Leaks</div>
+                        <div class="o-stat-label">3-Layer OTP Physical Server Security Vault</div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Team Size / Ownership Section (HexaTown Style Big Numbers) -->
-    <section class="team-section section-separator">
-        <div class="wrapper">
-            <div class="section-header-center">
-                <span class="section-kicker">Engineering Execution</span>
-                <h2 class="section-title-center">Project Ownership &amp; Impact</h2>
-                <p class="section-subtitle-center">
-                    Designed, architected, and built as a solo software engineering achievement.
-                </p>
-            </div>
-
-            <div class="team-grid">
-                <div class="team-stat-card">
-                    <div class="team-num">01</div>
-                    <div class="team-role">Lead Systems Architect</div>
-                    <div class="team-sub">Ahsan Tariq (Solo Architecture, Engineering &amp; Deployment)</div>
-                </div>
-
-                <div class="team-stat-card">
-                    <div class="team-num">37</div>
-                    <div class="team-role">Modules Shipped</div>
-                    <div class="team-sub">Unified cross-functional enterprise platform</div>
-                </div>
-
-                <div class="team-stat-card">
-                    <div class="team-num">100%</div>
-                    <div class="team-role">Paperless Transition</div>
-                    <div class="team-sub">Complete elimination of physical forms &amp; carbon slips</div>
-                </div>
-
-                <div class="team-stat-card">
-                    <div class="team-num">94%</div>
-                    <div class="team-role">Faster Approvals</div>
-                    <div class="team-sub">From 4.2 business days down to 14 minutes</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Bottom CTA (HexaTown "Let's code the future together!") -->
+    <!-- CTA Section (TheHexaTown Format) -->
     <section class="cta-section">
         <div class="wrapper">
-            <h2 class="cta-h2">Let's build the future together!</h2>
-            <p class="cta-p">
-                Have an enterprise operations, supply chain, or AI automation project? Turn complex manual bottlenecks into high-speed autonomous software.
+            <h2 class="cta-h2">Let&#39;s build the future together!</h2>
+            <p class="cta-desc">
+                Have a mission-critical enterprise system, complex ERP integration, or autonomous operations challenge? Let&#39;s talk architecture.
             </p>
-
-            <div class="cta-actions">
-                <a href="../../index.html#contact" class="btn-cta-primary">
-                    <i class="fas fa-paper-plane"></i> Get in Touch
+            <div class="cta-btn-row">
+                <a href="mailto:contact@tariqdreams.tech" class="btn-primary">
+                    <i class="fas fa-envelope"></i> Discuss Your Project
                 </a>
-                <a href="../ranbval-conversations/index.html" class="btn-cta-secondary">
-                    <i class="fas fa-comments"></i> Explore Ranbval Conversations
-                </a>
-                <a href="../../index.html" class="btn-cta-secondary">
-                    <i class="fas fa-arrow-left"></i> Main Portfolio
+                <a href="https://wa.me/923000000000" target="_blank" class="btn-secondary">
+                    <i class="fab fa-whatsapp"></i> WhatsApp Chat
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer style="background:#040507; padding: 2.5rem 0;">
-        <div class="wrapper">
-            <div class="footer-bottom">
-                <span>&copy; 2026 Ahsan Tariq. All Rights Reserved. Ambica International (Dovetail) Architecture Case Study.</span>
-                <span>Lead Systems Architect &amp; Software Engineer</span>
-            </div>
+    <!-- Full-Screen Lightbox Modal -->
+    <div class="lightbox-modal" id="lightboxModal" onclick="closeLightbox()">
+        <div class="lightbox-container" onclick="event.stopPropagation()">
+            <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+            <img id="lightboxImg" src="" alt="Enlarged screenshot" />
+            <div class="lightbox-caption" id="lightboxCaption"></div>
         </div>
-    </footer>
+    </div>
 
+    <!-- Lightbox JavaScript -->
     <script>
-        // Reading Progress Bar
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            const readProgress = document.getElementById('read-progress');
-            if (readProgress) readProgress.style.width = scrolled + '%';
+        function openLightbox(src, caption) {
+            const modal = document.getElementById('lightboxModal');
+            const img = document.getElementById('lightboxImg');
+            const cap = document.getElementById('lightboxCaption');
+            img.src = src;
+            cap.innerText = caption;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            const modal = document.getElementById('lightboxModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
         });
     </script>
 </body>

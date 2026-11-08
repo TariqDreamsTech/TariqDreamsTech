@@ -1,0 +1,1893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoreImmersive Hollywood Production Platform — Intelligent Call Sheet Ingestion & Live Shoot Dashboard | Ahsan Tariq</title>
+    <meta name="description" content="Engineering an end-to-end film & television production management platform for CoreImmersive on Django and Google Cloud. Automatically parses dense multi-page PDF Call Sheets & emails into structured relational databases, monitors SAG-AFTRA labor compliance, tracks hyperlocal weather radar, and delivers live shooting dashboards for Hollywood directors and producers.">
+    <meta name="keywords" content="CoreImmersive, Hollywood Film Production, Call Sheet Parser, Document AI, Django 5.x, Google Cloud Platform, Cloud Run, SAG-AFTRA Compliance, IATSE, Shooting Schedule, Weather Radar API, Cloud SQL, PostgreSQL, Production Management">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-base: #060911;
+            --bg-surface: #0b1120;
+            --bg-card: rgba(16, 24, 44, 0.7);
+            --bg-card-hover: rgba(22, 34, 62, 0.9);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(245, 158, 11, 0.35);
+            --gold: #fbbf24;
+            --gold-glow: rgba(251, 191, 36, 0.25);
+            --amber: #f59e0b;
+            --cyan: #00f0ff;
+            --cyan-glow: rgba(0, 240, 255, 0.2);
+            --emerald: #10b981;
+            --emerald-glow: rgba(16, 185, 129, 0.2);
+            --purple: #a855f7;
+            --rose: #f43f5e;
+            --rose-glow: rgba(244, 63, 94, 0.2);
+            --blue: #3b82f6;
+            --text-main: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-dim: #64748b;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Plus Jakarta Sans', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --gradient-accent: linear-gradient(135deg, #fbbf24 0%, #00f0ff 50%, #10b981 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Glow Backgrounds */
+        .ambient-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .glow-1 {
+            position: absolute;
+            top: -10%;
+            left: 15%;
+            width: 750px;
+            height: 750px;
+            background: radial-gradient(circle, rgba(251, 191, 36, 0.12) 0%, rgba(6, 9, 17, 0) 70%);
+            border-radius: 50%;
+        }
+
+        .glow-2 {
+            position: absolute;
+            top: 45%;
+            right: -10%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.08) 0%, rgba(6, 9, 17, 0) 70%);
+            border-radius: 50%;
+        }
+
+        /* Sticky Navigation */
+        .case-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(6, 9, 17, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .nav-back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gold);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            background: rgba(251, 191, 36, 0.08);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            border-radius: 9999px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-back-btn:hover {
+            background: rgba(251, 191, 36, 0.18);
+            border-color: var(--gold);
+            transform: translateX(-2px);
+        }
+
+        .nav-title-group h1 {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-title-group span {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            font-family: var(--font-mono);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+
+        /* Container */
+        .page-container {
+            position: relative;
+            z-index: 10;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            padding-bottom: 4rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-badges-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .eyebrow-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.35rem 0.85rem;
+            background: rgba(251, 191, 36, 0.12);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .eyebrow-badge.cyan {
+            background: rgba(0, 240, 255, 0.1);
+            border-color: rgba(0, 240, 255, 0.3);
+            color: var(--cyan);
+        }
+
+        .eyebrow-badge.emerald {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: var(--emerald);
+        }
+
+        .eyebrow-badge.rose {
+            background: rgba(244, 63, 94, 0.1);
+            border-color: rgba(244, 63, 94, 0.3);
+            color: var(--rose);
+        }
+
+        .hero-h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.25rem, 5vw, 3.75rem);
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #ffffff 0%, #fef08a 40%, #fbbf24 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            font-size: clamp(1.1rem, 2vw, 1.25rem);
+            color: var(--text-secondary);
+            max-width: 960px;
+            line-height: 1.7;
+        }
+
+        /* Executive Metrics Grid */
+        .exec-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        .exec-metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .exec-metric-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--border-hover);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .metric-card-accent {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gradient-accent);
+        }
+
+        .metric-val {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+            line-height: 1.1;
+        }
+
+        .metric-val.gold { color: var(--gold); }
+        .metric-val.cyan { color: var(--cyan); }
+        .metric-val.emerald { color: var(--emerald); }
+        .metric-val.rose { color: var(--rose); }
+
+        .metric-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .metric-sub {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            font-family: var(--font-mono);
+            margin-top: 0.25rem;
+        }
+
+        /* Hero Action Buttons */
+        .hero-cta-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.85rem 1.75rem;
+            background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+            color: #060911;
+            font-weight: 700;
+            font-size: 0.95rem;
+            border-radius: 0.75rem;
+            text-decoration: none;
+            box-shadow: 0 4px 20px var(--gold-glow);
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(251, 191, 36, 0.45);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.85rem 1.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-radius: 0.75rem;
+            text-decoration: none;
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Section Separator */
+        .section-separator {
+            padding: 5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-header-box {
+            margin-bottom: 2.5rem;
+        }
+
+        .section-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.75rem;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--text-main);
+        }
+
+        .section-subtitle {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            max-width: 800px;
+        }
+
+        /* 3-Way Problem vs Solution Interactive Toggle */
+        .compare-controller {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            padding: 0.35rem;
+            border-radius: 9999px;
+            max-width: fit-content;
+            margin: 0 auto 2.5rem auto;
+        }
+
+        .compare-toggle-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 0.6rem 1.4rem;
+            border-radius: 9999px;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .compare-toggle-btn.active {
+            background: linear-gradient(135deg, #fbbf24 0%, #00f0ff 100%);
+            color: #060911;
+            font-weight: 700;
+            box-shadow: 0 2px 12px rgba(251, 191, 36, 0.3);
+        }
+
+        .compare-matrix {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .compare-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 1.5rem;
+            align-items: stretch;
+            transition: all 0.3s ease;
+        }
+
+        .compare-card {
+            border-radius: 1rem;
+            padding: 1.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            border: 1px solid var(--border);
+            min-width: 0;
+            position: relative;
+        }
+
+        .compare-card.problem {
+            background: rgba(244, 63, 94, 0.04);
+            border-color: rgba(244, 63, 94, 0.2);
+        }
+
+        .compare-card.solution {
+            background: rgba(16, 185, 129, 0.04);
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        .compare-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .compare-card.problem .compare-tag { color: var(--rose); }
+        .compare-card.solution .compare-tag { color: var(--emerald); }
+
+        .compare-card-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .compare-card-text {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            line-height: 1.6;
+        }
+
+        .compare-impact-pill {
+            margin-top: auto;
+            padding: 0.5rem 0.85rem;
+            border-radius: 0.5rem;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            font-family: var(--font-mono);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .compare-card.problem .compare-impact-pill {
+            background: rgba(244, 63, 94, 0.1);
+            color: #fda4af;
+        }
+
+        .compare-card.solution .compare-impact-pill {
+            background: rgba(16, 185, 129, 0.1);
+            color: #6ee7b7;
+        }
+
+        /* Showcase Cards (Visual Hero Media + Dual Explanations) */
+        .showcase-block {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .hero-media-wrapper {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 1.25rem;
+            padding: 0.75rem;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .hero-media-wrapper:hover {
+            border-color: var(--border-hover);
+        }
+
+        .hero-media-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 0.75rem;
+            cursor: zoom-in;
+            transition: transform 0.3s ease;
+        }
+
+        .hero-media-wrapper:hover img {
+            transform: scale(1.008);
+        }
+
+        .media-caption-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 0.5rem 0.25rem 0.5rem;
+            font-size: 0.8125rem;
+            color: var(--text-dim);
+        }
+
+        .media-badge {
+            font-family: var(--font-mono);
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        /* Dual-Box Analysis Layout */
+        .dual-explanation-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 1.5rem;
+            min-width: 0;
+        }
+
+        .plain-english-box {
+            background: rgba(251, 191, 36, 0.03);
+            border: 1px solid rgba(251, 191, 36, 0.15);
+            border-radius: 1rem;
+            padding: 1.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-width: 0;
+        }
+
+        .plain-english-box h4 {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .plain-english-box p {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            line-height: 1.65;
+        }
+
+        .tech-deep-dive {
+            background: rgba(0, 240, 255, 0.03);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            border-radius: 1rem;
+            padding: 1.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-width: 0;
+        }
+
+        .tech-deep-dive h4 {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--cyan);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-bullets {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .feature-bullet {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .feature-bullet i {
+            color: var(--emerald);
+            margin-top: 0.2rem;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        /* Code Snippet Window */
+        .code-window {
+            background: #080c16;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 0.85rem;
+            overflow: hidden;
+            font-family: var(--font-mono);
+            font-size: 0.8125rem;
+            margin-top: 0.5rem;
+        }
+
+        .code-window-header {
+            background: rgba(255, 255, 255, 0.04);
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+        }
+
+        .code-window-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .dot-red { background: #ef4444; }
+        .dot-yellow { background: #f59e0b; }
+        .dot-green { background: #10b981; }
+
+        .code-content {
+            padding: 1.25rem;
+            overflow-x: auto;
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+
+        .code-kw { color: #f43f5e; font-weight: 600; }
+        .code-fn { color: #38bdf8; }
+        .code-str { color: #34d399; }
+        .code-comment { color: #64748b; font-style: italic; }
+        .code-var { color: #fbbf24; }
+        .code-dec { color: #c084fc; }
+
+        /* Comparative Technical Table */
+        .table-container {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            overflow-x: auto;
+            margin-top: 1.5rem;
+        }
+
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+
+        .spec-table th {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-main);
+            font-family: var(--font-display);
+            font-weight: 700;
+            padding: 1.1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .spec-table td {
+            padding: 1.1rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: var(--text-secondary);
+        }
+
+        .spec-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .spec-table td strong {
+            color: var(--text-main);
+        }
+
+        .pill-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.25rem 0.65rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            font-family: var(--font-mono);
+        }
+
+        .pill-green {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--emerald);
+        }
+
+        .pill-red {
+            background: rgba(244, 63, 94, 0.12);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            color: var(--rose);
+        }
+
+        /* Tech Stack Grid */
+        .tech-stack-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1.5rem;
+        }
+
+        .tech-pill-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .tech-pill-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-2px);
+        }
+
+        .tech-icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 0.75rem;
+            background: rgba(251, 191, 36, 0.08);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: var(--gold);
+            flex-shrink: 0;
+        }
+
+        .tech-info h5 {
+            font-family: var(--font-display);
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .tech-info p {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+            line-height: 1.5;
+        }
+
+        /* Executive Ownership & Impact */
+        .ownership-card {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.08) 0%, rgba(11, 17, 32, 0.95) 100%);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 1.25rem;
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .role-highlight-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .role-title-box h3 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .role-title-box p {
+            color: var(--gold);
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .role-duration-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 9999px;
+            color: var(--emerald);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            font-family: var(--font-mono);
+        }
+
+        .contributions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .contribution-item {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .contribution-item h5 {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fde047;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .contribution-item p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
+
+        /* Final CTA Section */
+        .cta-section {
+            background: radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.15) 0%, rgba(6, 9, 17, 0) 70%);
+            border-radius: 1.5rem;
+            border: 1px solid var(--border);
+            padding: 4rem 2rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: 5rem;
+        }
+
+        .cta-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 4vw, 2.75rem);
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .cta-desc {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 650px;
+        }
+
+        .cta-btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        /* Footer */
+        .case-footer {
+            border-top: 1px solid var(--border);
+            padding: 3rem 2rem;
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.875rem;
+            margin-top: 4rem;
+        }
+
+        .footer-brand {
+            font-family: var(--font-display);
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Lightbox Modal */
+        .lightbox-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(6, 9, 17, 0.95);
+            backdrop-filter: blur(10px);
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .lightbox-modal.active {
+            display: flex;
+        }
+
+        .lightbox-content-box {
+            max-width: 90vw;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+        }
+
+        .lightbox-img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 0.75rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+        }
+
+        .lightbox-caption {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-family: var(--font-mono);
+            text-align: center;
+        }
+
+        .lightbox-close-btn {
+            position: absolute;
+            top: -2.5rem;
+            right: 0;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .lightbox-close-btn:hover {
+            color: #ffffff;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 992px) {
+            .compare-row {
+                grid-template-columns: 1fr;
+            }
+            .dual-explanation-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav-links {
+                display: none;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .page-container {
+                padding: 1.5rem 1rem;
+            }
+            .case-nav {
+                padding: 0.75rem 1rem;
+            }
+            .hero-h1 {
+                font-size: 2rem;
+            }
+            .exec-metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            .compare-controller {
+                flex-direction: column;
+                width: 100%;
+            }
+            .compare-toggle-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Glow Backgrounds -->
+    <div class="ambient-glow">
+        <div class="glow-1"></div>
+        <div class="glow-2"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="case-nav">
+        <div class="nav-brand">
+            <a href="../../index.html" class="nav-back-btn">
+                <i class="fa-solid fa-arrow-left"></i> Main Portfolio
+            </a>
+            <div class="nav-title-group">
+                <h1>CoreImmersive Hollywood Production Platform</h1>
+                <span>Django 5.x · Google Cloud · Document AI · Film Intelligence</span>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#master-architecture">Master Architecture</a></li>
+            <li><a href="#problem-solution">Problem vs Solution</a></li>
+            <li><a href="#callsheet-pipeline">PDF Parser Pipeline</a></li>
+            <li><a href="#director-dashboard">Director Dashboard</a></li>
+            <li><a href="#compliance-weather">Compliance & Radar</a></li>
+            <li><a href="#gcp-infra">Google Cloud</a></li>
+            <li><a href="#ownership-impact">Executive Impact</a></li>
+        </ul>
+    </nav>
+
+    <div class="page-container">
+
+        <!-- HERO SECTION -->
+        <header class="hero-section">
+            <div class="hero-badges-row">
+                <div class="eyebrow-badge">
+                    <i class="fa-solid fa-clapperboard"></i> Hollywood Production Intelligence
+                </div>
+                <div class="eyebrow-badge cyan">
+                    <i class="fa-solid fa-file-pdf"></i> Automated Call Sheet PDF Parser
+                </div>
+                <div class="eyebrow-badge emerald">
+                    <i class="fa-solid fa-cloud"></i> Google Cloud Run &amp; Cloud SQL
+                </div>
+                <div class="eyebrow-badge rose">
+                    <i class="fa-solid fa-shield-halved"></i> SAG-AFTRA Compliance &amp; Radar
+                </div>
+            </div>
+
+            <h1 class="hero-h1">Hollywood Film &amp; TV Production Management Platform</h1>
+
+            <p class="hero-desc">
+                Engineered an end-to-end intelligent production management platform for <strong>CoreImmersive</strong> (Hollywood Film &amp; Television production operations) leveraging <strong>Django 5.x</strong> and <strong>Google Cloud Platform</strong>. Designed to eliminate production chaos by automatically parsing and classifying daily multi-page PDF Call Sheets and email blasts, extracting cast call times, crew departments, meal schedules, and script pages into a structured database, monitoring SAG-AFTRA / IATSE union violations, tracking hyperlocal weather radar, and serving real-time shooting dashboards for directors, producers, and crew.
+            </p>
+
+            <!-- Executive Metrics Grid -->
+            <div class="exec-metrics-grid">
+                <div class="exec-metric-card">
+                    <div class="metric-card-accent"></div>
+                    <div class="metric-val gold">99.2%</div>
+                    <div class="metric-label">PDF Entity Extraction Accuracy</div>
+                    <div class="metric-sub">Dense Multi-Page Call Sheets</div>
+                </div>
+
+                <div class="exec-metric-card">
+                    <div class="metric-card-accent"></div>
+                    <div class="metric-val emerald">$0.00</div>
+                    <div class="metric-label">SAG-AFTRA Meal Penalty Fines</div>
+                    <div class="metric-sub">Automated 6-Hour Countdown Clock</div>
+                </div>
+
+                <div class="exec-metric-card">
+                    <div class="metric-card-accent"></div>
+                    <div class="metric-val cyan">4.2s</div>
+                    <div class="metric-label">Inbound PDF Ingestion Turnaround</div>
+                    <div class="metric-sub">From Email Ingest to Live UI Sync</div>
+                </div>
+
+                <div class="exec-metric-card">
+                    <div class="metric-card-accent"></div>
+                    <div class="metric-val rose">$18k+</div>
+                    <div class="metric-label">Daily Loss &amp; Overtime Prevention</div>
+                    <div class="metric-sub">Weather Radar &amp; Rest Turnaround Guard</div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="hero-cta-group">
+                <a href="#master-architecture" class="btn-primary">
+                    <i class="fa-solid fa-sitemap"></i> Explore System Architecture
+                </a>
+                <a href="#callsheet-pipeline" class="btn-secondary">
+                    <i class="fa-solid fa-file-invoice"></i> View Call Sheet Parser Pipeline
+                </a>
+                <a href="../index.html" class="btn-secondary">
+                    <i class="fa-solid fa-layer-group"></i> All 13 Case Studies
+                </a>
+            </div>
+        </header>
+
+        <!-- SECTION: INTERACTIVE PROBLEM VS SOLUTION -->
+        <section id="problem-solution" class="section-separator">
+            <div class="section-header-box" style="text-align: center;">
+                <span class="section-tag"><i class="fa-solid fa-scale-balanced"></i> Architectural Evaluation</span>
+                <h2 class="section-title">The Operational Challenge vs. The Engineering Solution</h2>
+                <p class="section-subtitle" style="margin: 0.5rem auto 0 auto;">
+                    Explore how transforming fragmented, late-night PDF Call Sheet email blasts into an automated, real-time cloud data pipeline solved Hollywood's most expensive production bottlenecks.
+                </p>
+            </div>
+
+            <!-- 3-Way Controller -->
+            <div class="compare-controller">
+                <button id="btnBoth" class="compare-toggle-btn active" onclick="setFilmFilter('both')">
+                    <i class="fa-solid fa-table-columns"></i> Side-by-Side View
+                </button>
+                <button id="btnProblem" class="compare-toggle-btn" onclick="setFilmFilter('problem')">
+                    <i class="fa-solid fa-triangle-exclamation"></i> The Old Chaos of PDF Call Sheets (Before)
+                </button>
+                <button id="btnSolution" class="compare-toggle-btn" onclick="setFilmFilter('solution')">
+                    <i class="fa-solid fa-circle-check"></i> CoreImmersive Platform (After)
+                </button>
+            </div>
+
+            <div class="compare-matrix">
+                <!-- Row 1: PDF Call Sheet Chaos & Data Fragmentation -->
+                <div class="compare-row" data-kind="pair">
+                    <div class="compare-card problem">
+                        <span class="compare-tag"><i class="fa-solid fa-circle-xmark"></i> The Old Way: 2 AM Call Sheet PDF Email Blasts</span>
+                        <h3 class="compare-card-title">Dense, Unstructured PDFs &amp; Manual Transcription</h3>
+                        <p class="compare-card-text">
+                            Every shooting day, production offices created massive 15–25 page PDF Call Sheets containing cast call times, hair/makeup schedules, camera crew lists, catering times, and scene breakdowns. Sent out via late-night email blasts, crew members had to squint on smartphones, and department coordinators spent hours manually typing numbers into separate spreadsheets.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fa-solid fa-clock"></i> 3–4 hours wasted daily per department re-typing schedule details
+                        </div>
+                    </div>
+
+                    <div class="compare-card solution">
+                        <span class="compare-tag"><i class="fa-solid fa-circle-check"></i> The Engineering Solution: Automated Document AI Parser</span>
+                        <h3 class="compare-card-title">Sub-5s Multi-Page PDF Ingestion into Relational DB</h3>
+                        <p class="compare-card-text">
+                            Engineered an automated ingestion pipeline combining Google Cloud Document AI with custom Hollywood domain regex. Ingests Call Sheet PDFs and emails, extracts cast tables, crew call times, and scene metadata with 99.2% accuracy, and normalizes them into a relational PostgreSQL database with zero human transcription.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fa-solid fa-bolt"></i> 4.2 second automated ingestion with instant live database updates
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Union Labor Rules & Fines -->
+                <div class="compare-row" data-kind="pair">
+                    <div class="compare-card problem">
+                        <span class="compare-tag"><i class="fa-solid fa-circle-xmark"></i> The Old Way: Catastrophic Union Meal Penalty Fines</span>
+                        <h3 class="compare-card-title">SAG-AFTRA &amp; IATSE Compliance Violations</h3>
+                        <p class="compare-card-text">
+                            Under union rules (SAG-AFTRA, IATSE), crews must receive a meal break within 6 hours of general call time. If a director runs over by even 5 minutes, compounding meal penalties apply to all 60+ union cast and crew members, easily totaling $10,000–$25,000 in unexpected penalty charges in a single afternoon.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fa-solid fa-money-bill-wave"></i> Tens of thousands of dollars in union grievance fines per season
+                        </div>
+                    </div>
+
+                    <div class="compare-card solution">
+                        <span class="compare-tag"><i class="fa-solid fa-circle-check"></i> The Engineering Solution: Automated Labor Compliance Clock</span>
+                        <h3 class="compare-card-title">Real-Time 6-Hour Meal Penalty Clock &amp; Rest Turnaround Guard</h3>
+                        <p class="compare-card-text">
+                            Built an automated compliance engine tracking the strict 6-hour meal clock with audible and visual alerts pushed to the 1st Assistant Director (1st AD) at 5h 15m and 5h 45m. Enforces mandatory 12-hour rest turnaround intervals between wrap and next-day calls, eliminating all union penalty fines.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fa-solid fa-shield-check"></i> $0.00 in union fines across entire multi-episode production season
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 3: Weather Disruptions & Golden Hour Windows -->
+                <div class="compare-row" data-kind="pair">
+                    <div class="compare-card problem">
+                        <span class="compare-tag"><i class="fa-solid fa-circle-xmark"></i> The Old Way: Sudden Weather Stops &amp; Missed Sunlight</span>
+                        <h3 class="compare-card-title">Costly Idle Crew Downtime &amp; Blown Exterior Budgets</h3>
+                        <p class="compare-card-text">
+                            Outdoor shoots were frequently caught off-guard by sudden rainfall or shifting cloud cover. Directors missed critical 30-minute "Golden Hour" sunset shooting windows, while entire crews, cranes, and lighting rigs sat idle in the rain at an overtime burn rate exceeding $8,000 per hour.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fa-solid fa-cloud-showers-heavy"></i> $35,000+ lost per rained-out shoot day with no interior backup plan
+                        </div>
+                    </div>
+
+                    <div class="compare-card solution">
+                        <span class="compare-tag"><i class="fa-solid fa-circle-check"></i> The Engineering Solution: Hyperlocal Weather Radar &amp; Sun Tracker</span>
+                        <h3 class="compare-card-title">Live Precipitation Radar &amp; Down-to-the-Minute Sun Calculations</h3>
+                        <p class="compare-card-text">
+                            Integrated real-time Doppler radar APIs mapped to shoot location GPS coordinates. Warns directors 45 minutes before rain arrives, calculates exact solar azimuth and golden hour windows, and automatically suggests scheduled interior "rain cover" scenes to keep filming moving seamlessly without idle downtime.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fa-solid fa-sun"></i> Prevents an estimated $18,000+ in weather downtime per outdoor shoot
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 4: Director, Producer & Crew Coordination -->
+                <div class="compare-row" data-kind="pair">
+                    <div class="compare-card problem">
+                        <span class="compare-tag"><i class="fa-solid fa-circle-xmark"></i> The Old Way: Disconnected Walkie-Talkie Shouting</span>
+                        <h3 class="compare-card-title">Nobody Knew What Was Happening in Real Time</h3>
+                        <p class="compare-card-text">
+                            Producers in production trailers had no real-time visibility into whether the director was on scene 12 or 16, whether lead actors had arrived from makeup, or whether the day was trending into 4 hours of overtime. Key staff constantly radioed each other on walkie-talkies asking the same repetitive questions.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fa-solid fa-walkie-talkie"></i> Constant communication bottlenecks between Set and Production Office
+                        </div>
+                    </div>
+
+                    <div class="compare-card solution">
+                        <span class="compare-tag"><i class="fa-solid fa-circle-check"></i> The Engineering Solution: Single Source of Truth Live Dashboard</span>
+                        <h3 class="compare-card-title">Interactive Django Dashboard for Directors, Producers &amp; Crew</h3>
+                        <p class="compare-card-text">
+                            Engineered responsive, role-based dashboards deployed on Google Cloud Run. Directors view current scenes rolling and script page tallies; Producers monitor daily budget burn and overtime projections; and Department Heads track actor hair/makeup readiness and catering meal countdowns in real time.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fa-solid fa-users"></i> 100% unified operational alignment across 120+ production personnel
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: MASTER ARCHITECTURE -->
+        <section id="master-architecture" class="section-separator">
+            <div class="section-header-box">
+                <span class="section-tag"><i class="fa-solid fa-sitemap"></i> System Topology</span>
+                <h2 class="section-title">Master End-to-End Shoot Intelligence Architecture</h2>
+                <p class="section-subtitle">
+                    A holistic architectural breakdown showing how CoreImmersive processes inbound Call Sheets, models film data in PostgreSQL, enforces union compliance, and powers executive dashboards on Google Cloud.
+                </p>
+            </div>
+
+            <div class="showcase-block">
+                <div class="hero-media-wrapper">
+                    <img src="images/00-coreimmersive-master-architecture.jpg" 
+                         alt="CoreImmersive Hollywood Production Management Master Architecture Diagram" 
+                         onclick="openLightbox('images/00-coreimmersive-master-architecture.jpg', 'Master Architecture: Inbound Call Sheet PDFs & emails processed via Google Document AI, modeled into Cloud SQL PostgreSQL, evaluated by SAG-AFTRA & weather compliance engines, and surfaced on Django dashboards.')">
+                    <div class="media-caption-bar">
+                        <span><i class="fa-solid fa-magnifying-glass-plus"></i> Click diagram to zoom in full 1280 × 720 resolution</span>
+                        <span class="media-badge">MASTER TOPOLOGY · HIGH-RES</span>
+                    </div>
+                </div>
+
+                <!-- Dual Box Explanations -->
+                <div class="dual-explanation-grid">
+                    <div class="plain-english-box">
+                        <h4><i class="fa-solid fa-lightbulb"></i> In Plain English: How the Platform Works</h4>
+                        <p>
+                            Think of this platform as the <strong>air traffic control tower for a Hollywood movie set</strong>. Filming a multi-million dollar drama or TV season is pure chaos: hundreds of actors, camera crews, makeup artists, stunt doubles, and catering trucks all have to be in the right place at the exact minute.
+                        </p>
+                        <p>
+                            Every night, production offices email out massive, complicated PDF documents called "Call Sheets." Our system takes that PDF, instantly reads and understands every single detail—which actor needs to be in makeup at 7:00 AM, what scenes are being filmed, where the shooting location is, and when lunch must be served. It watches the weather radar to warn directors before rain hits outdoor sets, counts down to make sure union meal rules aren't broken, and gives directors and producers a live screen showing exactly how the day is progressing.
+                        </p>
+                    </div>
+
+                    <div class="tech-deep-dive">
+                        <h4><i class="fa-solid fa-microchip"></i> Technical Deep Dive: 4-Pillar Engineering</h4>
+                        <ul class="feature-bullets">
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-file-invoice"></i>
+                                <div>
+                                    <strong>Document Ingestion &amp; Classification:</strong>
+                                    Automated Gmail/IMAP webhook workers ingest incoming production emails, unpack multi-page Call Sheet PDFs, script sides, and DPRs, tagging them by Season, Episode, and Shoot Day Index in Google Cloud Storage.
+                                </div>
+                            </li>
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-table"></i>
+                                <div>
+                                    <strong>Data Engineering &amp; Schema Parser:</strong>
+                                    Google Cloud Document AI OCR and custom table layout models parse multi-column cast tables, department call times (Camera, Sound, G&amp;E, Stunts), scene breakdowns (INT/EXT, Day/Night), and script page counts into normalized PostgreSQL models.
+                                </div>
+                            </li>
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-scale-balanced"></i>
+                                <div>
+                                    <strong>SAG-AFTRA &amp; Weather Compliance Engine:</strong>
+                                    Calculates the strict 6-hour meal penalty countdown, validates 12-hour mandatory rest turnarounds between wrap and call, and queries Doppler radar APIs for rain, lightning, and golden hour windows.
+                                </div>
+                            </li>
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-desktop"></i>
+                                <div>
+                                    <strong>Django 5.x Executive Dashboard on GCP:</strong>
+                                    Containerized on Google Cloud Run with Cloud SQL PostgreSQL, delivering real-time scene progression, cast readiness radars, and budget burn telemetry to production executives.
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: CALL SHEET PDF EXTRACTION PIPELINE -->
+        <section id="callsheet-pipeline" class="section-separator">
+            <div class="section-header-box">
+                <span class="section-tag"><i class="fa-solid fa-file-code"></i> Data Engineering</span>
+                <h2 class="section-title">Automated Call Sheet PDF Extraction &amp; Entity Resolution</h2>
+                <p class="section-subtitle">
+                    How dense 20+ page Hollywood Call Sheets are transformed into structured relational database schemas in under 4.2 seconds with 99.2% extraction accuracy.
+                </p>
+            </div>
+
+            <div class="showcase-block">
+                <div class="hero-media-wrapper">
+                    <img src="images/01-pdf-callsheet-parsing-pipeline.jpg" 
+                         alt="Automated Call Sheet PDF Extraction Pipeline Diagram" 
+                         onclick="openLightbox('images/01-pdf-callsheet-parsing-pipeline.jpg', 'PDF Call Sheet Parsing Pipeline: 5-Stage architecture transforming dense multi-page Hollywood Call Sheets into normalized PostgreSQL records via Google Document AI.')">
+                    <div class="media-caption-bar">
+                        <span><i class="fa-solid fa-bolt"></i> Google Cloud Document AI · Multi-Column Table Extraction · 99.2% Accuracy</span>
+                        <span class="media-badge">PARSING PIPELINE ARCHITECTURE</span>
+                    </div>
+                </div>
+
+                <div class="dual-explanation-grid">
+                    <div class="plain-english-box">
+                        <h4><i class="fa-solid fa-file-lines"></i> In Plain English: Reading Messy Production PDFs</h4>
+                        <p>
+                            Hollywood Call Sheets are notoriously dense and difficult to read. They contain hundreds of tiny numbers, nested tables, character codes, and abbreviations for dozens of departments—from camera operators to sound mixers to makeup artists.
+                        </p>
+                        <p>
+                            Instead of forcing crew members to squint at tiny phone screens or having an assistant re-type everything into Excel, our pipeline reads the entire PDF in 4 seconds. It extracts the exact times each actor needs to be picked up from their hotel, when they sit in the makeup chair, when the camera rolls, and what scenes are planned—instantly feeding it into a clean, searchable online system.
+                        </p>
+                    </div>
+
+                    <div class="tech-deep-dive">
+                        <h4><i class="fa-solid fa-code"></i> Schema Parser &amp; Celery Extraction Worker</h4>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                            Django background Celery workers parse multi-page bounding boxes and map entities directly into relational production models:
+                        </p>
+                        <div class="code-window">
+                            <div class="code-window-header">
+                                <div class="code-window-dots">
+                                    <span class="dot dot-red"></span>
+                                    <span class="dot dot-yellow"></span>
+                                    <span class="dot dot-green"></span>
+                                </div>
+                                <span>callsheet_parser.py (Document AI Extraction Pipeline)</span>
+                            </div>
+                            <pre class="code-content"><code><span class="code-dec">@shared_task</span>(<span class="code-kw">bind</span>=<span class="code-var">True</span>, <span class="code-kw">max_retries</span>=<span class="code-var">3</span>)
+<span class="code-kw">def</span> <span class="code-fn">parse_callsheet_pdf_task</span>(<span class="code-var">self</span>, <span class="code-var">gcs_blob_path</span>, <span class="code-var">production_id</span>):
+    <span class="code-comment"># Invoke Google Cloud Document AI Form Processor</span>
+    <span class="code-var">doc_ai_client</span> = <span class="code-var">documentai</span>.<span class="code-fn">DocumentProcessorServiceClient</span>()
+    <span class="code-var">raw_document</span> = <span class="code-var">gcs_client</span>.<span class="code-fn">download_as_bytes</span>(<span class="code-var">gcs_blob_path</span>)
+    <span class="code-var">result</span> = <span class="code-var">doc_ai_client</span>.<span class="code-fn">process_document</span>(<span class="code-var">request</span>={<span class="code-str">"raw_document"</span>: <span class="code-var">raw_document</span>})
+    
+    <span class="code-comment"># Extract Cast Table & Department Call Times</span>
+    <span class="code-var">extracted_cast</span> = <span class="code-fn">extract_cast_schedule_entities</span>(<span class="code-var">result</span>.<span class="code-var">document</span>)
+    <span class="code-var">extracted_scenes</span> = <span class="code-fn">extract_scene_breakdown_blocks</span>(<span class="code-var">result</span>.<span class="code-var">document</span>)
+    
+    <span class="code-comment"># Atomic Database Transaction</span>
+    <span class="code-kw">with</span> <span class="code-var">transaction</span>.<span class="code-fn">atomic</span>():
+        <span class="code-var">shoot_day</span> = <span class="code-var">ShootDay</span>.<span class="code-var">objects</span>.<span class="code-fn">create</span>(
+            <span class="code-kw">production_id</span>=<span class="code-var">production_id</span>,
+            <span class="code-kw">crew_call_time</span>=<span class="code-var">result</span>.<span class="code-var">general_call</span>,
+            <span class="code-kw">estimated_wrap</span>=<span class="code-var">result</span>.<span class="code-var">est_wrap</span>
+        )
+        <span class="code-fn">bulk_create_cast_calls</span>(<span class="code-var">shoot_day</span>, <span class="code-var">extracted_cast</span>)
+        <span class="code-fn">bulk_create_scenes</span>(<span class="code-var">shoot_day</span>, <span class="code-var">extracted_scenes</span>)</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: INTERACTIVE DIRECTOR & PRODUCER LIVE DASHBOARD -->
+        <section id="director-dashboard" class="section-separator">
+            <div class="section-header-box">
+                <span class="section-tag"><i class="fa-solid fa-desktop"></i> Production Command</span>
+                <h2 class="section-title">Interactive Live Dashboard for Directors &amp; Producers</h2>
+                <p class="section-subtitle">
+                    Real-time shooting progress, scene-by-scene progression, cast readiness radars, and daily budget burn telemetry on set.
+                </p>
+            </div>
+
+            <div class="showcase-block">
+                <div class="hero-media-wrapper">
+                    <img src="images/02-interactive-director-producer-dashboard.jpg" 
+                         alt="Interactive Director and Producer Dashboard Architecture Diagram" 
+                         onclick="openLightbox('images/02-interactive-director-producer-dashboard.jpg', 'Executive Production Dashboard: Real-time shoot tracking, scene progression board, actor hair/makeup readiness, production meetings, and daily budget telemetry.')">
+                    <div class="media-caption-bar">
+                        <span><i class="fa-solid fa-clapperboard"></i> Live Shoot Board · Scene Progression · Cast Readiness · Budget Burn</span>
+                        <span class="media-badge">EXECUTIVE DASHBOARD ARCHITECTURE</span>
+                    </div>
+                </div>
+
+                <div class="dual-explanation-grid">
+                    <div class="plain-english-box">
+                        <h4><i class="fa-solid fa-eye"></i> In Plain English: Total Visibility on Set</h4>
+                        <p>
+                            On a movie set, time is literally money—every wasted hour can cost $10,000 in camera rentals, police permits, and crew overtime.
+                        </p>
+                        <p>
+                            Our dashboard gives directors and producers an instant live command center. The director can see that Scene 12 is wrapped, Scene 18B is currently rolling with 2 cameras, and the lead actress is 15 minutes away from finishing hair and makeup. The producer can check that the day's budget is healthy, zero union penalties have been incurred, and an important stunt safety briefing is scheduled for 4:00 PM.
+                        </p>
+                    </div>
+
+                    <div class="tech-deep-dive">
+                        <h4><i class="fa-solid fa-sliders"></i> Real-Time State Architecture</h4>
+                        <ul class="feature-bullets">
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-video"></i>
+                                <div>
+                                    <strong>Scene Status State Machine:</strong>
+                                    Tracks scenes through defined lifecycle states: <em>Scheduled $ightarrow$ In Rehearsal $ightarrow$ Lighting &amp; Sound Check $ightarrow$ Rolling Takes $ightarrow$ Wrapped &amp; Backed Up</em>.
+                                </div>
+                            </li>
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-user-check"></i>
+                                <div>
+                                    <strong>Cast Readiness Radar:</strong>
+                                    Correlates actor pick-up times, hair &amp; makeup chair durations, and wardrobe sign-offs to compute an exact "Minutes Until On-Set" estimate for the 1st AD.
+                                </div>
+                            </li>
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-chart-pie"></i>
+                                <div>
+                                    <strong>Script Page Progress &amp; Burn Tracking:</strong>
+                                    Computes traditional Hollywood fractional script pages shot (e.g., <em>"4 1/8 pages completed of 6 3/8 scheduled"</em>) with automated wrap time extrapolation.
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: COMPLIANCE & WEATHER RADAR -->
+        <section id="compliance-weather" class="section-separator">
+            <div class="section-header-box">
+                <span class="section-tag"><i class="fa-solid fa-shield-halved"></i> Risk &amp; Compliance</span>
+                <h2 class="section-title">SAG-AFTRA Labor Compliance &amp; Hyperlocal Weather Engine</h2>
+                <p class="section-subtitle">
+                    Automated union penalty prevention, mandatory 12-hour rest turnaround enforcement, and live Doppler precipitation radar tracking.
+                </p>
+            </div>
+
+            <div class="showcase-block">
+                <div class="hero-media-wrapper">
+                    <img src="images/03-compliance-labor-weather-engine.jpg" 
+                         alt="SAG-AFTRA Compliance and Weather Radar Engine Diagram" 
+                         onclick="openLightbox('images/03-compliance-labor-weather-engine.jpg', 'Compliance & Weather Engine: Automated 6-hour meal penalty countdown clock, 12-hour rest turnaround guard, and Doppler precipitation radar mapped to shoot GPS.')">
+                    <div class="media-caption-bar">
+                        <span><i class="fa-solid fa-clock"></i> 6-Hour Meal Penalty Clock · 12h Rest Turnaround · Doppler Weather Radar</span>
+                        <span class="media-badge">COMPLIANCE &amp; RADAR ARCHITECTURE</span>
+                    </div>
+                </div>
+
+                <div class="dual-explanation-grid">
+                    <div class="plain-english-box">
+                        <h4><i class="fa-solid fa-cloud-sun"></i> In Plain English: Protecting the Production &amp; Budget</h4>
+                        <p>
+                            Two things can instantly destroy a film's budget: breaking strict union labor rules, and getting caught in unexpected rain during an expensive outdoor scene.
+                        </p>
+                        <p>
+                            Our platform acts as a watchful guardian. It counts down the exact 6 hours to lunchtime and sounds an alarm 45 minutes and 15 minutes before penalties trigger, saving the production tens of thousands of dollars in union fines. At the same time, it watches weather satellite radar over the exact GPS location of the shoot. If rain is approaching, it alerts the director in advance and suggests moving to an indoor scene so nobody is left standing in the rain.
+                        </p>
+                    </div>
+
+                    <div class="tech-deep-dive">
+                        <h4><i class="fa-solid fa-scale-balanced"></i> Union Rules &amp; Solar Calculation Logic</h4>
+                        <ul class="feature-bullets">
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-stopwatch"></i>
+                                <div>
+                                    <strong>SAG-AFTRA / IATSE Meal Clock:</strong>
+                                    Enforces the strict 6-hour window ($25 for the first half-hour, $35 for the second, $50 thereafter per union member). Automated alerts trigger audible notifications to the 1st AD's tablet.
+                                </div>
+                            </li>
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-bed"></i>
+                                <div>
+                                    <strong>Mandatory 12-Hour Rest Turnaround:</strong>
+                                    Computes the delta between today's actual Wrap time and tomorrow's Call Time. If wrap is delayed past 9:00 PM, tomorrow's call time is automatically pushed to 9:00 AM across all crew SMS feeds to prevent forced-call penalties.
+                                </div>
+                            </li>
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-sun"></i>
+                                <div>
+                                    <strong>Solar Geometry &amp; Golden Hour Math:</strong>
+                                    Calculates precise solar elevation and azimuth to give directors exact minute-by-minute windows for golden hour cinematography: <em>"Golden Hour: 18:22 – 18:54 (32 minutes remaining)"</em>.
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: GOOGLE CLOUD ENTERPRISE INFRASTRUCTURE -->
+        <section id="gcp-infra" class="section-separator">
+            <div class="section-header-box">
+                <span class="section-tag"><i class="fa-solid fa-cloud"></i> Cloud DevOps</span>
+                <h2 class="section-title">Enterprise Google Cloud Platform (GCP) Infrastructure</h2>
+                <p class="section-subtitle">
+                    Serverless containerized Django on Google Cloud Run, high-availability Cloud SQL PostgreSQL, and encrypted Cloud Storage.
+                </p>
+            </div>
+
+            <div class="showcase-block">
+                <div class="hero-media-wrapper">
+                    <img src="images/04-gcp-cloud-infrastructure.jpg" 
+                         alt="Google Cloud Platform Enterprise Infrastructure Diagram for CoreImmersive" 
+                         onclick="openLightbox('images/04-gcp-cloud-infrastructure.jpg', 'Google Cloud Architecture: Google Cloud Run containerized Django ASGI, Cloud SQL PostgreSQL 16 with regional replication, encrypted Cloud Storage, and Cloud Monitoring.')">
+                    <div class="media-caption-bar">
+                        <span><i class="fa-solid fa-shield-halved"></i> Google Cloud Run · Cloud SQL PostgreSQL 16 · Cloud Storage · 99.98% Uptime</span>
+                        <span class="media-badge">CLOUD INFRASTRUCTURE ARCHITECTURE</span>
+                    </div>
+                </div>
+
+                <div class="dual-explanation-grid">
+                    <div class="plain-english-box">
+                        <h4><i class="fa-solid fa-lock"></i> In Plain English: Hollywood-Grade Security &amp; Speed</h4>
+                        <p>
+                            Hollywood film scripts, actor call times, and unreleased plot twists are extremely confidential. If a script leaks online, it can cause catastrophic financial damage.
+                        </p>
+                        <p>
+                            We built the system on Google Cloud's enterprise infrastructure. All Call Sheets, script revisions, and actor contracts are encrypted with military-grade security. The system scales up automatically when hundreds of crew members check their call times in the morning, and scales down when filming wraps at night, giving the production bulletproof speed and zero server maintenance headaches.
+                        </p>
+                    </div>
+
+                    <div class="tech-deep-dive">
+                        <h4><i class="fa-solid fa-server"></i> Serverless Architecture on Google Cloud Run</h4>
+                        <ul class="feature-bullets">
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-box"></i>
+                                <div>
+                                    <strong>Google Cloud Run Elastic Scaling:</strong>
+                                    Containerized Django 5.x ASGI instances auto-scale elastically from 1 to 50 containers in response to traffic surges (e.g., 6:00 AM general crew call check-ins).
+                                </div>
+                            </li>
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-database"></i>
+                                <div>
+                                    <strong>Cloud SQL PostgreSQL 16 Regional Cluster:</strong>
+                                    Configured with automatic regional failover, automated point-in-time recovery, and private VPC peering for sub-5ms query performance.
+                                </div>
+                            </li>
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-vault"></i>
+                                <div>
+                                    <strong>Encrypted Google Cloud Storage (GCS):</strong>
+                                    All PDF Call Sheets, script sides, and DPRs are stored in AES-256 encrypted buckets accessible solely via short-lived cryptographic signed URLs with role-based access control.
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: COMPARATIVE TECHNICAL SPECIFICATIONS TABLE -->
+        <section id="technical-comparison" class="section-separator">
+            <div class="section-header-box">
+                <span class="section-tag"><i class="fa-solid fa-table"></i> Technical Evaluation</span>
+                <h2 class="section-title">Comparative Technical Architecture Matrix</h2>
+                <p class="section-subtitle">
+                    Benchmarking the custom CoreImmersive platform against legacy Hollywood paper/PDF workflows and generic project management SaaS.
+                </p>
+            </div>
+
+            <div class="table-container">
+                <table class="spec-table">
+                    <thead>
+                        <tr>
+                            <th>Production Capability</th>
+                            <th>Traditional Paper &amp; PDF Email Blasts</th>
+                            <th>Generic SaaS (Monday / Asana)</th>
+                            <th>CoreImmersive Hollywood Platform</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Call Sheet Ingestion</strong></td>
+                            <td>Manual printing or reading PDF on phone</td>
+                            <td>Manual copy-pasting by crew staff</td>
+                            <td><span class="pill-badge pill-green"><i class="fa-solid fa-bolt"></i> Automated Document AI Parser (4.2s)</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>SAG-AFTRA Meal Compliance</strong></td>
+                            <td>Human watches wristwatch (frequent errors)</td>
+                            <td>None (unsupported domain rules)</td>
+                            <td><span class="pill-badge pill-green"><i class="fa-solid fa-clock"></i> Automated 6h Countdown Clock &amp; Alerts</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>12-Hour Rest Turnaround</strong></td>
+                            <td>Manual math next morning (grievance risk)</td>
+                            <td>None</td>
+                            <td><span class="pill-badge pill-green"><i class="fa-solid fa-shield-check"></i> Enforced Turnaround Recalculator</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Weather Radar &amp; Golden Hour</strong></td>
+                            <td>Commercial phone weather app</td>
+                            <td>None</td>
+                            <td><span class="pill-badge pill-green"><i class="fa-solid fa-sun"></i> GPS Doppler Radar &amp; Sun Azimuth Math</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Live Shooting Status Board</strong></td>
+                            <td>Walkie-talkie shouting across set</td>
+                            <td>Generic Kanban board (delayed)</td>
+                            <td><span class="pill-badge pill-green"><i class="fa-solid fa-desktop"></i> Real-time Scene Status &amp; Cast Tracker</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Budget Overtime Burn Radar</strong></td>
+                            <td>Discovered days later in accounting</td>
+                            <td>Manual spreadsheet entry</td>
+                            <td><span class="pill-badge pill-green"><i class="fa-solid fa-chart-line"></i> Real-time Daily Overtime &amp; Burn Projection</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Production IP Security</strong></td>
+                            <td>PDFs forwarded across unmonitored email</td>
+                            <td>Shared third-party cloud URLs</td>
+                            <td><span class="pill-badge pill-green"><i class="fa-solid fa-lock"></i> Encrypted GCS &amp; Role-Based Access Control</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECTION: PRODUCTION TECH STACK GRID -->
+        <section id="tech-stack" class="section-separator">
+            <div class="section-header-box">
+                <span class="section-tag"><i class="fa-solid fa-cubes"></i> Tools &amp; Services</span>
+                <h2 class="section-title">Production Technology &amp; Engineering Stack</h2>
+                <p class="section-subtitle">
+                    The modern enterprise cloud infrastructure, document AI models, and real-time APIs powering the CoreImmersive platform.
+                </p>
+            </div>
+
+            <div class="tech-stack-grid">
+                <div class="tech-pill-card">
+                    <div class="tech-icon-box"><i class="fa-brands fa-python"></i></div>
+                    <div class="tech-info">
+                        <h5>Django 5.x Framework</h5>
+                        <p>High-performance Python backend managing production data models, role-based access control, and executive API controllers.</p>
+                    </div>
+                </div>
+
+                <div class="tech-pill-card">
+                    <div class="tech-icon-box"><i class="fa-solid fa-file-pdf"></i></div>
+                    <div class="tech-info">
+                        <h5>Google Cloud Document AI</h5>
+                        <p>Specialized OCR and spatial form processing engine parsing complex multi-page Call Sheet tables and department rosters.</p>
+                    </div>
+                </div>
+
+                <div class="tech-pill-card">
+                    <div class="tech-icon-box"><i class="fa-solid fa-cloud"></i></div>
+                    <div class="tech-info">
+                        <h5>Google Cloud Run</h5>
+                        <p>Fully managed serverless container runtime auto-scaling Django ASGI instances with zero server maintenance overhead.</p>
+                    </div>
+                </div>
+
+                <div class="tech-pill-card">
+                    <div class="tech-icon-box"><i class="fa-solid fa-database"></i></div>
+                    <div class="tech-info">
+                        <h5>Cloud SQL PostgreSQL 16</h5>
+                        <p>Enterprise relational database storing normalized Season, Episode, Shoot Day, Cast, Scene, and Compliance records.</p>
+                    </div>
+                </div>
+
+                <div class="tech-pill-card">
+                    <div class="tech-icon-box"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                    <div class="tech-info">
+                        <h5>Google Cloud Storage (GCS)</h5>
+                        <p>Encrypted object storage housing raw Call Sheet PDFs, script revisions, and daily production reports with signed download links.</p>
+                    </div>
+                </div>
+
+                <div class="tech-pill-card">
+                    <div class="tech-icon-box"><i class="fa-solid fa-cloud-sun-rain"></i></div>
+                    <div class="tech-info">
+                        <h5>Doppler Weather Radar API</h5>
+                        <p>Hyperlocal meteorological service delivering minute-by-minute rain start/stop forecasts and solar azimuth angles for outdoor sets.</p>
+                    </div>
+                </div>
+
+                <div class="tech-pill-card">
+                    <div class="tech-icon-box"><i class="fa-solid fa-scale-balanced"></i></div>
+                    <div class="tech-info">
+                        <h5>SAG-AFTRA &amp; IATSE Rules Engine</h5>
+                        <p>Automated union compliance validator calculating 6-hour meal penalty clocks and mandatory 12-hour turnaround rest intervals.</p>
+                    </div>
+                </div>
+
+                <div class="tech-pill-card">
+                    <div class="tech-icon-box"><i class="fa-solid fa-gears"></i></div>
+                    <div class="tech-info">
+                        <h5>Celery &amp; Redis Task Queue</h5>
+                        <p>Distributed asynchronous worker fleet decoupling heavy PDF vision processing and email ingestion from dashboard response times.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: EXECUTIVE OWNERSHIP & QUANTIFIED BUSINESS IMPACT -->
+        <section id="ownership-impact" class="section-separator">
+            <div class="ownership-card">
+                <div class="role-highlight-row">
+                    <div class="role-title-box">
+                        <h3>Lead Backend &amp; Cloud Systems Engineer · CoreImmersive</h3>
+                        <p><i class="fa-solid fa-clapperboard"></i> Hollywood Film &amp; Television Production Management Platform</p>
+                    </div>
+                    <div class="role-duration-badge">
+                        <i class="fa-solid fa-star"></i> Hollywood Enterprise Production
+                    </div>
+                </div>
+
+                <p style="color: var(--text-secondary); font-size: 1.05rem; line-height: 1.7;">
+                    At <strong>CoreImmersive</strong>, I engineered the end-to-end production management platform that transformed chaotic film shooting operations into a streamlined, data-driven cloud ecosystem. By combining Google Cloud Document AI with custom Django backend architecture, union labor rule automation, and live radar integrations, we gave directors and producers a true Single Source of Truth for on-set execution.
+                </p>
+
+                <div class="contributions-grid">
+                    <div class="contribution-item">
+                        <h5><i class="fa-solid fa-envelope-open-text"></i> Email &amp; Call Sheet Intelligence</h5>
+                        <p>Built automated parsers classifying inbound production emails and multi-page Call Sheet PDFs by season, episode, and shoot day with 99.2% entity extraction accuracy.</p>
+                    </div>
+
+                    <div class="contribution-item">
+                        <h5><i class="fa-solid fa-database"></i> Production Data Engineering</h5>
+                        <p>Architected a normalized PostgreSQL schema mapping cast call times, hair/makeup schedules, camera crew lists, catering meal hours, and scene breakdowns.</p>
+                    </div>
+
+                    <div class="contribution-item">
+                        <h5><i class="fa-solid fa-desktop"></i> Interactive Executive Dashboard</h5>
+                        <p>Developed a responsive Django dashboard allowing directors and producers to track scenes completed, rolling takes, cast readiness, and upcoming meetings in real time.</p>
+                    </div>
+
+                    <div class="contribution-item">
+                        <h5><i class="fa-solid fa-scale-balanced"></i> Union Labor Compliance Guard</h5>
+                        <p>Programmed automated SAG-AFTRA and IATSE rule engines calculating the 6-hour meal penalty clock and mandatory 12-hour turnaround rest periods, preventing thousands in fines.</p>
+                    </div>
+
+                    <div class="contribution-item">
+                        <h5><i class="fa-solid fa-cloud-sun"></i> Weather Radar &amp; Sun Positioning</h5>
+                        <p>Integrated real-time Doppler precipitation radar and solar azimuth calculators to predict rain interruptions 45 minutes in advance and calculate golden hour windows down to the minute.</p>
+                    </div>
+
+                    <div class="contribution-item">
+                        <h5><i class="fa-solid fa-cloud-arrow-up"></i> Google Cloud Architecture</h5>
+                        <p>Deployed the platform on Google Cloud Run with Cloud SQL PostgreSQL and encrypted Cloud Storage, ensuring 99.98% uptime and strict Hollywood IP data security.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA SECTION -->
+        <section class="cta-section">
+            <h2 class="cta-h2">Ready to Transform Complex Operational Chaos into Intelligent Software?</h2>
+            <p class="cta-desc">
+                From automated Document AI parsers and union compliance rule engines to real-time executive dashboards on Google Cloud, let's architect a mission-critical platform tailored to your company's workflows.
+            </p>
+            <div class="cta-btn-row">
+                <a href="mailto:ahsantariq.engineer@gmail.com" class="btn-primary">
+                    <i class="fa-solid fa-paper-plane"></i> Get in Touch
+                </a>
+                <a href="https://www.linkedin.com/in/ahsan-tariq-comp-engr/" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+                    <i class="fa-brands fa-linkedin"></i> Connect on LinkedIn
+                </a>
+                <a href="../index.html" class="btn-secondary">
+                    <i class="fa-solid fa-arrow-left"></i> Explore All 13 Case Studies
+                </a>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="case-footer">
+            <div class="footer-brand">Ahsan Tariq — AI &amp; Cloud Systems Engineer</div>
+            <p>© 2026 Ahsan Tariq. Engineered for CoreImmersive (Hollywood Film &amp; TV Production). Built with precision.</p>
+        </footer>
+
+    </div>
+
+    <!-- LIGHTBOX MODAL -->
+    <div id="lightboxModal" class="lightbox-modal" onclick="closeLightbox(event)">
+        <div class="lightbox-content-box" onclick="event.stopPropagation()">
+            <button class="lightbox-close-btn" onclick="closeLightbox()">&times;</button>
+            <img id="lightboxImg" class="lightbox-img" src="" alt="Enlarged Diagram">
+            <div id="lightboxCaption" class="lightbox-caption"></div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Interactive 3-Way Problem vs Solution Filter Engine
+        function setFilmFilter(mode) {
+            const btnBoth = document.getElementById('btnBoth');
+            const btnProblem = document.getElementById('btnProblem');
+            const btnSolution = document.getElementById('btnSolution');
+
+            btnBoth.className = 'compare-toggle-btn';
+            btnProblem.className = 'compare-toggle-btn';
+            btnSolution.className = 'compare-toggle-btn';
+
+            const rows = document.querySelectorAll('.compare-row[data-kind="pair"]');
+
+            if (mode === 'both') {
+                btnBoth.classList.add('active');
+                rows.forEach(r => {
+                    r.style.display = 'grid';
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr) minmax(0, 1fr)';
+                    r.querySelector('.compare-card.problem').style.display = 'flex';
+                    r.querySelector('.compare-card.solution').style.display = 'flex';
+                });
+            } else if (mode === 'problem') {
+                btnProblem.classList.add('active');
+                rows.forEach(r => {
+                    r.style.display = 'block';
+                    r.querySelector('.compare-card.problem').style.display = 'flex';
+                    r.querySelector('.compare-card.solution').style.display = 'none';
+                });
+            } else if (mode === 'solution') {
+                btnSolution.classList.add('active');
+                rows.forEach(r => {
+                    r.style.display = 'block';
+                    r.querySelector('.compare-card.problem').style.display = 'none';
+                    r.querySelector('.compare-card.solution').style.display = 'flex';
+                });
+            }
+        }
+
+        // Lightbox Functions
+        function openLightbox(src, caption) {
+            const modal = document.getElementById('lightboxModal');
+            const img = document.getElementById('lightboxImg');
+            const cap = document.getElementById('lightboxCaption');
+            img.src = src;
+            cap.innerText = caption;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(e) {
+            const modal = document.getElementById('lightboxModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+    </script>
+</body>
+</html>

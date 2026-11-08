@@ -3,42 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ranbval Social Super-System Case Study | AI-Powered Social, Work &amp; Memory Platform — Ahsan Tariq</title>
-    <meta name="description" content="Comprehensive case study of Ranbval: The autonomous AI-powered social, communication, freelance work, memory, and entertainment super-system engineered by Ahsan Tariq.">
+    <title>Ranbval Social Super-App | Mobile Architecture &amp; Distributed Systems Backbone — Ahsan Tariq</title>
+    <meta name="description" content="Master architectural case study of Ranbval Social: An autonomous AI social, relationship intelligence, real-time messaging, memory engine, and gaming super-system built by Ahsan Tariq. 16 core pillars uniting React Native mobile execution with heavy-duty distributed systems (FastAPI, Redis Graph, PostgreSQL, MongoDB, RFC 6238 TOTP 2FA, and KMS payload encryption).">
     
-    <!-- Google Fonts -->
+    <!-- Google Fonts: Plus Jakarta Sans, Outfit, JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
 
     <style>
         :root {
-            --bg: #030303;
-            --bg-card: #0b0c10;
-            --bg-card-hover: #12141a;
-            --border: rgba(255, 255, 255, 0.08);
-            --border-accent: rgba(255, 186, 73, 0.4);
-            --text: #f0f0f5;
-            --text-muted: #9aa0a6;
-            --text-dim: rgba(255, 255, 255, 0.4);
-            --accent: #ffba49;
-            --accent-2: #ff6b6b;
-            --accent-cyan: #4ecdc4;
-            --accent-purple: #a78bfa;
-            --accent-glow: rgba(255, 186, 73, 0.18);
-            --gradient: linear-gradient(135deg, #ffba49 0%, #ff6b6b 100%);
-            --gradient-accent: linear-gradient(135deg, #ffba49 0%, #4ecdc4 100%);
-            --gradient-purple: linear-gradient(135deg, #a78bfa 0%, #ff6b6b 100%);
-            --font-h: 'Outfit', sans-serif;
-            --font-b: 'Space Grotesk', sans-serif;
-            --font-code: 'JetBrains Mono', monospace;
-            --radius: 16px;
+            --bg-main: #06070a;
+            --bg-surface: #0a0d14;
+            --bg-card: #0e121b;
+            --bg-card-hover: #141a26;
+            --border-subtle: rgba(255, 255, 255, 0.07);
+            --border-highlight: rgba(234, 179, 8, 0.35);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --gold: #eab308;
+            --gold-glow: rgba(234, 179, 8, 0.18);
+            --amber: #f59e0b;
+            --emerald: #10b981;
+            --cyan: #38bdf8;
+            --rose: #f43f5e;
+            --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-display: 'Outfit', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --radius-xl: 24px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
             --radius-sm: 8px;
-            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.6);
-            --shadow-glow: 0 0 50px rgba(255, 186, 73, 0.12);
+            --container-max: 1260px;
         }
 
         *, *::before, *::after {
@@ -53,1580 +53,1711 @@
         }
 
         body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: var(--font-b);
-            line-height: 1.7;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            line-height: 1.65;
             overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 12% 10%, rgba(255, 186, 73, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 88% 50%, rgba(78, 205, 196, 0.04) 0%, transparent 45%),
-                radial-gradient(circle at 50% 90%, rgba(167, 139, 250, 0.04) 0%, transparent 50%);
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Top Progress Bar */
-        #read-progress {
+        /* Ambient Glow & Canvas */
+        .ambient-glow {
             position: fixed;
             top: 0;
-            left: 0;
-            height: 3px;
-            width: 0%;
-            background: var(--gradient);
-            z-index: 9999;
-            transition: width 0.1s linear;
-            box-shadow: 0 0 12px rgba(255, 186, 73, 0.8);
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            height: 600px;
+            background: radial-gradient(circle 800px at 50% -100px, rgba(234, 179, 8, 0.12), rgba(56, 189, 248, 0.04), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
         }
 
-        /* Navigation Header */
+        /* Top Nav */
         .case-nav {
             position: sticky;
             top: 0;
-            width: 100%;
-            background: rgba(3, 3, 3, 0.88);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border);
             z-index: 1000;
+            background: rgba(6, 7, 10, 0.88);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-subtle);
             padding: 1rem 0;
         }
-
-        .container {
-            max-width: 1240px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
         .nav-inner {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 1.5rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
-
-        .nav-brand {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            text-decoration: none;
-        }
-
-        .nav-logo-badge {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: var(--gradient);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #000;
-            font-family: var(--font-h);
-            font-weight: 800;
-            font-size: 1.2rem;
-        }
-
-        .nav-titles {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .nav-title-main {
-            font-family: var(--font-h);
-            font-weight: 700;
-            font-size: 1.05rem;
-            color: var(--text);
-            letter-spacing: -0.3px;
-        }
-
-        .nav-title-sub {
-            font-size: 0.75rem;
-            color: var(--accent);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-        }
-
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 1.25rem;
-        }
-
-        .btn-back {
+        .nav-back {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.55rem 1.2rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            color: var(--text);
-            font-size: 0.85rem;
-            font-weight: 600;
+            gap: 0.6rem;
+            color: var(--text-secondary);
             text-decoration: none;
-            transition: all 0.25s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s ease, transform 0.2s ease;
         }
-
-        .btn-back:hover {
-            background: rgba(255, 186, 73, 0.15);
-            border-color: var(--border-accent);
-            color: var(--accent);
+        .nav-back:hover {
+            color: var(--gold);
             transform: translateX(-3px);
         }
-
-        .btn-portfolio {
+        .nav-brand {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 1.05rem;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .nav-brand span {
+            color: var(--gold);
+        }
+        .nav-status {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.55rem 1.2rem;
-            background: var(--gradient);
-            border: none;
-            border-radius: var(--radius-sm);
-            color: #000;
-            font-size: 0.85rem;
-            font-weight: 700;
-            text-decoration: none;
-            transition: all 0.25s ease;
+            background: rgba(234, 179, 8, 0.08);
+            border: 1px solid rgba(234, 179, 8, 0.25);
+            padding: 0.35rem 0.8rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--gold);
+            font-weight: 600;
+        }
+        .nav-status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--gold);
+            box-shadow: 0 0 8px var(--gold);
+            animation: pulseNav 2s infinite;
+        }
+        @keyframes pulseNav {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
         }
 
-        .btn-portfolio:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(255, 186, 73, 0.4);
-        }
-
-        /* Hero Header */
-        .hero-case {
-            padding: 5rem 0 3.5rem;
+        /* Container & Layout */
+        .wrapper {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 1.5rem;
             position: relative;
-            border-bottom: 1px solid var(--border);
+            z-index: 1;
+        }
+        .section-separator {
+            padding: 5.5rem 0;
+            border-bottom: 1px solid var(--border-subtle);
         }
 
-        .badge-pill {
+        /* TheHexaTown Signature Typography & Tags */
+        .eyebrow-badge {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.35rem 0.95rem;
-            border-radius: 50px;
-            background: rgba(255, 186, 73, 0.1);
-            border: 1px solid rgba(255, 186, 73, 0.3);
-            color: var(--accent);
+            background: rgba(234, 179, 8, 0.08);
+            border: 1px solid rgba(234, 179, 8, 0.25);
+            color: var(--gold);
+            font-family: var(--font-mono);
             font-size: 0.8rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
+            font-weight: 600;
+            padding: 0.4rem 1rem;
+            border-radius: 9999px;
             text-transform: uppercase;
+            letter-spacing: 0.05em;
             margin-bottom: 1.5rem;
         }
 
-        .hero-title {
-            font-family: var(--font-h);
-            font-size: 3.35rem;
-            font-weight: 800;
-            line-height: 1.15;
-            letter-spacing: -1.5px;
+        /* Hero */
+        .hero-section {
+            padding: 4.5rem 0 3.5rem;
+        }
+        .hero-h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.4rem, 5vw, 4.2rem);
+            font-weight: 900;
+            line-height: 1.08;
+            letter-spacing: -0.035em;
+            color: #ffffff;
             margin-bottom: 1.25rem;
-            background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 40%, var(--accent) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
-
-        .hero-subtitle {
-            font-size: 1.25rem;
-            line-height: 1.6;
-            color: var(--text-muted);
-            max-width: 960px;
-            margin-bottom: 2.5rem;
-            font-weight: 400;
+        .hero-tagline {
+            font-family: var(--font-display);
+            font-size: clamp(1.2rem, 2.3vw, 1.65rem);
+            font-weight: 500;
+            line-height: 1.35;
+            color: var(--text-secondary);
+            margin-bottom: 1.75rem;
         }
-
-        /* Metadata Grid */
-        .meta-strip {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-            gap: 1.25rem;
-            padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            margin-bottom: 3rem;
+        .hero-desc {
+            font-size: 1.12rem;
+            line-height: 1.75;
+            color: var(--text-secondary);
+            max-width: 980px;
+            margin-bottom: 2.75rem;
         }
-
-        .meta-item {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
-        .meta-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-dim);
+        .hero-desc strong {
+            color: #ffffff;
             font-weight: 600;
         }
 
-        .meta-val {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--text);
-        }
-
-        .meta-val.accent {
-            color: var(--accent);
-        }
-
-        /* Key Metrics Banner */
-        .metrics-grid {
+        /* Meta Grid */
+        .meta-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 1.25rem;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            margin-bottom: 3.5rem;
+        }
+        .meta-col {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+        .meta-title {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+        }
+        .meta-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        .meta-value.accent {
+            color: var(--gold);
         }
 
-        .metric-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.75rem 1.5rem;
+        /* Mobile Phone Showcase Spread */
+        .hero-phones-spread {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            padding: 2.5rem 0 1rem;
+            perspective: 1000px;
+        }
+        .phone-mockup {
+            width: 275px;
+            height: 560px;
+            background: #090c12;
+            border-radius: 40px;
+            border: 4px solid #1f2733;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.06);
             position: relative;
             overflow: hidden;
-            transition: all 0.3s ease;
+            cursor: zoom-in;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+            flex-shrink: 0;
+        }
+        .phone-mockup:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(234, 179, 8, 0.4);
+            box-shadow: 0 35px 80px -15px rgba(234, 179, 8, 0.25), 0 0 0 1px rgba(234, 179, 8, 0.3);
+        }
+        .phone-mockup.featured {
+            width: 295px;
+            height: 600px;
+            border-color: rgba(234, 179, 8, 0.45);
+            box-shadow: 0 30px 75px -15px rgba(234, 179, 8, 0.25), 0 0 0 1px rgba(234, 179, 8, 0.3);
+            z-index: 2;
+        }
+        .phone-notch {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 18px;
+            background: #000000;
+            border-radius: 12px;
+            z-index: 10;
+        }
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+        }
+        .phone-screen img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .phone-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(0deg, rgba(5, 7, 11, 0.95) 0%, rgba(5, 7, 11, 0.6) 70%, transparent 100%);
+            padding: 1.25rem 1rem 0.85rem;
+            text-align: center;
+            font-size: 0.78rem;
+            font-family: var(--font-mono);
+            color: #cbd5e1;
+            font-weight: 500;
+        }
+        .phone-caption span {
+            color: var(--gold);
+            font-weight: 700;
         }
 
-        .metric-card::before {
+        /* Statement Banner (TheHexaTown Big Typography) */
+        .statement-banner {
+            padding: 5.5rem 0;
+            border-top: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border-subtle);
+            background: linear-gradient(180deg, rgba(234, 179, 8, 0.03) 0%, transparent 100%);
+        }
+        .statement-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.75rem, 3.4vw, 2.75rem);
+            font-weight: 800;
+            line-height: 1.25;
+            letter-spacing: -0.025em;
+            color: #ffffff;
+            max-width: 1100px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .statement-h2 span {
+            color: var(--gold);
+        }
+
+        /* Executive Metrics Grid */
+        .exec-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin: 3.5rem 0;
+        }
+        .exec-metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem 1.5rem;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .exec-metric-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 3px;
-            background: var(--gradient);
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            background: linear-gradient(90deg, var(--gold), transparent);
+            opacity: 0.5;
         }
-
-        .metric-card:hover {
+        .exec-metric-card:hover {
             transform: translateY(-4px);
-            border-color: var(--border-accent);
-            box-shadow: var(--shadow-glow);
+            border-color: var(--border-highlight);
         }
-
-        .metric-card:hover::before {
-            opacity: 1;
-        }
-
-        .metric-num {
-            font-family: var(--font-h);
-            font-size: 2.5rem;
+        .exec-num {
+            font-family: var(--font-display);
+            font-size: 2.1rem;
             font-weight: 800;
-            color: var(--accent);
-            line-height: 1;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: baseline;
-            gap: 0.2rem;
+            line-height: 1.1;
+            color: #ffffff;
+            margin-bottom: 0.4rem;
         }
-
-        .metric-label {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--text);
+        .exec-num.gold { color: var(--gold); }
+        .exec-num.cyan { color: var(--cyan); }
+        .exec-num.emerald { color: var(--emerald); }
+        .exec-label {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #e2e8f0;
             margin-bottom: 0.35rem;
         }
-
-        .metric-desc {
+        .exec-sub {
             font-size: 0.8rem;
             color: var(--text-muted);
             line-height: 1.4;
         }
 
-        /* Layout Structure: Content + Sticky ToC */
-        .case-body-wrapper {
+        /* Showcase Split Section */
+        .showcase-block {
             display: grid;
-            grid-template-columns: 290px 1fr;
-            gap: 3.5rem;
-            padding: 4rem 0;
-            align-items: start;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 4rem;
+            align-items: center;
+            margin: 4.5rem 0;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
         }
-
-        /* Sticky Table of Contents */
-        .case-toc {
-            position: sticky;
-            top: 6rem;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            max-height: calc(100vh - 8rem);
-            overflow-y: auto;
+        .showcase-block.reverse {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         }
-
-        .toc-header {
-            font-family: var(--font-h);
-            font-size: 0.85rem;
-            font-weight: 700;
+        .showcase-block.reverse .showcase-text-col {
+            order: 2;
+        }
+        .showcase-block.reverse .showcase-media-col {
+            order: 1;
+        }
+        .showcase-text-col {
+            min-width: 0;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+        .showcase-media-col {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            min-width: 0;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+        .showcase-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--accent);
-            margin-bottom: 1rem;
+            letter-spacing: 0.12em;
+            color: var(--gold);
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
         }
-
-        .toc-list {
+        .showcase-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 2.5vw, 2.3rem);
+            font-weight: 800;
+            line-height: 1.22;
+            color: #ffffff;
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.02em;
+        }
+        .showcase-desc {
+            color: var(--text-secondary);
+            font-size: 1.02rem;
+            line-height: 1.72;
+            margin-bottom: 1.5rem;
+        }
+        .showcase-feature-list {
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 0.35rem;
+            gap: 0.85rem;
+            margin: 1.5rem 0;
         }
-
-        .toc-link {
-            display: block;
-            padding: 0.45rem 0.75rem;
-            font-size: 0.82rem;
-            color: var(--text-muted);
-            text-decoration: none;
+        .showcase-feature-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+        .showcase-feature-list li i {
+            color: var(--gold);
+            margin-top: 0.25rem;
+            font-size: 0.85rem;
+        }
+        .showcase-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1.25rem;
+        }
+        .showcase-tag {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #cbd5e1;
+            padding: 0.35rem 0.8rem;
             border-radius: 6px;
-            transition: all 0.2s ease;
-            line-height: 1.35;
+            font-size: 0.76rem;
+            font-family: var(--font-mono);
+            font-weight: 500;
         }
 
-        .toc-link:hover, .toc-link.active {
-            color: var(--accent);
-            background: rgba(255, 186, 73, 0.08);
-            transform: translateX(4px);
+        /* Problem & Solution Cards (TheHexaTown Format) */
+        .split-header-row {
+            margin-bottom: 2.5rem;
         }
-
-        /* Main Content Typography */
-        .case-content {
-            min-width: 0;
-        }
-
-        .section-block {
-            margin-bottom: 5rem;
-            scroll-margin-top: 6.5rem;
-        }
-
-        .section-tag {
-            font-family: var(--font-h);
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--accent);
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-
-        .section-heading {
-            font-family: var(--font-h);
+        .split-h2 {
+            font-family: var(--font-display);
             font-size: 2.2rem;
             font-weight: 800;
-            line-height: 1.2;
-            letter-spacing: -0.5px;
-            color: var(--text);
-            margin-bottom: 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .section-heading i {
-            color: var(--accent);
-            font-size: 1.6rem;
-        }
-
-        .paragraph {
-            color: #d1d5db;
-            font-size: 1.05rem;
-            line-height: 1.8;
-            margin-bottom: 1.5rem;
-        }
-
-        .paragraph strong {
             color: #ffffff;
-            font-weight: 600;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
         }
-
-        /* Callout Box */
-        .callout-box {
-            background: rgba(255, 186, 73, 0.05);
-            border-left: 4px solid var(--accent);
-            border-top: 1px solid rgba(255, 186, 73, 0.15);
-            border-right: 1px solid rgba(255, 186, 73, 0.15);
-            border-bottom: 1px solid rgba(255, 186, 73, 0.15);
-            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-            padding: 1.5rem 1.75rem;
-            margin: 2rem 0;
+        .split-sub {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            max-width: 800px;
         }
-
-        .callout-title {
-            font-family: var(--font-h);
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--accent);
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .callout-body {
-            color: #e5e7eb;
-            font-size: 0.98rem;
-            line-height: 1.7;
-        }
-
-        /* Feature Pillars 3-Column Grid */
-        .pillars-grid {
+        .problem-grid, .solution-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 1.5rem;
-            margin: 2rem 0;
         }
-
-        .pillar-card {
+        .problem-card, .solution-card {
             background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 2rem 1.5rem;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 2rem 1.75rem;
             display: flex;
             flex-direction: column;
-            transition: all 0.3s ease;
-        }
-
-        .pillar-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--border-accent);
-            box-shadow: var(--shadow-glow);
-        }
-
-        .pillar-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            background: rgba(255, 186, 73, 0.1);
-            color: var(--accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            margin-bottom: 1.25rem;
-            border: 1px solid rgba(255, 186, 73, 0.25);
-        }
-
-        .pillar-title {
-            font-family: var(--font-h);
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 0.75rem;
-        }
-
-        .pillar-text {
-            color: var(--text-muted);
-            font-size: 0.92rem;
-            line-height: 1.6;
-            margin-bottom: 1.25rem;
-            flex-grow: 1;
-        }
-
-        .pillar-bullets {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .pillar-bullets li {
-            font-size: 0.85rem;
-            color: #e2e8f0;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.5rem;
-        }
-
-        .pillar-bullets li i {
-            color: var(--accent);
-            font-size: 0.75rem;
-            margin-top: 0.35rem;
-        }
-
-        /* 2-Column Capability Grid */
-        .feature-two-col {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .feature-box {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.75rem;
-            transition: all 0.25s ease;
-        }
-
-        .feature-box:hover {
-            border-color: var(--border-accent);
-            transform: translateY(-3px);
-            background: var(--bg-card-hover);
-        }
-
-        .feature-header {
-            display: flex;
-            align-items: center;
             gap: 0.85rem;
-            margin-bottom: 0.9rem;
+            transition: transform 0.25s ease, border-color 0.25s ease;
         }
-
-        .feature-icon-badge {
-            width: 38px;
-            height: 38px;
-            border-radius: 8px;
-            background: rgba(255, 186, 73, 0.12);
-            color: var(--accent);
+        .problem-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(244, 63, 94, 0.35);
+        }
+        .solution-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-highlight);
+        }
+        .card-icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.1rem;
-            border: 1px solid rgba(255, 186, 73, 0.3);
+            font-size: 1.15rem;
+            margin-bottom: 0.5rem;
+        }
+        .card-icon-box.rose {
+            background: rgba(244, 63, 94, 0.12);
+            color: var(--rose);
+            border: 1px solid rgba(244, 63, 94, 0.25);
+        }
+        .card-icon-box.gold {
+            background: rgba(234, 179, 8, 0.12);
+            color: var(--gold);
+            border: 1px solid rgba(234, 179, 8, 0.25);
+        }
+        .card-title {
+            font-family: var(--font-display);
+            font-size: 1.18rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.3;
+        }
+        .card-desc {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.65;
         }
 
-        .feature-title {
-            font-family: var(--font-h);
+        /* Tech Stack Card Grid */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+        }
+        .tech-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+        .tech-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-highlight);
+        }
+        .tech-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+        .tech-header i {
+            color: var(--gold);
+            font-size: 1.25rem;
+        }
+        .tech-header h3 {
+            font-family: var(--font-display);
             font-size: 1.15rem;
             font-weight: 700;
             color: #ffffff;
         }
-
-        .feature-desc {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            line-height: 1.6;
-        }
-
-        /* Interactive Showcase Cards */
-        .showcase-strip {
-            background: #07090e;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 2.25rem;
-            margin: 2.5rem 0;
-        }
-
-        /* Code Block Container */
-        .code-box {
-            background: #080a0f;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            margin: 2rem 0;
-            overflow: hidden;
-        }
-
-        .code-header {
-            background: #11141c;
-            padding: 0.75rem 1.25rem;
+        .tech-tags {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .tech-pill {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #cbd5e1;
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-family: var(--font-mono);
         }
 
-        .code-title {
-            font-family: var(--font-code);
-            font-size: 0.82rem;
-            color: var(--text-muted);
+        /* Notion Architecture Links Strip */
+        .notion-strip {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            padding: 2.5rem;
+            margin: 3.5rem 0;
+        }
+        .notion-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            margin-top: 1.5rem;
+        }
+        .notion-link-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            text-decoration: none;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        .notion-link-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--gold);
+        }
+        .notion-link-title {
+            font-size: 0.92rem;
+            font-weight: 700;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-        }
-
-        .code-title span.dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-        .code-title span.dot.red { background: #ef4444; }
-        .code-title span.dot.yellow { background: #f59e0b; }
-        .code-title span.dot.green { background: #10b981; }
-
-        .btn-copy {
-            background: transparent;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            color: var(--text-muted);
-            padding: 0.25rem 0.6rem;
-            font-size: 0.75rem;
-            font-family: var(--font-b);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .btn-copy:hover {
-            color: var(--accent);
-            border-color: var(--accent);
-        }
-
-        pre code {
-            display: block;
-            padding: 1.5rem;
-            font-family: var(--font-code);
-            font-size: 0.85rem;
-            line-height: 1.65;
-            color: #d1d5db;
-            overflow-x: auto;
-        }
-
-        .c-kw { color: #f43f5e; font-weight: 600; }
-        .c-fn { color: #38bdf8; }
-        .c-str { color: #34d399; }
-        .c-num { color: #fbbf24; }
-        .c-cmt { color: #6b7280; font-style: italic; }
-        .c-cls { color: #a78bfa; font-weight: 600; }
-
-        /* References Box */
-        .ref-box {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.75rem;
-            margin: 2rem 0;
-            display: flex;
-            flex-direction: column;
-            gap: 0.85rem;
-        }
-
-        .ref-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.85rem 1rem;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            transition: all 0.2s ease;
-            text-decoration: none;
-        }
-
-        .ref-item:hover {
-            border-color: var(--border-accent);
-            transform: translateX(4px);
-            background: rgba(255, 186, 73, 0.04);
-        }
-
-        .ref-info {
-            display: flex;
-            align-items: center;
-            gap: 0.85rem;
-        }
-
-        .ref-info i {
-            color: var(--accent);
-            font-size: 1.1rem;
-        }
-
-        .ref-title {
-            font-weight: 600;
             color: #ffffff;
-            font-size: 0.95rem;
+        }
+        .notion-link-title i {
+            color: var(--gold);
+            font-size: 0.85rem;
+        }
+        .notion-link-desc {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
         }
 
-        .ref-tag {
-            font-size: 0.75rem;
-            padding: 0.25rem 0.6rem;
-            border-radius: 4px;
-            background: rgba(255, 186, 73, 0.1);
-            color: var(--accent);
-            font-weight: 600;
-        }
-
-        /* Comparison Table */
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-            margin: 2rem 0;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            background: var(--bg-card);
-        }
-
-        .comp-table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            font-size: 0.9rem;
-        }
-
-        .comp-table th {
-            background: #11131a;
-            padding: 1.1rem 1.25rem;
-            font-family: var(--font-h);
-            font-weight: 700;
-            font-size: 0.82rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--accent);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .comp-table td {
-            padding: 1rem 1.25rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            color: #d1d5db;
-            line-height: 1.5;
-            vertical-align: top;
-        }
-
-        .comp-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .comp-table tr:hover td {
-            background: rgba(255, 255, 255, 0.02);
-        }
-
-        /* Bottom Author / Footer CTA */
-        .case-footer {
-            background: #07080b;
-            border-top: 1px solid var(--border);
-            padding: 4.5rem 0 3rem;
-            margin-top: 5rem;
-        }
-
-        .footer-cta-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-accent);
-            border-radius: var(--radius);
+        /* Project Ownership & Founder Journey */
+        .ownership-box {
+            background: linear-gradient(135deg, rgba(234, 179, 8, 0.08) 0%, rgba(56, 189, 248, 0.04) 100%);
+            border: 1px solid var(--border-highlight);
+            border-radius: var(--radius-xl);
             padding: 3rem;
-            text-align: center;
-            box-shadow: var(--shadow-glow);
-            margin-bottom: 3.5rem;
+            margin: 3rem 0;
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 3rem;
+            align-items: center;
         }
-
-        .footer-cta-title {
-            font-family: var(--font-h);
+        .ownership-title {
+            font-family: var(--font-display);
             font-size: 2.2rem;
             font-weight: 800;
+            line-height: 1.2;
             color: #ffffff;
             margin-bottom: 1rem;
         }
-
-        .footer-cta-desc {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            max-width: 650px;
-            margin: 0 auto 2rem;
+        .ownership-quote {
+            font-style: italic;
+            color: #cbd5e1;
+            border-left: 3px solid var(--gold);
+            padding-left: 1.25rem;
+            margin: 1.25rem 0;
+            line-height: 1.7;
+            font-size: 0.98rem;
+        }
+        .ownership-desc {
+            font-size: 1.02rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+        .ownership-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        .o-stat {
+            background: rgba(10, 14, 22, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+        }
+        .o-stat-num {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--gold);
+            margin-bottom: 0.25rem;
+        }
+        .o-stat-label {
+            font-size: 0.82rem;
+            color: #cbd5e1;
+            line-height: 1.4;
         }
 
-        .footer-actions {
+        /* CTA Section */
+        .cta-section {
+            padding: 6rem 0;
+            text-align: center;
+        }
+        .cta-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2.2rem, 4vw, 3.5rem);
+            font-weight: 900;
+            line-height: 1.15;
+            color: #ffffff;
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.03em;
+        }
+        .cta-desc {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 650px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.6;
+        }
+        .cta-btn-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.25rem;
+        }
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--gold);
+            color: #0b0d13;
+            padding: 0.9rem 2rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            box-shadow: 0 10px 30px rgba(234, 179, 8, 0.35);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(234, 179, 8, 0.5);
+            background: #d97706;
+        }
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 0.9rem 2rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Lightbox Modal */
+        .lightbox-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(3, 5, 8, 0.95);
+            backdrop-filter: blur(12px);
+            z-index: 999999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            box-sizing: border-box;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .lightbox-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        .lightbox-container {
+            max-width: 95vw;
+            max-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .lightbox-container img {
+            max-width: 92vw;
+            max-height: 82vh;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+        .lightbox-caption {
+            margin-top: 1rem;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            font-family: var(--font-mono);
+            background: rgba(15, 23, 42, 0.85);
+            padding: 0.5rem 1.25rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            max-width: 800px;
+            text-align: center;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: -2.5rem;
+            right: 0;
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+        .lightbox-close:hover {
+            color: var(--gold);
+            transform: scale(1.15);
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            .meta-grid { grid-template-columns: repeat(2, 1fr); }
+            .exec-metrics-grid { grid-template-columns: repeat(2, 1fr); }
+            .showcase-block, .showcase-block.reverse { grid-template-columns: 1fr; gap: 2.5rem; }
+            .showcase-block.reverse .showcase-text-col { order: 1; }
+            .showcase-block.reverse .showcase-media-col { order: 2; }
+            .problem-grid, .solution-grid, .tech-grid { grid-template-columns: repeat(2, 1fr); }
+            .ownership-box { grid-template-columns: 1fr; }
+            .hero-phones-spread { flex-wrap: wrap; }
+            .notion-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 640px) {
+            .meta-grid { grid-template-columns: 1fr; }
+            .exec-metrics-grid { grid-template-columns: 1fr; }
+            .problem-grid, .solution-grid, .tech-grid { grid-template-columns: 1fr; }
+            .ownership-stats { grid-template-columns: 1fr; }
+            .cta-btn-row { flex-direction: column; }
+            .phone-mockup { width: 240px; height: 500px; }
+            .phone-mockup.featured { width: 260px; height: 530px; }
+            .notion-grid { grid-template-columns: 1fr; }
+        }
+    
+        /* ANIMATED INTERACTIVE PROBLEM VS SOLUTION SECTION */
+        .interactive-comparison-wrapper {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            padding: 3rem;
+            margin: 3.5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .comparison-controls {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 1rem;
+            margin-bottom: 2.5rem;
             flex-wrap: wrap;
         }
-
-        .footer-credits {
+        .compare-toggle-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            color: #cbd5e1;
+            padding: 0.65rem 1.5rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .compare-toggle-btn.active {
+            background: var(--gold);
+            color: #0b0d13;
+            border-color: var(--gold);
+            box-shadow: 0 0 20px rgba(234, 179, 8, 0.4);
+            transform: scale(1.03);
+        }
+        .compare-toggle-btn.problem-active {
+            background: var(--rose);
+            color: #ffffff;
+            border-color: var(--rose);
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.4);
+            transform: scale(1.03);
+        }
+        .compare-toggle-btn.solution-active {
+            background: var(--emerald);
+            color: #03140d;
+            border-color: var(--emerald);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+            transform: scale(1.03);
+        }
+        .comparison-cards-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .compare-row {
+            display: grid;
+            grid-template-columns: 1fr 60px 1fr;
+            align-items: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem 2rem;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .compare-row:hover {
+            transform: translateY(-3px);
+            border-color: var(--border-highlight);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+        .compare-side {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+        .side-label {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border);
-            color: var(--text-dim);
-            font-size: 0.85rem;
+            gap: 0.4rem;
+            font-weight: 700;
+        }
+        .side-label.before { color: var(--rose); }
+        .side-label.after { color: var(--gold); }
+        .side-title {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+        .side-desc {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        .compare-arrow-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: #141b28;
+            border-radius: 50%;
+            border: 1px solid var(--border-subtle);
+            color: var(--gold);
+            font-size: 1rem;
+            margin: 0 auto;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+        .compare-row:hover .compare-arrow-box {
+            transform: scale(1.15) rotate(90deg);
+            background: var(--gold);
+            color: #0b0d13;
         }
 
-        /* Responsive */
-        @media (max-width: 992px) {
-            .case-body-wrapper {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            .case-toc {
-                display: none;
-            }
-            .metrics-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .pillars-grid {
-                grid-template-columns: 1fr;
-            }
-            .feature-two-col {
-                grid-template-columns: 1fr;
-            }
-            .hero-title {
-                font-size: 2.4rem;
-            }
-        }
-
-        @media (max-width: 640px) {
-            .metrics-grid {
-                grid-template-columns: 1fr;
-            }
-            .nav-actions .btn-back span {
-                display: none;
-            }
-            .hero-title {
-                font-size: 2rem;
-            }
-        }
     </style>
 </head>
 <body>
 
-    <!-- Scroll Progress -->
-    <div id="read-progress"></div>
+    <!-- Ambient Glow Background -->
+    <div class="ambient-glow"></div>
 
     <!-- Navigation Bar -->
-    <header class="case-nav">
-        <div class="container">
-            <div class="nav-inner">
-                <a href="../../index.html" class="nav-brand">
-                    <div class="nav-logo-badge">AT</div>
-                    <div class="nav-titles">
-                        <span class="nav-title-main">Ahsan Tariq</span>
-                        <span class="nav-title-sub">Super-App Case Study</span>
-                    </div>
-                </a>
-                <div class="nav-actions">
-                    <a href="../../index.html" class="btn-back">
-                        <i class="fas fa-arrow-left"></i>
-                        <span>Back to Portfolio</span>
-                    </a>
-                    <a href="../ranbval-core/index.html" class="btn-back">
-                        <i class="fas fa-shield-halved"></i>
-                        <span>Core Architecture</span>
-                    </a>
-                    <a href="../../index.html#case-studies" class="btn-portfolio">
-                        <i class="fas fa-layer-group"></i>
-                        <span>All Studies</span>
-                    </a>
-                </div>
+    <nav class="case-nav">
+        <div class="nav-inner">
+            <a href="../index.html" class="nav-back">
+                <i class="fas fa-arrow-left"></i> Back to Case Studies
+            </a>
+            <div class="nav-brand">
+                <span>Tariq</span>DreamsTech
+            </div>
+            <div class="nav-status">
+                <span class="nav-status-dot"></span> 16 PILLARS · REACT NATIVE &amp; DISTRIBUTED BACKEND
             </div>
         </div>
-    </header>
+    </nav>
 
-    <!-- Hero Header -->
-    <section class="hero-case">
-        <div class="container">
-            <div class="badge-pill">
-                <i class="fas fa-brain"></i>
-                Autonomous AI Social, Communication, Work, Memory &amp; Gaming Super-System
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-mobile-screen-button"></i> 16-Pillar Ecosystem · Mobile Architecture &amp; Distributed Backend
             </div>
-            
-            <h1 class="hero-title">
-                Ranbval: The Next-Gen AI Social Super-Platform
-            </h1>
-            
-            <p class="hero-subtitle">
-                An all-in-one ecosystem uniting Google-caliber scale, Microsoft-level productivity, and next-gen AI agency—where human relationships, multi-persona AI proxies, autonomous social gaming, decentralized milestone freelancing, life memories, and zero-trust cryptographic vaults converge into a unified digital presence.
+
+            <h1 class="hero-h1">Ranbval: The AI Social, Work, Memory &amp; Gaming Super-System</h1>
+            <div class="hero-tagline">“You don’t win by chasing competition — you win by building a vision so powerful that competition becomes irrelevant.”</div>
+
+            <p class="hero-desc">
+                How a distributed systems backend architect engineered an all-in-one AI social super-system from scratch. Uniting <strong>16 integrated pillars</strong>: from sub-15ms real-time chat, 30-day connection streaks, and autonomous AI voice proxies to group game arcade coordination, milestone freelancing, zero-trust Constellation Privacy Vaults, and automated life memories. Bridging heavy-duty backend engineering (polyglot persistence with <strong>PostgreSQL, MongoDB &amp; Redis</strong>, <strong>RFC 6238 TOTP 2FA</strong>, mTLS) directly to a cross-platform <strong>React Native</strong> mobile client.
             </p>
 
-            <!-- Metadata Strip -->
-            <div class="meta-strip">
-                <div class="meta-item">
-                    <span class="meta-label">Architect &amp; Founder</span>
-                    <span class="meta-val">Ahsan Tariq (Lead Architect)</span>
+            <!-- Meta Strip -->
+            <div class="meta-grid">
+                <div class="meta-col">
+                    <span class="meta-title">Architect &amp; Founder</span>
+                    <span class="meta-value accent">Ahsan Tariq (Lead Systems Architect)</span>
                 </div>
-                <div class="meta-item">
-                    <span class="meta-label">Ecosystem Class</span>
-                    <span class="meta-val accent">All-In-One AI Super-Platform</span>
+                <div class="meta-col">
+                    <span class="meta-title">Mobile Architecture</span>
+                    <span class="meta-value">React Native · TypeScript · Expo · Reanimated</span>
                 </div>
-                <div class="meta-item">
-                    <span class="meta-label">Core Capabilities</span>
-                    <span class="meta-val">Social · AI Proxy · Jobs · Arcade · Vault</span>
+                <div class="meta-col">
+                    <span class="meta-title">Distributed Backend</span>
+                    <span class="meta-value">Python 3.12 (FastAPI) · ranbval-core Engine</span>
                 </div>
-                <div class="meta-item">
-                    <span class="meta-label">Underlying Runtime</span>
-                    <span class="meta-val">Ranbval-Core (FastAPI · Redis · ASGI)</span>
+                <div class="meta-col">
+                    <span class="meta-title">Security Protocol</span>
+                    <span class="meta-value">RFC 6238 TOTP 2FA · KMS Dynamic Encryption · Vault</span>
                 </div>
             </div>
 
-            <!-- Key Metrics Grid -->
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <div class="metric-num">30<span style="font-size:1.5rem">Days</span></div>
-                    <div class="metric-label">Relationship Intelligence</div>
-                    <div class="metric-desc">Continuous interaction streak unlocking verified presence transparency with consent.</div>
+            <!-- Hero Mobile Phones Showcase Spread -->
+            <div class="hero-phones-spread">
+                <!-- Left Phone: Realtime Chat -->
+                <div class="phone-mockup" onclick="openLightbox('images/01-ranbval-realtime-chat.jpg', 'Real-Time Chat & Multi-Persona Session: Ahsan Tariq (@ahsantariq0724) with Persona RANO, In-Chat Search, Instant Reactions (🔥👏❤️), Smart Reply Chips & Sub-15ms WebSockets')">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <img src="images/01-ranbval-realtime-chat.jpg" alt="Ranbval Realtime Chat Interface" />
+                    </div>
+                    <div class="phone-caption">
+                        <span>LIVE CHAT</span> · Sub-15ms &amp; Reactions
+                    </div>
                 </div>
-                <div class="metric-card">
-                    <div class="metric-num">100<span style="font-size:1.5rem">%</span></div>
-                    <div class="metric-label">Autonomous AI Proxy</div>
-                    <div class="metric-desc">Seamless voice and text replies in user's genuine persona, memory, and tone.</div>
+
+                <!-- Center Featured Phone: Stories & Feed -->
+                <div class="phone-mockup featured" onclick="openLightbox('images/04-ranbval-feed-stories-reels.jpg', 'Main Social Hub: Stories Streaks, Multi-Content Switcher (Posts, Reels, People) & Discovery Search')">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <img src="images/04-ranbval-feed-stories-reels.jpg" alt="Ranbval Main Feed & Stories" />
+                    </div>
+                    <div class="phone-caption">
+                        <span>MAIN FEED</span> · Stories, Reels &amp; Posts
+                    </div>
                 </div>
-                <div class="metric-card">
-                    <div class="metric-num">0<span style="font-size:1.5rem">Knowledge</span></div>
-                    <div class="metric-label">Media Vault &amp; Kill-Switch</div>
-                    <div class="metric-desc">Isolated media viewer app with instantaneous cryptographic data corruption switch.</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-num">Multi<span style="font-size:1.5rem">Agent</span></div>
-                    <div class="metric-label">Group Arcade &amp; Referee</div>
-                    <div class="metric-desc">Autonomous game master judging drawing battles, personal Q&amp;A, and trivia tournaments.</div>
+
+                <!-- Right Phone: Connections Reciprocity Graph -->
+                <div class="phone-mockup" onclick="openLightbox('images/08-ranbval-connections-network-graph.jpg', 'Connections & Network Graph: Algorithmic Reciprocity, Mutual Streaks & Connection Strength')">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <img src="images/08-ranbval-connections-network-graph.jpg" alt="Ranbval Connections Graph" />
+                    </div>
+                    <div class="phone-caption">
+                        <span>NETWORK GRAPH</span> · Reciprocity &amp; Streaks
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Main Content Layout with Sticky Sidebar -->
-    <div class="container">
-        <div class="case-body-wrapper">
-            
-            <!-- Sticky Navigation TOC -->
-            <aside class="case-toc">
-                <div class="toc-header">
-                    <i class="fas fa-list-check"></i>
-                    Ecosystem Index
+    <!-- Statement Banner (TheHexaTown Signature) -->
+    <section class="statement-banner">
+        <div class="wrapper">
+            <h2 class="statement-h2">
+                “I’m actually a backend engineer. But this vision <span>forced me into React Native</span>. Big companies took years to reach this architectural depth — <span>I built it across the entire stack from first principles</span>.”
+            </h2>
+        </div>
+    </section>
+
+    <!-- Executive Production Metrics Grid -->
+    <section class="section-separator">
+        <div class="wrapper">
+            <div class="exec-metrics-grid">
+                <div class="exec-metric-card">
+                    <div class="exec-num gold">16 Pillars</div>
+                    <div class="exec-label">All-in-One Super System</div>
+                    <div class="exec-sub">Social · Messaging · AI Voice Proxy · Group Arcade · Milestone Jobs · Memory Vault</div>
                 </div>
-                <ul class="toc-list">
-                    <li><a href="#vision" class="toc-link active">1. Strategic Super-App Vision</a></li>
-                    <li><a href="#relationship-intelligence" class="toc-link">2. Relationship Intelligence (30-Day)</a></li>
-                    <li><a href="#ai-proxy" class="toc-link">3. AI Conversation &amp; Voice Proxy</a></li>
-                    <li><a href="#multi-persona" class="toc-link">4. Multi-Persona Companion &amp; Safety</a></li>
-                    <li><a href="#agent-coordination" class="toc-link">5. Group Intelligence &amp; Games</a></li>
-                    <li><a href="#gaming-arcade" class="toc-link">6. AI Gaming Layer &amp; Time-Pass</a></li>
-                    <li><a href="#social-platform" class="toc-link">7. Social &amp; Content Platform</a></li>
-                    <li><a href="#services-jobs" class="toc-link">8. Services &amp; Milestone Jobs</a></li>
-                    <li><a href="#identity-verification" class="toc-link">9. Identity &amp; Blue-Tick Custody</a></li>
-                    <li><a href="#secure-vault" class="toc-link">10. Zero-Trust Vault &amp; Kill Switch</a></li>
-                    <li><a href="#memory-engine" class="toc-link">11. Memory &amp; Life Narrative Engine</a></li>
-                    <li><a href="#relationship-analytics" class="toc-link">12. Intimacy Metrics &amp; Analytics</a></li>
-                    <li><a href="#context-automation" class="toc-link">13. Context-Aware Life Automation</a></li>
-                    <li><a href="#platform-references" class="toc-link">14. Architecture Docs &amp; References</a></li>
-                </ul>
-            </aside>
+                <div class="exec-metric-card">
+                    <div class="exec-num cyan">Triple-DB</div>
+                    <div class="exec-label">Polyglot Persistence</div>
+                    <div class="exec-sub">PostgreSQL (Relational/Auth) · MongoDB (Feeds &amp; Media) · Redis (Sub-ms Cache &amp; PubSub)</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="exec-num emerald">Zero-Trust</div>
+                    <div class="exec-label">Constellation Privacy Vault</div>
+                    <div class="exec-sub">Granular attribute-level disclosure toggles · Instant profile kill-switch · Masked metadata</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="exec-num gold">&lt;15ms</div>
+                    <div class="exec-label">Bi-Directional Event Dispatch</div>
+                    <div class="exec-sub">Asynchronous WebSockets · Real-time presence · Message reactions &amp; smart reply chips</div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-            <!-- Case Content Body -->
-            <main class="case-content">
-
-                <!-- 1. Vision & Executive Summary -->
-                <section class="section-block" id="vision">
-                    <span class="section-tag">Section 01 / Strategic Vision</span>
-                    <h2 class="section-heading">
-                        <i class="fas fa-globe"></i>
-                        The Super-App Thesis: Beyond Fragmented Apps
-                    </h2>
-                    
-                    <p class="paragraph">
-                        Today’s digital ecosystem forces users to juggle a dozen disjointed applications: WhatsApp for communication, Instagram and TikTok for reels and social status, Upwork and LinkedIn for professional services, Notion or Apple Notes for life memories, and fragmented gaming hubs for entertainment. None of these systems communicate with each other, none understand the user’s continuous emotional life narrative, and all treat private user data as an ad-targeting commodity.
+    <!-- Pillar 1 & 2: Relationship Intelligence & Autonomous AI Voice Proxy -->
+    <section class="section-separator" id="relationship-intelligence">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-heart-pulse"></i> PILLAR 1 &amp; 2: RELATIONSHIP INTELLIGENCE &amp; AI CALL PROXY</div>
+                    <h2 class="showcase-h2">30-Day Connection Streaks &amp; Autonomous Voice Call Proxy</h2>
+                    <p class="showcase-desc">
+                        Legacy platforms count followers; Ranbval measures genuine human bonds. If two users converse consistently for 30 consecutive days, the system establishes a certified <strong>Deep Connection</strong>, unlocking algorithmic relationship insights and contextual transparency.
                     </p>
-
-                    <div class="callout-box">
-                        <div class="callout-title">
-                            <i class="fas fa-rocket"></i>
-                            The Ranbval Product Definition
-                        </div>
-                        <div class="callout-body">
-                            <strong>Ranbval is the world's first AI-powered Social + Communication + Work + Memory + Entertainment Super-System.</strong>
-                            <br><br>
-                            It establishes a single unified root (<a href="https://ranbval.com" target="_blank" style="color: var(--accent); font-weight: 700; text-decoration: underline;">ranbval.com</a>) where your digital presence, your authentic human relationships, your autonomous AI representatives, your freelance contracts, your life memories, and your private media vaults live under zero-trust cryptographic sovereignty.
-                        </div>
-                    </div>
-
-                    <p class="paragraph">
-                        Ranbval is not just an application; it is built on the enterprise-grade <strong>Ranbval-Core</strong> internal developer framework, providing AES-256-GCM envelope payload encryption, distributed OpenTelemetry tracing, and Redis-backed session management designed to scale to tens of millions of concurrent users worldwide.
-                    </p>
-                </section>
-
-                <!-- 2. Relationship Intelligence System -->
-                <section class="section-block" id="relationship-intelligence">
-                    <span class="section-tag">Section 02 / Social Graph Revolution</span>
-                    <h2 class="section-heading">
-                        <i class="fas fa-heart-pulse"></i>
-                        Relationship Intelligence System (30-Day Connection Engine)
-                    </h2>
-                    
-                    <p class="paragraph">
-                        Traditional social networks treat a 10-year friendship the exact same way as a stranger who clicked "Follow" 5 seconds ago. Ranbval introduces <strong>Relationship Intelligence</strong>: a dynamic emotional graph powered by Redis Graph and temporal interaction analysis.
-                    </p>
-
-                    <div class="feature-two-col">
-                        <div class="feature-box">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge"><i class="fas fa-fire"></i></div>
-                                <h4 class="feature-title">The 30-Day Intimacy Threshold</h4>
-                            </div>
-                            <p class="feature-desc">
-                                If two users engage in continuous conversation for 30 consecutive days, the system automatically recognizes a verified bond of deep mutual trust. This unlocks privileged transparency features, shared memory generation, and deep relationship analytics.
-                            </p>
-                        </div>
-
-                        <div class="feature-box">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge"><i class="fas fa-eye"></i></div>
-                                <h4 class="feature-title">Active Presence Transparency (Consent-Gated)</h4>
-                            </div>
-                            <p class="feature-desc">
-                                Once the 30-day bond is established, verified partners can optionally know who each other is actively communicating with. To prevent privacy violation, this is <strong>100% consent-gated</strong> and only activates when both parties explicitly opt in.
-                            </p>
-                        </div>
-
-                        <div class="feature-box">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge"><i class="fas fa-medal"></i></div>
-                                <h4 class="feature-title">Relationship Milestones &amp; Origins</h4>
-                            </div>
-                            <p class="feature-desc">
-                                Ranbval meticulously records relational genesis: Who was your very first friend on the platform? What was the first sentence you ever exchanged? Who is your top conversational partner, and who holds the highest Empathy &amp; Care Index?
-                            </p>
-                        </div>
-
-                        <div class="feature-box">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge"><i class="fas fa-calendar-check"></i></div>
-                                <h4 class="feature-title">Multi-Streak &amp; Status System</h4>
-                            </div>
-                            <p class="feature-desc">
-                                Beyond daily messaging streaks, Ranbval tracks <strong>Joint Activity Streaks</strong> (e.g., studying daily, working out together, or mutual prayer/reflection routines). Real-time situational status badges ("Recovering from illness", "Deep work", "Traveling") alert loved ones immediately.
-                            </p>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 3. Autonomous AI Conversation & Voice Proxy -->
-                <section class="section-block" id="ai-proxy">
-                    <span class="section-tag">Section 03 / Multi-Agent Agency</span>
-                    <h2 class="section-heading">
-                        <i class="fas fa-robot"></i>
-                        Autonomous AI Conversation &amp; Voice Proxy System
-                    </h2>
-
-                    <p class="paragraph">
-                        In an always-on world, human beings experience burnout, need sleep, travel through dead zones, and get overwhelmed by notification avalanches. Ranbval introduces the <strong>Autonomous AI Proxy</strong>: an individualized digital agent that represents the user when they are unavailable.
-                    </p>
-
-                    <div class="pillars-grid">
-                        <div class="pillar-card">
-                            <div class="pillar-icon"><i class="fas fa-comments"></i></div>
-                            <h3 class="pillar-title">Contextual Text Proxy</h3>
-                            <p class="pillar-text">
-                                When a user is sleeping or busy, their AI agent seamlessly replies on their behalf. It leverages historical memory embeddings and tone fine-tuning to converse with friends in the user's authentic style.
-                            </p>
-                        </div>
-
-                        <div class="pillar-card">
-                            <div class="pillar-icon"><i class="fas fa-phone-volume"></i></div>
-                            <h3 class="pillar-title">Real-Time Voice Call Proxy</h3>
-                            <p class="pillar-text">
-                                If an urgent voice or video call comes in while you are in a meeting or driving, your AI agent can pick up the call, speak in your personalized vocal tone, listen to the caller, take notes, and brief you afterward.
-                            </p>
-                        </div>
-
-                        <div class="pillar-card">
-                            <div class="pillar-icon"><i class="fas fa-brain"></i></div>
-                            <h3 class="pillar-title">Spontaneous Memory Recall</h3>
-                            <p class="pillar-text">
-                                The AI proxy spontaneously recalls shared memories, references mutual jokes, shares past stories, and maintains an organic emotional connection rather than robotic boilerplate auto-responses.
-                            </p>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 4. Multi-Persona Companion & Safety Engine -->
-                <section class="section-block" id="multi-persona">
-                    <span class="section-tag">Section 04 / Empathetic Intelligence</span>
-                    <h2 class="section-heading">
-                        <i class="fas fa-masks-theater"></i>
-                        Multi-Persona AI Companion &amp; Anti-Blackmail Safety Engine
-                    </h2>
-
-                    <p class="paragraph">
-                        Ranbval recognizes that humans experience diverse emotional states and require different types of counsel throughout their lives. The AI agent seamlessly morphs across customizable archetypes:
-                    </p>
-
-                    <div class="feature-two-col">
-                        <div class="feature-box">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge"><i class="fas fa-users-viewfinder"></i></div>
-                                <h4 class="feature-title">Dynamic Role Archetypes</h4>
-                            </div>
-                            <p class="feature-desc">
-                                Switch the AI into the persona you need right now: <strong>The Nurturing Parent</strong> (Father or Mother archetype offering unconditional warmth), <strong>The Trusted Best Friend</strong>, <strong>The Executive Career Mentor</strong>, or bespoke custom personas tailored to your workflow.
-                            </p>
-                        </div>
-
-                        <div class="feature-box">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge"><i class="fas fa-briefcase"></i></div>
-                                <h4 class="feature-title">Career &amp; Scope Brainstorming</h4>
-                            </div>
-                            <p class="feature-desc">
-                                The AI constantly analyzes market intelligence tailored to the user's profession. If you are an engineer, it proactively highlights high-demand tech stacks (e.g. distributed systems, robotics, AI agents) and ideates lucrative project concepts.
-                            </p>
-                        </div>
-
-                        <div class="feature-box">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge"><i class="fas fa-hands-praying"></i></div>
-                                <h4 class="feature-title">Spiritual &amp; Religious Personalization</h4>
-                            </div>
-                            <p class="feature-desc">
-                                For Muslim and spiritually oriented users, the platform delivers context-calibrated supplications (Duas), reflections, and motivational reminders synchronized to prayer times, Fridays, and significant spiritual occasions.
-                            </p>
-                        </div>
-
-                        <div class="feature-box">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge"><i class="fas fa-shield-virus"></i></div>
-                                <h4 class="feature-title">Proactive Anti-Blackmail &amp; Conflict Defense</h4>
-                            </div>
-                            <p class="feature-desc">
-                                If an adversary attempts blackmail, emotional manipulation, or extortion, the AI detects the pattern immediately. It de-escalates the tension, counsels the user with calm psychological support, locks evidentiary media into immutable vaults, and shields the victim.
-                            </p>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 5. Group Intelligence & Games -->
-                <section class="section-block" id="agent-coordination">
-                    <span class="section-tag">Section 05 / Autonomous Social Coordination</span>
-                    <h2 class="section-heading">
-                        <i class="fas fa-people-group"></i>
-                        Agent Coordination &amp; Group Game Master
-                    </h2>
-
-                    <p class="paragraph">
-                        Ranbval agents don't merely respond in 1-on-1 threads—they act as autonomous coordinators and referees inside group chats, transforming dormant groups into vibrant interactive arenas.
-                    </p>
-
-                    <div class="showcase-strip">
-                        <h3 style="font-family: var(--font-h); font-size: 1.4rem; color: #ffffff; margin-bottom: 1.25rem;">
-                            When Someone Says: <em>"Let's play a game!"</em>
-                        </h3>
-                        <p class="paragraph" style="margin-bottom: 1.5rem;">
-                            The AI agent instantly steps into the center of the group, asks what everyone wants to play, and launches interactive multiplayer game modes:
-                        </p>
-
-                        <div class="feature-two-col" style="margin: 0;">
-                            <div class="feature-box" style="background: #0d1017;">
-                                <h4 style="color: var(--accent); font-family: var(--font-h); font-size: 1.1rem; margin-bottom: 0.5rem;">
-                                    <i class="fas fa-circle-question"></i> 1. "Who Knows Who Better?" Showdown
-                                </h4>
-                                <p style="color: #cbd5e1; font-size: 0.88rem; line-height: 1.6;">
-                                    The AI pulls sanitized relational trivia from mutual public interactions, generates personalized Q&amp;A challenges ("What is Ahsan's favorite food?", "Where did they first meet?"), collects answers via private ephemeral prompts, scores results, and declares the ultimate friend.
-                                </p>
-                            </div>
-
-                            <div class="feature-box" style="background: #0d1017;">
-                                <h4 style="color: var(--accent); font-family: var(--font-h); font-size: 1.1rem; margin-bottom: 0.5rem;">
-                                    <i class="fas fa-lightbulb"></i> 2. Real-Time General Knowledge Arena
-                                </h4>
-                                <p style="color: #cbd5e1; font-size: 0.88rem; line-height: 1.6;">
-                                    The AI generates dynamic trivia rounds tailored to the group's passions (tech, astronomy, history, sports), administers a synchronized countdown timer, tracks scores, and updates the live group leaderboard.
-                                </p>
-                            </div>
-
-                            <div class="feature-box" style="background: #0d1017; grid-column: span 2;">
-                                <h4 style="color: var(--accent); font-family: var(--font-h); font-size: 1.1rem; margin-bottom: 0.5rem;">
-                                    <i class="fas fa-palette"></i> 3. Computer Vision Drawing &amp; Shape Battle
-                                </h4>
-                                <p style="color: #cbd5e1; font-size: 0.88rem; line-height: 1.6;">
-                                    The AI assigns a geometric shape or object ("Draw a futuristic skyscraper in 45 seconds!"), provides an in-app sketch canvas, runs computer vision sketch recognition on submissions, grades symmetry and artistic creativity, and crowns the winning artist.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 6. AI Gaming Layer & Arcade -->
-                <section class="section-block" id="gaming-arcade">
-                    <span class="section-tag">Section 06 / Entertainment & Engagement</span>
-                    <h2 class="section-heading">
-                        <i class="fas fa-gamepad"></i>
-                        AI Gaming Layer &amp; "Time-Pass" Companion Mode
-                    </h2>
-
-                    <p class="paragraph">
-                        Loneliness and idle downtime are pervasive in modern life. When none of your friends are online or everyone is caught up in work, Ranbval's <strong>Time-Pass Mode</strong> activates:
-                    </p>
-                    <ul class="pillar-bullets" style="margin-bottom: 2rem; gap: 0.85rem;">
-                        <li><i class="fas fa-check"></i> <span><strong>AI as Cooperative Player or Host:</strong> The agent can join you as an active gaming partner in word games, chess puzzles, roleplay adventures, or trivia.</span></li>
-                        <li><i class="fas fa-check"></i> <span><strong>Interactive Branching Stories:</strong> Generates collaborative Choose-Your-Own-Adventure sagas where you and the AI co-write interactive mysteries and science-fiction narratives.</span></li>
-                        <li><i class="fas fa-check"></i> <span><strong>Fair Referee &amp; Arbiter:</strong> In multiplayer rooms, the AI maintains rules, monitors turn timers, and prevents cheating without human bias.</span></li>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <strong>Permissioned Active Connection Awareness:</strong> If enabled by the user, close connections can see whom they are currently in active conversation with, preventing unnecessary interruptions while fostering closeness.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Autonomous Voice &amp; Chat Proxy:</strong> When you are traveling, working out at the gym, in meetings, or sleeping, your AI Proxy steps in. It speaks over live voice calls in your personalized voice and conversational tone, drawing upon past shared memories to keep conversations flowing naturally.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Interaction History &amp; Care Metrics:</strong> Evaluates who your very first platform friend was, who talks to you the most, and who exhibits the highest mutual care level over time.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Dynamic Life Statuses:</strong> Automated status broadcast (e.g. &ldquo;Sick&rdquo;, &ldquo;In Flight PK-302&rdquo;, &ldquo;Deep Coding Mode&rdquo;) to manage friend expectations gracefully.</li>
                     </ul>
-                </section>
-
-                <!-- 7. Social & Content Platform -->
-                <section class="section-block" id="social-platform">
-                    <span class="section-tag">Section 07 / Omnichannel Media</span>
-                    <h2 class="section-heading">
-                        <i class="fas fa-photo-film"></i>
-                        Omnichannel Social &amp; Content Platform (Reels, Posts &amp; Stories)
-                    </h2>
-
-                    <p class="paragraph">
-                        Ranbval integrates the full spectrum of viral social engagement without the toxicity of algorithmic clickbait:
-                    </p>
-
-                    <div class="pillars-grid">
-                        <div class="pillar-card">
-                            <div class="pillar-icon"><i class="fas fa-play"></i></div>
-                            <h3 class="pillar-title">Short-Form Reels</h3>
-                            <p class="pillar-text">
-                                Ultra-low-latency vertical video delivery backed by edge CDN chunking, adaptive HLS bitrate streaming, and generative AI audio remastering.
-                            </p>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">30-Day Connection Streak</span>
+                        <span class="showcase-tag">AI Voice Proxy</span>
+                        <span class="showcase-tag">Speech Synthesis</span>
+                        <span class="showcase-tag">Contextual Status</span>
+                    </div>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="phone-mockup" onclick="openLightbox('images/11-ranbval-ai-voice-proxy-call.jpg', 'AI Voice & Call Proxy: Autonomous Voice Call Management in User Tone with Live Transcript')">
+                        <div class="phone-notch"></div>
+                        <div class="phone-screen">
+                            <img src="images/11-ranbval-ai-voice-proxy-call.jpg" alt="Ranbval AI Voice Proxy Call Interface" />
                         </div>
-
-                        <div class="pillar-card">
-                            <div class="pillar-icon"><i class="fas fa-newspaper"></i></div>
-                            <h3 class="pillar-title">Posts &amp; Micro-Tweets</h3>
-                            <p class="pillar-text">
-                                Rich multimedia text, high-res carousel photos, thought-leadership threads, and real-time community engagement with encrypted commenting.
-                            </p>
-                        </div>
-
-                        <div class="pillar-card">
-                            <div class="pillar-icon"><i class="fas fa-clock-rotate-left"></i></div>
-                            <h3 class="pillar-title">24-Hour Ephemeral Stories</h3>
-                            <p class="pillar-text">
-                                Self-destructing day-in-the-life stories with interactive polls, anonymous Q&amp;A stickers, and cryptographic view receipts.
-                            </p>
+                        <div class="phone-caption">
+                            <span>AI VOICE PROXY</span> · Answering in User Tone
                         </div>
                     </div>
-                </section>
-
-                <!-- 8. Services & Milestone Jobs -->
-                <section class="section-block" id="services-jobs">
-                    <span class="section-tag">Section 08 / Economic Empowerment</span>
-                    <h2 class="section-heading">
-                        <i class="fas fa-handshake"></i>
-                        Decentralized Services Marketplace &amp; In-Chat Milestone Jobs
-                    </h2>
-
-                    <p class="paragraph">
-                        Why leave your social network to bid on freelance work on Upwork or Fiverr? Ranbval fuses social trust with economic opportunities:
-                    </p>
-
-                    <div class="feature-two-col">
-                        <div class="feature-box">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge"><i class="fas fa-id-card"></i></div>
-                                <h4 class="feature-title">Verified Skill &amp; Service Listings</h4>
-                            </div>
-                            <p class="feature-desc">
-                                Users showcase their professional superpowers directly on their profile—from Full-Stack Development and UI/UX Design to Accounting, Bookkeeping, and AI Automation.
-                            </p>
+                    <div class="phone-mockup" onclick="openLightbox('images/01-ranbval-realtime-chat.jpg', 'Real-Time Chat & Multi-Persona Session: Ahsan Tariq (@ahsantariq0724) with Persona RANO, In-Chat Search, Instant Reactions (🔥👏❤️), Smart Reply Chips & Sub-15ms WebSockets')">
+                        <div class="phone-notch"></div>
+                        <div class="phone-screen">
+                            <img src="images/01-ranbval-realtime-chat.jpg" alt="Ranbval Realtime Mobile Chat Screen" />
                         </div>
-
-                        <div class="feature-box">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge"><i class="fas fa-magnifying-glass-chart"></i></div>
-                                <h4 class="feature-title">Semantic AI Job Matchmaker</h4>
-                            </div>
-                            <p class="feature-desc">
-                                When a founder posts in a group: <em>"I need an expert to build an encrypted FastAPI microservice"</em>, the AI matches and introduces verified professionals whose portfolio exactly aligns with the requirements.
-                            </p>
-                        </div>
-
-                        <div class="feature-box" style="grid-column: span 2;">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge"><i class="fas fa-diagram-project"></i></div>
-                                <h4 class="feature-title">In-Chat Milestone Contracts &amp; Escrow Tracking</h4>
-                            </div>
-                            <p class="feature-desc">
-                                Contracts live inside the chat thread. Projects are automatically partitioned into verifiable milestones (Milestone 1: Wireframes, Milestone 2: API Scaffold, Milestone 3: Production Deploy). The AI verifies artifact delivery and releases milestone funds upon client confirmation.
-                            </p>
+                        <div class="phone-caption">
+                            <span>LIVE CHAT</span> · Online Now &amp; Reactions
                         </div>
                     </div>
-                </section>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                <!-- 9. Cryptographic Identity & Verification -->
-                <section class="section-block" id="identity-verification">
-                    <span class="section-tag">Section 09 / Trust & Reputation</span>
-                    <h2 class="section-heading">
-                        <i class="fas fa-badge-check"></i>
-                        Verified Identity &amp; Cryptographic Blue-Tick System
-                    </h2>
-
-                    <p class="paragraph">
-                        Bot farms, impersonators, and fraudulent accounts erode trust across the internet. Ranbval solves this through verified cryptographic identity:
+    <!-- Pillar 3 & 4: Multi-Persona AI & Agent Coordination (Group Games & Q&A Arcade) -->
+    <section class="section-separator" id="group-arcade">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-gamepad"></i> PILLAR 3, 4 &amp; 5: MULTI-PERSONA AI &amp; GROUP GAME MASTER</div>
+                    <h2 class="showcase-h2">Group Arcade Games, Q&amp;A Battles &amp; Multi-Persona Companions</h2>
+                    <p class="showcase-desc">
+                        AI in Ranbval is not a sterile customer support bot — it is an active group coordinator, arcade referee, empathetic companion, and protective shield.
                     </p>
-                    <ul class="pillar-bullets" style="margin-bottom: 2rem; gap: 0.85rem;">
-                        <li><i class="fas fa-check"></i> <span><strong>Paid &amp; Proof-Backed Blue Tick:</strong> Sybil-resistant identity badging verified against biometric and cryptographic proof of personhood.</span></li>
-                        <li><i class="fas fa-check"></i> <span><strong>Reputational Trust Score:</strong> Dynamic score computed from successful milestone completions, 30-day relationship streaks, and zero moderation violations.</span></li>
-                        <li><i class="fas fa-check"></i> <span><strong>View-Once Delivery Proof:</strong> Ephemeral media uses cryptographic signatures ensuring recipient viewed it exactly once with zero interception.</span></li>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <strong>AI Game Master:</strong> Say &ldquo;Chalo game khelte hain&rdquo; in any group chat, and the AI takes over as host, referee, and judge.
+                            <br/>🔹 <em>Q&amp;A Trivia Battle:</em> &ldquo;Who knows Ahsan better?&rdquo; AI generates customized questions based on memories, collects player votes, and crowns the winner.
+                            <br/>🔹 <em>Drawing Battle:</em> AI assigns shapes (e.g. &ldquo;Rocket landing on Mars&rdquo;), sets a timer, and uses computer vision to evaluate and rank the drawings.
+                            <br/>🔹 <em>General Knowledge:</em> AI runs timed trivia rounds with live leaderboards and streaks.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Adaptive Multi-Persona Companions:</strong> Switch seamlessly between Friend, Father, Mother, or Mentor personalities when you need advice, companionship, or brainstorming.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Religious &amp; Spiritual Personalization:</strong> Context-aware delivery of daily morning, evening, and situational Duas tailored to specific days and prayer times.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Shield Guard Anti-Blackmail Protection:</strong> If any party attempts blackmail, coercion, or harassment, the AI immediately intervenes, safely neutralizes the threat, de-escalates the dialogue, and archives forensic evidence.</li>
                     </ul>
-                </section>
-
-                <!-- 10. Zero-Trust Media Vault & Kill Switch -->
-                <section class="section-block" id="secure-vault">
-                    <span class="section-tag">Section 10 / Data Sovereignty</span>
-                    <h2 class="section-heading">
-                        <i class="fas fa-vault"></i>
-                        Zero-Trust Media Vault, Sandboxed Drive &amp; Emergency Kill-Switch
-                    </h2>
-
-                    <p class="paragraph">
-                        User data belongs solely to the user. Ranbval introduces military-grade data sovereignty protocols:
-                    </p>
-
-                    <div class="pillars-grid">
-                        <div class="pillar-card">
-                            <div class="pillar-icon"><i class="fas fa-lock"></i></div>
-                            <h3 class="pillar-title">Sandboxed Drive App</h3>
-                            <p class="pillar-text">
-                                Sensitive photos, private documents, and encrypted recordings open exclusively inside an isolated sandboxed drive. Media cannot leak to unencrypted device galleries without biometric approval.
-                            </p>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">AI Game Master</span>
+                        <span class="showcase-tag">Drawing Battle CV</span>
+                        <span class="showcase-tag">Multi-Persona Agents</span>
+                        <span class="showcase-tag">Anti-Blackmail Shield</span>
+                        <span class="showcase-tag">Spiritual Duas</span>
+                    </div>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="phone-mockup" onclick="openLightbox('images/12-ranbval-group-game-master.jpg', 'AI Game Master: Group Arcade Q&A Battle, Live Leaderboard & Drawing Challenge')">
+                        <div class="phone-notch"></div>
+                        <div class="phone-screen">
+                            <img src="images/12-ranbval-group-game-master.jpg" alt="Ranbval AI Game Master Arcade Screen" />
                         </div>
-
-                        <div class="pillar-card">
-                            <div class="pillar-icon"><i class="fas fa-file-export"></i></div>
-                            <h3 class="pillar-title">Sovereign Data Export</h3>
-                            <p class="pillar-text">
-                                Export your full social graph, memories, messages, and portfolio artifacts in standardized JSON/ZIP bundles at any moment with one click.
-                            </p>
-                        </div>
-
-                        <div class="pillar-card">
-                            <div class="pillar-icon"><i class="fas fa-skull-crossbones"></i></div>
-                            <h3 class="pillar-title">Emergency Kill-Switch</h3>
-                            <p class="pillar-text">
-                                In situations of imminent threat or compromise, users can trigger the <strong>Cryptographic Data Corruption Switch</strong>: all encryption keys are instantly zeroized, turning stored data into irreversible random noise forever.
-                            </p>
+                        <div class="phone-caption">
+                            <span>GAME MASTER</span> · Q&amp;A &amp; Drawing Arcade
                         </div>
                     </div>
-                </section>
-
-                <!-- 11. Memory Engine & Life Narrative Builder -->
-                <section class="section-block" id="memory-engine">
-                    <span class="section-tag">Section 11 / Emotional Computing</span>
-                    <h2 class="section-heading">
-                        <i class="fas fa-film"></i>
-                        The Memory Engine &amp; Continuous Life Narrative
-                    </h2>
-
-                    <p class="paragraph">
-                        As you chat, share milestones, and collaborate, Ranbval’s <strong>Life Engine</strong> works silently in the background:
-                    </p>
-
-                    <div class="feature-two-col">
-                        <div class="feature-box">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge"><i class="fas fa-sparkles"></i></div>
-                                <h4 class="feature-title">Automated Memory Generation</h4>
-                            </div>
-                            <p class="feature-desc">
-                                Chat logs automatically synthesize into memory capsules: <em>"Remember the night you both launched your first project together?"</em>, accompanied by generated photo albums and celebratory stories.
-                            </p>
+                    <div class="phone-mockup" onclick="openLightbox('images/15-ranbval-multi-persona-mentor.jpg', 'Multi-Persona AI Companion: Friend/Father/Mentor, Duas & Anti-Blackmail Shield')">
+                        <div class="phone-notch"></div>
+                        <div class="phone-screen">
+                            <img src="images/15-ranbval-multi-persona-mentor.jpg" alt="Ranbval Multi-Persona & Safety Screen" />
                         </div>
-
-                        <div class="feature-box">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge"><i class="fas fa-book-open-reader"></i></div>
-                                <h4 class="feature-title">Psychological Life Story Builder</h4>
-                            </div>
-                            <p class="feature-desc">
-                                Compiles a compassionate, private life narrative reflecting your personal growth over time, how your communication patterns evolved, and your overarching values as a human being.
-                            </p>
-                        </div>
-
-                        <div class="feature-box" style="grid-column: span 2;">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge"><i class="fas fa-location-dot"></i></div>
-                                <h4 class="feature-title">Activity &amp; Frequency Patterns</h4>
-                            </div>
-                            <p class="feature-desc">
-                                Privately models user habit routines: daily frequencies, workout patterns, and favorite spots visited, helping the user optimize their daily productivity and wellness balance.
-                            </p>
+                        <div class="phone-caption">
+                            <span>PERSONA SHIELD</span> · Mentor &amp; Safety
                         </div>
                     </div>
-                </section>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                <!-- 12. Relationship Analytics & Intimacy Metrics -->
-                <section class="section-block" id="relationship-analytics">
-                    <span class="section-tag">Section 12 / Quantitative Social Graph</span>
-                    <h2 class="section-heading">
-                        <i class="fas fa-chart-pie"></i>
-                        Relationship Analytics &amp; The Empathy Index
-                    </h2>
-
-                    <p class="paragraph">
-                        Ranbval provides users with objective, visual metrics illustrating the health and balance of their personal relationships:
+    <!-- Pillar 6 & 7: Social Platform, Reels & In-Chat Milestone Freelancing -->
+    <section class="section-separator" id="social-jobs">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-briefcase"></i> PILLAR 6, 7 &amp; 8: SOCIAL MEDIA, MILESTONE FREELANCING &amp; BLUE TICK</div>
+                    <h2 class="showcase-h2">Reels, Posts &amp; In-Chat Milestone Freelancing with Blue Tick Verification</h2>
+                    <p class="showcase-desc">
+                        Ranbval bridges lifestyle entertainment with economic empowerment. Content creators share short-form Reels, tweet-style micro-posts, and stories, while professionals discover high-value client gigs directly in conversation.
                     </p>
-
-                    <div class="table-responsive">
-                        <table class="comp-table">
-                            <thead>
-                                <tr>
-                                    <th>Relationship Metric</th>
-                                    <th>Data Analyzed</th>
-                                    <th>Personal &amp; Relational Value</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td style="font-weight: 700; color: #fff;">Connection Longevity</td>
-                                    <td>Cumulative voice, video, and text interaction minutes</td>
-                                    <td>Highlights who your most enduring lifelines and companions truly are.</td>
-                                </tr>
-                                <tr>
-                                    <td style="font-weight: 700; color: #fff;">Empathy &amp; Care Index</td>
-                                    <td>Frequency of proactive check-ins, supportive language, and illness status replies</td>
-                                    <td>Objectively shows who genuinely cares for your wellbeing during tough times.</td>
-                                </tr>
-                                <tr>
-                                    <td style="font-weight: 700; color: #fff;">Activity Streaks</td>
-                                    <td>Consecutive days of joint goal fulfillment (exercise, coding, prayer)</td>
-                                    <td>Builds unstoppable mutual discipline and habit accountability.</td>
-                                </tr>
-                                <tr>
-                                    <td style="font-weight: 700; color: #fff;">Relational Milestones</td>
-                                    <td>First contact date, first audio call, first collaborative job completed</td>
-                                    <td>Preserves a permanent, cherished history of your closest bonds.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <!-- 13. Context-Aware Life Automation -->
-                <section class="section-block" id="context-automation">
-                    <span class="section-tag">Section 13 / Ambient Intelligence</span>
-                    <h2 class="section-heading">
-                        <i class="fas fa-wand-magic-sparkles"></i>
-                        Context-Aware Life Automation &amp; Smart Scheduling
-                    </h2>
-
-                    <p class="paragraph">
-                        Ranbval bridges communication with intelligent scheduling and automation:
-                    </p>
-                    <ul class="pillar-bullets" style="margin-bottom: 2rem; gap: 0.85rem;">
-                        <li><i class="fas fa-check"></i> <span><strong>Precision Message Scheduling:</strong> Schedule messages for exact future dates, time zones, or trigger conditions (e.g. deliver right when friend lands at airport).</span></li>
-                        <li><i class="fas fa-check"></i> <span><strong>Memory-Synthesized Birthday Wishes:</strong> The system doesn't just ping <em>"Happy Birthday"</em>—it crafts heartfelt messages pulling real shared memories and triumphs from your mutual past.</span></li>
-                        <li><i class="fas fa-check"></i> <span><strong>Travel, Gym &amp; Meeting Sensor:</strong> Auto-detects physical transit or high-intensity activity, auto-responding gracefully so you stay focused in the present.</span></li>
-                        <li><i class="fas fa-check"></i> <span><strong>Autonomous Calendar &amp; Email Evolution:</strong> Like Google and Microsoft, Ranbval expands into sovereign calendar synchronization, task nudges, and secure mail protocols.</span></li>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <strong>Unified Social Content Hub:</strong> Fluid viewport switching between 24-hour Ephemeral Stories, short-form Reels, community Groups, and algorithmic feeds.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>AI Services &amp; Job Matchmaking:</strong> Say &ldquo;I need a UI/UX designer&rdquo; or &ldquo;I need a Redis expert&rdquo;, and the AI parses skills, reviews past project scores, and suggests certified professionals instantly.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>In-Chat Milestone Contracts:</strong> Execute freelance contracts directly inside chat threads. Projects are divided into transparent milestones with funds locked in secure escrow pools and released on delivery.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Verified Identity &amp; Paid Blue Tick:</strong> Prevents fake impersonators and bot farms through biometric KYC verification and tamper-proof blue tick credentials.</li>
                     </ul>
-                </section>
-
-                <!-- 14. Architecture Docs & Platform References -->
-                <section class="section-block" id="platform-references">
-                    <span class="section-tag">Section 14 / Engineering Foundations</span>
-                    <h2 class="section-heading">
-                        <i class="fas fa-book-bookmark"></i>
-                        Ranbval Platform Documentation &amp; Architecture References
-                    </h2>
-
-                    <p class="paragraph">
-                        Ranbval Social Super-System is engineered atop the production microservices infrastructure detailed in our official technical documentation and architecture repositories:
-                    </p>
-
-                    <div class="ref-box">
-                        <a href="../ranbval-core/index.html" class="ref-item">
-                            <div class="ref-info">
-                                <i class="fas fa-shield-halved"></i>
-                                <div>
-                                    <div class="ref-title">Ranbval-Core Architecture Case Study (In-Depth)</div>
-                                    <span style="font-size: 0.8rem; color: var(--text-muted);">AES-GCM encryption, Redis JTI revocation, OpenTelemetry tracing, and 14+ pre-commit CI gates.</span>
-                                </div>
-                            </div>
-                            <span class="ref-tag">Platform Foundation</span>
-                        </a>
-
-                        <a href="../ranbval-conversations/index.html" class="ref-item">
-                            <div class="ref-info">
-                                <i class="fas fa-comments"></i>
-                                <div>
-                                    <div class="ref-title">Ranbval Conversations: Unified Client Communication &amp; Semantic Memory</div>
-                                    <span style="font-size: 0.8rem; color: var(--text-muted);">Centralized cross-platform client context, Pinecone semantic vector memory, and Supabase data layer.</span>
-                                </div>
-                            </div>
-                            <span class="ref-tag">Client Intelligence</span>
-                        </a>
-
-                        <div class="ref-item">
-                            <div class="ref-info">
-                                <i class="fas fa-diagram-project"></i>
-                                <div>
-                                    <div class="ref-title">Ranbval-Followers / Redis Graph Architecture</div>
-                                    <span style="font-size: 0.8rem; color: var(--text-muted);">Low-latency relational graph queries, bidirectional friend mapping, and streak indexes.</span>
-                                </div>
-                            </div>
-                            <span class="ref-tag">Graph Engine</span>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">Reels &amp; Stories</span>
+                        <span class="showcase-tag">In-Chat Escrow</span>
+                        <span class="showcase-tag">Milestone Tracking</span>
+                        <span class="showcase-tag">Verified Blue Tick</span>
+                    </div>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="phone-mockup" onclick="openLightbox('images/04-ranbval-feed-stories-reels.jpg', 'Main Feed: Stories Carousel, Posts, Reels, People Discovery & Search')">
+                        <div class="phone-notch"></div>
+                        <div class="phone-screen">
+                            <img src="images/04-ranbval-feed-stories-reels.jpg" alt="Ranbval Stories & Reels Hub" />
                         </div>
-
-                        <div class="ref-item">
-                            <div class="ref-info">
-                                <i class="fas fa-video"></i>
-                                <div>
-                                    <div class="ref-title">Ranbval Reels &amp; Multimedia Streaming Pipeline</div>
-                                    <span style="font-size: 0.8rem; color: var(--text-muted);">Vertical short-form video encoding, adaptive HLS segmenting, and caching infrastructure.</span>
-                                </div>
-                            </div>
-                            <span class="ref-tag">Media Pipeline</span>
-                        </div>
-
-                        <div class="ref-item">
-                            <div class="ref-info">
-                                <i class="fas fa-key"></i>
-                                <div>
-                                    <div class="ref-title">Ranbval Secrets &amp; Zero-Knowledge Password Vault</div>
-                                    <span style="font-size: 0.8rem; color: var(--text-muted);">Repository-bound API credentials, PBKDF2/Argon2 master derivation, and live telemetry.</span>
-                                </div>
-                            </div>
-                            <span class="ref-tag">Secret Vault</span>
+                        <div class="phone-caption">
+                            <span>FEED HUB</span> · Stories &amp; Reels
                         </div>
                     </div>
-                </section>
+                    <div class="phone-mockup" onclick="openLightbox('images/13-ranbval-milestone-jobs-freelance.jpg', 'Services & Milestone Freelance: In-Chat Escrow Contract, AI Matchmaking & Progress Tracking')">
+                        <div class="phone-notch"></div>
+                        <div class="phone-screen">
+                            <img src="images/13-ranbval-milestone-jobs-freelance.jpg" alt="Ranbval Milestone Freelancing Contract Screen" />
+                        </div>
+                        <div class="phone-caption">
+                            <span>MILESTONES</span> · In-Chat Escrow Jobs
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-            </main>
+    <!-- Pillar 9 & 10: Secure Vault, View-Once Proof & Sovereign Kill-Switch -->
+    <section class="section-separator" id="secure-vault">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-vault"></i> PILLAR 9, 10 &amp; 14: SANDBOXED DRIVE &amp; SOVEREIGN KILL-SWITCH</div>
+                    <h2 class="showcase-h2">Zero-Knowledge Sandboxed Drive &amp; Emergency Data Corrupt Kill-Switch</h2>
+                    <p class="showcase-desc">
+                        Your data should never belong to big tech surveillance monopolies. Ranbval guarantees absolute mathematical ownership: media opens only within a sandboxed secure drive, supported by an irreversible emergency kill-switch.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <strong>View-Once Media Proof System:</strong> Sensitive documents and photos self-destruct after viewing, logging a cryptographic verification proof without leaking file bytes.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Sandboxed Drive Application:</strong> Confidential files (contracts, scans, private galleries) are encrypted with user-held KMS keys and can only be decrypted inside the isolated Ranbval enclave.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Emergency Data Corrupt Kill-Switch:</strong> Under physical coercion, device seizure, or legal breach, pressing the sovereign kill-switch permanently overwrites all master KMS keyrings and database shards with cryptographically random noise across all cloud clusters simultaneously.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Sovereign Data Export:</strong> 1-Click download of your complete account history, media, and encryption keys in open standard formats with zero vendor lock-in.</li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">Sandboxed Drive</span>
+                        <span class="showcase-tag">View-Once Proof</span>
+                        <span class="showcase-tag">KMS Dynamic Keys</span>
+                        <span class="showcase-tag">Emergency Kill-Switch</span>
+                        <span class="showcase-tag">Data Sovereignty</span>
+                    </div>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="phone-mockup" onclick="openLightbox('images/07-ranbval-constellation-privacy-vault.jpg', 'Constellation Privacy Vault: Attribute-Level Visibility Controls & Instant Kill-Switch')">
+                        <div class="phone-notch"></div>
+                        <div class="phone-screen">
+                            <img src="images/07-ranbval-constellation-privacy-vault.jpg" alt="Constellation Privacy Vault Screen" />
+                        </div>
+                        <div class="phone-caption">
+                            <span>PRIVACY VAULT</span> · Selective Disclosure
+                        </div>
+                    </div>
+                    <div class="phone-mockup" onclick="openLightbox('images/16-ranbval-secure-vault-killswitch.jpg', 'Sandboxed Drive & Emergency Kill-Switch: View-Once Media, Export & Irreversible Wipe')">
+                        <div class="phone-notch"></div>
+                        <div class="phone-screen">
+                            <img src="images/16-ranbval-secure-vault-killswitch.jpg" alt="Ranbval Sandboxed Drive & Kill-Switch Screen" />
+                        </div>
+                        <div class="phone-caption">
+                            <span>KILL-SWITCH</span> · Irreversible Data Wipe
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pillar 11, 12 & 15: Memory & Life Engine, Smart Calendar & Location Patterns -->
+    <section class="section-separator" id="memory-life-engine">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-brain"></i> PILLAR 11, 12, 13 &amp; 15: MEMORY ENGINE, BEHAVIORAL LIFE STORY &amp; SMART CALENDAR</div>
+                    <h2 class="showcase-h2">Autonomous Life Narrative, Geolocation Tracking &amp; Smart Memory Calendar</h2>
+                    <p class="showcase-desc">
+                        Human memories are scattered across thousands of fleeting chat messages. Ranbval’s Memory &amp; Life Engine synthesizes conversations into coherent, enduring life stories and actionable calendar milestones.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <strong>Autonomous Memory Extraction:</strong> Automatically detects emotional milestones, vacation memories, shared triumphs, and inside jokes, distilling them into structured memory capsules.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Smart Calendar with Memory-Powered Wishes:</strong> Unlike dumb calendars that only show &ldquo;Happy Birthday!&rdquo;, Ranbval pre-drafts deeply touching, personalized birthday messages referencing real past memories from your chat history.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Behavioral Life Narrative:</strong> Understands who you are as a human being — your communication style, peak productivity hours, and relationship loyalty patterns.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Geolocation Activity Radar:</strong> Tracks daily routine patterns (e.g. &ldquo;Visited computing lab 14 times this month&rdquo;) with full privacy encryption.</li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">Life Narrative Engine</span>
+                        <span class="showcase-tag">Smart Memory Calendar</span>
+                        <span class="showcase-tag">Pattern Recognition</span>
+                        <span class="showcase-tag">Relationship Timeline</span>
+                    </div>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="phone-mockup" onclick="openLightbox('images/14-ranbval-life-memory-timeline.jpg', 'Memory & Life Engine: Automated Memories, Summaries, Birthday Composer & Life Story Timeline')">
+                        <div class="phone-notch"></div>
+                        <div class="phone-screen">
+                            <img src="images/14-ranbval-life-memory-timeline.jpg" alt="Ranbval Memory & Life Engine Timeline Screen" />
+                        </div>
+                        <div class="phone-caption">
+                            <span>LIFE TIMELINE</span> · Memories &amp; Smart Calendar
+                        </div>
+                    </div>
+                    <div class="phone-mockup" onclick="openLightbox('images/08-ranbval-connections-network-graph.jpg', 'Connections: Your Network at a Glance, Followers/Following & Relationship Insights')">
+                        <div class="phone-notch"></div>
+                        <div class="phone-screen">
+                            <img src="images/08-ranbval-connections-network-graph.jpg" alt="Connections Network at a Glance" />
+                        </div>
+                        <div class="phone-caption">
+                            <span>RECIPROCITY</span> · Network Streaks
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pillar 16: Future Vision (Google & Microsoft-Caliber Ecosystem) -->
+    <section class="section-separator" id="ecosystem-vision">
+        <div class="wrapper">
+            <div class="split-header-row" style="text-align:center;">
+                <div class="eyebrow-badge"><i class="fas fa-globe"></i> PILLAR 16: GLOBAL ECOSYSTEM HORIZON</div>
+                <h2 class="split-h2">Building an Independent Global Tech Giant</h2>
+                <p class="split-sub" style="margin:0 auto;">
+                    Ranbval is not just an application — it is the inception of an independent sovereign ecosystem engineered to rival Google and Microsoft, with zero advertising surveillance and zero compromises on privacy.
+                </p>
+            </div>
+
+            <!-- Notion Architecture Documentation Grid -->
+            <div class="notion-strip">
+                <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+                    <h3 style="font-family:var(--font-display); font-size:1.4rem; font-weight:800; color:#ffffff;">
+                        <i class="fas fa-book-bookmark" style="color:var(--gold); margin-right:0.5rem;"></i>
+                        Architectural Blueprint &amp; Evolution Documentation
+                    </h3>
+                    <span style="font-family:var(--font-mono); font-size:0.75rem; color:var(--gold); background:rgba(234,179,8,0.1); padding:0.3rem 0.8rem; border-radius:9999px;">
+                        VERIFIED ARCHITECTURAL SPECIFICATIONS
+                    </span>
+                </div>
+
+                <div class="notion-grid">
+                    <a href="https://app.notion.com/p/Ranbval-Core-Architecture-Evolution-Document-330ed53c88fe80c091f1f33841433b70?pvs=21" target="_blank" class="notion-link-card">
+                        <span class="notion-link-title"><i class="fas fa-microchip"></i> Ranbval Core</span>
+                        <span class="notion-link-desc">Architecture &amp; Evolution Document detailing distributed microservices &amp; mTLS.</span>
+                    </a>
+                    <a href="https://app.notion.com/p/Company-Overview-330ed53c88fe80dd99efe3ae1da510a3?pvs=21" target="_blank" class="notion-link-card">
+                        <span class="notion-link-title"><i class="fas fa-building"></i> Company Overview</span>
+                        <span class="notion-link-desc">Vision, mission, and roadmap to capture the global communications market.</span>
+                    </a>
+                    <a href="https://app.notion.com/p/Ranbval-Followers-Redis-Graph-334ed53c88fe80bd93e2f79fa315d7d7?pvs=21" target="_blank" class="notion-link-card">
+                        <span class="notion-link-title"><i class="fas fa-diagram-project"></i> Redis Graph</span>
+                        <span class="notion-link-desc">High-speed relational followers graph traversals with sub-millisecond execution.</span>
+                    </a>
+                    <a href="https://app.notion.com/p/Project-Ranbval-Platform-335ed53c88fe80d0a3aef633f06bfedb?pvs=21" target="_blank" class="notion-link-card">
+                        <span class="notion-link-title"><i class="fas fa-layer-group"></i> Platform Specs</span>
+                        <span class="notion-link-desc">Unified Super-System technical specification across mobile, cloud, and AI.</span>
+                    </a>
+                    <a href="https://app.notion.com/p/Reels-363ed53c88fe80e596a3dc78a6d5c0bf?pvs=21" target="_blank" class="notion-link-card">
+                        <span class="notion-link-title"><i class="fas fa-video"></i> Reels Pipeline</span>
+                        <span class="notion-link-desc">Short-form video transcoding, streaming CDN, and lazy image caching protocols.</span>
+                    </a>
+                    <a href="https://app.notion.com/p/Emails-37ced53c88fe80338c75f589ad06356f?pvs=21" target="_blank" class="notion-link-card">
+                        <span class="notion-link-title"><i class="fas fa-envelope"></i> Ranbval Email</span>
+                        <span class="notion-link-desc">Sovereign end-to-end encrypted email engine replacing traditional corporate silos.</span>
+                    </a>
+                    <a href="https://app.notion.com/p/Idea-ranbval-password-maanger-37ced53c88fe801f976dee943addc353?pvs=21" target="_blank" class="notion-link-card">
+                        <span class="notion-link-title"><i class="fas fa-key"></i> Password Manager</span>
+                        <span class="notion-link-desc">Zero-knowledge cryptographic password vault integrated into the mobile enclave.</span>
+                    </a>
+                    <a href="https://app.notion.com/p/Ranbval-Conversations-380ed53c88fe80e5b840fb89e72a0a27?pvs=21" target="_blank" class="notion-link-card">
+                        <span class="notion-link-title"><i class="fas fa-comments"></i> Conversations Hub</span>
+                        <span class="notion-link-desc">Single Context Layer uniting LinkedIn, Upwork, WhatsApp, and email into one view.</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem vs Solution (TheHexaTown 6x6 Grid) -->
+        <!-- ANIMATED DEDICATED PROBLEM VS SOLUTION SECTION (SUPER EASY FOR NON-TECHNICAL READERS) -->
+    <section class="section-separator" id="problem-solution">
+        <div class="wrapper">
+            <div class="split-header-row" style="text-align:center;">
+                <div class="eyebrow-badge"><i class="fas fa-scale-balanced"></i> Crystal-Clear Non-Technical Breakdown</div>
+                <h2 class="split-h2">The Transformation: Big Tech Flaws vs Ranbval</h2>
+                <p class="split-sub" style="margin:0 auto;">
+                    A simple, human-readable comparison of why legacy social apps leave you drained, tracked, and scattered, versus how Ranbval gives you full autonomous control.
+                </p>
+            </div>
+
+            <div class="interactive-comparison-wrapper">
+                <!-- Interactive Filter Controls -->
+                <div class="comparison-controls">
+                    <button class="compare-toggle-btn active" id="btnSocialBoth" onclick="filterComparisonSocial('both')">
+                        <i class="fas fa-arrow-right-arrow-left"></i> Side-by-Side View
+                    </button>
+                    <button class="compare-toggle-btn" id="btnSocialProblem" onclick="filterComparisonSocial('problem')">
+                        <i class="fas fa-triangle-exclamation"></i> The Big Tech Trap (Before)
+                    </button>
+                    <button class="compare-toggle-btn" id="btnSocialSolution" onclick="filterComparisonSocial('solution')">
+                        <i class="fas fa-circle-check"></i> The Ranbval Super-System (After)
+                    </button>
+                </div>
+
+                <!-- Animated Comparison Rows -->
+                <div class="comparison-cards-grid" id="compareGridSocial">
+                    <!-- Row 1: Surveillance vs Privacy -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label before"><i class="fas fa-circle-xmark"></i> BEFORE (SURVEILLANCE &amp; CREEPY ADS)</div>
+                            <h3 class="side-title">Apps Spy on Your Messages &amp; Sell Your Life to Advertisers</h3>
+                            <p class="side-desc">
+                                You mention &ldquo;coffee machine&rdquo; in a private chat, and 2 minutes later your feed is flooded with aggressive coffee ads. Legacy apps harvest your contacts, reading your chats and leaking private data to ad networks.
+                            </p>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label after"><i class="fas fa-circle-check"></i> AFTER (CONSTELLATION PRIVACY VAULT)</div>
+                            <h3 class="side-title">Zero Ad Tracking &amp; Instant 1-Tap Emergency Kill-Switch</h3>
+                            <p class="side-desc">
+                                You own your data. You decide who sees your profile, your friends, and your status. If you ever feel unsafe, one tap on the &ldquo;Hide Profile&rdquo; toggle instantly vanishes you from all public searches across the network.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Vanity Followers vs True Streaks -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label before"><i class="fas fa-circle-xmark"></i> BEFORE (EMPTY VANITY NUMBERS)</div>
+                            <h3 class="side-title">10,000 Fake Followers, But Nobody Who Truly Cares</h3>
+                            <p class="side-desc">
+                                Traditional apps push follower counts that are easily faked by bots and create artificial dopamine addiction. There is zero measurement of genuine friendship, mutual care, or conversational loyalty.
+                            </p>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label after"><i class="fas fa-circle-check"></i> AFTER (30-DAY STREAKS &amp; 100% CARE METRICS)</div>
+                            <h3 class="side-title">Honoring Real Human Bonds &amp; Reciprocity</h3>
+                            <p class="side-desc">
+                                Talk with someone for 30 consecutive days, and Ranbval celebrates a verified Deep Connection. The system reveals who your first friend was, who talks with you most, and measures 100% mutual conversation balance.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Row 3: App Juggling -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label before"><i class="fas fa-circle-xmark"></i> BEFORE (APP JUGGLING FATIGUE)</div>
+                            <h3 class="side-title">Switching Between 10 Different Apps Every Single Day</h3>
+                            <p class="side-desc">
+                                You use WhatsApp for messaging, Instagram for reels, Zoom for calls, Upwork for freelance projects, and Google Drive for documents. Your phone battery drains, and your attention is constantly fractured.
+                            </p>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label after"><i class="fas fa-circle-check"></i> AFTER (16-PILLAR ALL-IN-ONE SUPER SYSTEM)</div>
+                            <h3 class="side-title">Chat, Calls, Games, Reels &amp; Freelancing in One App</h3>
+                            <p class="side-desc">
+                                Sub-15ms chat, voice calls, 24-hr stories, video reels, group arcade games, and in-chat milestone freelance jobs all live harmoniously inside one sleek, high-speed React Native mobile experience.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Row 4: Unreachable When Busy -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label before"><i class="fas fa-circle-xmark"></i> BEFORE (MISSED CALLS &amp; ANXIOUS FRIENDS)</div>
+                            <h3 class="side-title">Stuck in Meetings or Gym While Urgent Calls Ring</h3>
+                            <p class="side-desc">
+                                You are working out, in an exam, or flying on an airplane. Important friends or clients call, get voicemail, and worry or get frustrated waiting hours for a simple status update.
+                            </p>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label after"><i class="fas fa-circle-check"></i> AFTER (AUTONOMOUS AI VOICE PROXY)</div>
+                            <h3 class="side-title">AI Answers the Phone in Your Voice &amp; Tone</h3>
+                            <p class="side-desc">
+                                Your AI Voice Proxy picks up the call! Speaking naturally in your tone, it recalls past memories, explains you are in flight, provides answers to their questions, and sends you a clean text summary when you land.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Row 5: Group Chat Silence -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label before"><i class="fas fa-circle-xmark"></i> BEFORE (DEAD AWKWARD GROUP CHATS)</div>
+                            <h3 class="side-title">Silent Group Chats With Nothing Fun To Do</h3>
+                            <p class="side-desc">
+                                Family and friend group chats go dead for weeks with nothing new to talk about except occasional forwarded forwards and awkward silence.
+                            </p>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label after"><i class="fas fa-circle-check"></i> AFTER (AI GAME MASTER ARCADE)</div>
+                            <h3 class="side-title">Say "Chalo Game Khelte Hain" &amp; AI Hosts the Arcade</h3>
+                            <p class="side-desc">
+                                The AI steps in as referee: running Q&amp;A battles (&ldquo;Who knows Ahsan better?&rdquo;), drawing competitions judged by computer vision, and general knowledge trivia with live point streaks and leaderboards!
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Row 6: Blackmail & Data Destruction -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label before"><i class="fas fa-circle-xmark"></i> BEFORE (HELPLESS AGAINST EXTORTION)</div>
+                            <h3 class="side-title">Weeks Waiting for Useless Report Buttons</h3>
+                            <p class="side-desc">
+                                If bad actors attempt to blackmail you or steal account photos, legacy platforms leave you helpless with slow automated form replies while damage spreads across the web.
+                            </p>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label after"><i class="fas fa-circle-check"></i> AFTER (SHIELD GUARD &amp; EMERGENCY DATA CORRUPT WIPE)</div>
+                            <h3 class="side-title">Real-Time AI Intervention &amp; Irreversible Sovereign Wipe</h3>
+                            <p class="side-desc">
+                                Shield Guard AI detects threats in real-time, safely mediating and de-escalating. In worst-case emergency, pressing the red kill-switch permanently scrambles all your data and encryption keys into random noise across all cloud servers.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+<section class="section-separator" id="tech-stack">
+        <div class="wrapper">
+            <div class="split-header-row" style="text-align:center;">
+                <div class="eyebrow-badge"><i class="fas fa-microchip"></i> System Anatomy</div>
+                <h2 class="split-h2">End-to-End Technology Stack</h2>
+                <p class="split-sub" style="margin:0 auto;">Crafted across the entire spectrum from low-level systems architecture to cross-platform mobile UI.</p>
+            </div>
+
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <i class="fab fa-react"></i>
+                        <h3>Mobile Client</h3>
+                    </div>
+                    <div class="tech-tags">
+                        <span class="tech-pill">React Native</span>
+                        <span class="tech-pill">TypeScript</span>
+                        <span class="tech-pill">Expo Core</span>
+                        <span class="tech-pill">Reanimated 3</span>
+                        <span class="tech-pill">React Navigation</span>
+                        <span class="tech-pill">AsyncStorage</span>
+                    </div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <i class="fab fa-python"></i>
+                        <h3>Distributed Core</h3>
+                    </div>
+                    <div class="tech-tags">
+                        <span class="tech-pill">Python 3.12</span>
+                        <span class="tech-pill">FastAPI</span>
+                        <span class="tech-pill">ranbval-core</span>
+                        <span class="tech-pill">Pydantic v2</span>
+                        <span class="tech-pill">Celery Workers</span>
+                        <span class="tech-pill">Load Shedding</span>
+                    </div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <i class="fas fa-database"></i>
+                        <h3>Polyglot Storage</h3>
+                    </div>
+                    <div class="tech-tags">
+                        <span class="tech-pill">Async PostgreSQL</span>
+                        <span class="tech-pill">MongoDB Motor</span>
+                        <span class="tech-pill">Redis Cluster</span>
+                        <span class="tech-pill">SQLAlchemy 2.0</span>
+                        <span class="tech-pill">Pub/Sub Streams</span>
+                    </div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <i class="fas fa-shield-halved"></i>
+                        <h3>Security &amp; Cryptography</h3>
+                    </div>
+                    <div class="tech-tags">
+                        <span class="tech-pill">RFC 6238 TOTP</span>
+                        <span class="tech-pill">Argon2id KDF</span>
+                        <span class="tech-pill">KMS Dynamic Keys</span>
+                        <span class="tech-pill">Payload Decryption</span>
+                        <span class="tech-pill">Anti-Replay Nonce</span>
+                        <span class="tech-pill">mTLS Service Mesh</span>
+                    </div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <i class="fas fa-network-wired"></i>
+                        <h3>Real-Time Networking</h3>
+                    </div>
+                    <div class="tech-tags">
+                        <span class="tech-pill">WebSockets</span>
+                        <span class="tech-pill">Server-Sent Events</span>
+                        <span class="tech-pill">Heartbeat Pings</span>
+                        <span class="tech-pill">HTTP/2 Push</span>
+                        <span class="tech-pill">Token Bucket Limiter</span>
+                    </div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <i class="fas fa-brain"></i>
+                        <h3>AI &amp; Relationship Engine</h3>
+                    </div>
+                    <div class="tech-tags">
+                        <span class="tech-pill">Voice Call Proxy</span>
+                        <span class="tech-pill">Game Master Arcade</span>
+                        <span class="tech-pill">Reciprocity Streaks</span>
+                        <span class="tech-pill">Memory Capsules</span>
+                        <span class="tech-pill">Anti-Blackmail Shield</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Project Ownership & Founder Journey -->
+    <section class="section-separator" id="ownership-impact">
+        <div class="wrapper">
+            <div class="ownership-box">
+                <div class="ownership-text-col">
+                    <div class="eyebrow-badge"><i class="fas fa-crown"></i> Project Leadership &amp; Vision</div>
+                    <h2 class="ownership-title">01 Lead Systems Architect (Solo Build)</h2>
+                    <div class="ownership-quote">
+                        &ldquo;Also… small confession. I’m actually a backend engineer. But this vision? It forced me into React Native. Big companies took years to reach this level of depth. I’m doing it across the entire stack now. Design will evolve, but the foundation is being built right. Sometimes you don’t pick the stack — the vision picks it for you.&rdquo;
+                    </div>
+                    <p class="ownership-desc">
+                        Conceived, architected, and built end-to-end by <strong>Ahsan Tariq</strong>. From authoring the low-level distributed service framework (<span style="font-family:var(--font-mono); color:var(--gold); font-size:0.85rem;">ranbval-core</span>) and polyglot database pipelines to mastering cross-platform mobile client development in React Native.
+                    </p>
+                </div>
+                <div class="ownership-stats">
+                    <div class="o-stat">
+                        <div class="o-stat-num">16 Pillars</div>
+                        <div class="o-stat-label">Unified All-in-One AI Super System</div>
+                    </div>
+                    <div class="o-stat">
+                        <div class="o-stat-num">Full-Stack</div>
+                        <div class="o-stat-label">React Native Client to Distributed Systems Core</div>
+                    </div>
+                    <div class="o-stat">
+                        <div class="o-stat-num">Triple-DB</div>
+                        <div class="o-stat-label">Polyglot PostgreSQL, MongoDB &amp; Redis</div>
+                    </div>
+                    <div class="o-stat">
+                        <div class="o-stat-num">Zero-Trust</div>
+                        <div class="o-stat-label">RFC 6238 TOTP 2FA + Dynamic KMS Encryption</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section (TheHexaTown Format) -->
+    <section class="cta-section">
+        <div class="wrapper">
+            <h2 class="cta-h2">Let&#39;s build the future together!</h2>
+            <p class="cta-desc">
+                Ready to create an independent, sovereign enterprise system, complex distributed architecture, or next-generation AI ecosystem? Let&#39;s talk.
+            </p>
+            <div class="cta-btn-row">
+                <a href="mailto:contact@tariqdreams.tech" class="btn-primary">
+                    <i class="fas fa-envelope"></i> Discuss Your Vision
+                </a>
+                <a href="https://wa.me/923000000000" target="_blank" class="btn-secondary">
+                    <i class="fab fa-whatsapp"></i> WhatsApp Chat
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Full-Screen Lightbox Modal -->
+    <div class="lightbox-modal" id="lightboxModal" onclick="closeLightbox()">
+        <div class="lightbox-container" onclick="event.stopPropagation()">
+            <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+            <img id="lightboxImg" src="" alt="Enlarged mobile screenshot" />
+            <div class="lightbox-caption" id="lightboxCaption"></div>
         </div>
     </div>
 
-    <!-- Case Study Footer & CTA -->
-    <footer class="case-footer">
-        <div class="container">
-            <div class="footer-cta-card">
-                <h3 class="footer-cta-title">Ready to Experience the Future of Digital Connection?</h3>
-                <p class="footer-cta-desc">
-                    Ranbval unites autonomous AI agency, human emotional connection, and zero-trust cryptographic security into a revolutionary super-platform.
-                </p>
-                <div class="footer-actions">
-                    <a href="../../index.html#contact" class="btn-portfolio" style="padding: 0.75rem 1.8rem; font-size: 0.95rem;">
-                        <i class="fas fa-envelope"></i> Partner with Ahsan Tariq
-                    </a>
-                    <a href="../ranbval-core/index.html" class="btn-back" style="padding: 0.75rem 1.8rem; font-size: 0.95rem;">
-                        <i class="fas fa-shield-halved"></i> Explore Ranbval-Core Architecture
-                    </a>
-                    <a href="../../index.html" class="btn-back" style="padding: 0.75rem 1.8rem; font-size: 0.95rem;">
-                        <i class="fas fa-house"></i> View Full Portfolio
-                    </a>
-                </div>
-            </div>
-
-            <div class="footer-credits">
-                <span>&copy; 2026 Ahsan Tariq. All Rights Reserved. Ranbval Super-Platform Architecture.</span>
-                <span>Founder &amp; Lead Systems Architect</span>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Interactive Scripts -->
+    <!-- Lightbox JavaScript -->
     <script>
-        // Reading Progress Indicator
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.getElementById('read-progress').style.width = scrolled + '%';
+        function openLightbox(src, caption) {
+            const modal = document.getElementById('lightboxModal');
+            const img = document.getElementById('lightboxImg');
+            const cap = document.getElementById('lightboxCaption');
+            img.src = src;
+            cap.innerText = caption;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
 
-            // Active TOC link highlighter
-            const sections = document.querySelectorAll('.section-block');
-            const tocLinks = document.querySelectorAll('.toc-link');
-            
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop - 120;
-                if (winScroll >= sectionTop) {
-                    current = section.getAttribute('id');
-                }
-            });
+        function closeLightbox() {
+            const modal = document.getElementById('lightboxModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
 
-            tocLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + current) {
-                    link.classList.add('active');
-                }
-            });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
         });
     </script>
 </body>

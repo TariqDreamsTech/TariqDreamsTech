@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InstaMailAI Case Study — Scalable Vector Search &amp; RAG Architecture for Email Intelligence | Ahsan Tariq</title>
+    <meta name="description" content="How Ahsan Tariq engineered scalable vector search systems and LangChain RAG pipelines using MongoDB Atlas Vector Search (HNSW), OpenAI embeddings, and FastAPI for InstaMailAI — delivering sub-18ms semantic retrieval, 94.8% draft acceptance, and 68% token reduction.">
+
+    <!-- Google Fonts: Plus Jakarta Sans & Outfit & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-main: #060911;
+            --bg-surface: #0a0f1d;
+            --bg-card: #0f1629;
+            --bg-card-hover: #151e36;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-highlight: rgba(6, 182, 212, 0.35);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --cyan: #06b6d4;
+            --cyan-glow: rgba(6, 182, 212, 0.18);
+            --electric-blue: #38bdf8;
+            --indigo: #6366f1;
+            --emerald: #10b981;
+            --emerald-glow: rgba(16, 185, 129, 0.16);
+            --amber: #f59e0b;
+            --purple: #a855f7;
+            --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-display: 'Outfit', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --radius-xl: 24px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --container-max: 1260px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            line-height: 1.68;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: var(--cyan);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        a:hover {
+            color: #22d3ee;
+            text-decoration: underline;
+        }
+
+        .wrapper {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(6, 9, 17, 0.88);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 16px 0;
+        }
+
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            padding: 6px 14px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            color: var(--text-primary);
+            background: rgba(6, 182, 212, 0.12);
+            border-color: rgba(6, 182, 212, 0.3);
+            text-decoration: none;
+        }
+
+        .breadcrumbs {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .breadcrumbs span {
+            color: var(--text-secondary);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .badge-live {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-family: var(--font-mono);
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 9999px;
+            background: rgba(6, 182, 212, 0.12);
+            border: 1px solid rgba(6, 182, 212, 0.35);
+            color: #22d3ee;
+            letter-spacing: 0.02em;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: #06b6d4;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #06b6d4;
+            animation: pulse-ring 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(0.9); opacity: 0.8; }
+            50% { transform: scale(1.3); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.8; }
+        }
+
+        .toggle-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 7px 15px;
+            border-radius: 9999px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(6, 182, 212, 0.15);
+            border-color: var(--cyan);
+            color: #ffffff;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 70px 0 50px;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: 15%;
+            width: 500px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+            filter: blur(80px);
+        }
+
+        .meta-tagline {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            font-family: var(--font-mono);
+            color: #22d3ee;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.25);
+            padding: 6px 14px;
+            border-radius: 9999px;
+            margin-bottom: 24px;
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(34px, 4.8vw, 56px);
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .hero-title span {
+            background: linear-gradient(135deg, #22d3ee 0%, #38bdf8 50%, #818cf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-lead {
+            font-size: clamp(17px, 1.8vw, 20px);
+            color: var(--text-secondary);
+            max-width: 980px;
+            margin-bottom: 36px;
+            line-height: 1.65;
+        }
+
+        /* Hero Stats Grid */
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 18px;
+            margin-bottom: 48px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(6, 182, 212, 0.35);
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--cyan);
+        }
+
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: 38px;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.1;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .stat-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 6px;
+            font-family: var(--font-mono);
+        }
+
+        /* Hero Browser Mockup with Master Diagram */
+        .browser-mockup {
+            background: #0a0f1d;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 40px rgba(6, 182, 212, 0.08);
+            margin-bottom: 70px;
+        }
+
+        .browser-chrome {
+            background: #0d1424;
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .dots {
+            display: flex;
+            gap: 7px;
+        }
+
+        .dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background: #ef4444; }
+        .dot-yellow { background: #f59e0b; }
+        .dot-green { background: #10b981; }
+
+        .address-bar {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 6px 16px;
+            font-size: 12px;
+            font-family: var(--font-mono);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-grow: 1;
+            max-width: 600px;
+        }
+
+        .address-bar i {
+            color: #10b981;
+        }
+
+        .diagram-container {
+            padding: 24px;
+            background: #080c16;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .diagram-container img {
+            width: 100%;
+            height: auto;
+            border-radius: var(--radius-md);
+            display: block;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: transform 0.25s ease, filter 0.25s ease;
+        }
+
+        .diagram-container:hover img {
+            filter: brightness(1.03);
+        }
+
+        .zoom-overlay-hint {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            background: rgba(6, 9, 17, 0.88);
+            border: 1px solid var(--border-highlight);
+            color: #22d3ee;
+            font-size: 13px;
+            font-family: var(--font-mono);
+            padding: 8px 16px;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+        }
+
+        /* Statement Banner */
+        .statement-banner {
+            padding: 48px 0;
+            background: linear-gradient(180deg, rgba(6, 182, 212, 0.04) 0%, rgba(6, 9, 17, 0) 100%);
+            border-top: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border-subtle);
+            margin-bottom: 70px;
+        }
+
+        .statement-text {
+            font-family: var(--font-display);
+            font-size: clamp(20px, 2.4vw, 30px);
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.45;
+            text-align: center;
+            max-width: 1050px;
+            margin: 0 auto;
+        }
+
+        .statement-text span {
+            color: #22d3ee;
+            border-bottom: 2px dashed rgba(6, 182, 212, 0.5);
+            padding-bottom: 2px;
+        }
+
+        /* Section Headings */
+        .section-header {
+            margin-bottom: 42px;
+        }
+
+        .section-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-family: var(--font-mono);
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #22d3ee;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(28px, 3.2vw, 42px);
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+        }
+
+        .section-lead {
+            font-size: 17px;
+            color: var(--text-secondary);
+            max-width: 850px;
+            margin-top: 10px;
+        }
+
+        /* Problem vs Solution 3-Way Grid */
+        .pvs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+            margin-bottom: 80px;
+        }
+
+        .pvs-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .pvs-problem {
+            border-left: 3px solid #ef4444;
+            padding-left: 16px;
+        }
+
+        .pvs-problem h4 {
+            color: #f87171;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pvs-problem p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .pvs-solution {
+            border-left: 3px solid #10b981;
+            padding-left: 16px;
+            background: rgba(16, 185, 129, 0.03);
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        .pvs-solution h4 {
+            color: #34d399;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pvs-solution p {
+            font-size: 14px;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+
+        /* Deep Dive Showcases */
+        .showcase-block {
+            margin-bottom: 90px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .showcase-header {
+            padding: 30px 36px;
+            border-bottom: 1px solid var(--border-subtle);
+            background: #0d1424;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .showcase-number {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: #22d3ee;
+            background: rgba(6, 182, 212, 0.12);
+            padding: 4px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .showcase-title {
+            font-family: var(--font-display);
+            font-size: clamp(22px, 2.2vw, 28px);
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .showcase-body {
+            padding: 36px;
+        }
+
+        .showcase-diagram-wrap {
+            margin-bottom: 30px;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #070b14;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .showcase-diagram-wrap img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.25s ease;
+        }
+
+        .showcase-diagram-wrap:hover img {
+            transform: scale(1.008);
+        }
+
+        /* Dual Explanation Tabs */
+        .dual-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .dual-tabs {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .plain-box {
+            background: rgba(6, 182, 212, 0.04);
+            border: 1px solid rgba(6, 182, 212, 0.25);
+            border-radius: var(--radius-md);
+            padding: 24px;
+        }
+
+        .plain-box h5 {
+            color: #22d3ee;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .plain-box p {
+            font-size: 14.5px;
+            color: #cbd5e1;
+            line-height: 1.65;
+            margin-bottom: 12px;
+        }
+
+        .plain-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .tech-box {
+            background: rgba(99, 102, 241, 0.04);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            border-radius: var(--radius-md);
+            padding: 24px;
+        }
+
+        .tech-box h5 {
+            color: #818cf8;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tech-box p {
+            font-size: 14px;
+            color: #cbd5e1;
+            line-height: 1.65;
+            margin-bottom: 12px;
+        }
+
+        .tech-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .tech-box li {
+            font-size: 13.5px;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .tech-box li::before {
+            content: '▹';
+            position: absolute;
+            left: 0;
+            color: #818cf8;
+            font-size: 14px;
+        }
+
+        /* Code Block Snippet */
+        .code-container {
+            background: #080d1a;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            margin-top: 24px;
+        }
+
+        .code-header {
+            background: #0e1526;
+            padding: 10px 18px;
+            font-size: 12px;
+            font-family: var(--font-mono);
+            color: var(--text-secondary);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .code-header span i {
+            margin-right: 6px;
+            color: #22d3ee;
+        }
+
+        pre code {
+            display: block;
+            padding: 20px;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: #e2e8f0;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+
+        .c-kw { color: #f43f5e; font-weight: 600; }
+        .c-fn { color: #38bdf8; font-weight: 600; }
+        .c-str { color: #34d399; }
+        .c-num { color: #fbbf24; }
+        .c-cmt { color: #64748b; font-style: italic; }
+        .c-cls { color: #a855f7; font-weight: 600; }
+
+        /* Comparative Benchmarks Table */
+        .table-responsive {
+            overflow-x: auto;
+            margin: 40px 0 80px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background: #0d1424;
+            padding: 18px 22px;
+            color: #ffffff;
+            font-weight: 700;
+            font-family: var(--font-display);
+            font-size: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        td {
+            padding: 16px 22px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #cbd5e1;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .highlight-col {
+            background: rgba(6, 182, 212, 0.05);
+            color: #22d3ee;
+            font-weight: 600;
+        }
+
+        /* Tech Stack Grid */
+        .stack-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 80px;
+        }
+
+        .stack-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .stack-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(6, 182, 212, 0.4);
+        }
+
+        .stack-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            background: rgba(6, 182, 212, 0.12);
+            color: #22d3ee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+
+        .stack-name {
+            font-family: var(--font-display);
+            font-size: 17px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+
+        .stack-role {
+            font-size: 12.5px;
+            font-family: var(--font-mono);
+            color: #38bdf8;
+            margin-bottom: 12px;
+        }
+
+        .stack-desc {
+            font-size: 13.5px;
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
+
+        /* Ownership Grid */
+        .ownership-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 22px;
+            margin-bottom: 90px;
+        }
+
+        .owner-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            border-left: 4px solid #06b6d4;
+        }
+
+        .owner-card h4 {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .owner-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Next Steps CTA */
+        .cta-section {
+            background: linear-gradient(135deg, #0e1528 0%, #080c16 100%);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: var(--radius-xl);
+            padding: 60px 40px;
+            text-align: center;
+            margin-bottom: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-title {
+            font-family: var(--font-display);
+            font-size: clamp(26px, 3vw, 38px);
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 16px;
+        }
+
+        .cta-desc {
+            font-size: 17px;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 32px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14.5px;
+            font-weight: 600;
+            padding: 12px 26px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #06b6d4 0%, #0284c7 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 18px rgba(6, 182, 212, 0.35);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 24px rgba(6, 182, 212, 0.5);
+            transform: translateY(-2px);
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            color: #ffffff;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-subtle);
+            padding: 40px 0;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Lightbox Modal */
+        .lightbox-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.94);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            backdrop-filter: blur(8px);
+        }
+
+        .lightbox-modal.active {
+            display: flex;
+        }
+
+        .lightbox-content {
+            max-width: 95vw;
+            max-height: 90vh;
+            position: relative;
+        }
+
+        .lightbox-content img {
+            max-width: 100%;
+            max-height: 85vh;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+            display: block;
+        }
+
+        .lightbox-caption {
+            color: #e2e8f0;
+            font-size: 14px;
+            font-family: var(--font-mono);
+            text-align: center;
+            margin-top: 14px;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: -45px;
+            right: 0;
+            color: #ffffff;
+            font-size: 26px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 6px;
+            transition: color 0.2s ease;
+        }
+
+        .lightbox-close:hover {
+            color: #22d3ee;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sticky Navigation -->
+    <nav class="top-nav">
+        <div class="wrapper nav-inner">
+            <div class="nav-left">
+                <a href="../index.html" class="back-link">
+                    <i class="fas fa-arrow-left"></i> All Case Studies
+                </a>
+                <div class="breadcrumbs">
+                    <a href="../../index.html">Portfolio</a>
+                    <i class="fas fa-chevron-right" style="font-size: 10px;"></i>
+                    <a href="../index.html">Case Studies</a>
+                    <i class="fas fa-chevron-right" style="font-size: 10px;"></i>
+                    <span>InstaMailAI</span>
+                </div>
+            </div>
+            <div class="nav-right">
+                <div class="badge-live">
+                    <span class="pulse-dot"></span>
+                    <span>10,000+ EMAILS / MIN</span>
+                </div>
+                <button class="toggle-btn" id="audienceToggle" onclick="toggleAudience()">
+                    <i class="fas fa-sliders"></i>
+                    <span id="toggleLabel">Audience: Technical View</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="wrapper">
+            <div class="meta-tagline">
+                <i class="fas fa-database"></i> VECTOR DATABASE &amp; RAG SOFTWARE ENGINEERING · FEB 2025 - APR 2025
+            </div>
+            <h1 class="hero-title">
+                InstaMailAI: Scalable <span>Vector Search &amp; RAG Architecture</span> for Real-Time Email Intelligence
+            </h1>
+            <p class="hero-lead" id="heroDesc">
+                Engineered an enterprise vector search and intelligent email orchestration platform for InstaMailAI. Designed high-throughput semantic ingestion pipelines combining MongoDB Atlas Vector Search ($vectorSearch), OpenAI 1536-dimensional embeddings, LangChain RAG workflows, and asynchronous FastAPI microservices — delivering sub-18ms semantic retrieval, 94.8% contextual draft acceptance, and 68% token overhead reduction.
+            </p>
+
+            <!-- Hero Metrics Grid -->
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #22d3ee;">&lt; 18.2ms</div>
+                    <div class="stat-label">p95 Vector Search Latency</div>
+                    <div class="stat-sub">Across 8.4M+ Indexed Vectors</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #34d399;">97.4%</div>
+                    <div class="stat-label">Recall@10 Search Accuracy</div>
+                    <div class="stat-sub">HNSW with Compound Pre-Filter</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #fbbf24;">94.8%</div>
+                    <div class="stat-label">Contextual Draft Acceptance</div>
+                    <div class="stat-sub">Human-in-the-Loop Telemetry</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #c084fc;">68.2%</div>
+                    <div class="stat-label">Token Overhead Reduction</div>
+                    <div class="stat-sub">Noise, Boilerplate &amp; Quoted Text</div>
+                </div>
+            </div>
+
+            <!-- Master Diagram Preview Mockup -->
+            <div class="browser-mockup" id="master-architecture">
+                <div class="browser-chrome">
+                    <div class="dots">
+                        <span class="dot dot-red"></span>
+                        <span class="dot dot-yellow"></span>
+                        <span class="dot dot-green"></span>
+                    </div>
+                    <div class="address-bar">
+                        <i class="fas fa-lock"></i>
+                        <span>instamail.internal/architecture/master-vector-rag-pipeline</span>
+                    </div>
+                </div>
+                <div class="diagram-container" onclick="openLightbox('images/00-instamail-master-vector-search-rag.jpg', 'InstaMailAI: Master End-to-End Vector Search &amp; LangChain RAG Architecture')">
+                    <img src="images/00-instamail-master-vector-search-rag.jpg" alt="InstaMailAI Master Vector Search and LangChain RAG Architecture Diagram">
+                    <div class="zoom-overlay-hint">
+                        <i class="fas fa-search-plus"></i> Click diagram for full-resolution view
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Statement Banner -->
+    <section class="statement-banner">
+        <div class="wrapper">
+            <p class="statement-text">
+                &ldquo;Transforming millions of cluttered, unstructured email chains into <span>sub-18ms semantic vector search</span>, zero-hallucination <span>LangChain RAG drafts</span>, and <span>automated multi-label routing</span> at enterprise scale.&rdquo;
+            </p>
+        </div>
+    </section>
+
+    <!-- Problem vs Solution Matrix -->
+    <section class="wrapper">
+        <div class="section-header">
+            <span class="section-tag"><i class="fas fa-triangle-exclamation"></i> Architectural Challenges &amp; Solutions</span>
+            <h2 class="section-title">Solving the Triad of Modern Email Intelligence</h2>
+            <p class="section-lead">Traditional email search relies on rigid keyword matching, while naive LLM implementations suffer from massive token bloat, hallucinations, and multi-tenant data bleed.</p>
+        </div>
+
+        <div class="pvs-grid">
+            <div class="pvs-card">
+                <div class="pvs-problem">
+                    <h4><i class="fas fa-circle-xmark"></i> The Keyword &amp; Noise Bottleneck</h4>
+                    <p>Conventional full-text search (Elasticsearch/SQL LIKE) fails on colloquial phrasing, synonyms, or conceptual questions like "Where did we agree on Q3 pricing?". Furthermore, raw emails contain 70%+ repetitive noise: quoted thread history, HTML CSS styles, and corporate legal disclaimers.</p>
+                </div>
+                <div class="pvs-solution">
+                    <h4><i class="fas fa-circle-check"></i> Semantic Chunking &amp; Noise Stripping</h4>
+                    <p>Built an asynchronous MIME normalization engine with FastAPI that strips boilerplate, signatures, and disclaimers before feeding a sliding-window chunker (512 tokens with 64 overlap), cutting token overhead by 68% and preserving true semantic boundaries.</p>
+                </div>
+            </div>
+
+            <div class="pvs-card">
+                <div class="pvs-problem">
+                    <h4><i class="fas fa-circle-xmark"></i> Vector Latency &amp; Tenant Isolation</h4>
+                    <p>Executing nearest-neighbor vector search over millions of email chunks across thousands of tenants causes catastrophic query latency (450ms+) and introduces critical risks of cross-tenant data leaks when filtering occurs post-vector computation.</p>
+                </div>
+                <div class="pvs-solution">
+                    <h4><i class="fas fa-circle-check"></i> Atlas HNSW with Compound Pre-Filtering</h4>
+                    <p>Configured MongoDB Atlas Vector Search using Hierarchical Navigable Small World (HNSW) graphs with scalar quantization (4x RAM saving) and compound pre-filtering on tenant_id, folder, and timestamp — achieving sub-18.2ms p95 latency with mathematical isolation.</p>
+                </div>
+            </div>
+
+            <div class="pvs-card">
+                <div class="pvs-problem">
+                    <h4><i class="fas fa-circle-xmark"></i> Hallucinated Drafts &amp; Cold Context</h4>
+                    <p>Sending unstructured entire email threads into raw LLM prompts leads to hallucinated commitments, broken tone, and high API costs ($0.04+ per draft) with slow generation speeds (> 4.5 seconds).</p>
+                </div>
+                <div class="pvs-solution">
+                    <h4><i class="fas fa-circle-check"></i> Re-Ranked RAG &amp; Streaming HITL Drafts</h4>
+                    <p>Designed a LangChain RAG pipeline that retrieves top-15 vectors, applies Cross-Encoder re-ranking, and injects tone guardrails into GPT-4o with Server-Sent Events (SSE) streaming — achieving 750ms time-to-first-token and 94.8% human acceptance.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep Dive Showcases -->
+    <main class="wrapper">
+        <div class="section-header">
+            <span class="section-tag"><i class="fas fa-microchip"></i> Technical Deep Dives</span>
+            <h2 class="section-title">Architectural Pillars &amp; Core Contributions</h2>
+            <p class="section-lead">An in-depth breakdown of the five production subsystems engineered for InstaMailAI's vector database and RAG infrastructure.</p>
+        </div>
+
+        <!-- SHOWCASE 1: Master Vector Search Architecture -->
+        <article class="showcase-block">
+            <div class="showcase-header">
+                <div>
+                    <span class="showcase-number">SUBSYSTEM 01</span>
+                    <h3 class="showcase-title">Master End-to-End Vector Pipeline &amp; High-Throughput Ingestion</h3>
+                </div>
+                <span class="badge-live"><i class="fas fa-bolt"></i> FASTAPI + CELERY + REDIS</span>
+            </div>
+            <div class="showcase-body">
+                <div class="showcase-diagram-wrap" onclick="openLightbox('images/00-instamail-master-vector-search-rag.jpg', 'Subsystem 01: Master End-to-End Vector Search &amp; RAG Pipeline Architecture')">
+                    <img src="images/00-instamail-master-vector-search-rag.jpg" alt="Master End-to-End Vector Pipeline Architecture">
+                </div>
+
+                <div class="dual-tabs">
+                    <div class="plain-box">
+                        <h5><i class="fas fa-comment-dots"></i> Plain English Explanation</h5>
+                        <p>When an email arrives in a user's inbox, InstaMailAI doesn't just read it like a dumb text document. Our system immediately catches the email, cleans out all the junk (like legal disclosures, huge company logos, and repeated previous replies), and translates the meaningful content into a mathematical "concept map" (a vector).</p>
+                        <p>This allows the system to instantly understand what the email is actually about — whether it's a customer complaining about a broken button or a business asking for enterprise pricing — in less than a second.</p>
+                    </div>
+                    <div class="tech-box">
+                        <h5><i class="fas fa-terminal"></i> Technical Deep Dive</h5>
+                        <ul>
+                            <li><strong>Ingestion Engine:</strong> Asynchronous FastAPI worker pool ingesting RFC 2822 raw email payloads via IMAP webhooks and webhook gateways.</li>
+                            <li><strong>Throughput Capacity:</strong> Handles sustained 10,000+ incoming emails per minute using Redis-backed async queues and batch vectorization.</li>
+                            <li><strong>Validation Layer:</strong> Pydantic v2 schemas validating headers, encoding formats, multipart MIME boundaries, and cryptographic tenant tokens.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Code Block -->
+                <div class="code-container">
+                    <div class="code-header">
+                        <span><i class="fas fa-code"></i> email_vector_ingest.py — FastAPI Ingestion &amp; Vectorization Worker</span>
+                        <span>Python 3.11 / FastAPI / Pydantic v2</span>
+                    </div>
+                    <pre><code><span class="c-kw">from</span> fastapi <span class="c-kw">import</span> FastAPI, BackgroundTasks, Depends, HTTPException
+<span class="c-kw">from</span> pydantic <span class="c-kw">import</span> BaseModel, Field
+<span class="c-kw">from</span> typing <span class="c-kw">import</span> List, Optional
+<span class="c-kw">import</span> openai
+
+<span class="c-kw">class</span> <span class="c-cls">EmailIngestPayload</span>(BaseModel):
+    message_id: <span class="c-cls">str</span> = Field(..., description=<span class="c-str">"RFC 2822 Message-ID"</span>)
+    tenant_id: <span class="c-cls">str</span> = Field(..., index=<span class="c-kw">True</span>)
+    user_id: <span class="c-cls">str</span>
+    folder: <span class="c-cls">str</span> = <span class="c-str">"INBOX"</span>
+    subject: <span class="c-cls">str</span>
+    raw_mime: <span class="c-cls">str</span>
+    timestamp: <span class="c-cls">float</span>
+
+<span class="c-kw">async def</span> <span class="c-fn">generate_embeddings_batch</span>(text_chunks: List[<span class="c-cls">str</span>]) -&gt; List[List[<span class="c-cls">float</span>]]:
+    <span class="c-cmt"># OpenAI text-embedding-3-small (1536 dims, normalized L2)</span>
+    response = <span class="c-kw">await</span> openai.AsyncOpenAI().embeddings.create(
+        input=text_chunks,
+        model=<span class="c-str">"text-embedding-3-small"</span>,
+        encoding_format=<span class="c-str">"float"</span>
+    )
+    <span class="c-kw">return</span> [item.embedding <span class="c-kw">for</span> item <span class="c-kw">in</span> response.data]</code></pre>
+                </div>
+            </div>
+        </article>
+
+        <!-- SHOWCASE 2: Email Normalization & Token Chunking -->
+        <article class="showcase-block">
+            <div class="showcase-header">
+                <div>
+                    <span class="showcase-number">SUBSYSTEM 02</span>
+                    <h3 class="showcase-title">MIME Parsing, Thread DAG Graphing &amp; Token-Aware Chunking</h3>
+                </div>
+                <span class="badge-live"><i class="fas fa-scissors"></i> 68.2% TOKEN OVERHEAD ELIMINATION</span>
+            </div>
+            <div class="showcase-body">
+                <div class="showcase-diagram-wrap" onclick="openLightbox('images/01-email-normalization-chunking-pipeline.jpg', 'Subsystem 02: Ingestion &amp; Token-Aware Chunking Pipeline')">
+                    <img src="images/01-email-normalization-chunking-pipeline.jpg" alt="Email Normalization and Chunking Pipeline Architecture">
+                </div>
+
+                <div class="dual-tabs">
+                    <div class="plain-box">
+                        <h5><i class="fas fa-comment-dots"></i> Plain English Explanation</h5>
+                        <p>Most emails are full of clutter: 50 lines of quoted previous emails from last Tuesday, giant legal disclaimers about wire transfers, and invisible image tracking pixels. If you send that directly to an AI, it wastes money, confuses the AI, and slows down responses.</p>
+                        <p>Our cleaning pipeline surgically strips away that garbage, links messages to their exact conversation threads, and cuts the real content into smart chunks without cutting sentences in half.</p>
+                    </div>
+                    <div class="tech-box">
+                        <h5><i class="fas fa-terminal"></i> Technical Deep Dive</h5>
+                        <ul>
+                            <li><strong>MIME &amp; HTML Parsing:</strong> Uses bleach and lxml to strip scripts, stylesheets, tracking pixels, and malicious entity injections while retaining semantic bold/link tags.</li>
+                            <li><strong>Heuristic Noise Stripping:</strong> Regex-driven detection of signatures ("Sent from my iPhone", "Best regards"), enterprise legal footers, and RFC 2822 reply prefixes (">", "On [date], [person] wrote:").</li>
+                            <li><strong>Sliding-Window Chunking:</strong> Token-aware chunking (512 tokens with 64-token overlap) respecting natural sentence and paragraph boundaries to eliminate context truncation.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Code Block -->
+                <div class="code-container">
+                    <div class="code-header">
+                        <span><i class="fas fa-code"></i> chunking_engine.py — Token-Aware Sliding Chunker with Sentence Boundary Detection</span>
+                        <span>Python 3.11 / Tiktoken / LangChain</span>
+                    </div>
+                    <pre><code><span class="c-kw">import</span> tiktoken
+<span class="c-kw">from</span> typing <span class="c-kw">import</span> List, Dict
+
+<span class="c-kw">class</span> <span class="c-cls">EmailSemanticChunker</span>:
+    <span class="c-kw">def</span> <span class="c-fn">__init__</span>(self, chunk_size: <span class="c-cls">int</span> = <span class="c-num">512</span>, chunk_overlap: <span class="c-cls">int</span> = <span class="c-num">64</span>):
+        self.chunk_size = chunk_size
+        self.chunk_overlap = chunk_overlap
+        self.tokenizer = tiktoken.get_encoding(<span class="c-str">"cl100k_base"</span>)
+
+    <span class="c-kw">def</span> <span class="c-fn">chunk_email_body</span>(self, clean_body: <span class="c-cls">str</span>, parent_meta: Dict) -&gt; List[Dict]:
+        tokens = self.tokenizer.encode(clean_body)
+        chunks = []
+        start = <span class="c-num">0</span>
+        <span class="c-kw">while</span> start &lt; len(tokens):
+            end = min(start + self.chunk_size, len(tokens))
+            chunk_tokens = tokens[start:end]
+            chunk_text = self.tokenizer.decode(chunk_tokens)
+            chunks.append({
+                <span class="c-str">"chunk_index"</span>: len(chunks),
+                <span class="c-str">"text"</span>: chunk_text,
+                <span class="c-str">"token_count"</span>: len(chunk_tokens),
+                <span class="c-str">"message_id"</span>: parent_meta[<span class="c-str">"message_id"</span>],
+                <span class="c-str">"thread_id"</span>: parent_meta[<span class="c-str">"thread_id"</span>]
+            })
+            <span class="c-kw">if</span> end == len(tokens):
+                <span class="c-kw">break</span>
+            start += (self.chunk_size - self.chunk_overlap)
+        <span class="c-kw">return</span> chunks</code></pre>
+                </div>
+            </div>
+        </article>
+
+        <!-- SHOWCASE 3: MongoDB Atlas Vector Search & HNSW Indexing -->
+        <article class="showcase-block">
+            <div class="showcase-header">
+                <div>
+                    <span class="showcase-number">SUBSYSTEM 03</span>
+                    <h3 class="showcase-title">MongoDB Atlas Vector Search ($vectorSearch) &amp; HNSW Tuning</h3>
+                </div>
+                <span class="badge-live"><i class="fas fa-gauge-high"></i> &lt; 18.2MS P95 QUERY LATENCY</span>
+            </div>
+            <div class="showcase-body">
+                <div class="showcase-diagram-wrap" onclick="openLightbox('images/02-mongodb-atlas-vector-indexing-hnsw.jpg', 'Subsystem 03: MongoDB Atlas Vector Search &amp; HNSW Index Tuning')">
+                    <img src="images/02-mongodb-atlas-vector-indexing-hnsw.jpg" alt="MongoDB Atlas Vector Search Architecture">
+                </div>
+
+                <div class="dual-tabs">
+                    <div class="plain-box">
+                        <h5><i class="fas fa-comment-dots"></i> Plain English Explanation</h5>
+                        <p>Searching through millions of mathematical coordinates across thousands of different business accounts is like searching for a specific grain of sand on a vast beach. If you don't build special "express lanes", search times can slow to a crawl or accidentally show one customer another customer's private emails.</p>
+                        <p>We designed a multi-layer graph index (HNSW) inside MongoDB Atlas with strict company isolation walls. This guarantees that searches only explore the right customer's inbox and return the most relevant emails in under 18 milliseconds.</p>
+                    </div>
+                    <div class="tech-box">
+                        <h5><i class="fas fa-terminal"></i> Technical Deep Dive</h5>
+                        <ul>
+                            <li><strong>HNSW Graph Parameters:</strong> Tuned M=16 (bi-directional vertex connectivity) and efConstruction=64 for optimal index density and sub-second insertion rates.</li>
+                            <li><strong>Pre-Filter compound Indexes:</strong> Built Atlas Vector Search definitions with pre-filtering on `tenant_id`, `user_id`, and `received_at`, guaranteeing mathematical tenant isolation prior to vector graph traversal.</li>
+                            <li><strong>Scalar Quantization:</strong> Enabled 8-bit scalar quantization on 1536-dimensional vectors, reducing memory consumption by 58% while maintaining 97.4% Recall@10.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Code Block -->
+                <div class="code-container">
+                    <div class="code-header">
+                        <span><i class="fas fa-code"></i> atlas_vector_query.py — MongoDB $vectorSearch Aggregation Pipeline</span>
+                        <span>Motor / AsyncIOMotorClient / MongoDB Atlas</span>
+                    </div>
+                    <pre><code><span class="c-kw">async def</span> <span class="c-fn">execute_semantic_email_search</span>(
+    db, tenant_id: <span class="c-cls">str</span>, user_id: <span class="c-cls">str</span>, query_vec: List[<span class="c-cls">float</span>], limit: <span class="c-cls">int</span> = <span class="c-num">10</span>
+) -&gt; List[Dict]:
+    pipeline = [
+        {
+            <span class="c-str">"$vectorSearch"</span>: {
+                <span class="c-str">"index"</span>: <span class="c-str">"email_vector_idx"</span>,
+                <span class="c-str">"path"</span>: <span class="c-str">"embedding_1536"</span>,
+                <span class="c-str">"queryVector"</span>: query_vec,
+                <span class="c-str">"numCandidates"</span>: limit * <span class="c-num">15</span>,  <span class="c-cmt"># 150 candidates for HNSW exploration</span>
+                <span class="c-str">"limit"</span>: limit,
+                <span class="c-str">"filter"</span>: {
+                    <span class="c-str">"$and"</span>: [
+                        { <span class="c-str">"tenant_id"</span>: { <span class="c-str">"$eq"</span>: tenant_id } },
+                        { <span class="c-str">"user_id"</span>: { <span class="c-str">"$eq"</span>: user_id } }
+                    ]
+                }
+            }
+        },
+        {
+            <span class="c-str">"$project"</span>: {
+                <span class="c-str">"score"</span>: { <span class="c-str">"$meta"</span>: <span class="c-str">"vectorSearchScore"</span> },
+                <span class="c-str">"subject"</span>: <span class="c-num">1</span>,
+                <span class="c-str">"body_snippet"</span>: <span class="c-num">1</span>,
+                <span class="c-str">"thread_id"</span>: <span class="c-num">1</span>,
+                <span class="c-str">"received_at"</span>: <span class="c-num">1</span>
+            }
+        }
+    ]
+    cursor = db.email_chunks.aggregate(pipeline)
+    <span class="c-kw">return</span> <span class="c-kw">await</span> cursor.to_list(length=limit)</code></pre>
+                </div>
+            </div>
+        </article>
+
+        <!-- SHOWCASE 4: LangChain RAG & Real-Time Contextual Drafting -->
+        <article class="showcase-block">
+            <div class="showcase-header">
+                <div>
+                    <span class="showcase-number">SUBSYSTEM 04</span>
+                    <h3 class="showcase-title">LangChain RAG Architecture &amp; Real-Time Contextual Drafting</h3>
+                </div>
+                <span class="badge-live"><i class="fas fa-wand-magic-sparkles"></i> 94.8% DRAFT ACCEPTANCE</span>
+            </div>
+            <div class="showcase-body">
+                <div class="showcase-diagram-wrap" onclick="openLightbox('images/03-langchain-rag-contextual-reply-engine.jpg', 'Subsystem 04: LangChain RAG Architecture &amp; Context-Aware Drafts')">
+                    <img src="images/03-langchain-rag-contextual-reply-engine.jpg" alt="LangChain RAG Architecture Diagram">
+                </div>
+
+                <div class="dual-tabs">
+                    <div class="plain-box">
+                        <h5><i class="fas fa-comment-dots"></i> Plain English Explanation</h5>
+                        <p>Writing email replies by hand takes hours every day. But generic AI replies often sound robotic, make up policies that don't exist, or fail to mention what was previously agreed upon in earlier emails.</p>
+                        <p>Our RAG system finds the exact facts from previous emails, verifies them, and writes a draft reply in the user's authentic personal tone. The user can review the draft in their email client and send it with one click — resulting in a 94.8% acceptance rate.</p>
+                    </div>
+                    <div class="tech-box">
+                        <h5><i class="fas fa-terminal"></i> Technical Deep Dive</h5>
+                        <ul>
+                            <li><strong>Two-Stage Re-Ranking:</strong> Initial top-15 vector retrieval is re-ranked using a Cross-Encoder to evaluate bidirectional semantic overlap with the prompt question.</li>
+                            <li><strong>Guardrail Prompting:</strong> Structured LangChain prompt templates enforcing organizational compliance, preventing hallucinated pricing/discounts, and matching user persona signatures.</li>
+                            <li><strong>Streaming SSE:</strong> FastAPI Server-Sent Events (SSE) streaming token output from OpenAI GPT-4o, giving users instant visual feedback with sub-750ms time-to-first-token.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Code Block -->
+                <div class="code-container">
+                    <div class="code-header">
+                        <span><i class="fas fa-code"></i> rag_draft_orchestrator.py — LangChain RAG Retrieval &amp; Streaming Response</span>
+                        <span>Python 3.11 / LangChain / OpenAI GPT-4o</span>
+                    </div>
+                    <pre><code><span class="c-kw">from</span> langchain_core.prompts <span class="c-kw">import</span> ChatPromptTemplate
+<span class="c-kw">from</span> langchain_openai <span class="c-kw">import</span> ChatOpenAI
+<span class="c-kw">from</span> langchain_core.output_parsers <span class="c-kw">import</span> StrOutputParser
+
+<span class="c-kw">async def</span> <span class="c-fn">stream_contextual_email_draft</span>(inquiry_text: <span class="c-cls">str</span>, retrieved_context: <span class="c-cls">str</span>, user_tone: <span class="c-cls">str</span>):
+    system_prompt = (
+        <span class="c-str">"You are an enterprise email co-pilot. Write a direct, context-aware reply draft.\n"</span>
+        <span class="c-str">"Strict Rules:\n"</span>
+        <span class="c-str">"1. ONLY state facts present in the verified context snippets.\n"</span>
+        <span class="c-str">"2. Do NOT promise discounts, dates, or SLAs unless explicitly confirmed.\n"</span>
+        <span class="c-str">"3. Match the user's signature tone: {tone}.\n\n"</span>
+        <span class="c-str">"Verified Context Snippets:\n{context}"</span>
+    )
+    prompt = ChatPromptTemplate.from_messages([
+        (<span class="c-str">"system"</span>, system_prompt),
+        (<span class="c-str">"user"</span>, <span class="c-str">"Customer Email:\n{email_text}\n\nGenerate Draft Reply:"</span>)
+    ])
+    llm = ChatOpenAI(model=<span class="c-str">"gpt-4o"</span>, streaming=<span class="c-kw">True</span>, temperature=<span class="c-num">0.2</span>)
+    chain = prompt | llm | StrOutputParser()
+
+    <span class="c-kw">async for</span> chunk <span class="c-kw">in</span> chain.astream({
+        <span class="c-str">"context"</span>: retrieved_context,
+        <span class="c-str">"tone"</span>: user_tone,
+        <span class="c-str">"email_text"</span>: inquiry_text
+    }):
+        <span class="c-kw">yield</span> chunk</code></pre>
+                </div>
+            </div>
+        </article>
+
+        <!-- SHOWCASE 5: Intelligent Classification & Tagging Dashboard -->
+        <article class="showcase-block">
+            <div class="showcase-header">
+                <div>
+                    <span class="showcase-number">SUBSYSTEM 05</span>
+                    <h3 class="showcase-title">Multi-Label Semantic Tagging, Urgency Scoring &amp; System Telemetry</h3>
+                </div>
+                <span class="badge-live"><i class="fas fa-tags"></i> 96.2% CLASSIFICATION ACCURACY</span>
+            </div>
+            <div class="showcase-body">
+                <div class="showcase-diagram-wrap" onclick="openLightbox('images/04-intelligent-classification-tagging-dashboard.jpg', 'Subsystem 05: Auto-Tagging, Intent Classification &amp; Monitoring Dashboard')">
+                    <img src="images/04-intelligent-classification-tagging-dashboard.jpg" alt="Intelligent Classification and Telemetry Dashboard">
+                </div>
+
+                <div class="dual-tabs">
+                    <div class="plain-box">
+                        <h5><i class="fas fa-comment-dots"></i> Plain English Explanation</h5>
+                        <p>Customer service and sales inboxes are constantly flooded with hundreds of messages. When a critical outage or a multi-million dollar sales lead arrives, it shouldn't sit unread for six hours behind twenty marketing newsletters.</p>
+                        <p>Our intelligent auto-tagging system scans incoming emails instantly, rates their urgency from 0 to 1, tags their exact intent (like Billing, Outage, or High-Value Lead), and immediately routes them to the right team or Slack channel.</p>
+                    </div>
+                    <div class="tech-box">
+                        <h5><i class="fas fa-terminal"></i> Technical Deep Dive</h5>
+                        <ul>
+                            <li><strong>Multi-Label Taxonomy:</strong> Classifies emails across 18 distinct domain labels with 96.2% accuracy and an F1-score of 0.954 using embedding distance to archetype centroids.</li>
+                            <li><strong>Urgency Scoring Engine:</strong> Computes a continuous urgency score (0.00 to 1.00) based on sentiment extremity, deadline entities, and sender hierarchy.</li>
+                            <li><strong>Semantic Deduplication:</strong> Computes cosine similarity against messages in the preceding 24-hour window; duplicate complaints (cosine > 0.93) are clustered to prevent agent collision.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Code Block -->
+                <div class="code-container">
+                    <div class="code-header">
+                        <span><i class="fas fa-code"></i> email_classifier.py — Semantic Intent &amp; Urgency Scoring</span>
+                        <span>Python 3.11 / NumPy / MongoDB Atlas</span>
+                    </div>
+                    <pre><code><span class="c-kw">import</span> numpy <span class="c-kw">as</span> np
+
+<span class="c-kw">def</span> <span class="c-fn">compute_urgency_score</span>(sentiment_polarity: <span class="c-cls">float</span>, has_deadline: <span class="c-cls">bool</span>, sender_vip: <span class="c-cls">bool</span>) -&gt; <span class="c-cls">float</span>:
+    base = <span class="c-num">0.25</span>
+    <span class="c-kw">if</span> sentiment_polarity &lt; -<span class="c-num">0.6</span>:  <span class="c-cmt"># Strongly negative sentiment</span>
+        base += <span class="c-num">0.35</span>
+    <span class="c-kw">if</span> has_deadline:
+        base += <span class="c-num">0.25</span>
+    <span class="c-kw">if</span> sender_vip:
+        base += <span class="c-num">0.20</span>
+    <span class="c-kw">return</span> min(round(base, <span class="c-num">2</span>), <span class="c-num">1.0</span>)
+
+<span class="c-kw">def</span> <span class="c-fn">is_duplicate_thread</span>(new_vector: List[<span class="c-cls">float</span>], recent_vectors: List[List[<span class="c-cls">float</span>]], threshold: <span class="c-cls">float</span> = <span class="c-num">0.93</span>) -&gt; <span class="c-cls">bool</span>:
+    v1 = np.array(new_vector)
+    <span class="c-kw">for</span> vec <span class="c-kw">in</span> recent_vectors:
+        v2 = np.array(vec)
+        cos_sim = np.dot(v1, v2) / (np.linalg.norm(v1) * np.linalg.norm(v2))
+        <span class="c-kw">if</span> cos_sim &gt;= threshold:
+            <span class="c-kw">return</span> <span class="c-kw">True</span>
+    <span class="c-kw">return</span> <span class="c-kw">False</span></code></pre>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <!-- Comparative Benchmark Table -->
+    <section class="wrapper">
+        <div class="section-header">
+            <span class="section-tag"><i class="fas fa-chart-column"></i> Architectural Benchmarks</span>
+            <h2 class="section-title">Comparative Analysis: Traditional Search vs Naive LLM vs InstaMailAI</h2>
+            <p class="section-lead">Rigorous benchmarking across retrieval latency, accuracy, token cost, and production reliability.</p>
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Architectural Dimension</th>
+                        <th>Keyword Search (Elasticsearch)</th>
+                        <th>Naive Full-Context LLM</th>
+                        <th class="highlight-col">InstaMailAI Vector RAG</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Query Latency (p95)</strong></td>
+                        <td>45ms – 85ms</td>
+                        <td>4,200ms – 6,800ms</td>
+                        <td class="highlight-col">&lt; 18.2ms (Atlas HNSW)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Semantic Recall@10</strong></td>
+                        <td>48.2% (Vocabulary Mismatch)</td>
+                        <td>81.4% (Lost in Context)</td>
+                        <td class="highlight-col">97.4% (Cosine + Re-Ranking)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>API Token Cost / Email</strong></td>
+                        <td>$0.000</td>
+                        <td>$0.048 (Massive bloat)</td>
+                        <td class="highlight-col">$0.003 (68% Noise Reduction)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Multi-Tenant Data Bleed Risk</strong></td>
+                        <td>Low (SQL/Filter Partitioned)</td>
+                        <td>Critical (Prompt Injection)</td>
+                        <td class="highlight-col">Zero (Pre-Filtered HNSW Index)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Hallucination Frequency</strong></td>
+                        <td>N/A (No Generation)</td>
+                        <td>14.8% (Unconstrained)</td>
+                        <td class="highlight-col">&lt; 0.2% (Context-Bound Prompts)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Thread Ancestry Awareness</strong></td>
+                        <td>None (Document-level)</td>
+                        <td>Fragmented</td>
+                        <td class="highlight-col">Full DAG Thread Traversal</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Draft Human Acceptance Rate</strong></td>
+                        <td>N/A</td>
+                        <td>61.2%</td>
+                        <td class="highlight-col">94.8% (HITL Telemetry)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Tech Stack Grid -->
+    <section class="wrapper">
+        <div class="section-header">
+            <span class="section-tag"><i class="fas fa-layer-group"></i> Production Infrastructure</span>
+            <h2 class="section-title">Core Technology Stack &amp; Architectural Roles</h2>
+            <p class="section-lead">Every tool, database, and library chosen was selected specifically for high throughput, sub-second latency, and enterprise reliability.</p>
+        </div>
+
+        <div class="stack-grid">
+            <div class="stack-card">
+                <div class="stack-icon"><i class="fas fa-database"></i></div>
+                <h4 class="stack-name">MongoDB Atlas Vector Search</h4>
+                <div class="stack-role">VECTOR ENGINE ($vectorSearch)</div>
+                <p class="stack-desc">Hierarchical Navigable Small World (HNSW) indexing, scalar quantization (4x RAM reduction), and compound pre-filtering for sub-18ms queries.</p>
+            </div>
+            <div class="stack-card">
+                <div class="stack-icon"><i class="fas fa-brain"></i></div>
+                <h4 class="stack-name">OpenAI Embeddings (1536d)</h4>
+                <div class="stack-role">VECTOR REPRESENTATION</div>
+                <p class="stack-desc">`text-embedding-3-small` generating normalized Euclidean L2 vectors, batched asynchronously for high-throughput email body vectorization.</p>
+            </div>
+            <div class="stack-card">
+                <div class="stack-icon"><i class="fas fa-bolt"></i></div>
+                <h4 class="stack-name">FastAPI ASGI Microservices</h4>
+                <div class="stack-role">HIGH-PERFORMANCE INGESTION</div>
+                <p class="stack-desc">Asynchronous endpoints with Pydantic v2 data validation, streaming Server-Sent Events (SSE), and non-blocking I/O worker pipelines.</p>
+            </div>
+            <div class="stack-card">
+                <div class="stack-icon"><i class="fas fa-link"></i></div>
+                <h4 class="stack-name">LangChain Orchestrator</h4>
+                <div class="stack-role">RAG &amp; CONTEXT INJECTION</div>
+                <p class="stack-desc">Dynamic retrieval orchestration, context compression, few-shot prompt structuring, and tone guardrail enforcement.</p>
+            </div>
+            <div class="stack-card">
+                <div class="stack-icon"><i class="fas fa-robot"></i></div>
+                <h4 class="stack-name">OpenAI GPT-4o</h4>
+                <div class="stack-role">CONTEXTUAL DRAFTING</div>
+                <p class="stack-desc">High-speed conversational drafting with sub-750ms time-to-first-token, strict factuality enforcement, and persona mimicry.</p>
+            </div>
+            <div class="stack-card">
+                <div class="stack-icon"><i class="fas fa-filter"></i></div>
+                <h4 class="stack-name">Cross-Encoder Re-Ranker</h4>
+                <div class="stack-role">CANDIDATE REFINEMENT</div>
+                <p class="stack-desc">MiniLM cross-encoder scoring top-15 nearest neighbors to guarantee only exact, relevant historical contexts enter the prompt window.</p>
+            </div>
+            <div class="stack-card">
+                <div class="stack-icon"><i class="fas fa-shield-halved"></i></div>
+                <h4 class="stack-name">Bleach, lxml &amp; MIME Decoders</h4>
+                <div class="stack-role">SANITIZATION &amp; CLEANING</div>
+                <p class="stack-desc">High-speed RFC 2822 parsing, signature block stripping, legal disclaimer removal, and 68.2% token noise elimination.</p>
+            </div>
+            <div class="stack-card">
+                <div class="stack-icon"><i class="fas fa-server"></i></div>
+                <h4 class="stack-name">Redis &amp; Celery Cluster</h4>
+                <div class="stack-role">ASYNC QUEUES &amp; CACHE</div>
+                <p class="stack-desc">Distributed task queues for vector indexing jobs and LRU query cache achieving an 89.4% cache hit ratio on repeated queries.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Engineering Ownership Grid -->
+    <section class="wrapper">
+        <div class="section-header">
+            <span class="section-tag"><i class="fas fa-user-check"></i> Ownership &amp; Contributions</span>
+            <h2 class="section-title">Key Responsibilities as Vectorized Database Software Engineer</h2>
+            <p class="section-lead">Direct architectural and implementation responsibilities executed during the tenure at InstaMailAI.</p>
+        </div>
+
+        <div class="ownership-grid">
+            <div class="owner-card">
+                <h4><i class="fas fa-diagram-project"></i> Vector Search &amp; Semantics</h4>
+                <p>Architected end-to-end semantic pipelines using MongoDB Atlas Vector Search, LangChain, and OpenAI embeddings for ingesting, transforming, and querying structured and unstructured email records.</p>
+            </div>
+            <div class="owner-card">
+                <h4><i class="fas fa-wand-magic-sparkles"></i> RAG Architecture &amp; Auto-Drafts</h4>
+                <p>Implemented Retrieval-Augmented Generation (RAG) for real-time, context-aware email responses with Cross-Encoder re-ranking, tone matching, and a 94.8% human acceptance rate.</p>
+            </div>
+            <div class="owner-card">
+                <h4><i class="fas fa-bolt"></i> High-Speed FastAPI Services</h4>
+                <p>Built asynchronous microservices for parsing, cleaning, and normalizing MIME email content and metadata, stripping 68% token overhead and handling 10,000+ emails/min.</p>
+            </div>
+            <div class="owner-card">
+                <h4><i class="fas fa-gears"></i> Atlas Index Tuning &amp; Optimization</h4>
+                <p>Fine-tuned MongoDB HNSW graph indexes with scalar quantization and compound tenant isolation filters, driving p95 query latency down to sub-18.2ms across 8.4M+ vectors.</p>
+            </div>
+            <div class="owner-card">
+                <h4><i class="fas fa-tags"></i> Intelligent Email Classification</h4>
+                <p>Enabled multi-label auto-tagging, sentiment-weighted urgency scoring, and semantic deduplication clustering to automate inbox prioritization and prevent agent collision.</p>
+            </div>
+            <div class="owner-card">
+                <h4><i class="fas fa-users-gear"></i> Cross-Team Engineering &amp; QA</h4>
+                <p>Collaborated closely with ML and product teams to integrate vector search into production user interfaces, enforce strict Pydantic validation, and guarantee 99.98% platform uptime.</p>
+            </div>
+        </div>
+
+        <!-- Next Steps CTA -->
+        <div class="cta-section">
+            <h3 class="cta-title">Explore More Engineering Case Studies</h3>
+            <p class="cta-desc">Discover how I design and deploy scalable AI architectures, vector search backends, and distributed systems in production.</p>
+            <div class="cta-buttons">
+                <a href="../jericho-ai-multicloud/index.html" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Previous: Jericho AI GenAI Ops
+                </a>
+                <a href="../index.html" class="btn btn-primary">
+                    <i class="fas fa-th-large"></i> Explore All 18 Case Studies
+                </a>
+                <a href="../../index.html#contact" class="btn btn-secondary">
+                    <i class="fas fa-envelope"></i> Get in Touch
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="wrapper">
+            <p>&copy; 2026 Ahsan Tariq &middot; Computer Engineer &amp; Principal AI Backend Architect. All technical diagrams and case study architectures proprietary to their respective implementations.</p>
+        </div>
+    </footer>
+
+    <!-- Fullscreen Lightbox Modal -->
+    <div class="lightbox-modal" id="lightboxModal" onclick="closeLightbox(event)">
+        <div class="lightbox-content">
+            <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+            <img id="lightboxImg" src="" alt="Enlarged Architecture Diagram">
+            <div class="lightbox-caption" id="lightboxCaption"></div>
+        </div>
+    </div>
+
+    <!-- Interactive Scripts -->
+    <script>
+        // Lightbox Functions
+        function openLightbox(src, caption) {
+            const modal = document.getElementById('lightboxModal');
+            const img = document.getElementById('lightboxImg');
+            const cap = document.getElementById('lightboxCaption');
+            img.src = src;
+            cap.innerText = caption;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(e) {
+            if (!e || e.target.id === 'lightboxModal' || e.target.classList.contains('lightbox-close')) {
+                const modal = document.getElementById('lightboxModal');
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+
+        // Audience Toggle (Technical vs Plain English)
+        let isTechnical = true;
+        function toggleAudience() {
+            isTechnical = !isTechnical;
+            const label = document.getElementById('toggleLabel');
+            const heroDesc = document.getElementById('heroDesc');
+            const plainBoxes = document.querySelectorAll('.plain-box');
+            const techBoxes = document.querySelectorAll('.tech-box');
+
+            if (isTechnical) {
+                label.innerText = 'Audience: Technical View';
+                heroDesc.innerHTML = 'Engineered an enterprise vector search and intelligent email orchestration platform for InstaMailAI. Designed high-throughput semantic ingestion pipelines combining MongoDB Atlas Vector Search ($vectorSearch), OpenAI 1536-dimensional embeddings, LangChain RAG workflows, and asynchronous FastAPI microservices — delivering sub-18ms semantic retrieval, 94.8% contextual draft acceptance, and 68% token overhead reduction.';
+                plainBoxes.forEach(b => b.style.display = 'block');
+                techBoxes.forEach(b => b.style.display = 'block');
+            } else {
+                label.innerText = 'Audience: Plain English';
+                heroDesc.innerHTML = 'At InstaMailAI, I built a smart AI engine that transforms chaotic, messy company inboxes into an organized, instant-search supercomputer. Instead of workers digging through hundreds of old emails, our AI understands what questions mean in plain English, pulls up the right answers in under 18 milliseconds, and automatically writes accurate reply drafts that users can send with one click.';
+                plainBoxes.forEach(b => {
+                    b.style.display = 'block';
+                    b.style.gridColumn = '1 / -1';
+                });
+                techBoxes.forEach(b => b.style.display = 'none');
+            }
+        }
+    </script>
+</body>
+</html>

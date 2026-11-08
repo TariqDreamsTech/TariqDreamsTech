@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ballyhass Case Study — Autonomous Booking Assistant & Real-Time API Engine | Ahsan Tariq</title>
+    <meta name="description" content="Engineering the Ballyhass Adventure Group booking assistant: Voiceflow Agentic AI, event-driven API orchestration middleware, real-time date resolution, venue normalization, and live booking checkout mapping with 100% deterministic responses.">
+    <meta name="keywords" content="Ballyhass, Voiceflow, Booking API, API Orchestration, Chatbot, Webhooks, Date Resolution, JavaScript JSON, Live Availability">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-base: #060911;
+            --bg-surface: #0b1120;
+            --bg-card: rgba(16, 24, 44, 0.7);
+            --bg-card-hover: rgba(22, 34, 62, 0.9);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(0, 240, 255, 0.35);
+            --cyan: #00f0ff;
+            --cyan-glow: rgba(0, 240, 255, 0.25);
+            --emerald: #10b981;
+            --emerald-glow: rgba(16, 185, 129, 0.2);
+            --blue: #3b82f6;
+            --blue-glow: rgba(59, 130, 246, 0.25);
+            --violet: #a855f7;
+            --rose: #f43f5e;
+            --amber: #f59e0b;
+            --text-main: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-dim: #64748b;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Plus Jakarta Sans', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --gradient-accent: linear-gradient(135deg, #00f0ff 0%, #3b82f6 50%, #10b981 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* Ambient glowing background */
+        .ambient-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .glow-1 {
+            position: absolute;
+            top: -120px;
+            right: 15%;
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.15) 0%, rgba(6, 9, 17, 0) 70%);
+            border-radius: 50%;
+        }
+        .glow-2 {
+            position: absolute;
+            top: 45%;
+            left: -120px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, rgba(6, 9, 17, 0) 70%);
+            border-radius: 50%;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Sticky Navigation Bar */
+        .case-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(6, 9, 17, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            padding: 0.85rem 0;
+        }
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        .nav-back:hover {
+            color: var(--cyan);
+        }
+        .nav-brand {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.15rem;
+            letter-spacing: -0.02em;
+        }
+        .nav-brand span {
+            color: var(--cyan);
+        }
+        .nav-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 20px;
+            padding: 0.3rem 0.8rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--cyan);
+        }
+        .nav-status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 8px var(--cyan);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        /* Hero Section */
+        .hero-section {
+            padding: 4.5rem 0 3.5rem;
+            text-align: left;
+        }
+        .eyebrow-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0, 240, 255, 0.12);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 30px;
+            padding: 0.4rem 1.1rem;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--cyan);
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .hero-h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.4rem, 5vw, 4.2rem);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.25rem;
+            background: linear-gradient(135deg, #ffffff 40%, #00f0ff 75%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-tagline {
+            font-size: clamp(1.1rem, 2vw, 1.45rem);
+            font-weight: 500;
+            color: var(--cyan);
+            margin-bottom: 1.5rem;
+            font-family: var(--font-display);
+        }
+        .hero-desc {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 950px;
+            margin-bottom: 2.5rem;
+            line-height: 1.8;
+        }
+
+        /* Meta Grid */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1rem;
+            margin-bottom: 3.5rem;
+        }
+        .meta-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+        .meta-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+        .meta-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.4rem;
+        }
+        .meta-val {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .meta-sub {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.2rem;
+            font-family: var(--font-mono);
+        }
+
+        /* Hero Media / Master Architecture Preview */
+        .hero-media-wrapper {
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            background: var(--bg-surface);
+            padding: 0.6rem;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 40px rgba(0, 240, 255, 0.15);
+            margin-bottom: 4rem;
+            overflow: hidden;
+        }
+        .hero-img-container {
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+        .hero-img-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+        .hero-img-container:hover img {
+            transform: scale(1.015);
+        }
+        .img-overlay-badge {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            background: rgba(6, 9, 17, 0.85);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 0.4rem 0.9rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--cyan);
+            backdrop-filter: blur(8px);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* Executive Metrics Strip */
+        .exec-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 4.5rem;
+        }
+        .exec-metric-card {
+            background: linear-gradient(180deg, rgba(20, 30, 52, 0.8) 0%, rgba(11, 17, 32, 0.8) 100%);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.75rem 1.25rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .exec-metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gradient-accent);
+        }
+        .metric-num {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            color: var(--cyan);
+        }
+        .metric-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            margin-bottom: 0.35rem;
+        }
+        .metric-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* Section Headings */
+        .section-separator {
+            padding: 4.5rem 0;
+            border-top: 1px solid var(--border);
+        }
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 3.5rem;
+        }
+        .section-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.75rem;
+        }
+        .section-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 3.5vw, 2.75rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+        }
+        .section-p {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Interactive Problem vs Solution Comparison Section */
+        .compare-controller {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+        }
+        .compare-toggle-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 0.6rem 1.4rem;
+            border-radius: 30px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .compare-toggle-btn:hover {
+            color: var(--text-main);
+            border-color: var(--cyan);
+        }
+        .compare-toggle-btn.active {
+            background: rgba(0, 240, 255, 0.12);
+            color: var(--cyan);
+            border-color: var(--cyan);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+        }
+
+        .compare-matrix {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .compare-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .compare-card {
+            border-radius: 14px;
+            padding: 1.75rem;
+            position: relative;
+            backdrop-filter: blur(8px);
+        }
+        .compare-card.problem {
+            background: rgba(244, 63, 94, 0.04);
+            border: 1px solid rgba(244, 63, 94, 0.2);
+        }
+        .compare-card.solution {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+        .compare-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 4px;
+            padding: 0.2rem 0.6rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+        .compare-card.problem .compare-tag {
+            background: rgba(244, 63, 94, 0.15);
+            color: var(--rose);
+        }
+        .compare-card.solution .compare-tag {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--emerald);
+        }
+        .compare-card-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--text-main);
+        }
+        .compare-card-text {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.65;
+            margin-bottom: 1.25rem;
+        }
+        .compare-impact-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            border-radius: 6px;
+            padding: 0.35rem 0.75rem;
+        }
+        .compare-card.problem .compare-impact-pill {
+            background: rgba(244, 63, 94, 0.1);
+            color: #fda4af;
+            border: 1px solid rgba(244, 63, 94, 0.2);
+        }
+        .compare-card.solution .compare-impact-pill {
+            background: rgba(16, 185, 129, 0.12);
+            color: #6ee7b7;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+
+        /* Showcase Deep-Dive Blocks */
+        .showcase-block {
+            display: grid;
+            grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+            gap: 3.5rem;
+            align-items: center;
+            margin-bottom: 6rem;
+        }
+        .showcase-block.reverse {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+        }
+        .showcase-block.reverse .showcase-text-col {
+            order: 2;
+        }
+        .showcase-block.reverse .showcase-media-col {
+            order: 1;
+        }
+        .showcase-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--cyan);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .showcase-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 2.5vw, 2.3rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 1.25rem;
+            color: var(--text-main);
+        }
+        .showcase-p {
+            font-size: 1.02rem;
+            color: var(--text-secondary);
+            line-height: 1.75;
+            margin-bottom: 1.5rem;
+        }
+        .feature-bullets {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            margin-bottom: 1.75rem;
+        }
+        .feature-bullet {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
+        .feature-bullet i {
+            color: var(--cyan);
+            margin-top: 0.25rem;
+            font-size: 0.85rem;
+        }
+        .feature-bullet strong {
+            color: var(--text-main);
+        }
+
+        .showcase-media-box {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 0.5rem;
+            box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 240, 255, 0.08);
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        .showcase-media-box img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+        .showcase-media-box:hover img {
+            transform: scale(1.02);
+        }
+
+        /* Comparative Architecture Table */
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            margin: 2.5rem 0;
+        }
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.92rem;
+            text-align: left;
+        }
+        .spec-table th {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1rem 1.25rem;
+            color: var(--text-dim);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
+        }
+        .spec-table td {
+            padding: 1.1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+        .spec-table tr:last-child td {
+            border-bottom: none;
+        }
+        .spec-table td:first-child {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        .spec-table td.highlight {
+            color: var(--cyan);
+            font-weight: 600;
+            font-family: var(--font-mono);
+        }
+
+        /* Tech Stack Grid */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1.25rem;
+            margin-top: 2rem;
+        }
+        .tech-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.25s ease;
+        }
+        .tech-card:hover {
+            border-color: var(--cyan);
+            transform: translateY(-2px);
+        }
+        .tech-icon {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+        }
+        .tech-name {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text-main);
+            margin-bottom: 0.35rem;
+        }
+        .tech-role {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--cyan);
+            margin-bottom: 0.75rem;
+        }
+        .tech-desc {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Ownership & Impact Card */
+        .ownership-card {
+            background: linear-gradient(135deg, rgba(16, 28, 48, 0.9) 0%, rgba(10, 18, 32, 0.9) 100%);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 3.5rem 2.5rem;
+            margin: 4rem 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8);
+        }
+        .ownership-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.12) 0%, rgba(6, 9, 17, 0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .ownership-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+            gap: 3rem;
+            align-items: center;
+        }
+        .o-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--cyan);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+        }
+        .o-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 3vw, 2.4rem);
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.25rem;
+        }
+        .o-p {
+            font-size: 1.02rem;
+            color: var(--text-secondary);
+            line-height: 1.75;
+            margin-bottom: 1.5rem;
+        }
+        .o-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.25rem;
+        }
+        .o-stat {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+        }
+        .o-stat-num {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--cyan);
+            margin-bottom: 0.25rem;
+        }
+        .o-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+        }
+
+        /* Call To Action */
+        .cta-section {
+            padding: 5rem 0;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+        .cta-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 3.5vw, 2.8rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+        .cta-desc {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 650px;
+            margin: 0 auto 2.5rem;
+        }
+        .cta-btn-row {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--gradient-accent);
+            color: #060911;
+            font-weight: 700;
+            font-size: 0.95rem;
+            padding: 0.85rem 2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            box-shadow: 0 10px 30px rgba(0, 240, 255, 0.25);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 240, 255, 0.4);
+        }
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 0.85rem 1.8rem;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: all 0.25s ease;
+        }
+        .btn-secondary:hover {
+            border-color: var(--cyan);
+            color: var(--cyan);
+            transform: translateY(-2px);
+        }
+
+        /* Lightbox Modal */
+        .lightbox-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(6, 9, 17, 0.95);
+            backdrop-filter: blur(14px);
+            z-index: 999999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .lightbox-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        .lightbox-container {
+            max-width: 95vw;
+            max-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .lightbox-container img {
+            max-width: 92vw;
+            max-height: 82vh;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+        .lightbox-caption {
+            margin-top: 1rem;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            font-family: var(--font-mono);
+            background: rgba(15, 23, 42, 0.85);
+            padding: 0.5rem 1.25rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            max-width: 800px;
+            text-align: center;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: -2.5rem;
+            right: 0;
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+        .lightbox-close:hover {
+            color: var(--cyan);
+            transform: scale(1.15);
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .exec-metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .showcase-block, .showcase-block.reverse {
+                grid-template-columns: minmax(0, 1fr) !important;
+                gap: 2.5rem;
+            }
+            .showcase-block.reverse .showcase-text-col { order: 1; }
+            .showcase-block.reverse .showcase-media-col { order: 2; }
+            .compare-row { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+            .ownership-grid { grid-template-columns: minmax(0, 1fr); }
+            .tech-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
+        @media (max-width: 640px) {
+            .meta-grid { grid-template-columns: minmax(0, 1fr); }
+            .exec-metrics-grid { grid-template-columns: minmax(0, 1fr); }
+            .tech-grid { grid-template-columns: minmax(0, 1fr); }
+            .o-stats-grid { grid-template-columns: minmax(0, 1fr); }
+            .hero-section { padding: 3rem 0 2rem; }
+            .section-separator { padding: 3rem 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Glowing Background -->
+    <div class="ambient-glow">
+        <div class="glow-1"></div>
+        <div class="glow-2"></div>
+    </div>
+
+    <!-- Navigation Header -->
+    <nav class="case-nav">
+        <div class="wrapper">
+            <div class="nav-inner">
+                <a href="../index.html" class="nav-back">
+                    <i class="fas fa-arrow-left"></i> Back to Case Studies
+                </a>
+                <div class="nav-brand">
+                    <span>BALLYHASS</span> ADVENTURE
+                </div>
+                <div class="nav-status">
+                    <span class="nav-status-dot"></span> PRODUCTION LIVE · LIVE BOOKING API
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-calendar-check"></i> Conversational AI &amp; Real-Time Booking API Orchestration
+            </div>
+
+            <h1 class="hero-h1">Ballyhass Adventure: Autonomous Booking Assistant &amp; Real-Time API Engine</h1>
+            <div class="hero-tagline">“Connecting Conversational Voiceflow Intelligence with Live Booking Systems via Deterministic Middleware”</div>
+
+            <p class="hero-desc">
+                Developed a production-ready booking assistant chatbot for <strong>Ballyhass Adventure Group</strong> (Mallow &amp; Coachford activity lakes). Engineered a tri-layer architecture combining <strong>Voiceflow Agentic AI</strong>, an <strong>event-driven API orchestration middleware</strong>, and the <strong>live Ballyhass booking API</strong>. The system provides real-time relative date resolution, venue normalization, live capacity filtering, and structured category-to-slot button arrays mapping directly to secure online checkouts with <strong>100% deterministic precision</strong>.
+            </p>
+
+            <!-- Meta Strip -->
+            <div class="meta-grid">
+                <div class="meta-card">
+                    <div class="meta-label">Client / Brand</div>
+                    <div class="meta-val">Ballyhass Adventure</div>
+                    <div class="meta-sub">Mallow &amp; Coachford Activity Centres</div>
+                </div>
+                <div class="meta-card">
+                    <div class="meta-label">Engineering Role</div>
+                    <div class="meta-val">Lead AI &amp; API Architect</div>
+                    <div class="meta-sub">Voiceflow · Webhooks · API Middleware</div>
+                </div>
+                <div class="meta-card">
+                    <div class="meta-label">Data Architecture</div>
+                    <div class="meta-val">Deterministic REST API</div>
+                    <div class="meta-sub">Capacity Filtering &amp; Slot Aggregation</div>
+                </div>
+                <div class="meta-card">
+                    <div class="meta-label">Response Guarantee</div>
+                    <div class="meta-val">Zero Hallucinations</div>
+                    <div class="meta-sub">Strict Category &rarr; Product &rarr; Checkout</div>
+                </div>
+            </div>
+
+            <!-- Master Architecture Graphic Preview -->
+            <div class="hero-media-wrapper">
+                <div class="hero-img-container" onclick="openLightbox('images/00-ballyhass-master-architecture.jpg', 'Ballyhass Adventure Group Master Architecture: Voiceflow Conversational Layer, API Orchestration Middleware, and Customer Presentation with Checkout Buttons')">
+                    <img src="images/00-ballyhass-master-architecture.jpg" alt="Ballyhass Master Architecture Diagram" />
+                    <div class="img-overlay-badge">
+                        <i class="fas fa-expand"></i> Click to Inspect Master Architecture
+                    </div>
+                </div>
+            </div>
+
+            <!-- Executive Performance Metrics -->
+            <div class="exec-metrics-grid">
+                <div class="exec-metric-card">
+                    <div class="metric-num">100%</div>
+                    <div class="metric-title">Deterministic Output</div>
+                    <div class="metric-desc">Zero AI hallucinations on availability; every time slot reflects genuine live ticket inventory.</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="metric-num">&lt;480ms</div>
+                    <div class="metric-title">End-to-End Latency</div>
+                    <div class="metric-desc">Sub-second webhook execution, live JSON filtering, capacity subtraction, and button generation.</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="metric-num">YYYY-MM-DD</div>
+                    <div class="metric-title">Relative Date Resolver</div>
+                    <div class="metric-desc">Accurately converts colloquial queries like "next Saturday" or "this coming Friday" into standardized API dates.</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="metric-num">1-Click</div>
+                    <div class="metric-title">Direct Checkout Flow</div>
+                    <div class="metric-desc">Every time slot button deep-links directly to the exact pre-filled checkout URL on the live booking engine.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Problem vs Solution Section -->
+    <section class="section-separator" id="problem-solution">
+        <div class="wrapper">
+            <div class="section-header">
+                <div class="section-eyebrow"><i class="fas fa-balance-scale"></i> CONVERSATIONAL EVOLUTION</div>
+                <h2 class="section-h2">The Static Chatbot Trap vs. Deterministic API Integration</h2>
+                <p class="section-p">
+                    Standard chatbots fail in booking environments because LLMs invent false availability, fail at date math, and provide generic homepage links. See how Ballyhass solved this.
+                </p>
+            </div>
+
+            <!-- Filter Controls -->
+            <div class="compare-controller">
+                <button class="compare-toggle-btn active" id="btnBoth" onclick="setBallyhassFilter('both')">
+                    <i class="fas fa-columns"></i> Side-by-Side View
+                </button>
+                <button class="compare-toggle-btn" id="btnProblem" onclick="setBallyhassFilter('problem')">
+                    <i class="fas fa-circle-xmark"></i> The Old Manual Way (Before)
+                </button>
+                <button class="compare-toggle-btn" id="btnSolution" onclick="setBallyhassFilter('solution')">
+                    <i class="fas fa-circle-check"></i> The Deterministic Engine (After)
+                </button>
+            </div>
+
+            <!-- Comparison Cards Matrix -->
+            <div class="compare-matrix">
+                <!-- Row 1: False Availability -->
+                <div class="compare-row" id="rowBallyhass1">
+                    <div class="compare-card problem">
+                        <div class="compare-tag"><i class="fas fa-times"></i> The Old Limitation</div>
+                        <h3 class="compare-card-title">LLMs Hallucinating False Ticket Availability</h3>
+                        <p class="compare-card-text">
+                            Generic AI assistants guess or assume activities are open. When customers arrive at the adventure park expecting to jump on the Aquapark or Zipline based on chatbot promises, they discover slots were sold out hours ago, creating severe customer frustration.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fas fa-triangle-exclamation"></i> Customer disappointment · Front desk booking disputes
+                        </div>
+                    </div>
+                    <div class="compare-card solution">
+                        <div class="compare-tag"><i class="fas fa-check"></i> The Ballyhass Solution</div>
+                        <h3 class="compare-card-title">Live API Interrogation &amp; Dynamic Capacity Calculation</h3>
+                        <p class="compare-card-text">
+                            The bot executes a live REST query against the booking database on every turn. A custom JavaScript parser dynamically evaluates <code>available = total_capacity - booked_count</code>, immediately excluding sold-out slots from the presentation layer.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fas fa-bolt"></i> 100% verified inventory · Zero false promises
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Relative Date Math -->
+                <div class="compare-row" id="rowBallyhass2">
+                    <div class="compare-card problem">
+                        <div class="compare-tag"><i class="fas fa-times"></i> The Old Limitation</div>
+                        <h3 class="compare-card-title">Chatbots Failing at "Next Friday" Date Arithmetic</h3>
+                        <p class="compare-card-text">
+                            Natural human queries rarely contain ISO dates. Users ask "Can I come next Friday afternoon?" or "Are you open this weekend?". Legacy bots misunderstand relative dates, querying the current day or throwing unhandled date parse errors.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fas fa-calendar-xmark"></i> Conversational dead-ends · Incorrect date queries
+                        </div>
+                    </div>
+                    <div class="compare-card solution">
+                        <div class="compare-tag"><i class="fas fa-check"></i> The Ballyhass Solution</div>
+                        <h3 class="compare-card-title">Algorithmic Relative Date Resolution Engine</h3>
+                        <p class="compare-card-text">
+                            Integrated an intelligent date resolver that calculates the exact calendar timestamp relative to real-world current time, converting colloquial terms ("this coming Friday", "tomorrow afternoon") into clean <code>YYYY-MM-DD</code> strings for API ingestion.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fas fa-calendar-check"></i> Flawless temporal resolution · Standardized ISO format
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 3: Venue Normalization -->
+                <div class="compare-row" id="rowBallyhass3">
+                    <div class="compare-card problem">
+                        <div class="compare-tag"><i class="fas fa-times"></i> The Old Limitation</div>
+                        <h3 class="compare-card-title">Multi-Venue Naming Conflicts &amp; Prefix Brittleness</h3>
+                        <p class="compare-card-text">
+                            Customers refer to parks interchangeably: "Ballyhass Mallow", "Mallow Lakes", "Coachford park", or simply "the wakeboarding lake". Raw APIs fail when query strings don't match exact database IDs, resulting in empty responses.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fas fa-map-location-dot"></i> Failed searches · Frustrating "No venue found" errors
+                        </div>
+                    </div>
+                    <div class="compare-card solution">
+                        <div class="compare-tag"><i class="fas fa-check"></i> The Ballyhass Solution</div>
+                        <h3 class="compare-card-title">Venue Normalization &amp; Intelligent Discovery Mode</h3>
+                        <p class="compare-card-text">
+                            Automatically strips "Ballyhass" prefixes and maps synonyms into canonical API parameters (<code>mallow</code> / <code>coachford</code>). If a user specifies an activity without a location, the bot enters Discovery Mode, presenting options across both parks.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fas fa-compass"></i> Seamless venue mapping · Multi-park discovery mode
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 4: Checkout Friction -->
+                <div class="compare-row" id="rowBallyhass4">
+                    <div class="compare-card problem">
+                        <div class="compare-tag"><i class="fas fa-times"></i> The Old Limitation</div>
+                        <h3 class="compare-card-title">Dumping Users on Generic Homepage Links</h3>
+                        <p class="compare-card-text">
+                            Most booking bots conclude by sending a link to <code>ballyhass.ie/book</code>, forcing customers to re-select their location, re-find their activity, re-pick their date, and re-choose their time, resulting in massive checkout drop-off.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fas fa-cart-shopping"></i> High cart abandonment · Repetitive customer re-entry
+                        </div>
+                    </div>
+                    <div class="compare-card solution">
+                        <div class="compare-tag"><i class="fas fa-check"></i> The Ballyhass Solution</div>
+                        <h3 class="compare-card-title">Strict Hierarchy with Direct-to-Checkout Slot Buttons</h3>
+                        <p class="compare-card-text">
+                            Transforms raw API payloads into a crisp presentation layer: Category &rarr; Product &rarr; Time Slots. Each slot includes pricing, available spaces, and an individual <code>[Book now]</code> button that deep-links straight into the final checkout stage.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fas fa-arrow-up-right-from-square"></i> 1-click checkout · Zero friction transaction flow
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Feature 1: Master Architecture -->
+    <section class="section-separator" id="master-architecture">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-sitemap"></i> SYSTEM ARCHITECTURE</div>
+                    <h2 class="showcase-h2">The Tri-Layer Integration: Voiceflow, Middleware &amp; Live API</h2>
+                    <p class="showcase-p">
+                        To balance natural conversational flexibility with 100% strict booking accuracy, the system separates cognitive conversation management from transactional data manipulation.
+                    </p>
+                    <ul class="feature-bullets">
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Voiceflow Agentic AI Layer:</strong> Manages conversation state, captures user intent, resolves relative dates, normalizes venue parameters, and enforces brand-neutral guidelines.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Event-Driven Orchestration Middleware:</strong> Intercepts incoming webhooks, validates parameters, queries the Ballyhass REST API, filters out closed slots, and computes remaining capacity.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Live Ballyhass Booking API:</strong> Serves real-time scheduling data, product inventories, and dynamic ticket pricing across both Mallow and Coachford locations.</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="showcase-media-box" onclick="openLightbox('images/00-ballyhass-master-architecture.jpg', 'Ballyhass Adventure Group Master Architecture: Tri-layer integration between Voiceflow conversational AI, orchestration middleware, and live booking API')">
+                        <img src="images/00-ballyhass-master-architecture.jpg" alt="Ballyhass Master Architecture Diagram" />
+                        <div class="img-overlay-badge">
+                            <i class="fas fa-search-plus"></i> View Master Architecture
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Feature 2: Voiceflow Conversational Canvas -->
+    <section class="section-separator" id="voiceflow-canvas">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-comments"></i> CONVERSATIONAL STATE MACHINE</div>
+                    <h2 class="showcase-h2">Deterministic Conversation Flow &amp; Booking Agent Plus</h2>
+                    <p class="showcase-p">
+                        The Voiceflow canvas orchestrates multiple specialized sub-agents: the <em>Main Agent</em> for initial intent recognition, <em>Booking Agent Plus</em> for structured ticket lookup, and an <em>Info Collector</em> fallback for complex customer service queries.
+                    </p>
+                    <ul class="feature-bullets">
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Strict Greeting Control:</strong> Enforces prompt guardrails preventing unnecessary repetitive greetings, keeping conversations concise and direct.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Brand-Neutral System Prompt:</strong> Formatted to prevent bias, ensuring activities, pricing, and rules are presented with total factual accuracy.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Graceful Human Escalation:</strong> If a customer request falls outside automated booking parameters, the conversation seamlessly routes to the Info Collector contact form.</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="showcase-media-box" onclick="openLightbox('images/01-voiceflow-conversational-canvas.jpg', 'Voiceflow Production Canvas: Main Agent, Basic Conversational Agent, Booking Agent Plus, and Info Collector flows')">
+                        <img src="images/01-voiceflow-conversational-canvas.jpg" alt="Voiceflow Conversational Canvas" />
+                        <div class="img-overlay-badge">
+                            <i class="fas fa-search-plus"></i> View Voiceflow Canvas
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Feature 3: Webhook API Integration Node -->
+    <section class="section-separator" id="api-integration-node">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-network-wired"></i> REST WEBHOOK INTEGRATION</div>
+                    <h2 class="showcase-h2">Dynamic Parameter Extraction &amp; Webhook Invocation</h2>
+                    <p class="showcase-p">
+                        Once the conversational layer extracts the normalized venue (<code>mallow</code>) and resolved date (<code>2026-01-23</code>), it triggers a high-speed REST webhook dispatching parameters directly to the orchestration middleware.
+                    </p>
+                    <ul class="feature-bullets">
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Standardized URL Parameters:</strong> <code>GET .../webhook/...?venue={venue}&amp;date={date}</code> passing validated query arguments.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Input Validation Layer:</strong> Voiceflow verifies variables match expected formats before the network request executes, eliminating invalid API roundtrips.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Asynchronous Timeout Handling:</strong> Built-in 2.5-second timeout safeguard that falls back to a friendly assistance message if the live venue API experiences network hiccups.</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="showcase-media-box" onclick="openLightbox('images/02-voiceflow-api-integration-node.jpg', 'Voiceflow API Integration Node Modal: Webhook URL, venue & date parameters, and live session variables')">
+                        <img src="images/02-voiceflow-api-integration-node.jpg" alt="Voiceflow API Integration Node" />
+                        <div class="img-overlay-badge">
+                            <i class="fas fa-search-plus"></i> View Webhook Node
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Feature 4: API Orchestration & Filtering Pipeline -->
+    <section class="section-separator" id="orchestration-pipeline">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-filter"></i> DATA FILTERING &amp; TRANSFORMATION</div>
+                    <h2 class="showcase-h2">API Orchestration Pipeline &amp; JavaScript Filtering</h2>
+                    <p class="showcase-p">
+                        Raw booking system APIs return massive, complex JSON payloads containing dozens of activities, past slots, and maintenance blocks. The orchestration pipeline transforms this raw data into an actionable response.
+                    </p>
+                    <ul class="feature-bullets">
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Conditional Branching (If Node):</strong> Evaluates whether both venue and date were supplied; branches to Discovery Mode if venue is unspecified.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Capacity Computation:</strong> JavaScript logic iterates through time slots, calculating <code>available = total - booked</code>, automatically stripping out sold-out slots.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Checkout Link Synthesis:</strong> Maps product IDs and slot timestamps into direct, authenticated checkout URLs embedded into interactive button payloads.</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="showcase-media-box" onclick="openLightbox('images/03-api-orchestration-pipeline.jpg', 'Production API Orchestration Pipeline: Webhook -> If Branch -> HTTP Request -> JavaScript Filter & Button Mapper')">
+                        <img src="images/03-api-orchestration-pipeline.jpg" alt="API Orchestration Pipeline" />
+                        <div class="img-overlay-badge">
+                            <i class="fas fa-search-plus"></i> View Orchestration Pipeline
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Feature 5: Customer UI & Presentation Layer -->
+    <section class="section-separator" id="chat-ui-presentation">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-mobile-screen"></i> FRONTEND PRESENTATION LAYER</div>
+                    <h2 class="showcase-h2">Customer Presentation Layer &amp; Time Slot Button Arrays</h2>
+                    <p class="showcase-p">
+                        Instead of walls of unformatted text, the customer receives a clean, mobile-responsive card layout showing exact pricing, remaining slots, and 1-click booking buttons.
+                    </p>
+                    <ul class="feature-bullets">
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Hierarchical Structure:</strong> Groups results cleanly by Category (e.g. <em>High Ropes &amp; Ziplining</em>) &rarr; Product (<em>Zip Trails &amp; Aerial Course</em>) &rarr; Time Slots.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Real-Time Capacity Indicators:</strong> Shows live spaces remaining (e.g. <em>"12 spaces remaining"</em>), creating natural urgency and transparency.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>1-Click Checkout:</strong> Clicking any time slot button navigates the customer directly to the final checkout step with date, venue, and product pre-selected.</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="showcase-media-box" onclick="openLightbox('images/04-ballyhass-chat-presentation-mockup.jpg', 'Customer Chatbot Interface & Live Data Transformation: Structured time slot cards and raw-to-clean JSON parsing')">
+                        <img src="images/04-ballyhass-chat-presentation-mockup.jpg" alt="Customer Chatbot Presentation Mockup" />
+                        <div class="img-overlay-badge">
+                            <i class="fas fa-search-plus"></i> View Presentation Interface
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technical Comparison Table Section -->
+    <section class="section-separator" id="technical-comparison">
+        <div class="wrapper">
+            <div class="section-header">
+                <div class="section-eyebrow"><i class="fas fa-table-columns"></i> TECHNICAL SPECIFICATIONS</div>
+                <h2 class="section-h2">Traditional Chatbots vs. Ballyhass Deterministic API Engine</h2>
+                <p class="section-p">
+                    A technical comparison detailing why event-driven API orchestration is essential for commercial booking chatbots.
+                </p>
+            </div>
+
+            <div class="table-wrap">
+                <table class="spec-table">
+                    <thead>
+                        <tr>
+                            <th>Capability Dimension</th>
+                            <th>Traditional Generic Chatbots</th>
+                            <th>Ballyhass Deterministic API Engine</th>
+                            <th>Commercial Impact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Inventory Accuracy</td>
+                            <td>Static knowledge base or hallucinated guesses</td>
+                            <td class="highlight">100% Live REST API Query &amp; Capacity Check</td>
+                            <td>Zero customer booking disputes at the venue</td>
+                        </tr>
+                        <tr>
+                            <td>Temporal Understanding</td>
+                            <td>Fails on relative dates ("next Friday")</td>
+                            <td class="highlight">Algorithmic Relative Date Resolution Engine</td>
+                            <td>Accurately converts colloquial language to ISO dates</td>
+                        </tr>
+                        <tr>
+                            <td>Venue Handling</td>
+                            <td>Requires exact string match or fails</td>
+                            <td class="highlight">Prefix Normalization &amp; Multi-Venue Discovery</td>
+                            <td>Supports natural language queries without friction</td>
+                        </tr>
+                        <tr>
+                            <td>Capacity Filtering</td>
+                            <td>Returns full day schedules regardless of slots</td>
+                            <td class="highlight">Dynamic Calculation: Available = Total - Booked</td>
+                            <td>Sold-out slots are automatically hidden from cards</td>
+                        </tr>
+                        <tr>
+                            <td>Checkout Navigation</td>
+                            <td>Dumps user onto generic booking homepage</td>
+                            <td class="highlight">Direct-to-Checkout Slot Button Arrays</td>
+                            <td>Dramatically reduces online booking abandonments</td>
+                        </tr>
+                        <tr>
+                            <td>End-to-End Latency</td>
+                            <td>3,000ms+ un-optimized roundtrip</td>
+                            <td class="highlight">&lt;480ms Webhook &amp; JavaScript Execution</td>
+                            <td>Instantaneous conversational flow and user satisfaction</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Stack Section -->
+    <section class="section-separator" id="tech-stack">
+        <div class="wrapper">
+            <div class="section-header">
+                <div class="section-eyebrow"><i class="fas fa-layer-group"></i> PRODUCTION TECH STACK</div>
+                <h2 class="section-h2">Engineered with Production-Grade Conversational &amp; API Tech</h2>
+                <p class="section-p">
+                    Built for extreme reliability, sub-second latency, and scalable multi-venue operations.
+                </p>
+            </div>
+
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <div class="tech-icon" style="color: var(--blue);"><i class="fas fa-brain"></i></div>
+                    <div class="tech-name">Voiceflow AI</div>
+                    <div class="tech-role">Conversational State Machine</div>
+                    <div class="tech-desc">Agentic conversation flow, strict greeting control, brand-neutral prompting, and intent parsing.</div>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon" style="color: var(--cyan);"><i class="fas fa-bolt"></i></div>
+                    <div class="tech-name">API Orchestration Engine</div>
+                    <div class="tech-role">Event-Driven Middleware</div>
+                    <div class="tech-desc">Webhook ingestion, conditional branching, live HTTP requests, and sub-second data filtering.</div>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon" style="color: var(--emerald);"><i class="fas fa-code"></i></div>
+                    <div class="tech-name">JavaScript &amp; JSON</div>
+                    <div class="tech-role">Capacity Math &amp; Link Mapping</div>
+                    <div class="tech-desc">Calculates remaining slot spaces, strips closed activities, and compiles checkout button payloads.</div>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon" style="color: var(--amber);"><i class="fas fa-calendar-days"></i></div>
+                    <div class="tech-name">Temporal Resolver</div>
+                    <div class="tech-role">Relative Date Calculation</div>
+                    <div class="tech-desc">Converts natural phrases ("this Friday", "next weekend") into standardized YYYY-MM-DD parameters.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Executive Ownership & Impact Card -->
+    <section class="section-separator" id="ownership-impact">
+        <div class="wrapper">
+            <div class="ownership-card">
+                <div class="ownership-grid">
+                    <div class="o-text">
+                        <div class="o-eyebrow"><i class="fas fa-award"></i> ENGINEERING LEADERSHIP &amp; IMPACT</div>
+                        <h2 class="o-h2">Architected from Concept to Live Production Deployment</h2>
+                        <p class="o-p">
+                            As the Lead AI &amp; API Architect, I designed and delivered the complete Ballyhass booking assistant ecosystem. By decoupling conversational intent from transactional API filtering, we achieved a 100% deterministic booking experience that eliminates hallucinations, resolves complex relative dates, and drives customers directly into completed online reservations.
+                        </p>
+                        <p class="o-p">
+                            The resulting platform operates with zero downtime, scales effortlessly across multiple activity centers, and provides a clean, maintainable codebase ready for future expansion.
+                        </p>
+                    </div>
+                    <div class="o-stats-grid">
+                        <div class="o-stat">
+                            <div class="o-stat-num">100%</div>
+                            <div class="o-stat-label">Deterministic Availability</div>
+                        </div>
+                        <div class="o-stat">
+                            <div class="o-stat-num">&lt;480ms</div>
+                            <div class="o-stat-label">End-to-End API Roundtrip</div>
+                        </div>
+                        <div class="o-stat">
+                            <div class="o-stat-num">0</div>
+                            <div class="o-stat-label">Hallucinated Booking Slots</div>
+                        </div>
+                        <div class="o-stat">
+                            <div class="o-stat-num">1-Click</div>
+                            <div class="o-stat-label">Direct Checkout Routing</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta-section">
+        <div class="wrapper">
+            <h2 class="cta-h2">Need Real-Time Booking AI &amp; API Orchestration?</h2>
+            <p class="cta-desc">
+                Discover how deterministic conversational agents, live API middleware, and sub-second data filtering can turn casual website visitors into confirmed customers.
+            </p>
+            <div class="cta-btn-row">
+                <a href="../index.html" class="btn-primary">
+                    <i class="fas fa-arrow-left"></i> Explore All Case Studies
+                </a>
+                <a href="https://linkedin.com/in/ahsantariq0724" target="_blank" class="btn-secondary">
+                    <i class="fab fa-linkedin"></i> Connect on LinkedIn
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Lightbox Modal -->
+    <div id="lightboxModal" class="lightbox-modal" onclick="closeLightbox(event)">
+        <div class="lightbox-container" onclick="event.stopPropagation()">
+            <button class="lightbox-close" onclick="closeLightbox(event)">&times;</button>
+            <img id="lightboxImg" src="" alt="Enlarged screenshot" />
+            <div id="lightboxCaption" class="lightbox-caption"></div>
+        </div>
+    </div>
+
+    <!-- Interactive JavaScript Logic -->
+    <script>
+        // Interactive Problem vs Solution Filter Engine
+        function setBallyhassFilter(mode) {
+            const btnBoth = document.getElementById('btnBoth');
+            const btnProblem = document.getElementById('btnProblem');
+            const btnSolution = document.getElementById('btnSolution');
+
+            btnBoth.className = 'compare-toggle-btn';
+            btnProblem.className = 'compare-toggle-btn';
+            btnSolution.className = 'compare-toggle-btn';
+
+            const rows = document.querySelectorAll('.compare-row');
+
+            if (mode === 'both') {
+                btnBoth.classList.add('active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr) minmax(0, 1fr)';
+                    r.querySelector('.compare-card.problem').style.display = 'block';
+                    r.querySelector('.compare-card.solution').style.display = 'block';
+                });
+            } else if (mode === 'problem') {
+                btnProblem.classList.add('active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr)';
+                    r.querySelector('.compare-card.problem').style.display = 'block';
+                    r.querySelector('.compare-card.solution').style.display = 'none';
+                });
+            } else if (mode === 'solution') {
+                btnSolution.classList.add('active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr)';
+                    r.querySelector('.compare-card.problem').style.display = 'none';
+                    r.querySelector('.compare-card.solution').style.display = 'block';
+                });
+            }
+        }
+
+        // Interactive Lightbox Engine
+        function openLightbox(src, caption) {
+            const modal = document.getElementById('lightboxModal');
+            const img = document.getElementById('lightboxImg');
+            const cap = document.getElementById('lightboxCaption');
+            img.src = src;
+            cap.innerText = caption;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(e) {
+            const modal = document.getElementById('lightboxModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+    </script>
+</body>
+</html>

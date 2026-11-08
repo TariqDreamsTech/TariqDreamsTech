@@ -1,0 +1,1857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hddisenos Enterprise Cloud Orchestration & AI Automation Fleet | Ahsan Tariq</title>
+    <meta name="description" content="Engineering hddisenos: A self-hosted enterprise cloud automation infrastructure & 57-pipeline fleet deployed on dedicated Linux VPS with Coolify PaaS, persistent PostgreSQL backend, Gemini multimodal AI pipelines, and multi-CRM syndication cutting manual workload by 60%.">
+    <meta name="keywords" content="hddisenos, henry.lat, Cloud Orchestration, Coolify PaaS, Self-Hosted Automation, Gemini Multimodal API, Facebook Graph API, HubSpot CRM, Zoho CRM, Telegram Bot API, PostgreSQL, AI Engineer, Event-Driven Architecture">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-base: #060911;
+            --bg-surface: #0b1120;
+            --bg-card: rgba(16, 24, 44, 0.7);
+            --bg-card-hover: rgba(22, 34, 62, 0.9);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(168, 85, 247, 0.35);
+            --purple: #a855f7;
+            --purple-glow: rgba(168, 85, 247, 0.25);
+            --cyan: #00f0ff;
+            --cyan-glow: rgba(0, 240, 255, 0.2);
+            --emerald: #10b981;
+            --emerald-glow: rgba(16, 185, 129, 0.2);
+            --rose: #f43f5e;
+            --rose-glow: rgba(244, 63, 94, 0.2);
+            --amber: #f59e0b;
+            --blue: #3b82f6;
+            --text-main: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-dim: #64748b;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Plus Jakarta Sans', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --gradient-accent: linear-gradient(135deg, #a855f7 0%, #00f0ff 50%, #10b981 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Glow Backgrounds */
+        .ambient-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .glow-1 {
+            position: absolute;
+            top: -10%;
+            left: 20%;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, rgba(6, 9, 17, 0) 70%);
+            border-radius: 50%;
+        }
+
+        .glow-2 {
+            position: absolute;
+            top: 40%;
+            right: -10%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.08) 0%, rgba(6, 9, 17, 0) 70%);
+            border-radius: 50%;
+        }
+
+        /* Sticky Navigation */
+        .case-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(6, 9, 17, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .nav-back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--cyan);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 9999px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-back-btn:hover {
+            background: rgba(0, 240, 255, 0.18);
+            border-color: var(--cyan);
+            transform: translateX(-2px);
+        }
+
+        .nav-title-group h1 {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-title-group span {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            font-family: var(--font-mono);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--cyan);
+        }
+
+        /* Container */
+        .page-container {
+            position: relative;
+            z-index: 10;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            padding-bottom: 4rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-badges-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .eyebrow-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.35rem 0.85rem;
+            background: rgba(168, 85, 247, 0.12);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #d8b4fe;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .eyebrow-badge.cyan {
+            background: rgba(0, 240, 255, 0.1);
+            border-color: rgba(0, 240, 255, 0.3);
+            color: var(--cyan);
+        }
+
+        .eyebrow-badge.emerald {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: var(--emerald);
+        }
+
+        .eyebrow-badge.rose {
+            background: rgba(244, 63, 94, 0.1);
+            border-color: rgba(244, 63, 94, 0.3);
+            color: var(--rose);
+        }
+
+        .hero-h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.25rem, 5vw, 3.75rem);
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            font-size: clamp(1.1rem, 2vw, 1.25rem);
+            color: var(--text-secondary);
+            max-width: 960px;
+            line-height: 1.7;
+        }
+
+        /* Executive Metrics Grid */
+        .exec-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        .exec-metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .exec-metric-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--border-hover);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .metric-card-accent {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gradient-accent);
+        }
+
+        .metric-val {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+            line-height: 1.1;
+        }
+
+        .metric-val.cyan { color: var(--cyan); }
+        .metric-val.emerald { color: var(--emerald); }
+        .metric-val.purple { color: var(--purple); }
+        .metric-val.amber { color: var(--amber); }
+
+        .metric-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .metric-sub {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            font-family: var(--font-mono);
+            margin-top: 0.25rem;
+        }
+
+        /* Hero Action Buttons */
+        .hero-cta-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.85rem 1.75rem;
+            background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-radius: 0.75rem;
+            text-decoration: none;
+            box-shadow: 0 4px 20px var(--purple-glow);
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(168, 85, 247, 0.45);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.85rem 1.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-radius: 0.75rem;
+            text-decoration: none;
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Section Separator */
+        .section-separator {
+            padding: 5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-header-box {
+            margin-bottom: 2.5rem;
+        }
+
+        .section-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.75rem;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--text-main);
+        }
+
+        .section-subtitle {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            max-width: 800px;
+        }
+
+        /* 3-Way Problem vs Solution Interactive Toggle */
+        .compare-controller {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            padding: 0.35rem;
+            border-radius: 9999px;
+            max-width: fit-content;
+            margin: 0 auto 2.5rem auto;
+        }
+
+        .compare-toggle-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 0.6rem 1.4rem;
+            border-radius: 9999px;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .compare-toggle-btn.active {
+            background: linear-gradient(135deg, #a855f7 0%, #00f0ff 100%);
+            color: #060911;
+            font-weight: 700;
+            box-shadow: 0 2px 12px rgba(0, 240, 255, 0.3);
+        }
+
+        .compare-matrix {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .compare-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 1.5rem;
+            align-items: stretch;
+            transition: all 0.3s ease;
+        }
+
+        .compare-card {
+            border-radius: 1rem;
+            padding: 1.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            border: 1px solid var(--border);
+            min-width: 0;
+            position: relative;
+        }
+
+        .compare-card.problem {
+            background: rgba(244, 63, 94, 0.04);
+            border-color: rgba(244, 63, 94, 0.2);
+        }
+
+        .compare-card.solution {
+            background: rgba(16, 185, 129, 0.04);
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        .compare-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .compare-card.problem .compare-tag { color: var(--rose); }
+        .compare-card.solution .compare-tag { color: var(--emerald); }
+
+        .compare-card-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .compare-card-text {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            line-height: 1.6;
+        }
+
+        .compare-impact-pill {
+            margin-top: auto;
+            padding: 0.5rem 0.85rem;
+            border-radius: 0.5rem;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            font-family: var(--font-mono);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .compare-card.problem .compare-impact-pill {
+            background: rgba(244, 63, 94, 0.1);
+            color: #fda4af;
+        }
+
+        .compare-card.solution .compare-impact-pill {
+            background: rgba(16, 185, 129, 0.1);
+            color: #6ee7b7;
+        }
+
+        /* Showcase Cards (Visual Hero Media + Dual Explanations) */
+        .showcase-block {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .hero-media-wrapper {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 1.25rem;
+            padding: 0.75rem;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .hero-media-wrapper:hover {
+            border-color: var(--border-hover);
+        }
+
+        .hero-media-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 0.75rem;
+            cursor: zoom-in;
+            transition: transform 0.3s ease;
+        }
+
+        .hero-media-wrapper:hover img {
+            transform: scale(1.008);
+        }
+
+        .media-caption-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 0.5rem 0.25rem 0.5rem;
+            font-size: 0.8125rem;
+            color: var(--text-dim);
+        }
+
+        .media-badge {
+            font-family: var(--font-mono);
+            color: var(--cyan);
+            font-weight: 600;
+        }
+
+        /* Dual-Box Analysis Layout (Plain English vs Technical Deep Dive) */
+        .dual-explanation-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 1.5rem;
+            min-width: 0;
+        }
+
+        .plain-english-box {
+            background: rgba(0, 240, 255, 0.03);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            border-radius: 1rem;
+            padding: 1.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-width: 0;
+        }
+
+        .plain-english-box h4 {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--cyan);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .plain-english-box p {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            line-height: 1.65;
+        }
+
+        .tech-deep-dive {
+            background: rgba(168, 85, 247, 0.03);
+            border: 1px solid rgba(168, 85, 247, 0.15);
+            border-radius: 1rem;
+            padding: 1.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-width: 0;
+        }
+
+        .tech-deep-dive h4 {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #d8b4fe;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-bullets {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .feature-bullet {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .feature-bullet i {
+            color: var(--emerald);
+            margin-top: 0.2rem;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        /* Code Snippet Window */
+        .code-window {
+            background: #080c16;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 0.85rem;
+            overflow: hidden;
+            font-family: var(--font-mono);
+            font-size: 0.8125rem;
+            margin-top: 0.5rem;
+        }
+
+        .code-window-header {
+            background: rgba(255, 255, 255, 0.04);
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+        }
+
+        .code-window-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .dot-red { background: #ef4444; }
+        .dot-yellow { background: #f59e0b; }
+        .dot-green { background: #10b981; }
+
+        .code-content {
+            padding: 1.25rem;
+            overflow-x: auto;
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+
+        .code-kw { color: #f43f5e; font-weight: 600; }
+        .code-fn { color: #38bdf8; }
+        .code-str { color: #34d399; }
+        .code-comment { color: #64748b; font-style: italic; }
+        .code-var { color: #fbbf24; }
+
+        /* Comparative Technical Table */
+        .table-container {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            overflow-x: auto;
+            margin-top: 1.5rem;
+        }
+
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+
+        .spec-table th {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-main);
+            font-family: var(--font-display);
+            font-weight: 700;
+            padding: 1.1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .spec-table td {
+            padding: 1.1rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: var(--text-secondary);
+        }
+
+        .spec-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .spec-table td strong {
+            color: var(--text-main);
+        }
+
+        .pill-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.25rem 0.65rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            font-family: var(--font-mono);
+        }
+
+        .pill-green {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--emerald);
+        }
+
+        .pill-red {
+            background: rgba(244, 63, 94, 0.12);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            color: var(--rose);
+        }
+
+        /* Tech Stack Grid */
+        .tech-stack-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1.5rem;
+        }
+
+        .tech-pill-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .tech-pill-card:hover {
+            border-color: var(--cyan);
+            transform: translateY(-2px);
+        }
+
+        .tech-icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 0.75rem;
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: var(--cyan);
+            flex-shrink: 0;
+        }
+
+        .tech-info h5 {
+            font-family: var(--font-display);
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .tech-info p {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+            line-height: 1.5;
+        }
+
+        /* Executive Ownership & Impact */
+        .ownership-card {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(11, 17, 32, 0.95) 100%);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 1.25rem;
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .role-highlight-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .role-title-box h3 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .role-title-box p {
+            color: var(--cyan);
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .role-duration-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 9999px;
+            color: var(--emerald);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            font-family: var(--font-mono);
+        }
+
+        .contributions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .contribution-item {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .contribution-item h5 {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 700;
+            color: #d8b4fe;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .contribution-item p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
+
+        /* Final CTA Section */
+        .cta-section {
+            background: radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.15) 0%, rgba(6, 9, 17, 0) 70%);
+            border-radius: 1.5rem;
+            border: 1px solid var(--border);
+            padding: 4rem 2rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: 5rem;
+        }
+
+        .cta-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 4vw, 2.75rem);
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .cta-desc {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 650px;
+        }
+
+        .cta-btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        /* Footer */
+        .case-footer {
+            border-top: 1px solid var(--border);
+            padding: 3rem 2rem;
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.875rem;
+            margin-top: 4rem;
+        }
+
+        .footer-brand {
+            font-family: var(--font-display);
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Lightbox Modal */
+        .lightbox-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(6, 9, 17, 0.95);
+            backdrop-filter: blur(10px);
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .lightbox-modal.active {
+            display: flex;
+        }
+
+        .lightbox-content-box {
+            max-width: 90vw;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+        }
+
+        .lightbox-img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 0.75rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+        }
+
+        .lightbox-caption {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-family: var(--font-mono);
+            text-align: center;
+        }
+
+        .lightbox-close-btn {
+            position: absolute;
+            top: -2.5rem;
+            right: 0;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .lightbox-close-btn:hover {
+            color: #ffffff;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 992px) {
+            .compare-row {
+                grid-template-columns: 1fr;
+            }
+            .dual-explanation-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav-links {
+                display: none;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .page-container {
+                padding: 1.5rem 1rem;
+            }
+            .case-nav {
+                padding: 0.75rem 1rem;
+            }
+            .hero-h1 {
+                font-size: 2rem;
+            }
+            .exec-metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            .compare-controller {
+                flex-direction: column;
+                width: 100%;
+            }
+            .compare-toggle-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Glow Backgrounds -->
+    <div class="ambient-glow">
+        <div class="glow-1"></div>
+        <div class="glow-2"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="case-nav">
+        <div class="nav-brand">
+            <a href="../../index.html" class="nav-back-btn">
+                <i class="fa-solid fa-arrow-left"></i> Main Portfolio
+            </a>
+            <div class="nav-title-group">
+                <h1>hddisenos Cloud Automation Fleet</h1>
+                <span>henry.lat · Dedicated Enterprise Infrastructure</span>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#master-architecture">Architecture</a></li>
+            <li><a href="#problem-solution">Problem vs Solution</a></li>
+            <li><a href="#production-cloud">Cloud VPS</a></li>
+            <li><a href="#fleet-management">57 Workflows</a></li>
+            <li><a href="#gemini-pipeline">Gemini AI</a></li>
+            <li><a href="#social-crm">Social & CRM</a></li>
+            <li><a href="#ownership-impact">Executive Impact</a></li>
+        </ul>
+    </nav>
+
+    <div class="page-container">
+
+        <!-- HERO SECTION -->
+        <header class="hero-section">
+            <div class="hero-badges-row">
+                <div class="eyebrow-badge">
+                    <i class="fa-solid fa-server"></i> Self-Hosted Cloud Infrastructure
+                </div>
+                <div class="eyebrow-badge cyan">
+                    <i class="fa-solid fa-network-wired"></i> 57 Production Workflows
+                </div>
+                <div class="eyebrow-badge emerald">
+                    <i class="fa-solid fa-shield-halved"></i> Dedicated VPS 95.217.22.200
+                </div>
+                <div class="eyebrow-badge rose">
+                    <i class="fa-solid fa-bolt"></i> 13.33s Average Latency
+                </div>
+            </div>
+
+            <h1 class="hero-h1">Enterprise Multi-Tenant Event Orchestration Platform & Cloud Infrastructure</h1>
+
+            <p class="hero-desc">
+                Architected, deployed, and scaled a self-hosted cloud automation engine for <strong>hddisenos</strong> (production domain <code style="color:var(--cyan); background:rgba(0,240,255,0.1); padding:0.15rem 0.4rem; border-radius:4px;">henry.lat</code>). Featuring containerized microservices managed via <strong>Coolify v4 PaaS</strong> on a dedicated Linux VPS with a persistent PostgreSQL backend, Google Gemini multimodal AI vision pipelines, automated automotive marketing on Facebook Graph API, and bi-directional multi-CRM synchronization (HubSpot & Zoho) cutting manual operational workload by <strong>60%</strong>.
+            </p>
+
+            <!-- Executive Metrics Grid -->
+            <div class="exec-metrics-grid">
+                <div class="exec-metric-card">
+                    <div class="metric-card-accent"></div>
+                    <div class="metric-val purple">57</div>
+                    <div class="metric-label">Active Production Pipelines</div>
+                    <div class="metric-sub">Distributed Fleet on henry.lat</div>
+                </div>
+
+                <div class="exec-metric-card">
+                    <div class="metric-card-accent"></div>
+                    <div class="metric-val emerald">60%</div>
+                    <div class="metric-label">Manual Workload Eliminated</div>
+                    <div class="metric-sub">Cross-Department Automations</div>
+                </div>
+
+                <div class="exec-metric-card">
+                    <div class="metric-card-accent"></div>
+                    <div class="metric-val cyan">13.33s</div>
+                    <div class="metric-label">Average Execution Latency</div>
+                    <div class="metric-sub">End-to-End Event Turnaround</div>
+                </div>
+
+                <div class="exec-metric-card">
+                    <div class="metric-card-accent"></div>
+                    <div class="metric-val amber">$0.00</div>
+                    <div class="metric-label">Per-Operation Cloud SaaS Tax</div>
+                    <div class="metric-sub">Self-Hosted Dedicated VPS</div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="hero-cta-group">
+                <a href="#master-architecture" class="btn-primary">
+                    <i class="fa-solid fa-sitemap"></i> Explore System Architecture
+                </a>
+                <a href="#production-cloud" class="btn-secondary">
+                    <i class="fa-solid fa-cloud"></i> View Cloud VPS Infrastructure
+                </a>
+                <a href="../index.html" class="btn-secondary">
+                    <i class="fa-solid fa-layer-group"></i> All 11 Case Studies
+                </a>
+            </div>
+        </header>
+
+        <!-- SECTION: INTERACTIVE PROBLEM VS SOLUTION -->
+        <section id="problem-solution" class="section-separator">
+            <div class="section-header-box" style="text-align: center;">
+                <span class="section-tag"><i class="fa-solid fa-scale-balanced"></i> Architectural Comparison</span>
+                <h2 class="section-title">The Operational Challenge vs. The Engineering Solution</h2>
+                <p class="section-subtitle" style="margin: 0.5rem auto 0 auto;">
+                    Explore how migrating from fragmented third-party SaaS tools to an owned, containerized event orchestration engine transformed operational velocity and eradicated cloud overhead.
+                </p>
+            </div>
+
+            <!-- 3-Way Controller -->
+            <div class="compare-controller">
+                <button id="btnBoth" class="compare-toggle-btn active" onclick="setHddFilter('both')">
+                    <i class="fa-solid fa-table-columns"></i> Side-by-Side View
+                </button>
+                <button id="btnProblem" class="compare-toggle-btn" onclick="setHddFilter('problem')">
+                    <i class="fa-solid fa-triangle-exclamation"></i> The Old Manual Way (Before)
+                </button>
+                <button id="btnSolution" class="compare-toggle-btn" onclick="setHddFilter('solution')">
+                    <i class="fa-solid fa-circle-check"></i> Self-Hosted Platform (After)
+                </button>
+            </div>
+
+            <div class="compare-matrix">
+                <!-- Row 1: Hosting & Cost Predictability -->
+                <div class="compare-row" data-kind="pair">
+                    <div class="compare-card problem">
+                        <span class="compare-tag"><i class="fa-solid fa-circle-xmark"></i> The Old Way: Cloud SaaS Subscription Lock-in</span>
+                        <h3 class="compare-card-title">Exponential Per-Task Costs & Artificial Rate Limits</h3>
+                        <p class="compare-card-text">
+                            Relying on commercial cloud automation vendors incurred punishing monthly bill spikes whenever lead generation surged. Workflows were throttled by strict execution tier limits, webhook queues timed out during traffic spikes, and third-party data residency raised privacy red flags.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fa-solid fa-arrow-trend-up"></i> $1,200+/mo SaaS overhead with zero host infrastructure ownership
+                        </div>
+                    </div>
+
+                    <div class="compare-card solution">
+                        <span class="compare-tag"><i class="fa-solid fa-circle-check"></i> The Engineering Solution: Dedicated Self-Hosted VPS</span>
+                        <h3 class="compare-card-title">100% Owned Containerized Infrastructure via Coolify PaaS</h3>
+                        <p class="compare-card-text">
+                            Deployed a dedicated Linux cloud instance (VPS <code style="color:var(--cyan);">95.217.22.200:8000</code>) orchestrating containerized event engines with a dedicated PostgreSQL backend. Uncapped workflow executions, zero per-run fees, strict local secret encryption, and complete data governance.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fa-solid fa-shield-heart"></i> Fixed VPS server footprint & unlimited monthly execution capacity
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Workflow Scale & Reliability -->
+                <div class="compare-row" data-kind="pair">
+                    <div class="compare-card problem">
+                        <span class="compare-tag"><i class="fa-solid fa-circle-xmark"></i> The Old Way: Fragmented Ad-Hoc Scripts</span>
+                        <h3 class="compare-card-title">Silent Failures & Manual Cross-Posting Overhead</h3>
+                        <p class="compare-card-text">
+                            Staff manually copied inventory into Facebook pages, manually generated marketing copy, and hand-keyed customer contact details between HubSpot and Zoho CRM. Scripts crashed silently without error notifications, leaving customers waiting and vehicle listings out of date.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fa-solid fa-clock"></i> 35+ hours/week lost to manual clerical entry and inventory copy-pasting
+                        </div>
+                    </div>
+
+                    <div class="compare-card solution">
+                        <span class="compare-tag"><i class="fa-solid fa-circle-check"></i> The Engineering Solution: 57 Unified Production Pipelines</span>
+                        <h3 class="compare-card-title">Fault-Tolerant Orchestration with Telegram Alert Hooks</h3>
+                        <p class="compare-card-text">
+                            Architected 57 production pipelines orchestrating vehicle feeds, AI copywriting, and multi-CRM state syncing in 13.33 seconds flat. Engineered intelligent retry guards, exponential backoff on API rate limits, and automated Telegram incident alerts for instant developer visibility.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fa-solid fa-bolt"></i> 60% workload reduction with automated failure detection and retries
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 3: Advanced AI Integration -->
+                <div class="compare-row" data-kind="pair">
+                    <div class="compare-card problem">
+                        <span class="compare-tag"><i class="fa-solid fa-circle-xmark"></i> The Old Way: Human Design Bottlenecks</span>
+                        <h3 class="compare-card-title">Days-Long Turnaround for Custom Artistic Deliverables</h3>
+                        <p class="compare-card-text">
+                            Transforming client photos into stylized watercolor art required human designers spending 45-90 minutes per asset in Photoshop. Orders bottlenecked over weekends, preventing rapid e-commerce fulfillment and causing high customer drop-off rates.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fa-solid fa-hourglass-half"></i> 24-48 hour fulfillment turnaround per individual pet portrait
+                        </div>
+                    </div>
+
+                    <div class="compare-card solution">
+                        <span class="compare-tag"><i class="fa-solid fa-circle-check"></i> The Engineering Solution: Gemini Multimodal AI Pipeline</span>
+                        <h3 class="compare-card-title">End-to-End Artistic Watercolor Synthesis in Under 15s</h3>
+                        <p class="compare-card-text">
+                            Integrated Google Gemini Multimodal API with dynamic prompt engineering for watercolor pet portraits. Automated image pre-validation, vision feature extraction, watercolor style rendering, high-res upscaling, and S3 CDN delivery direct to the client in real time.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Sub-15 second autonomous synthesis with zero human designer touch
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: MASTER ARCHITECTURE DIAGRAM -->
+        <section id="master-architecture" class="section-separator">
+            <div class="section-header-box">
+                <span class="section-tag"><i class="fa-solid fa-network-wired"></i> System Topography</span>
+                <h2 class="section-title">Master Cloud Architecture & 4-Tier Topology</h2>
+                <p class="section-subtitle">
+                    A holistic overview of hddisenos' dedicated Linux VPS hosting environment, containerized PostgreSQL persistence layer, secure domain ingress, and 57-workflow fleet categories.
+                </p>
+            </div>
+
+            <div class="showcase-block">
+                <div class="hero-media-wrapper">
+                    <img src="images/00-hddisenos-master-architecture.jpg" 
+                         alt="hddisenos Enterprise Cloud Orchestration Master Architecture Diagram" 
+                         onclick="openLightbox('images/00-hddisenos-master-architecture.jpg', 'Master Cloud Architecture: Dedicated Linux VPS hosting Coolify v4 PaaS, PostgreSQL persistence, and 57 production pipelines across Gemini AI, Facebook Syndication, and Dual-CRM sync.')">
+                    <div class="media-caption-bar">
+                        <span><i class="fa-solid fa-magnifying-glass-plus"></i> Click diagram to zoom in full resolution</span>
+                        <span class="media-badge">TOPOLOGY DIAGRAM · 1280 × 720 HIGH-RES</span>
+                    </div>
+                </div>
+
+                <!-- Dual Box Explanations -->
+                <div class="dual-explanation-grid">
+                    <div class="plain-english-box">
+                        <h4><i class="fa-solid fa-lightbulb"></i> In Plain English: How It Works</h4>
+                        <p>
+                            Think of this system as a <strong>private, 24/7 digital factory</strong> that lives on our own dedicated server. Instead of paying expensive monthly rental fees to commercial automation websites that charge for every single click and data transfer, we built our own private cloud engine.
+                        </p>
+                        <p>
+                            Whenever a customer orders a pet portrait, a car dealership adds a new vehicle, or a lead fills out an inquiry form, our server immediately hears about it. It analyzes the information, creates beautiful social media posts or AI artwork, updates both sales systems (HubSpot and Zoho), and sends instant confirmations—all in about 13 seconds without any human needing to touch a keyboard.
+                        </p>
+                    </div>
+
+                    <div class="tech-deep-dive">
+                        <h4><i class="fa-solid fa-microchip"></i> Technical Deep Dive: 4-Tier Engineering</h4>
+                        <ul class="feature-bullets">
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-server"></i>
+                                <div>
+                                    <strong>Dedicated Linux VPS & Coolify PaaS:</strong>
+                                    Hosted on a high-throughput Linux server (<code style="color:var(--cyan);">95.217.22.200:8000</code>) managed via Coolify v4.0.0 container orchestrator. Isolated Docker networks ensure complete process security.
+                                </div>
+                            </li>
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-database"></i>
+                                <div>
+                                    <strong>Stateful PostgreSQL Persistence:</strong>
+                                    Production service <code style="color:var(--emerald);">n8n-with-postgresql</code> maintains execution history, cached credentials, and transactional state with automated local snapshots and persistent volume mounts.
+                                </div>
+                            </li>
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-lock"></i>
+                                <div>
+                                    <strong>Enterprise Reverse Proxy & SSL:</strong>
+                                    Traffic routes through production domain <code style="color:var(--purple);">henry.lat</code> backed by automated Let's Encrypt TLS/SSL certificates, webhook signature verification, and OAuth2.0 token refreshes.
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: PRODUCTION CLOUD HOSTING ON DEDICATED VPS -->
+        <section id="production-cloud" class="section-separator">
+            <div class="section-header-box">
+                <span class="section-tag"><i class="fa-solid fa-cloud-arrow-up"></i> Infrastructure & DevOps</span>
+                <h2 class="section-title">Production Cloud VPS & Containerized Orchestration</h2>
+                <p class="section-subtitle">
+                    Live verification of the Coolify v4 production environment running the containerized orchestration service with persistent PostgreSQL database on our dedicated host.
+                </p>
+            </div>
+
+            <div class="showcase-block">
+                <div class="hero-media-wrapper">
+                    <img src="images/01-coolify-production-cloud.jpg" 
+                         alt="Coolify v4 Production Environment Dashboard for hddisenos" 
+                         onclick="openLightbox('images/01-coolify-production-cloud.jpg', 'Coolify v4 Dashboard: Production service n8n-with-postgresql running on dedicated VPS 95.217.22.200:8000 with healthy state and automated backups.')">
+                    <div class="media-caption-bar">
+                        <span><i class="fa-solid fa-shield-halved"></i> Live Host: 95.217.22.200:8000 | Coolify v4.0.0-beta.442</span>
+                        <span class="media-badge">INFRASTRUCTURE DASHBOARD</span>
+                    </div>
+                </div>
+
+                <div class="dual-explanation-grid">
+                    <div class="plain-english-box">
+                        <h4><i class="fa-solid fa-circle-question"></i> Why Dedicated Hosting Beats Third-Party Clouds</h4>
+                        <p>
+                            Most businesses use shared cloud services where prices scale with every task executed. At 50+ workflows running thousands of times per day, third-party bills quickly reach thousands of dollars per month while imposing restrictive rate limits.
+                        </p>
+                        <p>
+                            By self-hosting on our own private server with Coolify, we eliminated the monthly "cloud task tax" entirely. Our automations execute at lightning speed because our database and automation engine live on the same dedicated hardware, completely immune to external outages or API rate tier penalties.
+                        </p>
+                    </div>
+
+                    <div class="tech-deep-dive">
+                        <h4><i class="fa-solid fa-code"></i> Production Environment Configuration</h4>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                            The container stack is defined with strict security isolation, persistent volume mappings, and health checks to guarantee 99.9% operational uptime:
+                        </p>
+                        <div class="code-window">
+                            <div class="code-window-header">
+                                <div class="code-window-dots">
+                                    <span class="dot dot-red"></span>
+                                    <span class="dot dot-yellow"></span>
+                                    <span class="dot dot-green"></span>
+                                </div>
+                                <span>docker-compose.production.yml (Coolify PaaS)</span>
+                            </div>
+                            <pre class="code-content"><code><span class="code-kw">services:</span>
+  <span class="code-var">orchestrator:</span>
+    <span class="code-kw">image:</span> <span class="code-str">n8nio/n8n:latest</span>
+    <span class="code-kw">restart:</span> <span class="code-str">always</span>
+    <span class="code-kw">environment:</span>
+      - <span class="code-var">DB_TYPE</span>=<span class="code-str">postgresdb</span>
+      - <span class="code-var">DB_POSTGRESDB_HOST</span>=<span class="code-str">postgres</span>
+      - <span class="code-var">DB_POSTGRESDB_DATABASE</span>=<span class="code-str">n8n_prod_db</span>
+      - <span class="code-var">N8N_ENCRYPTION_KEY</span>=<span class="code-str">${SECURE_VAULT_KEY}</span>
+      - <span class="code-var">WEBHOOK_URL</span>=<span class="code-str">https://henry.lat/</span>
+      - <span class="code-var">EXECUTIONS_DATA_PRUNE</span>=<span class="code-str">true</span>
+      - <span class="code-var">EXECUTIONS_DATA_MAX_AGE</span>=<span class="code-str">168</span> <span class="code-comment"># 7 days rolling</span>
+    <span class="code-kw">volumes:</span>
+      - <span class="code-str">/data/coolify/orchestrator:/home/node/.n8n</span>
+  <span class="code-var">postgres:</span>
+    <span class="code-kw">image:</span> <span class="code-str">postgres:16-alpine</span>
+    <span class="code-kw">volumes:</span>
+      - <span class="code-str">/data/coolify/postgres:/var/lib/postgresql/data</span></code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: FLEET MANAGEMENT & RUNTIME OPTIMIZATION -->
+        <section id="fleet-management" class="section-separator">
+            <div class="section-header-box">
+                <span class="section-tag"><i class="fa-solid fa-chart-line"></i> Operations & Telemetry</span>
+                <h2 class="section-title">57-Pipeline Production Fleet & Runtime Telemetry</h2>
+                <p class="section-subtitle">
+                    Live operational metrics from henry.lat showing high-throughput execution cycles, sub-14 second turnaround, and automated incident recovery.
+                </p>
+            </div>
+
+            <div class="showcase-block">
+                <div class="hero-media-wrapper">
+                    <img src="images/02-henry-workflows-fleet.jpg" 
+                         alt="henry.lat Production Workflows Dashboard Overview" 
+                         onclick="openLightbox('images/02-henry-workflows-fleet.jpg', 'henry.lat Workflows Fleet: 57 active workflows across Gemini Pet Portrait Watercolor, Facebook Automotive Posting, and Telegram Legal Appeal Bots.')">
+                    <div class="media-caption-bar">
+                        <span><i class="fa-solid fa-server"></i> Domain: henry.lat/home/workflows | Total Fleet: 57 Active Pipelines</span>
+                        <span class="media-badge">PRODUCTION OVERVIEW</span>
+                    </div>
+                </div>
+
+                <div class="dual-explanation-grid">
+                    <div class="plain-english-box">
+                        <h4><i class="fa-solid fa-clock-rotate-left"></i> Managing 57 Automations Without Chaos</h4>
+                        <p>
+                            Running dozens of automated business processes simultaneously can easily turn into a maintenance nightmare if an API changes or an external service goes down.
+                        </p>
+                        <p>
+                            On our production dashboard at <code>henry.lat</code>, all 57 pipelines are organized into clear business domains. If Facebook or Telegram updates an API endpoint, our built-in error alert channels immediately notify us on Telegram with the exact step that needs attention, while the platform automatically retries the task up to 3 times with exponential backoff so no client data is ever lost.
+                        </p>
+                    </div>
+
+                    <div class="tech-deep-dive">
+                        <h4><i class="fa-solid fa-gauge-high"></i> Telemetry & Fault Tolerance Architecture</h4>
+                        <ul class="feature-bullets">
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-stopwatch"></i>
+                                <div>
+                                    <strong>13.33s Average Execution Latency:</strong>
+                                    Highly optimized node sequences with in-memory JSON buffering and batch API queries reduce processing time from minutes down to 13 seconds.
+                                </div>
+                            </li>
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-rotate-right"></i>
+                                <div>
+                                    <strong>Configurable Retry Mechanisms:</strong>
+                                    Nodes interacting with external third-party APIs (Facebook Graph, Telegram, Google Gemini) feature automated 3-tier exponential backoff retries (1s, 5s, 15s).
+                                </div>
+                            </li>
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-bell"></i>
+                                <div>
+                                    <strong>Dead-Letter Webhook Channel:</strong>
+                                    Any persistent error triggers an immediate JSON payload dispatch to a secure Telegram dev channel containing workflow ID, error stack trace, and execution link for 1-click debugging.
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: MULTIMODAL GENERATIVE AI PIPELINE -->
+        <section id="gemini-pipeline" class="section-separator">
+            <div class="section-header-box">
+                <span class="section-tag"><i class="fa-solid fa-wand-magic-sparkles"></i> Artificial Intelligence</span>
+                <h2 class="section-title">Multimodal Generative AI: Pet Portrait Watercolor</h2>
+                <p class="section-subtitle">
+                    Automated client image ingestion, Google Gemini multimodal vision analysis, dynamic watercolor styling prompts, and high-speed CDN delivery.
+                </p>
+            </div>
+
+            <div class="showcase-block">
+                <div class="hero-media-wrapper">
+                    <img src="images/03-gemini-pet-portrait-pipeline.jpg" 
+                         alt="Gemini Multimodal AI Pet Portrait Watercolor Pipeline Diagram" 
+                         onclick="openLightbox('images/03-gemini-pet-portrait-pipeline.jpg', 'Multimodal Generative AI Pipeline: 5-Stage architecture transforming user-uploaded pet photos into high-res watercolor artworks via Google Gemini API.')">
+                    <div class="media-caption-bar">
+                        <span><i class="fa-solid fa-palette"></i> Production Workflow: Pet Portrait Watercolor - Gemini</span>
+                        <span class="media-badge">AI PIPELINE ARCHITECTURE · 1280 × 720</span>
+                    </div>
+                </div>
+
+                <div class="dual-explanation-grid">
+                    <div class="plain-english-box">
+                        <h4><i class="fa-solid fa-heart"></i> In Plain English: Turning Pet Photos into Art</h4>
+                        <p>
+                            Customers upload a photo of their dog or cat through an online form. In the past, a graphic designer had to manually open the photo, mask out the messy background, apply digital paint brushes, and export the file.
+                        </p>
+                        <p>
+                            Now, our <strong>Gemini Multimodal AI pipeline</strong> inspects the photo instantly. It recognizes the pet's breed, fur color, and lighting, removes background clutter, and prompts Gemini with specialized artistic watercolor parameters. Within seconds, a high-resolution watercolor portrait is rendered, watermarked, uploaded to cloud storage, and sent straight to the customer's inbox.
+                        </p>
+                    </div>
+
+                    <div class="tech-deep-dive">
+                        <h4><i class="fa-solid fa-brain"></i> Gemini Multimodal Engineering Highlights</h4>
+                        <ul class="feature-bullets">
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-image"></i>
+                                <div>
+                                    <strong>Binary Buffer Ingestion & Normalization:</strong>
+                                    Image files (JPG, PNG, HEIC) are sanitized, stripped of sensitive EXIF metadata, and converted to Base64 buffers optimized for the Gemini vision endpoint.
+                                </div>
+                            </li>
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-sliders"></i>
+                                <div>
+                                    <strong>Dynamic Watercolor Prompt Synthesis:</strong>
+                                    The pipeline injects specialized styling directives: <em>"vibrant translucent watercolor wash, soft pigment bleeding, splattered granulation on cold-press paper, crisp focal detail on eyes and nose"</em>.
+                                </div>
+                            </li>
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                <div>
+                                    <strong>Automated S3 CDN Storage & Signing:</strong>
+                                    Synthesized assets are passed through a Sharp/Canvas node for subtle branding, saved to cloud storage, and assigned a time-limited signed download URL.
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: SOCIAL & CRM SYNDICATION ENGINE -->
+        <section id="social-crm" class="section-separator">
+            <div class="section-header-box">
+                <span class="section-tag"><i class="fa-solid fa-share-nodes"></i> Syndication & Sales</span>
+                <h2 class="section-title">Multi-Tenant Social Marketing & Dual CRM Sync</h2>
+                <p class="section-subtitle">
+                    Automated Facebook inventory publishing for automotive dealerships (Savvy Auto Sales & Northwest Indiana) synchronized bi-directionally with HubSpot and Zoho CRM.
+                </p>
+            </div>
+
+            <div class="showcase-block">
+                <div class="hero-media-wrapper">
+                    <img src="images/04-social-crm-syndication-engine.jpg" 
+                         alt="Multi-Tenant Automotive Social Syndication and CRM Sync Diagram" 
+                         onclick="openLightbox('images/04-social-crm-syndication-engine.jpg', 'Social Syndication Engine: Dealer management feed ingestion, Facebook Graph multi-page carousel publishing, and dual CRM synchronization.')">
+                    <div class="media-caption-bar">
+                        <span><i class="fa-brands fa-facebook"></i> Workflows: Facebook Post (Savvy Auto Sales & Northwest Indiana)</span>
+                        <span class="media-badge">SYNDICATION ARCHITECTURE · 1280 × 720</span>
+                    </div>
+                </div>
+
+                <div class="dual-explanation-grid">
+                    <div class="plain-english-box">
+                        <h4><i class="fa-solid fa-car"></i> In Plain English: Hands-Free Car Sales Marketing</h4>
+                        <p>
+                            Car dealerships need to post newly arrived vehicles to Facebook pages every single day to attract local buyers. When done by hand, sales managers spend 2 to 3 hours daily typing out mileage, prices, financing terms, and uploading car photos.
+                        </p>
+                        <p>
+                            Our automated social syndication engine continuously watches the dealership inventory. As soon as a car is ready for sale, it automatically writes an engaging sales post with verified vehicle specs, generates multi-photo carousels, and publishes directly to Facebook. When an interested buyer clicks or messages, their contact info is instantly added to both <strong>HubSpot</strong> and <strong>Zoho CRM</strong> for sales reps to call.
+                        </p>
+                    </div>
+
+                    <div class="tech-deep-dive">
+                        <h4><i class="fa-solid fa-diagram-project"></i> Facebook Graph API & Multi-CRM Technical Flow</h4>
+                        <ul class="feature-bullets">
+                            <li class="feature-bullet">
+                                <i class="fa-brands fa-facebook"></i>
+                                <div>
+                                    <strong>Long-Lived Page Access Token Management:</strong>
+                                    Configured OAuth2 refresh flows ensuring uninterrupted posting to multi-tenant Facebook pages without token expiration drops.
+                                </div>
+                            </li>
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-filter"></i>
+                                <div>
+                                    <strong>Inventory Deduplication in PostgreSQL:</strong>
+                                    Stores VIN hashes in the dedicated database. If a vehicle has already been published in the last 7 days, redundant postings are automatically suppressed.
+                                </div>
+                            </li>
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-arrows-split-up-and-left"></i>
+                                <div>
+                                    <strong>Dual CRM Schema Normalization:</strong>
+                                    Translates Facebook instant lead form payloads into unified JSON objects dispatched in parallel to HubSpot CRM (Contacts & Deals) and Zoho CRM (Accounts & Leads).
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: COMPARATIVE TECHNICAL SPECIFICATIONS TABLE -->
+        <section id="technical-comparison" class="section-separator">
+            <div class="section-header-box">
+                <span class="section-tag"><i class="fa-solid fa-table"></i> Technical Evaluation</span>
+                <h2 class="section-title">Comparative Technical Architecture Matrix</h2>
+                <p class="section-subtitle">
+                    Benchmarking the self-hosted hddisenos platform against traditional third-party SaaS cloud automation vendors.
+                </p>
+            </div>
+
+            <div class="table-container">
+                <table class="spec-table">
+                    <thead>
+                        <tr>
+                            <th>Architectural Metric</th>
+                            <th>Traditional Cloud SaaS (Zapier / Make)</th>
+                            <th>hddisenos Self-Hosted Platform (henry.lat)</th>
+                            <th>Operational Impact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Hosting & Infrastructure</strong></td>
+                            <td>Multi-tenant shared public cloud</td>
+                            <td><span class="pill-badge pill-green"><i class="fa-solid fa-server"></i> Dedicated Linux VPS (95.217.22.200)</span></td>
+                            <td>Complete hardware isolation & resource dedication</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Execution Cost Model</strong></td>
+                            <td>Per-task metering ($0.01 - $0.05 per step)</td>
+                            <td><span class="pill-badge pill-green"><i class="fa-solid fa-infinity"></i> Unlimited Free Executions</span></td>
+                            <td>Predictable $0.00 incremental cloud bill shock</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Database Backend</strong></td>
+                            <td>Vendor proprietary black-box storage</td>
+                            <td><span class="pill-badge pill-green"><i class="fa-solid fa-database"></i> Dedicated PostgreSQL 16</span></td>
+                            <td>Permanent relational audit logs & instant queries</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Execution Latency</strong></td>
+                            <td>30 - 180 seconds (shared worker queues)</td>
+                            <td><span class="pill-badge pill-green"><i class="fa-solid fa-bolt"></i> 13.33 seconds Average</span></td>
+                            <td>Real-time responsiveness for AI and CRM webhooks</td>
+                        </tr>
+                        <tr>
+                            <td><strong>AI Multimodal Integration</strong></td>
+                            <td>Limited basic text wrappers & extra charges</td>
+                            <td><span class="pill-badge pill-green"><i class="fa-solid fa-wand-magic-sparkles"></i> Native Gemini Multimodal API</span></td>
+                            <td>Autonomous vision analysis and artistic synthesis</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Enterprise CRM Sync</strong></td>
+                            <td>Fragmented 1-to-1 sync with data drift</td>
+                            <td><span class="pill-badge pill-green"><i class="fa-solid fa-arrows-split-up-and-left"></i> Dual Sync: HubSpot & Zoho</span></td>
+                            <td>Zero discrepancy between sales and accounting records</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Incident Notification</strong></td>
+                            <td>Delayed daily email digest</td>
+                            <td><span class="pill-badge pill-green"><i class="fa-brands fa-telegram"></i> Real-time Telegram Bot Alerts</span></td>
+                            <td>Sub-second incident alerting to engineering team</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECTION: PRODUCTION TECH STACK GRID -->
+        <section id="tech-stack" class="section-separator">
+            <div class="section-header-box">
+                <span class="section-tag"><i class="fa-solid fa-cubes"></i> Tools & Services</span>
+                <h2 class="section-title">Production Technology & Engineering Stack</h2>
+                <p class="section-subtitle">
+                    The modern open-source and enterprise APIs orchestrated across the 57-pipeline fleet.
+                </p>
+            </div>
+
+            <div class="tech-stack-grid">
+                <div class="tech-pill-card">
+                    <div class="tech-icon-box"><i class="fa-solid fa-ship"></i></div>
+                    <div class="tech-info">
+                        <h5>Coolify v4 PaaS</h5>
+                        <p>Self-hosted application platform managing Docker containers, reverse proxies, and automated deployment pipelines on VPS.</p>
+                    </div>
+                </div>
+
+                <div class="tech-pill-card">
+                    <div class="tech-icon-box"><i class="fa-solid fa-database"></i></div>
+                    <div class="tech-info">
+                        <h5>PostgreSQL 16 Engine</h5>
+                        <p>Stateful persistence layer storing workflow configurations, execution telemetry, credentials, and deduplication hashes.</p>
+                    </div>
+                </div>
+
+                <div class="tech-pill-card">
+                    <div class="tech-icon-box"><i class="fa-solid fa-brain"></i></div>
+                    <div class="tech-info">
+                        <h5>Google Gemini Multimodal API</h5>
+                        <p>State-of-the-art vision and multimodal models driving the automated Pet Portrait Watercolor artistic synthesis engine.</p>
+                    </div>
+                </div>
+
+                <div class="tech-pill-card">
+                    <div class="tech-icon-box"><i class="fa-brands fa-facebook"></i></div>
+                    <div class="tech-info">
+                        <h5>Facebook Graph API</h5>
+                        <p>Multi-page automotive inventory syndication, carousel generation, and lead generation instant form ingest.</p>
+                    </div>
+                </div>
+
+                <div class="tech-pill-card">
+                    <div class="tech-icon-box"><i class="fa-brands fa-hubspot"></i></div>
+                    <div class="tech-info">
+                        <h5>HubSpot CRM API</h5>
+                        <p>Enterprise customer relationship management handling automated contact creation, deal pipeline updates, and sales tasks.</p>
+                    </div>
+                </div>
+
+                <div class="tech-pill-card">
+                    <div class="tech-icon-box"><i class="fa-solid fa-briefcase"></i></div>
+                    <div class="tech-info">
+                        <h5>Zoho CRM API</h5>
+                        <p>Bi-directional customer and inventory account synchronization maintaining parity across international sales teams.</p>
+                    </div>
+                </div>
+
+                <div class="tech-pill-card">
+                    <div class="tech-icon-box"><i class="fa-brands fa-telegram"></i></div>
+                    <div class="tech-info">
+                        <h5>Telegram Bot API</h5>
+                        <p>Interactive compliance bot handling traffic citation appeal generation (Gestor Apelaciones) and real-time incident alerting.</p>
+                    </div>
+                </div>
+
+                <div class="tech-pill-card">
+                    <div class="tech-icon-box"><i class="fa-solid fa-key"></i></div>
+                    <div class="tech-info">
+                        <h5>OAuth2 & Secure Webhooks</h5>
+                        <p>Token lifecycle automation, encrypted environment secrets, and cryptographically verified payload webhooks.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: EXECUTIVE OWNERSHIP & QUANTIFIED BUSINESS IMPACT -->
+        <section id="ownership-impact" class="section-separator">
+            <div class="ownership-card">
+                <div class="role-highlight-row">
+                    <div class="role-title-box">
+                        <h3>AI Engineer · hddisenos</h3>
+                        <p><i class="fa-solid fa-location-dot"></i> Venezuela · Remote | Full-Time Engineering Leadership</p>
+                    </div>
+                    <div class="role-duration-badge">
+                        <i class="fa-solid fa-calendar-check"></i> Jun 2025 – Present (1 yr 6 mos)
+                    </div>
+                </div>
+
+                <p style="color: var(--text-secondary); font-size: 1.05rem; line-height: 1.7;">
+                    At <strong>hddisenos</strong>, I lead the architecture, deployment, and continuous optimization of the company's enterprise self-hosted automation infrastructure. By combining containerized orchestration on dedicated cloud instances with modern multimodal AI, we eliminated manual clerical bottlenecks and transformed disparate business operations into a unified, event-driven engine.
+                </p>
+
+                <div class="contributions-grid">
+                    <div class="contribution-item">
+                        <h5><i class="fa-solid fa-diagram-project"></i> Workflow Automation Fleet</h5>
+                        <p>Built 57 robust production pipelines that eliminated 60% of manual repetitive tasks across marketing, sales, accounting, and compliance teams.</p>
+                    </div>
+
+                    <div class="contribution-item">
+                        <h5><i class="fa-solid fa-plug-circle-bolt"></i> Cross-Platform API Integration</h5>
+                        <p>Connected complex REST/SOAP APIs, CRMs (HubSpot, Zoho), Google Sheets, and SQL databases with bidirectional data normalization and deduplication.</p>
+                    </div>
+
+                    <div class="contribution-item">
+                        <h5><i class="fa-solid fa-shield-halved"></i> Flow Reliability & Fault Tolerance</h5>
+                        <p>Implemented conditional routing, automated retries with exponential backoff, looping mechanisms, and instant Telegram incident alerting channels.</p>
+                    </div>
+
+                    <div class="contribution-item">
+                        <h5><i class="fa-solid fa-code-merge"></i> Custom Triggers & Webhooks</h5>
+                        <p>Developed custom nodes with webhook listeners, OAuth2 token lifecycle management, and payload signature verification for zero data loss.</p>
+                    </div>
+
+                    <div class="contribution-item">
+                        <h5><i class="fa-solid fa-lock"></i> Secure Cloud Deployments</h5>
+                        <p>Engineered environment-specific credential vaults, reverse proxy SSL ingress, and role-based access control (RBAC) on dedicated VPS.</p>
+                    </div>
+
+                    <div class="contribution-item">
+                        <h5><i class="fa-solid fa-users"></i> Agile Cross-Team Collaboration</h5>
+                        <p>Worked remotely with executive, design, and sales teams to deliver high-velocity, modular automations tightly aligned with business goals.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA SECTION -->
+        <section class="cta-section">
+            <h2 class="cta-h2">Ready to Automate Your Business Operations?</h2>
+            <p class="cta-desc">
+                From self-hosted private cloud infrastructure to multimodal generative AI and enterprise CRM synchronization, let's architect an automated ecosystem that cuts overhead and scales your company.
+            </p>
+            <div class="cta-btn-row">
+                <a href="mailto:ahsantariq.engineer@gmail.com" class="btn-primary">
+                    <i class="fa-solid fa-paper-plane"></i> Get in Touch
+                </a>
+                <a href="https://www.linkedin.com/in/ahsan-tariq-comp-engr/" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+                    <i class="fa-brands fa-linkedin"></i> Connect on LinkedIn
+                </a>
+                <a href="../index.html" class="btn-secondary">
+                    <i class="fa-solid fa-arrow-left"></i> Explore All 11 Case Studies
+                </a>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="case-footer">
+            <div class="footer-brand">Ahsan Tariq — AI & Automation Systems Engineer</div>
+            <p>© 2026 Ahsan Tariq. Engineered for hddisenos (henry.lat). Built with precision.</p>
+        </footer>
+
+    </div>
+
+    <!-- LIGHTBOX MODAL -->
+    <div id="lightboxModal" class="lightbox-modal" onclick="closeLightbox(event)">
+        <div class="lightbox-content-box" onclick="event.stopPropagation()">
+            <button class="lightbox-close-btn" onclick="closeLightbox()">&times;</button>
+            <img id="lightboxImg" class="lightbox-img" src="" alt="Enlarged Diagram">
+            <div id="lightboxCaption" class="lightbox-caption"></div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Interactive 3-Way Problem vs Solution Filter Engine
+        function setHddFilter(mode) {
+            const btnBoth = document.getElementById('btnBoth');
+            const btnProblem = document.getElementById('btnProblem');
+            const btnSolution = document.getElementById('btnSolution');
+
+            btnBoth.className = 'compare-toggle-btn';
+            btnProblem.className = 'compare-toggle-btn';
+            btnSolution.className = 'compare-toggle-btn';
+
+            const rows = document.querySelectorAll('.compare-row[data-kind="pair"]');
+
+            if (mode === 'both') {
+                btnBoth.classList.add('active');
+                rows.forEach(r => {
+                    r.style.display = 'grid';
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr) minmax(0, 1fr)';
+                    r.querySelector('.compare-card.problem').style.display = 'flex';
+                    r.querySelector('.compare-card.solution').style.display = 'flex';
+                });
+            } else if (mode === 'problem') {
+                btnProblem.classList.add('active');
+                rows.forEach(r => {
+                    r.style.display = 'block';
+                    r.querySelector('.compare-card.problem').style.display = 'flex';
+                    r.querySelector('.compare-card.solution').style.display = 'none';
+                });
+            } else if (mode === 'solution') {
+                btnSolution.classList.add('active');
+                rows.forEach(r => {
+                    r.style.display = 'block';
+                    r.querySelector('.compare-card.problem').style.display = 'none';
+                    r.querySelector('.compare-card.solution').style.display = 'flex';
+                });
+            }
+        }
+
+        // Lightbox Functions
+        function openLightbox(src, caption) {
+            const modal = document.getElementById('lightboxModal');
+            const img = document.getElementById('lightboxImg');
+            const cap = document.getElementById('lightboxCaption');
+            img.src = src;
+            cap.innerText = caption;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(e) {
+            const modal = document.getElementById('lightboxModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+    </script>
+</body>
+</html>

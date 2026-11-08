@@ -114,3 +114,9 @@ Research Projects/**
 
 # Embedded local repositories
 ranbval-core/
+
+# Video files and raw extraction frames
+*.webm
+case-studies/ambica-dovetail/video_frames/
+case-studies/ranbval-social/ranbval-demo.mp4
+case-studies/ranbval-social/video_frames/

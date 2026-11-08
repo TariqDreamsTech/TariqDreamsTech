@@ -1,0 +1,1895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autonomous Voice AI Agent, Smart Scheduling & Meeting Intelligence Platform | Ahsan Tariq</title>
+    <meta name="description" content="Engineering an autonomous AI-driven voice agent ecosystem built with Django, Retell AI, Cal.com, and Recall.ai. Enables conversational voice agents to qualify leads over the phone, resolve calendar availability in real time, generate multi-platform video meetings, and deliver structured post-meeting deal intelligence.">
+    <meta name="keywords" content="Retell AI, Voice Agent, Django Admin Sync, Cal.com API, Recall.ai, Conversational Telephony, Smart Scheduling, Google Meet, Zoom, MS Teams, Post-Meeting Intelligence, Celery, PostgreSQL, Webhook Orchestration, AI Engineer">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-base: #060911;
+            --bg-surface: #0b1120;
+            --bg-card: rgba(16, 24, 44, 0.7);
+            --bg-card-hover: rgba(22, 34, 62, 0.9);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(168, 85, 247, 0.35);
+            --purple: #a855f7;
+            --purple-glow: rgba(168, 85, 247, 0.25);
+            --cyan: #00f0ff;
+            --cyan-glow: rgba(0, 240, 255, 0.2);
+            --emerald: #10b981;
+            --emerald-glow: rgba(16, 185, 129, 0.2);
+            --rose: #f43f5e;
+            --rose-glow: rgba(244, 63, 94, 0.2);
+            --amber: #f59e0b;
+            --blue: #3b82f6;
+            --text-main: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-dim: #64748b;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Plus Jakarta Sans', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --gradient-accent: linear-gradient(135deg, #00f0ff 0%, #a855f7 50%, #10b981 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Glow Backgrounds */
+        .ambient-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .glow-1 {
+            position: absolute;
+            top: -10%;
+            left: 15%;
+            width: 750px;
+            height: 750px;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.1) 0%, rgba(6, 9, 17, 0) 70%);
+            border-radius: 50%;
+        }
+
+        .glow-2 {
+            position: absolute;
+            top: 45%;
+            right: -10%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, rgba(6, 9, 17, 0) 70%);
+            border-radius: 50%;
+        }
+
+        /* Sticky Navigation */
+        .case-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(6, 9, 17, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .nav-back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--cyan);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 9999px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-back-btn:hover {
+            background: rgba(0, 240, 255, 0.18);
+            border-color: var(--cyan);
+            transform: translateX(-2px);
+        }
+
+        .nav-title-group h1 {
+            font-family: var(--font-display);
+            font-size: 1.125rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-title-group span {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            font-family: var(--font-mono);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--cyan);
+        }
+
+        /* Container */
+        .page-container {
+            position: relative;
+            z-index: 10;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            padding-bottom: 4rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-badges-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .eyebrow-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.35rem 0.85rem;
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .eyebrow-badge.purple {
+            background: rgba(168, 85, 247, 0.12);
+            border-color: rgba(168, 85, 247, 0.3);
+            color: #d8b4fe;
+        }
+
+        .eyebrow-badge.emerald {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: var(--emerald);
+        }
+
+        .eyebrow-badge.amber {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: rgba(245, 158, 11, 0.3);
+            color: var(--amber);
+        }
+
+        .hero-h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.25rem, 5vw, 3.75rem);
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            font-size: clamp(1.1rem, 2vw, 1.25rem);
+            color: var(--text-secondary);
+            max-width: 960px;
+            line-height: 1.7;
+        }
+
+        /* Executive Metrics Grid */
+        .exec-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1rem;
+        }
+
+        .exec-metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .exec-metric-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--border-hover);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .metric-card-accent {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gradient-accent);
+        }
+
+        .metric-val {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+            line-height: 1.1;
+        }
+
+        .metric-val.cyan { color: var(--cyan); }
+        .metric-val.emerald { color: var(--emerald); }
+        .metric-val.purple { color: var(--purple); }
+        .metric-val.amber { color: var(--amber); }
+
+        .metric-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .metric-sub {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            font-family: var(--font-mono);
+            margin-top: 0.25rem;
+        }
+
+        /* Hero Action Buttons */
+        .hero-cta-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.85rem 1.75rem;
+            background: linear-gradient(135deg, #00f0ff 0%, #0284c7 100%);
+            color: #060911;
+            font-weight: 700;
+            font-size: 0.95rem;
+            border-radius: 0.75rem;
+            text-decoration: none;
+            box-shadow: 0 4px 20px var(--cyan-glow);
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 240, 255, 0.45);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.85rem 1.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-radius: 0.75rem;
+            text-decoration: none;
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Section Separator */
+        .section-separator {
+            padding: 5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-header-box {
+            margin-bottom: 2.5rem;
+        }
+
+        .section-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.75rem;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--text-main);
+        }
+
+        .section-subtitle {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            max-width: 800px;
+        }
+
+        /* 3-Way Problem vs Solution Interactive Toggle */
+        .compare-controller {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            padding: 0.35rem;
+            border-radius: 9999px;
+            max-width: fit-content;
+            margin: 0 auto 2.5rem auto;
+        }
+
+        .compare-toggle-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 0.6rem 1.4rem;
+            border-radius: 9999px;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .compare-toggle-btn.active {
+            background: linear-gradient(135deg, #00f0ff 0%, #a855f7 100%);
+            color: #060911;
+            font-weight: 700;
+            box-shadow: 0 2px 12px rgba(0, 240, 255, 0.3);
+        }
+
+        .compare-matrix {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .compare-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 1.5rem;
+            align-items: stretch;
+            transition: all 0.3s ease;
+        }
+
+        .compare-card {
+            border-radius: 1rem;
+            padding: 1.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            border: 1px solid var(--border);
+            min-width: 0;
+            position: relative;
+        }
+
+        .compare-card.problem {
+            background: rgba(244, 63, 94, 0.04);
+            border-color: rgba(244, 63, 94, 0.2);
+        }
+
+        .compare-card.solution {
+            background: rgba(16, 185, 129, 0.04);
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        .compare-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .compare-card.problem .compare-tag { color: var(--rose); }
+        .compare-card.solution .compare-tag { color: var(--emerald); }
+
+        .compare-card-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .compare-card-text {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            line-height: 1.6;
+        }
+
+        .compare-impact-pill {
+            margin-top: auto;
+            padding: 0.5rem 0.85rem;
+            border-radius: 0.5rem;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            font-family: var(--font-mono);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .compare-card.problem .compare-impact-pill {
+            background: rgba(244, 63, 94, 0.1);
+            color: #fda4af;
+        }
+
+        .compare-card.solution .compare-impact-pill {
+            background: rgba(16, 185, 129, 0.1);
+            color: #6ee7b7;
+        }
+
+        /* Showcase Cards (Visual Hero Media + Dual Explanations) */
+        .showcase-block {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .hero-media-wrapper {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 1.25rem;
+            padding: 0.75rem;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .hero-media-wrapper:hover {
+            border-color: var(--border-hover);
+        }
+
+        .hero-media-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 0.75rem;
+            cursor: zoom-in;
+            transition: transform 0.3s ease;
+        }
+
+        .hero-media-wrapper:hover img {
+            transform: scale(1.008);
+        }
+
+        .media-caption-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 0.5rem 0.25rem 0.5rem;
+            font-size: 0.8125rem;
+            color: var(--text-dim);
+        }
+
+        .media-badge {
+            font-family: var(--font-mono);
+            color: var(--cyan);
+            font-weight: 600;
+        }
+
+        /* Dual-Box Analysis Layout */
+        .dual-explanation-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 1.5rem;
+            min-width: 0;
+        }
+
+        .plain-english-box {
+            background: rgba(0, 240, 255, 0.03);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            border-radius: 1rem;
+            padding: 1.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-width: 0;
+        }
+
+        .plain-english-box h4 {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--cyan);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .plain-english-box p {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            line-height: 1.65;
+        }
+
+        .tech-deep-dive {
+            background: rgba(168, 85, 247, 0.03);
+            border: 1px solid rgba(168, 85, 247, 0.15);
+            border-radius: 1rem;
+            padding: 1.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            min-width: 0;
+        }
+
+        .tech-deep-dive h4 {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #d8b4fe;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-bullets {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .feature-bullet {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .feature-bullet i {
+            color: var(--emerald);
+            margin-top: 0.2rem;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        /* Code Snippet Window */
+        .code-window {
+            background: #080c16;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 0.85rem;
+            overflow: hidden;
+            font-family: var(--font-mono);
+            font-size: 0.8125rem;
+            margin-top: 0.5rem;
+        }
+
+        .code-window-header {
+            background: rgba(255, 255, 255, 0.04);
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+        }
+
+        .code-window-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .dot-red { background: #ef4444; }
+        .dot-yellow { background: #f59e0b; }
+        .dot-green { background: #10b981; }
+
+        .code-content {
+            padding: 1.25rem;
+            overflow-x: auto;
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+
+        .code-kw { color: #f43f5e; font-weight: 600; }
+        .code-fn { color: #38bdf8; }
+        .code-str { color: #34d399; }
+        .code-comment { color: #64748b; font-style: italic; }
+        .code-var { color: #fbbf24; }
+        .code-dec { color: #c084fc; }
+
+        /* Comparative Technical Table */
+        .table-container {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            overflow-x: auto;
+            margin-top: 1.5rem;
+        }
+
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+
+        .spec-table th {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-main);
+            font-family: var(--font-display);
+            font-weight: 700;
+            padding: 1.1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .spec-table td {
+            padding: 1.1rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: var(--text-secondary);
+        }
+
+        .spec-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .spec-table td strong {
+            color: var(--text-main);
+        }
+
+        .pill-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.25rem 0.65rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            font-family: var(--font-mono);
+        }
+
+        .pill-green {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--emerald);
+        }
+
+        .pill-red {
+            background: rgba(244, 63, 94, 0.12);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            color: var(--rose);
+        }
+
+        /* Tech Stack Grid */
+        .tech-stack-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1.5rem;
+        }
+
+        .tech-pill-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .tech-pill-card:hover {
+            border-color: var(--cyan);
+            transform: translateY(-2px);
+        }
+
+        .tech-icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 0.75rem;
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: var(--cyan);
+            flex-shrink: 0;
+        }
+
+        .tech-info h5 {
+            font-family: var(--font-display);
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .tech-info p {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+            line-height: 1.5;
+        }
+
+        /* Executive Ownership & Impact */
+        .ownership-card {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.08) 0%, rgba(11, 17, 32, 0.95) 100%);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 1.25rem;
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .role-highlight-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .role-title-box h3 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .role-title-box p {
+            color: var(--cyan);
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .role-duration-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 9999px;
+            color: var(--emerald);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            font-family: var(--font-mono);
+        }
+
+        .contributions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .contribution-item {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .contribution-item h5 {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 700;
+            color: #67e8f9;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .contribution-item p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
+
+        /* Final CTA Section */
+        .cta-section {
+            background: radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.15) 0%, rgba(6, 9, 17, 0) 70%);
+            border-radius: 1.5rem;
+            border: 1px solid var(--border);
+            padding: 4rem 2rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: 5rem;
+        }
+
+        .cta-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 4vw, 2.75rem);
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .cta-desc {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 650px;
+        }
+
+        .cta-btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        /* Footer */
+        .case-footer {
+            border-top: 1px solid var(--border);
+            padding: 3rem 2rem;
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.875rem;
+            margin-top: 4rem;
+        }
+
+        .footer-brand {
+            font-family: var(--font-display);
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Lightbox Modal */
+        .lightbox-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(6, 9, 17, 0.95);
+            backdrop-filter: blur(10px);
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .lightbox-modal.active {
+            display: flex;
+        }
+
+        .lightbox-content-box {
+            max-width: 90vw;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+        }
+
+        .lightbox-img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 0.75rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+        }
+
+        .lightbox-caption {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-family: var(--font-mono);
+            text-align: center;
+        }
+
+        .lightbox-close-btn {
+            position: absolute;
+            top: -2.5rem;
+            right: 0;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .lightbox-close-btn:hover {
+            color: #ffffff;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 992px) {
+            .compare-row {
+                grid-template-columns: 1fr;
+            }
+            .dual-explanation-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav-links {
+                display: none;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .page-container {
+                padding: 1.5rem 1rem;
+            }
+            .case-nav {
+                padding: 0.75rem 1rem;
+            }
+            .hero-h1 {
+                font-size: 2rem;
+            }
+            .exec-metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            .compare-controller {
+                flex-direction: column;
+                width: 100%;
+            }
+            .compare-toggle-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Glow Backgrounds -->
+    <div class="ambient-glow">
+        <div class="glow-1"></div>
+        <div class="glow-2"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="case-nav">
+        <div class="nav-brand">
+            <a href="../../index.html" class="nav-back-btn">
+                <i class="fa-solid fa-arrow-left"></i> Main Portfolio
+            </a>
+            <div class="nav-title-group">
+                <h1>Autonomous Voice AI Agent & Scheduling Platform</h1>
+                <span>Django 5.x · Retell AI · Cal.com · Recall.ai</span>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#master-architecture">Master Architecture</a></li>
+            <li><a href="#problem-solution">Problem vs Solution</a></li>
+            <li><a href="#django-sync">Django Admin Sync</a></li>
+            <li><a href="#voice-loop">Voice Qualification</a></li>
+            <li><a href="#smart-scheduling">Smart Scheduling</a></li>
+            <li><a href="#recall-intelligence">Meeting Intelligence</a></li>
+            <li><a href="#ownership-impact">Executive Impact</a></li>
+        </ul>
+    </nav>
+
+    <div class="page-container">
+
+        <!-- HERO SECTION -->
+        <header class="hero-section">
+            <div class="hero-badges-row">
+                <div class="eyebrow-badge">
+                    <i class="fa-solid fa-microphone-lines"></i> Retell AI Conversational Telephony
+                </div>
+                <div class="eyebrow-badge purple">
+                    <i class="fa-solid fa-arrows-rotate"></i> Two-Way Django Admin Sync
+                </div>
+                <div class="eyebrow-badge emerald">
+                    <i class="fa-solid fa-calendar-check"></i> Cal.com Smart Scheduling
+                </div>
+                <div class="eyebrow-badge amber">
+                    <i class="fa-solid fa-video"></i> Recall.ai Meeting Bot & Reporting
+                </div>
+            </div>
+
+            <h1 class="hero-h1">Autonomous AI Voice Agent, Real-Time Scheduling & Meeting Intelligence Platform</h1>
+
+            <p class="hero-desc">
+                Engineered an end-to-end autonomous voice agent ecosystem combining <strong>Django 5.x</strong>, <strong>Retell AI</strong>, <strong>Cal.com</strong>, and <strong>Recall.ai</strong>. The platform empowers AI voice agents to make inbound/outbound phone calls, qualify prospective clients through natural conversation, check calendar availability in real time, auto-generate Google Meet, Zoom, or Teams video sessions, and dispatch autonomous meeting bots that transcribe discussions and deliver structured executive reports to sales teams.
+            </p>
+
+            <!-- Executive Metrics Grid -->
+            <div class="exec-metrics-grid">
+                <div class="exec-metric-card">
+                    <div class="metric-card-accent"></div>
+                    <div class="metric-val cyan">&lt;800ms</div>
+                    <div class="metric-label">Voice Conversational Latency</div>
+                    <div class="metric-sub">STT + LLM + Neural TTS Loop</div>
+                </div>
+
+                <div class="exec-metric-card">
+                    <div class="metric-card-accent"></div>
+                    <div class="metric-val emerald">78%</div>
+                    <div class="metric-label">Booking Cycle Reduction</div>
+                    <div class="metric-sub">From Days to Under 3 Minutes</div>
+                </div>
+
+                <div class="exec-metric-card">
+                    <div class="metric-card-accent"></div>
+                    <div class="metric-val purple">100%</div>
+                    <div class="metric-label">Two-Way Django Admin Parity</div>
+                    <div class="metric-sub">Zero Prompt & Script Drift</div>
+                </div>
+
+                <div class="exec-metric-card">
+                    <div class="metric-card-accent"></div>
+                    <div class="metric-val amber">100%</div>
+                    <div class="metric-label">Post-Meeting Intelligence</div>
+                    <div class="metric-sub">Automated Dossiers via Recall.ai</div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="hero-cta-group">
+                <a href="#master-architecture" class="btn-primary">
+                    <i class="fa-solid fa-sitemap"></i> Explore System Architecture
+                </a>
+                <a href="#django-sync" class="btn-secondary">
+                    <i class="fa-solid fa-arrows-spin"></i> View Two-Way Admin Sync
+                </a>
+                <a href="../index.html" class="btn-secondary">
+                    <i class="fa-solid fa-layer-group"></i> All 12 Case Studies
+                </a>
+            </div>
+        </header>
+
+        <!-- SECTION: INTERACTIVE PROBLEM VS SOLUTION -->
+        <section id="problem-solution" class="section-separator">
+            <div class="section-header-box" style="text-align: center;">
+                <span class="section-tag"><i class="fa-solid fa-scale-balanced"></i> Architectural Evaluation</span>
+                <h2 class="section-title">The Operational Challenge vs. The Engineering Solution</h2>
+                <p class="section-subtitle" style="margin: 0.5rem auto 0 auto;">
+                    Explore how replacing manual SDR outreach and fragmented scheduling with an orchestrated AI telephony and meeting intelligence backend transformed sales velocity.
+                </p>
+            </div>
+
+            <!-- 3-Way Controller -->
+            <div class="compare-controller">
+                <button id="btnBoth" class="compare-toggle-btn active" onclick="setVoiceFilter('both')">
+                    <i class="fa-solid fa-table-columns"></i> Side-by-Side View
+                </button>
+                <button id="btnProblem" class="compare-toggle-btn" onclick="setVoiceFilter('problem')">
+                    <i class="fa-solid fa-triangle-exclamation"></i> The Old Manual Way (Before)
+                </button>
+                <button id="btnSolution" class="compare-toggle-btn" onclick="setVoiceFilter('solution')">
+                    <i class="fa-solid fa-circle-check"></i> Autonomous AI Platform (After)
+                </button>
+            </div>
+
+            <div class="compare-matrix">
+                <!-- Row 1: Lead Qualification & Phone Outreach -->
+                <div class="compare-row" data-kind="pair">
+                    <div class="compare-card problem">
+                        <span class="compare-tag"><i class="fa-solid fa-circle-xmark"></i> The Old Way: Manual SDR Cold Calling</span>
+                        <h3 class="compare-card-title">Slow Follow-Up Times & High Lead Decay</h3>
+                        <p class="compare-card-text">
+                            Sales development representatives spent hours dialing cold lists with low answer rates. Incoming web inquiries sat in inboxes for 6 to 24 hours before a human called, leading to missed opportunities and cold prospects who had already moved on to competitors.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fa-solid fa-hourglass-half"></i> 12–24 hour lead response lag with &lt;18% contact rates
+                        </div>
+                    </div>
+
+                    <div class="compare-card solution">
+                        <span class="compare-tag"><i class="fa-solid fa-circle-check"></i> The Engineering Solution: Retell AI Voice Agents</span>
+                        <h3 class="compare-card-title">Instant Sub-Second Inbound & Outbound Calling</h3>
+                        <p class="compare-card-text">
+                            Retell AI voice agents initiate outbound calls within 60 seconds of lead submission or answer inbound calls 24/7. With conversational latency under 800ms, the AI engages prospects in natural, human-like dialogue, conducts multi-step qualification, and records responses.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fa-solid fa-bolt"></i> &lt;60 second lead response with 3.2x higher conversation completion
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Meeting Scheduling & Calendar Friction -->
+                <div class="compare-row" data-kind="pair">
+                    <div class="compare-card problem">
+                        <span class="compare-tag"><i class="fa-solid fa-circle-xmark"></i> The Old Way: Back-and-Forth Email Scheduling</span>
+                        <h3 class="compare-card-title">Timezone Confusion & Link Drop-Offs</h3>
+                        <p class="compare-card-text">
+                            Reps manually sent booking links via email. Prospects forgot to click them, struggled with timezone discrepancies, or encountered calendar conflicts. When video calls were finally arranged, generating Zoom or Teams links was done manually with frequent configuration mistakes.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fa-solid fa-calendar-xmark"></i> 42% drop-off between verbal interest and confirmed calendar invite
+                        </div>
+                    </div>
+
+                    <div class="compare-card solution">
+                        <span class="compare-tag"><i class="fa-solid fa-circle-check"></i> The Engineering Solution: Cal.com Live API Integration</span>
+                        <h3 class="compare-card-title">Real-Time In-Call Slot Booking Across Video Platforms</h3>
+                        <p class="compare-card-text">
+                            Integrated Cal.com v2 API so the voice agent queries real-time sales rep availability mid-call, suggests conflict-free slots in the prospect's local timezone, and books verbally. Automatically provisions Google Meet, Zoom, or Microsoft Teams video links with instant SMS and email calendar dispatch.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fa-solid fa-calendar-check"></i> 78% reduction in booking cycle with 0% double-booking errors
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 3: Post-Meeting Documentation & CRM Sync -->
+                <div class="compare-row" data-kind="pair">
+                    <div class="compare-card problem">
+                        <span class="compare-tag"><i class="fa-solid fa-circle-xmark"></i> The Old Way: Forgotten Call Notes & Lost Context</span>
+                        <h3 class="compare-card-title">Inconsistent CRM Hygiene & Delayed Follow-Ups</h3>
+                        <p class="compare-card-text">
+                            Account executives attended 6–8 customer calls daily and frequently failed to log detailed meeting notes. Key prospect objections, technical requirements, and agreed next action items were lost or delayed by days, causing post-demo deals to stall.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fa-solid fa-file-excel"></i> 65% of CRM meeting records lacked structured pain points or timelines
+                        </div>
+                    </div>
+
+                    <div class="compare-card solution">
+                        <span class="compare-tag"><i class="fa-solid fa-circle-check"></i> The Engineering Solution: Recall.ai Autonomous Meeting Intelligence</span>
+                        <h3 class="compare-card-title">Automated Meeting Ingress, Diarization & Deal Dossiers</h3>
+                        <p class="compare-card-text">
+                            An autonomous Recall.ai meeting bot enters scheduled Google Meet, Zoom, or Teams sessions, captures multi-speaker audio, runs Whisper Large-v3 diarization, and triggers a Django Celery pipeline that extracts executive summaries, prospect objections, pain points, and deal probabilities sent to Slack.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fa-solid fa-file-lines"></i> 100% automated post-call documentation delivered in under 5 minutes
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 4: Business Logic & Script Synchronization -->
+                <div class="compare-row" data-kind="pair">
+                    <div class="compare-card problem">
+                        <span class="compare-tag"><i class="fa-solid fa-circle-xmark"></i> The Old Way: Disconnected AI Configuration</span>
+                        <h3 class="compare-card-title">Hardcoded Prompts & Operational Drift</h3>
+                        <p class="compare-card-text">
+                            Whenever sales scripts, qualification criteria, or voice personas needed updating, developers had to manually edit codebases or log into third-party dashboards. Non-technical marketing and sales managers were unable to tweak prompts without engineering intervention.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Days of developer lag to roll out updated objection handling prompts
+                        </div>
+                    </div>
+
+                    <div class="compare-card solution">
+                        <span class="compare-tag"><i class="fa-solid fa-circle-check"></i> The Engineering Solution: Two-Way Django Admin Sync Engine</span>
+                        <h3 class="compare-card-title">Instant Hot-Reloading from Django Admin to Retell AI</h3>
+                        <p class="compare-card-text">
+                            Architected a robust two-way synchronization layer using Django model signals (`post_save`). Edits to voice agent personas, qualification scripts, model temperature, or assignees in Django Admin immediately patch the live Retell AI agent API with zero downtime.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fa-solid fa-arrows-rotate"></i> Sub-second live prompt hot-reloading with complete audit history
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: MASTER ARCHITECTURE -->
+        <section id="master-architecture" class="section-separator">
+            <div class="section-header-box">
+                <span class="section-tag"><i class="fa-solid fa-sitemap"></i> System Topology</span>
+                <h2 class="section-title">Master End-to-End Orchestration Architecture</h2>
+                <p class="section-subtitle">
+                    A holistic architectural breakdown showing how Django coordinates Retell AI conversational voice agents, Cal.com real-time scheduling, and Recall.ai post-meeting intelligence pipelines.
+                </p>
+            </div>
+
+            <div class="showcase-block">
+                <div class="hero-media-wrapper">
+                    <img src="images/00-master-voice-orchestration-architecture.jpg" 
+                         alt="Master Architecture Diagram for Django Retell AI Cal.com and Recall.ai Platform" 
+                         onclick="openLightbox('images/00-master-voice-orchestration-architecture.jpg', 'Master Architecture Diagram: Django 5.x Backend Orchestrator, Retell AI Sub-800ms Voice Telephony, Cal.com Smart Scheduling API, and Recall.ai Autonomous Meeting Intelligence.')">
+                    <div class="media-caption-bar">
+                        <span><i class="fa-solid fa-magnifying-glass-plus"></i> Click diagram to zoom in full 1280 × 720 resolution</span>
+                        <span class="media-badge">MASTER TOPOLOGY · HIGH-RES</span>
+                    </div>
+                </div>
+
+                <!-- Dual Box Explanations -->
+                <div class="dual-explanation-grid">
+                    <div class="plain-english-box">
+                        <h4><i class="fa-solid fa-lightbulb"></i> In Plain English: How the Platform Works</h4>
+                        <p>
+                            Imagine having an <strong>indefatigable, 24/7 AI sales team</strong> that never sleeps, never forgets to follow up, and handles the entire sales cycle from the first phone call to the post-meeting executive summary.
+                        </p>
+                        <p>
+                            When a customer requests information, our AI voice agent calls them immediately. It sounds completely human, asks questions to see if they are a good fit, checks our team's calendar in real time, and books a video meeting on Google Meet, Zoom, or Teams. When the meeting takes place, an automated AI assistant joins the call, listens carefully, and emails our sales team a structured report with everything discussed, what the buyer was worried about, and the recommended next steps.
+                        </p>
+                    </div>
+
+                    <div class="tech-deep-dive">
+                        <h4><i class="fa-solid fa-microchip"></i> Technical Deep Dive: 4-Pillar Engineering</h4>
+                        <ul class="feature-bullets">
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-server"></i>
+                                <div>
+                                    <strong>Django 5.x Orchestration Core:</strong>
+                                    Maintains system state, agent configurations, call sessions, and customer dossiers in PostgreSQL, backed by Celery distributed background workers and Redis cache.
+                                </div>
+                            </li>
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-phone-volume"></i>
+                                <div>
+                                    <strong>Retell AI Conversational Voice Engine:</strong>
+                                    Full-duplex WebSocket audio streaming, sub-150ms Deepgram Nova-2 transcription, low-latency LLM reasoning, and ElevenLabs neural voice generation with interruptibility.
+                                </div>
+                            </li>
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-calendar-days"></i>
+                                <div>
+                                    <strong>Cal.com Dynamic Scheduling Gateway:</strong>
+                                    Live slot discovery via REST API, automatic timezone reconciliation, and multi-tenant video link provisioning (Google Meet, Zoom, MS Teams).
+                                </div>
+                            </li>
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-video"></i>
+                                <div>
+                                    <strong>Recall.ai Autonomous Meeting Bot:</strong>
+                                    Headless meeting bot ingress, speaker diarization, audio capture, Whisper transcription, and structured deal scoring dispatched to Django webhooks.
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: DJANGO ADMIN TWO-WAY SYNC -->
+        <section id="django-sync" class="section-separator">
+            <div class="section-header-box">
+                <span class="section-tag"><i class="fa-solid fa-arrows-spin"></i> Synchronization Engine</span>
+                <h2 class="section-title">Two-Way Django Admin Synchronization Architecture</h2>
+                <p class="section-subtitle">
+                    How updates to agent personas, scripts, and qualification logic in Django Admin automatically mutate live Retell AI voice agents with zero downtime.
+                </p>
+            </div>
+
+            <div class="showcase-block">
+                <div class="hero-media-wrapper">
+                    <img src="images/01-django-admin-twoway-sync.jpg" 
+                         alt="Django Admin Two-Way Synchronization Diagram" 
+                         onclick="openLightbox('images/01-django-admin-twoway-sync.jpg', 'Two-Way Django Admin Sync: Django model signals trigger Celery workers to patch Retell AI Agent API, while Retell webhooks stream call telemetry back to PostgreSQL.')">
+                    <div class="media-caption-bar">
+                        <span><i class="fa-solid fa-code-compare"></i> Real-Time Model Signals & Webhook Feedback Loop</span>
+                        <span class="media-badge">TWO-WAY SYNC ARCHITECTURE</span>
+                    </div>
+                </div>
+
+                <div class="dual-explanation-grid">
+                    <div class="plain-english-box">
+                        <h4><i class="fa-solid fa-sliders"></i> Non-Technical Overview: Admin-Driven Control</h4>
+                        <p>
+                            Sales scripts and pricing change constantly. In traditional setups, if marketing wanted to update a phone agent's script or change how it answers pricing questions, an engineer had to rewrite code and redeploy the server.
+                        </p>
+                        <p>
+                            With our <strong>Two-Way Django Admin Sync</strong>, any authorized business manager can simply log into the familiar Django Admin portal, update the prompt or qualifying questions, and click Save. The system immediately reaches out to the live voice AI and updates its brain instantly. When calls finish, the AI sends the recording, transcript, and customer mood back into the Django database for full audit visibility.
+                        </p>
+                    </div>
+
+                    <div class="tech-deep-dive">
+                        <h4><i class="fa-solid fa-code"></i> Django Signals & API Mutation Implementation</h4>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                            We leverage Django's <code style="color:var(--cyan);">post_save</code> signals combined with Celery tasks to decouple admin UI response times from external third-party API latency:
+                        </p>
+                        <div class="code-window">
+                            <div class="code-window-header">
+                                <div class="code-window-dots">
+                                    <span class="dot dot-red"></span>
+                                    <span class="dot dot-yellow"></span>
+                                    <span class="dot dot-green"></span>
+                                </div>
+                                <span>signals.py (Django Two-Way Sync Engine)</span>
+                            </div>
+                            <pre class="code-content"><code><span class="code-dec">@receiver</span>(<span class="code-var">post_save</span>, <span class="code-kw">sender</span>=<span class="code-var">VoiceAgentConfig</span>)
+<span class="code-kw">def</span> <span class="code-fn">sync_retell_agent_on_save</span>(<span class="code-var">sender</span>, <span class="code-var">instance</span>, <span class="code-var">created</span>, **<span class="code-var">kwargs</span>):
+    <span class="code-comment"># Compute payload delta & dispatch async sync worker</span>
+    <span class="code-var">payload</span> = {
+        <span class="code-str">"agent_name"</span>: <span class="code-var">instance</span>.<span class="code-var">name</span>,
+        <span class="code-str">"voice_id"</span>: <span class="code-var">instance</span>.<span class="code-var">voice_id</span>,
+        <span class="code-str">"llm_websocket_url"</span>: <span class="code-var">instance</span>.<span class="code-var">custom_llm_url</span>,
+        <span class="code-str">"interruption_sensitivity"</span>: <span class="code-var">instance</span>.<span class="code-var">interruption_sensitivity</span>,
+        <span class="code-str">"general_prompt"</span>: <span class="code-var">instance</span>.<span class="code-fn">compile_dynamic_system_prompt</span>(),
+    }
+    <span class="code-comment"># Enqueue Celery task with exponential retry guard</span>
+    <span class="code-var">sync_retell_agent_task</span>.<span class="code-fn">delay</span>(<span class="code-var">instance</span>.<span class="code-var">retell_agent_id</span>, <span class="code-var">payload</span>)</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: CONVERSATIONAL AI QUALIFICATION LOOP -->
+        <section id="voice-loop" class="section-separator">
+            <div class="section-header-box">
+                <span class="section-tag"><i class="fa-solid fa-microphone-lines"></i> Voice AI Telephony</span>
+                <h2 class="section-title">Sub-800ms Conversational Telephony & Lead Qualification</h2>
+                <p class="section-subtitle">
+                    Full-duplex audio streaming, ultra-low latency speech-to-text, adaptive LLM reasoning, and interruptible neural voice synthesis.
+                </p>
+            </div>
+
+            <div class="showcase-block">
+                <div class="hero-media-wrapper">
+                    <img src="images/02-voice-agent-conversational-loop.jpg" 
+                         alt="Sub-800ms Voice Agent Conversational Loop Diagram" 
+                         onclick="openLightbox('images/02-voice-agent-conversational-loop.jpg', 'Conversational AI Qualification Loop: 5-Step architecture from Deepgram Nova-2 speech-to-text through custom LLM qualification logic and ElevenLabs neural TTS to Cal.com tool calling.')">
+                    <div class="media-caption-bar">
+                        <span><i class="fa-solid fa-stopwatch"></i> Telephony Audio Pipeline & Conversational Latency &lt;800ms</span>
+                        <span class="media-badge">VOICE PIPELINE ARCHITECTURE</span>
+                    </div>
+                </div>
+
+                <div class="dual-explanation-grid">
+                    <div class="plain-english-box">
+                        <h4><i class="fa-solid fa-comments"></i> In Plain English: Talking Like a Real Human</h4>
+                        <p>
+                            Older phone robots sounded robotic, paused awkwardly for several seconds after you spoke, and got confused if you interrupted them.
+                        </p>
+                        <p>
+                            Our Retell AI voice agent responds in <strong>less than 800 milliseconds</strong>—faster than a human breath. It listens through Deepgram speech recognition, analyzes what you said, and speaks back using realistic neural voices that include natural pauses, tone inflections, and breath. If the customer interrupts to ask a question, the agent immediately stops speaking, listens politely, and adapts its response without losing track of the sales qualification criteria.
+                        </p>
+                    </div>
+
+                    <div class="tech-deep-dive">
+                        <h4><i class="fa-solid fa-brain"></i> Dynamic Qualification State Machine</h4>
+                        <ul class="feature-bullets">
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-filter"></i>
+                                <div>
+                                    <strong>Multi-Step Qualification Gates:</strong>
+                                    The agent systematically assesses BANT criteria (Budget, Authority, Need, Timeline) via natural, non-linear dialogue:
+                                    <em>"Could you share your current team size and the main workflow bottleneck you are experiencing today?"</em>
+                                </div>
+                            </li>
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-shield-halved"></i>
+                                <div>
+                                    <strong>Anti-Hallucination Guardrails:</strong>
+                                    Strict system prompts prevent the agent from inventing pricing tiers or promising technical capabilities outside the Django-compiled feature matrix.
+                                </div>
+                            </li>
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-wrench"></i>
+                                <div>
+                                    <strong>Real-Time Function Calling:</strong>
+                                    When the prospect confirms interest in a demo, the voice agent triggers an internal tool call (`check_availability`) that queries Cal.com APIs without disconnecting the audio stream.
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: SMART SCHEDULING & MULTI-PLATFORM -->
+        <section id="smart-scheduling" class="section-separator">
+            <div class="section-header-box">
+                <span class="section-tag"><i class="fa-solid fa-calendar-check"></i> Smart Scheduling</span>
+                <h2 class="section-title">Cal.com Real-Time Scheduling & Multi-Platform Meeting Ingress</h2>
+                <p class="section-subtitle">
+                    Live slot discovery mid-call, automated timezone conversion, and dynamic provisioning of Google Meet, Zoom, and Microsoft Teams video rooms.
+                </p>
+            </div>
+
+            <div class="showcase-block">
+                <div class="hero-media-wrapper">
+                    <img src="images/03-smart-scheduling-multiplatform-meeting.jpg" 
+                         alt="Cal.com Smart Scheduling and Multi-Platform Meeting Ingress Diagram" 
+                         onclick="openLightbox('images/03-smart-scheduling-multiplatform-meeting.jpg', 'Cal.com Smart Scheduling Architecture: Real-time slot resolution, automated timezone translation, and dynamic video room provisioning across Google Meet, Zoom, and MS Teams.')">
+                    <div class="media-caption-bar">
+                        <span><i class="fa-solid fa-video"></i> Cal.com v2 API · Auto-Provisioned Google Meet, Zoom & Teams</span>
+                        <span class="media-badge">SCHEDULING ENGINE ARCHITECTURE</span>
+                    </div>
+                </div>
+
+                <div class="dual-explanation-grid">
+                    <div class="plain-english-box">
+                        <h4><i class="fa-solid fa-calendar-plus"></i> In Plain English: Frictionless Booking</h4>
+                        <p>
+                            Instead of telling a customer, <em>"We will email you a link to pick a time,"</em> which often leads to 40% of people forgetting to book, the voice agent looks at the sales rep's calendar right during the conversation.
+                        </p>
+                        <p>
+                            It automatically detects where the caller is located and says: <em>"I see our specialist has an opening tomorrow at 2:00 PM your time, or Thursday morning at 10:30 AM. Which works better for you?"</em> As soon as the customer picks, the meeting is booked instantly, and a calendar invite with a video link (Google Meet, Zoom, or Microsoft Teams) is sent directly to their phone and email.
+                        </p>
+                    </div>
+
+                    <div class="tech-deep-dive">
+                        <h4><i class="fa-solid fa-network-wired"></i> Cal.com v2 API Orchestration Logic</h4>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                            The scheduling pipeline resolves conflicts and provisions video conferences via an atomic 2-stage API interaction:
+                        </p>
+                        <div class="code-window">
+                            <div class="code-window-header">
+                                <div class="code-window-dots">
+                                    <span class="dot dot-red"></span>
+                                    <span class="dot dot-yellow"></span>
+                                    <span class="dot dot-green"></span>
+                                </div>
+                                <span>calcom_service.py (Live In-Call Slot Resolution)</span>
+                            </div>
+                            <pre class="code-content"><code><span class="code-kw">def</span> <span class="code-fn">book_voice_lead_slot</span>(<span class="code-var">client_info</span>, <span class="code-var">chosen_slot_iso</span>, <span class="code-var">platform_pref</span>):
+    <span class="code-comment"># Dynamic video location mapping</span>
+    <span class="code-var">location_map</span> = {
+        <span class="code-str">"google_meet"</span>: <span class="code-str">"integrations:google:meet"</span>,
+        <span class="code-str">"zoom"</span>: <span class="code-str">"integrations:zoom"</span>,
+        <span class="code-str">"teams"</span>: <span class="code-str">"integrations:office365:teams"</span>,
+    }
+    <span class="code-var">payload</span> = {
+        <span class="code-str">"start"</span>: <span class="code-var">chosen_slot_iso</span>,
+        <span class="code-str">"eventTypeId"</span>: <span class="code-var">settings</span>.<span class="code-var">CALCOM_DISCOVERY_EVENT_ID</span>,
+        <span class="code-str">"attendee"</span>: {
+            <span class="code-str">"name"</span>: <span class="code-var">client_info</span>[<span class="code-str">"name"</span>],
+            <span class="code-str">"email"</span>: <span class="code-var">client_info</span>[<span class="code-str">"email"</span>],
+            <span class="code-str">"timeZone"</span>: <span class="code-var">client_info</span>[<span class="code-str">"detected_timezone"</span>],
+        },
+        <span class="code-str">"location"</span>: <span class="code-var">location_map</span>.<span class="code-fn">get</span>(<span class="code-var">platform_pref</span>, <span class="code-str">"integrations:google:meet"</span>),
+        <span class="code-str">"metadata"</span>: {<span class="code-str">"source"</span>: <span class="code-str">"retell_voice_agent"</span>, <span class="code-str">"lead_score"</span>: <span class="code-var">client_info</span>[<span class="code-str">"score"</span>]}
+    }
+    <span class="code-kw">return</span> <span class="code-var">requests</span>.<span class="code-fn">post</span>(<span class="code-str">"https://api.cal.com/v2/bookings"</span>, <span class="code-var">json</span>=<span class="code-var">payload</span>, <span class="code-var">headers</span>=<span class="code-var">CAL_HEADERS</span>)</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: RECALL.AI POST-MEETING INTELLIGENCE -->
+        <section id="recall-intelligence" class="section-separator">
+            <div class="section-header-box">
+                <span class="section-tag"><i class="fa-solid fa-brain"></i> Post-Meeting Automation</span>
+                <h2 class="section-title">Recall.ai Autonomous Meeting Intelligence & Deal Reporting</h2>
+                <p class="section-subtitle">
+                    Autonomous meeting bot ingress, speaker diarization, multi-track audio capture, and automated LLM executive dossiers delivered straight to sales teams.
+                </p>
+            </div>
+
+            <div class="showcase-block">
+                <div class="hero-media-wrapper">
+                    <img src="images/04-recallai-post-meeting-intelligence.jpg" 
+                         alt="Recall.ai Autonomous Meeting Intelligence Pipeline Diagram" 
+                         onclick="openLightbox('images/04-recallai-post-meeting-intelligence.jpg', 'Recall.ai Post-Meeting Intelligence Pipeline: Meeting bot auto-join, Whisper Large-v3 diarization, LLM structured dossier generation, and automated Slack/CRM dispatch.')">
+                    <div class="media-caption-bar">
+                        <span><i class="fa-solid fa-robot"></i> Recall.ai Bot Ingress · Whisper Large-v3 Diarization · LLM Deal Dossier</span>
+                        <span class="media-badge">MEETING INTELLIGENCE PIPELINE</span>
+                    </div>
+                </div>
+
+                <div class="dual-explanation-grid">
+                    <div class="plain-english-box">
+                        <h4><i class="fa-solid fa-file-invoice"></i> In Plain English: Never Take Meeting Notes Again</h4>
+                        <p>
+                            During high-stakes sales demos, salespeople need to focus 100% on understanding the customer's needs, not scribbling hasty notes on a notepad.
+                        </p>
+                        <p>
+                            When the meeting starts on Google Meet, Zoom, or Teams, our <strong>Recall.ai assistant</strong> automatically joins the video call as a silent participant. It records what everyone says and distinguishes between the customer and the sales rep. Within 3 minutes of the meeting ending, it produces a clear, beautiful summary outlining the prospect's biggest challenges, pricing objections, agreed next steps, and estimated deal win probability—delivered directly into the sales rep's Slack and CRM.
+                        </p>
+                    </div>
+
+                    <div class="tech-deep-dive">
+                        <h4><i class="fa-solid fa-list-check"></i> Post-Meeting Extraction Schema</h4>
+                        <ul class="feature-bullets">
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-robot"></i>
+                                <div>
+                                    <strong>Autonomous Bot Lifecycle:</strong>
+                                    A Django calendar watcher registers scheduled video meetings with Recall.ai's Bot Dispatch API (<code style="color:var(--cyan);">POST /api/v1/bot/</code>). The bot automatically arrives 60 seconds prior to meeting start and leaves when all participants disconnect.
+                                </div>
+                            </li>
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-wave-square"></i>
+                                <div>
+                                    <strong>Whisper Speaker Diarization:</strong>
+                                    Processes separate audio streams for every speaker, eliminating crosstalk ambiguity and labeling utterances as `[Prospect: VP of Ops]` vs `[Account Executive]`.
+                                </div>
+                            </li>
+                            <li class="feature-bullet">
+                                <i class="fa-solid fa-bolt"></i>
+                                <div>
+                                    <strong>Structured JSON Output Format:</strong>
+                                    The Celery pipeline processes the transcript using GPT-4o / Claude 3.5 Sonnet with Pydantic schema validation, extracting:
+                                    <em>executive_summary</em>, <em>identified_pain_points</em>, <em>budget_constraints</em>, <em>action_items</em> (with assignees and deadlines), and <em>deal_health_score</em>.
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: COMPARATIVE TECHNICAL SPECIFICATIONS TABLE -->
+        <section id="technical-comparison" class="section-separator">
+            <div class="section-header-box">
+                <span class="section-tag"><i class="fa-solid fa-table"></i> Technical Evaluation</span>
+                <h2 class="section-title">Comparative Technical Architecture Matrix</h2>
+                <p class="section-subtitle">
+                    Benchmarking our unified Django + Retell + Cal.com + Recall.ai architecture against legacy manual sales teams and fragmented SaaS tools.
+                </p>
+            </div>
+
+            <div class="table-container">
+                <table class="spec-table">
+                    <thead>
+                        <tr>
+                            <th>Operational Metric</th>
+                            <th>Traditional Manual SDR Team</th>
+                            <th>Off-the-Shelf Calendly + Chatbot</th>
+                            <th>Our Unified Django + Retell + Recall.ai Platform</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Speed to Lead Follow-Up</strong></td>
+                            <td>4 to 24 hours (business hours only)</td>
+                            <td>Form email link (10 to 60 mins)</td>
+                            <td><span class="pill-badge pill-green"><i class="fa-solid fa-bolt"></i> &lt; 60 seconds (24/7/365)</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Conversational Telephony</strong></td>
+                            <td>Human rep dialing with high fatigue</td>
+                            <td>No voice capabilities (text only)</td>
+                            <td><span class="pill-badge pill-green"><i class="fa-solid fa-microphone"></i> Sub-800ms Retell AI Voice Agent</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>In-Call Calendar Booking</strong></td>
+                            <td>Manual calendar lookup on phone</td>
+                            <td>User clicks link in external email</td>
+                            <td><span class="pill-badge pill-green"><i class="fa-solid fa-calendar-check"></i> Real-time In-Call Cal.com Booking</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Multi-Platform Video Links</strong></td>
+                            <td>Manual link creation in Zoom/Teams</td>
+                            <td>Single platform default only</td>
+                            <td><span class="pill-badge pill-green"><i class="fa-solid fa-video"></i> Auto-Generated Meet, Zoom & Teams</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Post-Meeting Documentation</strong></td>
+                            <td>Manual notes typed by rep (often omitted)</td>
+                            <td>None (manual CRM entry)</td>
+                            <td><span class="pill-badge pill-green"><i class="fa-solid fa-robot"></i> 100% Recall.ai Bot Diarization & Dossier</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Admin Business Logic Sync</strong></td>
+                            <td>Manual sales training manuals</td>
+                            <td>Fragmented third-party admin panels</td>
+                            <td><span class="pill-badge pill-green"><i class="fa-solid fa-arrows-rotate"></i> Two-Way Django Admin Signal Sync</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Booking Conversion Rate</strong></td>
+                            <td>12% – 18% of inbound leads</td>
+                            <td>22% – 28% of link clicks</td>
+                            <td><span class="pill-badge pill-green"><i class="fa-solid fa-chart-line"></i> 48% – 56% Qualified Booking Rate</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECTION: PRODUCTION TECH STACK GRID -->
+        <section id="tech-stack" class="section-separator">
+            <div class="section-header-box">
+                <span class="section-tag"><i class="fa-solid fa-cubes"></i> Tools & Services</span>
+                <h2 class="section-title">Production Technology & Engineering Stack</h2>
+                <p class="section-subtitle">
+                    The enterprise backend, conversational AI telephony, scheduling APIs, and meeting bots orchestrated across the platform.
+                </p>
+            </div>
+
+            <div class="tech-stack-grid">
+                <div class="tech-pill-card">
+                    <div class="tech-icon-box"><i class="fa-brands fa-python"></i></div>
+                    <div class="tech-info">
+                        <h5>Django 5.x & Python</h5>
+                        <p>Central application framework managing ORM models, business logic, signal interceptors, and secure RESTful webhook endpoints.</p>
+                    </div>
+                </div>
+
+                <div class="tech-pill-card">
+                    <div class="tech-icon-box"><i class="fa-solid fa-microphone-lines"></i></div>
+                    <div class="tech-info">
+                        <h5>Retell AI Voice Engine</h5>
+                        <p>Ultra-low-latency voice telephony engine delivering sub-800ms conversational turnarounds with Deepgram Nova-2 and neural TTS.</p>
+                    </div>
+                </div>
+
+                <div class="tech-pill-card">
+                    <div class="tech-icon-box"><i class="fa-solid fa-calendar-days"></i></div>
+                    <div class="tech-info">
+                        <h5>Cal.com v2 API</h5>
+                        <p>Enterprise scheduling infrastructure supporting real-time slot resolution, timezone translation, and automated calendar invitations.</p>
+                    </div>
+                </div>
+
+                <div class="tech-pill-card">
+                    <div class="tech-icon-box"><i class="fa-solid fa-robot"></i></div>
+                    <div class="tech-info">
+                        <h5>Recall.ai Meeting Bot</h5>
+                        <p>Headless bot ingress platform that automatically joins Google Meet, Zoom, and Teams meetings to capture and diarize audio.</p>
+                    </div>
+                </div>
+
+                <div class="tech-pill-card">
+                    <div class="tech-icon-box"><i class="fa-solid fa-video"></i></div>
+                    <div class="tech-info">
+                        <h5>Meet, Zoom & Teams</h5>
+                        <p>Multi-platform video conferencing connectors automatically provisioning secure video rooms based on buyer preference.</p>
+                    </div>
+                </div>
+
+                <div class="tech-pill-card">
+                    <div class="tech-icon-box"><i class="fa-solid fa-database"></i></div>
+                    <div class="tech-info">
+                        <h5>PostgreSQL 16 & Redis</h5>
+                        <p>High-throughput transactional database storing call recordings, transcripts, and lead scores, backed by Redis in-memory cache.</p>
+                    </div>
+                </div>
+
+                <div class="tech-pill-card">
+                    <div class="tech-icon-box"><i class="fa-solid fa-gears"></i></div>
+                    <div class="tech-info">
+                        <h5>Celery Distributed Queue</h5>
+                        <p>Asynchronous worker queues decoupling API webhooks from long-running LLM meeting summarization and Retell sync tasks.</p>
+                    </div>
+                </div>
+
+                <div class="tech-pill-card">
+                    <div class="tech-icon-box"><i class="fa-brands fa-slack"></i></div>
+                    <div class="tech-info">
+                        <h5>Slack & CRM Webhooks</h5>
+                        <p>Real-time notifications and deal dossier dispatches keeping sales executives informed within 5 minutes of meeting completion.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: EXECUTIVE OWNERSHIP & QUANTIFIED BUSINESS IMPACT -->
+        <section id="ownership-impact" class="section-separator">
+            <div class="ownership-card">
+                <div class="role-highlight-row">
+                    <div class="role-title-box">
+                        <h3>Lead AI & Systems Engineer · Voice AI Orchestrator</h3>
+                        <p><i class="fa-solid fa-code-branch"></i> Django Backend Architecture, Retell AI, Cal.com & Recall.ai Integration</p>
+                    </div>
+                    <div class="role-duration-badge">
+                        <i class="fa-solid fa-shield-check"></i> Production Enterprise Deployment
+                    </div>
+                </div>
+
+                <p style="color: var(--text-secondary); font-size: 1.05rem; line-height: 1.7;">
+                    I architected and shipped the complete AI voice agent and meeting intelligence platform from ground up. By uniting Django's robust backend orchestration with Retell AI's real-time voice infrastructure, Cal.com's scheduling API, and Recall.ai's post-meeting intelligence, we eliminated manual SDR scheduling bottlenecks, elevated lead-to-meeting conversion rates, and ensured zero prompt drift between the admin team and live voice agents.
+                </p>
+
+                <div class="contributions-grid">
+                    <div class="contribution-item">
+                        <h5><i class="fa-solid fa-microphone-lines"></i> Conversational AI Telephony</h5>
+                        <p>Implemented Retell AI voice agents handling inbound and outbound calls, asking multi-step qualification questions, handling objections, and recording structured responses.</p>
+                    </div>
+
+                    <div class="contribution-item">
+                        <h5><i class="fa-solid fa-calendar-check"></i> Smart In-Call Scheduling</h5>
+                        <p>Integrated Cal.com v2 API for real-time calendar availability checks during live voice calls, enabling prospects to pick slots verbally with automatic timezone conversion.</p>
+                    </div>
+
+                    <div class="contribution-item">
+                        <h5><i class="fa-solid fa-video"></i> Multi-Platform Conference Routing</h5>
+                        <p>Auto-generated Google Meet, Zoom, and Microsoft Teams video links based on client preference, embedding them into automated email and SMS calendar invites.</p>
+                    </div>
+
+                    <div class="contribution-item">
+                        <h5><i class="fa-solid fa-robot"></i> Post-Meeting Automation</h5>
+                        <p>Engineered Recall.ai bot pipeline to record, transcribe, and diarize customer video calls, automatically generating structured executive dossiers for the sales team.</p>
+                    </div>
+
+                    <div class="contribution-item">
+                        <h5><i class="fa-solid fa-arrows-rotate"></i> Two-Way Django Admin Sync</h5>
+                        <p>Designed a seamless two-way integration where updates to agent profiles, scripts, voice settings, and temperature in Django Admin instantly update the live Retell AI agent.</p>
+                    </div>
+
+                    <div class="contribution-item">
+                        <h5><i class="fa-solid fa-network-wired"></i> Scalable Backend Orchestration</h5>
+                        <p>Architected asynchronous Celery workflows, webhook signature validators, and database transactions to coordinate voice agents, scheduling APIs, and reporting pipelines.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA SECTION -->
+        <section class="cta-section">
+            <h2 class="cta-h2">Ready to Build Your Autonomous Voice AI Infrastructure?</h2>
+            <p class="cta-desc">
+                From sub-second conversational voice telephony and automated calendar scheduling to autonomous post-meeting intelligence and CRM synchronization, let's engineer a solution tailored to your sales workflows.
+            </p>
+            <div class="cta-btn-row">
+                <a href="mailto:ahsantariq.engineer@gmail.com" class="btn-primary">
+                    <i class="fa-solid fa-paper-plane"></i> Get in Touch
+                </a>
+                <a href="https://www.linkedin.com/in/ahsan-tariq-comp-engr/" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+                    <i class="fa-brands fa-linkedin"></i> Connect on LinkedIn
+                </a>
+                <a href="../index.html" class="btn-secondary">
+                    <i class="fa-solid fa-arrow-left"></i> Explore All 12 Case Studies
+                </a>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="case-footer">
+            <div class="footer-brand">Ahsan Tariq — AI & Voice Automation Systems Engineer</div>
+            <p>© 2026 Ahsan Tariq. Engineered with Django, Retell AI, Cal.com & Recall.ai. Built with precision.</p>
+        </footer>
+
+    </div>
+
+    <!-- LIGHTBOX MODAL -->
+    <div id="lightboxModal" class="lightbox-modal" onclick="closeLightbox(event)">
+        <div class="lightbox-content-box" onclick="event.stopPropagation()">
+            <button class="lightbox-close-btn" onclick="closeLightbox()">&times;</button>
+            <img id="lightboxImg" class="lightbox-img" src="" alt="Enlarged Diagram">
+            <div id="lightboxCaption" class="lightbox-caption"></div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Interactive 3-Way Problem vs Solution Filter Engine
+        function setVoiceFilter(mode) {
+            const btnBoth = document.getElementById('btnBoth');
+            const btnProblem = document.getElementById('btnProblem');
+            const btnSolution = document.getElementById('btnSolution');
+
+            btnBoth.className = 'compare-toggle-btn';
+            btnProblem.className = 'compare-toggle-btn';
+            btnSolution.className = 'compare-toggle-btn';
+
+            const rows = document.querySelectorAll('.compare-row[data-kind="pair"]');
+
+            if (mode === 'both') {
+                btnBoth.classList.add('active');
+                rows.forEach(r => {
+                    r.style.display = 'grid';
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr) minmax(0, 1fr)';
+                    r.querySelector('.compare-card.problem').style.display = 'flex';
+                    r.querySelector('.compare-card.solution').style.display = 'flex';
+                });
+            } else if (mode === 'problem') {
+                btnProblem.classList.add('active');
+                rows.forEach(r => {
+                    r.style.display = 'block';
+                    r.querySelector('.compare-card.problem').style.display = 'flex';
+                    r.querySelector('.compare-card.solution').style.display = 'none';
+                });
+            } else if (mode === 'solution') {
+                btnSolution.classList.add('active');
+                rows.forEach(r => {
+                    r.style.display = 'block';
+                    r.querySelector('.compare-card.problem').style.display = 'none';
+                    r.querySelector('.compare-card.solution').style.display = 'flex';
+                });
+            }
+        }
+
+        // Lightbox Functions
+        function openLightbox(src, caption) {
+            const modal = document.getElementById('lightboxModal');
+            const img = document.getElementById('lightboxImg');
+            const cap = document.getElementById('lightboxCaption');
+            img.src = src;
+            cap.innerText = caption;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(e) {
+            const modal = document.getElementById('lightboxModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+    </script>
+</body>
+</html>
