@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProspectIntelligence Case Study — Autonomous AI Sales Backend & Explicit Context Caching | Ahsan Tariq</title>
+    <meta name="description" content="Engineering ProspectIntelligence: An enterprise AI sales intelligence backend featuring Google Gemini 2.5 Pro explicit context caching, a deterministic 4-case cache router, PostgreSQL single-query hydration, and React webhook integration with 90%+ token cost savings.">
+    <meta name="keywords" content="ProspectIntelligence, Gemini 2.5 Pro, Explicit Context Caching, cachedContents, AI Sales Assistant, PostgreSQL, React, Webhook, SHA-256 Invalidation, Token Optimization">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-base: #060911;
+            --bg-surface: #0b1120;
+            --bg-card: rgba(16, 24, 44, 0.7);
+            --bg-card-hover: rgba(22, 34, 62, 0.9);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(168, 85, 247, 0.35);
+            --purple: #a855f7;
+            --purple-glow: rgba(168, 85, 247, 0.25);
+            --cyan: #00f0ff;
+            --cyan-glow: rgba(0, 240, 255, 0.2);
+            --emerald: #10b981;
+            --emerald-glow: rgba(16, 185, 129, 0.2);
+            --rose: #f43f5e;
+            --amber: #f59e0b;
+            --blue: #3b82f6;
+            --text-main: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-dim: #64748b;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Plus Jakarta Sans', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --gradient-accent: linear-gradient(135deg, #a855f7 0%, #00f0ff 50%, #10b981 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* Ambient glowing background */
+        .ambient-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .glow-1 {
+            position: absolute;
+            top: -120px;
+            right: 15%;
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, rgba(6, 9, 17, 0) 70%);
+            border-radius: 50%;
+        }
+        .glow-2 {
+            position: absolute;
+            top: 45%;
+            left: -120px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.12) 0%, rgba(6, 9, 17, 0) 70%);
+            border-radius: 50%;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Sticky Navigation Bar */
+        .case-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(6, 9, 17, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            padding: 0.85rem 0;
+        }
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        .nav-back:hover {
+            color: var(--purple);
+        }
+        .nav-brand {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.15rem;
+            letter-spacing: -0.02em;
+        }
+        .nav-brand span {
+            color: var(--purple);
+        }
+        .nav-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 20px;
+            padding: 0.3rem 0.8rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: #c084fc;
+        }
+        .nav-status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--purple);
+            box-shadow: 0 0 8px var(--purple);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        /* Hero Section */
+        .hero-section {
+            padding: 4.5rem 0 3.5rem;
+            text-align: left;
+        }
+        .eyebrow-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(168, 85, 247, 0.12);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 30px;
+            padding: 0.4rem 1.1rem;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #c084fc;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .hero-h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.4rem, 5vw, 4.2rem);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.25rem;
+            background: linear-gradient(135deg, #ffffff 40%, #c084fc 75%, #00f0ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-tagline {
+            font-size: clamp(1.1rem, 2vw, 1.45rem);
+            font-weight: 500;
+            color: var(--cyan);
+            margin-bottom: 1.5rem;
+            font-family: var(--font-display);
+        }
+        .hero-desc {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 950px;
+            margin-bottom: 2.5rem;
+            line-height: 1.8;
+        }
+
+        /* Meta Grid */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1rem;
+            margin-bottom: 3.5rem;
+        }
+        .meta-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+        .meta-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+        .meta-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.4rem;
+        }
+        .meta-val {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .meta-sub {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.2rem;
+            font-family: var(--font-mono);
+        }
+
+        /* Hero Media Preview */
+        .hero-media-wrapper {
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            background: var(--bg-surface);
+            padding: 0.6rem;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 40px rgba(168, 85, 247, 0.15);
+            margin-bottom: 4rem;
+            overflow: hidden;
+        }
+        .hero-img-container {
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+        .hero-img-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+        .hero-img-container:hover img {
+            transform: scale(1.015);
+        }
+        .img-overlay-badge {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            background: rgba(6, 9, 17, 0.85);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 0.4rem 0.9rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--purple);
+            backdrop-filter: blur(8px);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* Executive Metrics Strip */
+        .exec-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 4.5rem;
+        }
+        .exec-metric-card {
+            background: linear-gradient(180deg, rgba(20, 30, 52, 0.8) 0%, rgba(11, 17, 32, 0.8) 100%);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.75rem 1.25rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .exec-metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gradient-accent);
+        }
+        .metric-num {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            color: var(--cyan);
+        }
+        .metric-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            margin-bottom: 0.35rem;
+        }
+        .metric-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* Section Headings */
+        .section-separator {
+            padding: 4.5rem 0;
+            border-top: 1px solid var(--border);
+        }
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 3.5rem;
+        }
+        .section-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--purple);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.75rem;
+        }
+        .section-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 3.5vw, 2.75rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+        }
+        .section-p {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Interactive Problem vs Solution Comparison Section */
+        .compare-controller {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+        }
+        .compare-toggle-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 0.6rem 1.4rem;
+            border-radius: 30px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .compare-toggle-btn:hover {
+            color: var(--text-main);
+            border-color: var(--purple);
+        }
+        .compare-toggle-btn.active {
+            background: rgba(168, 85, 247, 0.12);
+            color: #c084fc;
+            border-color: var(--purple);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
+        }
+
+        .compare-matrix {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .compare-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .compare-card {
+            border-radius: 14px;
+            padding: 1.75rem;
+            position: relative;
+            backdrop-filter: blur(8px);
+        }
+        .compare-card.problem {
+            background: rgba(244, 63, 94, 0.04);
+            border: 1px solid rgba(244, 63, 94, 0.2);
+        }
+        .compare-card.solution {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+        .compare-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 4px;
+            padding: 0.2rem 0.6rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+        .compare-card.problem .compare-tag {
+            background: rgba(244, 63, 94, 0.15);
+            color: var(--rose);
+        }
+        .compare-card.solution .compare-tag {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--emerald);
+        }
+        .compare-card-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--text-main);
+        }
+        .compare-card-text {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.65;
+            margin-bottom: 1.25rem;
+        }
+        .compare-impact-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            border-radius: 6px;
+            padding: 0.35rem 0.75rem;
+        }
+        .compare-card.problem .compare-impact-pill {
+            background: rgba(244, 63, 94, 0.1);
+            color: #fda4af;
+            border: 1px solid rgba(244, 63, 94, 0.2);
+        }
+        .compare-card.solution .compare-impact-pill {
+            background: rgba(16, 185, 129, 0.12);
+            color: #6ee7b7;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+
+        /* Showcase Deep-Dive Blocks */
+        .showcase-block {
+            display: grid;
+            grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+            gap: 3.5rem;
+            align-items: center;
+            margin-bottom: 6rem;
+        }
+        .showcase-block.reverse {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+        }
+        .showcase-block.reverse .showcase-text-col {
+            order: 2;
+        }
+        .showcase-block.reverse .showcase-media-col {
+            order: 1;
+        }
+        .showcase-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--purple);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .showcase-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 2.5vw, 2.3rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 1.25rem;
+            color: var(--text-main);
+        }
+        .showcase-p {
+            font-size: 1.02rem;
+            color: var(--text-secondary);
+            line-height: 1.75;
+            margin-bottom: 1.5rem;
+        }
+        .feature-bullets {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            margin-bottom: 1.75rem;
+        }
+        .feature-bullet {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
+        .feature-bullet i {
+            color: var(--cyan);
+            margin-top: 0.25rem;
+            font-size: 0.85rem;
+        }
+        .feature-bullet strong {
+            color: var(--text-main);
+        }
+
+        .showcase-media-box {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 0.5rem;
+            box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.7), 0 0 30px rgba(168, 85, 247, 0.08);
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        .showcase-media-box img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+        .showcase-media-box:hover img {
+            transform: scale(1.02);
+        }
+
+        /* Comparative Architecture Table */
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            margin: 2.5rem 0;
+        }
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.92rem;
+            text-align: left;
+        }
+        .spec-table th {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1rem 1.25rem;
+            color: var(--text-dim);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
+        }
+        .spec-table td {
+            padding: 1.1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+        .spec-table tr:last-child td {
+            border-bottom: none;
+        }
+        .spec-table td:first-child {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        .spec-table td.highlight {
+            color: var(--cyan);
+            font-weight: 600;
+            font-family: var(--font-mono);
+        }
+
+        /* Tech Stack Grid */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1.25rem;
+            margin-top: 2rem;
+        }
+        .tech-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.25s ease;
+        }
+        .tech-card:hover {
+            border-color: var(--purple);
+            transform: translateY(-2px);
+        }
+        .tech-icon {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+        }
+        .tech-name {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text-main);
+            margin-bottom: 0.35rem;
+        }
+        .tech-role {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--purple);
+            margin-bottom: 0.75rem;
+        }
+        .tech-desc {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Ownership & Impact Card */
+        .ownership-card {
+            background: linear-gradient(135deg, rgba(24, 18, 48, 0.9) 0%, rgba(12, 10, 32, 0.9) 100%);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 3.5rem 2.5rem;
+            margin: 4rem 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8);
+        }
+        .ownership-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, rgba(6, 9, 17, 0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .ownership-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+            gap: 3rem;
+            align-items: center;
+        }
+        .o-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--purple);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+        }
+        .o-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 3vw, 2.4rem);
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.25rem;
+        }
+        .o-p {
+            font-size: 1.02rem;
+            color: var(--text-secondary);
+            line-height: 1.75;
+            margin-bottom: 1.5rem;
+        }
+        .o-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.25rem;
+        }
+        .o-stat {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+        }
+        .o-stat-num {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--cyan);
+            margin-bottom: 0.25rem;
+        }
+        .o-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+        }
+
+        /* Call To Action */
+        .cta-section {
+            padding: 5rem 0;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+        .cta-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 3.5vw, 2.8rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+        .cta-desc {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 650px;
+            margin: 0 auto 2.5rem;
+        }
+        .cta-btn-row {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--gradient-accent);
+            color: #060911;
+            font-weight: 700;
+            font-size: 0.95rem;
+            padding: 0.85rem 2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.25);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(168, 85, 247, 0.4);
+        }
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 0.85rem 1.8rem;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: all 0.25s ease;
+        }
+        .btn-secondary:hover {
+            border-color: var(--purple);
+            color: var(--purple);
+            transform: translateY(-2px);
+        }
+
+        /* Lightbox Modal */
+        .lightbox-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(6, 9, 17, 0.95);
+            backdrop-filter: blur(14px);
+            z-index: 999999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .lightbox-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        .lightbox-container {
+            max-width: 95vw;
+            max-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .lightbox-container img {
+            max-width: 92vw;
+            max-height: 82vh;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+        .lightbox-caption {
+            margin-top: 1rem;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            font-family: var(--font-mono);
+            background: rgba(15, 23, 42, 0.85);
+            padding: 0.5rem 1.25rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            max-width: 800px;
+            text-align: center;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: -2.5rem;
+            right: 0;
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+        .lightbox-close:hover {
+            color: var(--cyan);
+            transform: scale(1.15);
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .exec-metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .showcase-block, .showcase-block.reverse {
+                grid-template-columns: minmax(0, 1fr) !important;
+                gap: 2.5rem;
+            }
+            .showcase-block.reverse .showcase-text-col { order: 1; }
+            .showcase-block.reverse .showcase-media-col { order: 2; }
+            .compare-row { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+            .ownership-grid { grid-template-columns: minmax(0, 1fr); }
+            .tech-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
+        @media (max-width: 640px) {
+            .meta-grid { grid-template-columns: minmax(0, 1fr); }
+            .exec-metrics-grid { grid-template-columns: minmax(0, 1fr); }
+            .tech-grid { grid-template-columns: minmax(0, 1fr); }
+            .o-stats-grid { grid-template-columns: minmax(0, 1fr); }
+            .hero-section { padding: 3rem 0 2rem; }
+            .section-separator { padding: 3rem 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Glowing Background -->
+    <div class="ambient-glow">
+        <div class="glow-1"></div>
+        <div class="glow-2"></div>
+    </div>
+
+    <!-- Navigation Header -->
+    <nav class="case-nav">
+        <div class="wrapper">
+            <div class="nav-inner">
+                <a href="../index.html" class="nav-back">
+                    <i class="fas fa-arrow-left"></i> Back to Case Studies
+                </a>
+                <div class="nav-brand">
+                    <span>PROSPECT</span> INTELLIGENCE
+                </div>
+                <div class="nav-status">
+                    <span class="nav-status-dot"></span> GEMINI 2.5 PRO · EXPLICIT CACHE LIVE
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-microchip"></i> Enterprise AI Sales Backend &amp; Explicit Context Caching
+            </div>
+
+            <h1 class="hero-h1">ProspectIntelligence: Autonomous Sales AI with Explicit Context Caching</h1>
+            <div class="hero-tagline">“Server-Side Google Gemini 2.5 Pro Caching, 4-Case State Routing &amp; React Webhook Integration”</div>
+
+            <p class="hero-desc">
+                Designed and shipped a production-grade client intelligence backend that equips sales reps with an always-on, hyper-contextual AI assistant for every prospect — without rebuilding massive 100k+ token context payloads on every query. Powered by <strong>Google Gemini 2.5 Pro explicit context caching (<code>/v1beta/cachedContents</code>)</strong>, a <strong>deterministic 4-case cache routing engine</strong>, <strong>single-query PostgreSQL data hydration</strong>, and <strong>pre-compute database budget guardrails</strong> integrated seamlessly with a <strong>React sales frontend</strong> via webhooks.
+            </p>
+
+            <!-- Meta Strip -->
+            <div class="meta-grid">
+                <div class="meta-card">
+                    <div class="meta-label">Client / Product</div>
+                    <div class="meta-val">ProspectIntelligence</div>
+                    <div class="meta-sub">Enterprise Sales Copilot</div>
+                </div>
+                <div class="meta-card">
+                    <div class="meta-label">Engineering Role</div>
+                    <div class="meta-val">Lead AI &amp; Backend Architect</div>
+                    <div class="meta-sub">Gemini API · PostgreSQL · React</div>
+                </div>
+                <div class="meta-card">
+                    <div class="meta-label">Cache Architecture</div>
+                    <div class="meta-val">Explicit Server Caching</div>
+                    <div class="meta-sub">Google /v1beta/cachedContents</div>
+                </div>
+                <div class="meta-card">
+                    <div class="meta-label">State Management</div>
+                    <div class="meta-val">SHA-256 Hash Drift Check</div>
+                    <div class="meta-sub">4-Case Deterministic Router</div>
+                </div>
+            </div>
+
+            <!-- Master Architecture Graphic Preview -->
+            <div class="hero-media-wrapper">
+                <div class="hero-img-container" onclick="openLightbox('images/00-prospect-master-architecture.jpg', 'ProspectIntelligence Master Architecture: React Webhook Integration, 4-Case Cache Router, PostgreSQL Single-Query Hydration, and Gemini 2.5 Pro Explicit Server Cache')">
+                    <img src="images/00-prospect-master-architecture.jpg" alt="ProspectIntelligence Master Architecture Diagram" />
+                    <div class="img-overlay-badge">
+                        <i class="fas fa-expand"></i> Click to Inspect Master Architecture
+                    </div>
+                </div>
+            </div>
+
+            <!-- Executive Performance Metrics -->
+            <div class="exec-metrics-grid">
+                <div class="exec-metric-card">
+                    <div class="metric-num">90%+</div>
+                    <div class="metric-title">Cost &amp; Token Savings</div>
+                    <div class="metric-desc">Static 100k+ token payload uploaded once; subsequent queries bill only the sales rep's prompt turn.</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="metric-num">&lt;840ms</div>
+                    <div class="metric-title">Response Latency</div>
+                    <div class="metric-desc">Sub-second turnaround by bypassing full model context ingestion on Google server infrastructure.</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="metric-num">SHA-256</div>
+                    <div class="metric-title">Data Drift Invalidation</div>
+                    <div class="metric-desc">Automatic hash comparison detects CRM transcript or LinkedIn updates, triggering instant cache refresh.</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="metric-num">75-Msg</div>
+                    <div class="metric-title">Postgres Budget Cap</div>
+                    <div class="metric-desc">Enforced in SQL before any compute runs, guaranteeing predictable enterprise SaaS unit economics.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Problem vs Solution Section -->
+    <section class="section-separator" id="problem-solution">
+        <div class="wrapper">
+            <div class="section-header">
+                <div class="section-eyebrow"><i class="fas fa-balance-scale"></i> ARCHITECTURAL PARADIGM SHIFT</div>
+                <h2 class="section-h2">Brute-Force Context Resubmission vs. Explicit Caching</h2>
+                <p class="section-p">
+                    Why standard conversational LLM implementations crumble under enterprise context sizes, and how explicit server-side caching solves latency and cost.
+                </p>
+            </div>
+
+            <!-- Filter Controls -->
+            <div class="compare-controller">
+                <button class="compare-toggle-btn active" id="btnBoth" onclick="setProspectFilter('both')">
+                    <i class="fas fa-columns"></i> Side-by-Side View
+                </button>
+                <button class="compare-toggle-btn" id="btnProblem" onclick="setProspectFilter('problem')">
+                    <i class="fas fa-circle-xmark"></i> The Old Brute-Force Way (Before)
+                </button>
+                <button class="compare-toggle-btn" id="btnSolution" onclick="setProspectFilter('solution')">
+                    <i class="fas fa-circle-check"></i> The Explicit Caching Engine (After)
+                </button>
+            </div>
+
+            <!-- Comparison Cards Matrix -->
+            <div class="compare-matrix">
+                <!-- Row 1: Token Processing Tax -->
+                <div class="compare-row" id="rowProspect1">
+                    <div class="compare-card problem">
+                        <div class="compare-tag"><i class="fas fa-times"></i> The Old Limitation</div>
+                        <h3 class="compare-card-title">Paying to Re-Tokenize 100k Tokens on Every Turn</h3>
+                        <p class="compare-card-text">
+                            Sales intelligence requires deep context: call transcripts, LinkedIn posts, persona profiles, CSR financial reports, and sales playbooks (~104,000 tokens). In naive architectures, every single follow-up message resubmits this massive payload, costing $0.04 per question and racking up $3,000+ monthly bills per rep.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fas fa-triangle-exclamation"></i> 1M+ tokens billed per 10 questions · Prohibitive API bills
+                        </div>
+                    </div>
+                    <div class="compare-card solution">
+                        <div class="compare-tag"><i class="fas fa-check"></i> The ProspectIntelligence Solution</div>
+                        <h3 class="compare-card-title">Explicit Context Caching via Gemini 2.5 Pro</h3>
+                        <p class="compare-card-text">
+                            Leverages Google's <code>/v1beta/cachedContents</code> endpoint. The 104k static tokens are uploaded once to Google's server infrastructure and assigned a cache ID. Every subsequent query references that cache ID directly, billing only the ~150 prompt tokens and reducing token costs by over 90%.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fas fa-bolt"></i> 90%+ cost reduction · Zero redundant tokenization
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Latency Bottleneck -->
+                <div class="compare-row" id="rowProspect2">
+                    <div class="compare-card problem">
+                        <div class="compare-tag"><i class="fas fa-times"></i> The Old Limitation</div>
+                        <h3 class="compare-card-title">7-to-10 Second Ingestion Lags That Paralyze Reps</h3>
+                        <p class="compare-card-text">
+                            Forcing the model to read 100k tokens from scratch on every question induces massive latency. Sales reps sitting on live prospect calls must wait 8 to 10 seconds per response, making real-time objection handling completely impractical.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fas fa-clock"></i> 8,400ms average response lag · Clunky live sales experience
+                        </div>
+                    </div>
+                    <div class="compare-card solution">
+                        <div class="compare-tag"><i class="fas fa-check"></i> The ProspectIntelligence Solution</div>
+                        <h3 class="compare-card-title">Sub-Second Pre-Warmed Memory Resolution</h3>
+                        <p class="compare-card-text">
+                            Because the context is already pre-warmed in memory on Google's model servers, the model skips context encoding entirely. Conversational responses return in under 840 milliseconds, empowering reps to pull prospect insights instantly mid-call.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fas fa-gauge-high"></i> &lt;840ms latency · Instantaneous live call copilot
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 3: Data Freshness & Invalidation -->
+                <div class="compare-row" id="rowProspect3">
+                    <div class="compare-card problem">
+                        <div class="compare-tag"><i class="fas fa-times"></i> The Old Limitation</div>
+                        <h3 class="compare-card-title">Stale Cached Context or Expensive Total Rebuilds</h3>
+                        <p class="compare-card-text">
+                            Primitive caching mechanisms either cache data forever (missing newly logged calls or LinkedIn posts) or invalidate blindly on arbitrary timers, destroying cost savings by re-uploading static unchanged documents repeatedly.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fas fa-arrows-rotate"></i> Data drift hallucinations or wasteful re-caches
+                        </div>
+                    </div>
+                    <div class="compare-card solution">
+                        <div class="compare-tag"><i class="fas fa-check"></i> The ProspectIntelligence Solution</div>
+                        <h3 class="compare-card-title">Deterministic SHA-256 Hash Drift Detection</h3>
+                        <p class="compare-card-text">
+                            A 4-case cache decision router compares the cryptographic SHA-256 hash of the prospect's current CRM data with the stored cache hash. If data has not changed, it reuses the cache and extends TTL (+24h). If a new call transcript is added, it instantly invalidates and recreates the cache.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fas fa-fingerprint"></i> Mathematical freshness · 100% data integrity
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 4: Budget Governance -->
+                <div class="compare-row" id="rowProspect4">
+                    <div class="compare-card problem">
+                        <div class="compare-tag"><i class="fas fa-times"></i> The Old Limitation</div>
+                        <h3 class="compare-card-title">Uncapped Runaway LLM Compute at Enterprise Scale</h3>
+                        <p class="compare-card-text">
+                            Without strict usage gates, enthusiastic reps or automated test scripts can hammer the assistant hundreds of times per lead, blowing up cloud bills and eroding SaaS gross margins without oversight.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fas fa-receipt"></i> Unpredictable SaaS margins · Runaway API consumption
+                        </div>
+                    </div>
+                    <div class="compare-card solution">
+                        <div class="compare-tag"><i class="fas fa-check"></i> The ProspectIntelligence Solution</div>
+                        <h3 class="compare-card-title">Pre-Compute 75-Message Database Usage Cap</h3>
+                        <p class="compare-card-text">
+                            Enforces an atomic PostgreSQL usage cap check (75 messages per user-client pair) in the initial SQL hydration query before any LLM API call is triggered. Once reached, the system gracefully halts compute, ensuring 100% predictable enterprise SaaS unit economics.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fas fa-shield-halved"></i> 100% predictable SaaS margins · Zero runaway costs
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Feature 1: Master Architecture -->
+    <section class="section-separator" id="master-architecture">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-sitemap"></i> SYSTEM ARCHITECTURE</div>
+                    <h2 class="showcase-h2">The Tri-Tier Infrastructure: React, Middleware &amp; Gemini Cache</h2>
+                    <p class="showcase-p">
+                        The architecture decouples the frontend user experience from complex server-side caching mechanics through clean, asynchronous webhook pipelines.
+                    </p>
+                    <ul class="feature-bullets">
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>React Sales Frontend:</strong> Embedded conversational UI inside the sales CRM providing instant prospect summaries, objection talking points, and real-time usage telemetry.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Event-Driven Orchestration Middleware:</strong> Stateless execution layer executing single-query PostgreSQL hydration, SHA-256 fingerprinting, 4-case routing, and webhook responses.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Google Gemini 2.5 Pro Explicit Cache:</strong> Pre-warmed model memory layer hosting 104k+ tokens with auto-extending 24-hour TTL, serving answers with sub-second immediacy.</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="showcase-media-box" onclick="openLightbox('images/00-prospect-master-architecture.jpg', 'ProspectIntelligence Master Architecture Diagram: React Webhook Integration, 4-Case Cache Router, PostgreSQL Single-Query Hydration, and Gemini 2.5 Pro Explicit Server Cache')">
+                        <img src="images/00-prospect-master-architecture.jpg" alt="ProspectIntelligence Master Architecture Diagram" />
+                        <div class="img-overlay-badge">
+                            <i class="fas fa-search-plus"></i> View Master Architecture
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Feature 2: Production 4-Case Routing Workflow -->
+    <section class="section-separator" id="routing-workflow">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-diagram-project"></i> PRODUCTION ORCHESTRATION</div>
+                    <h2 class="showcase-h2">Production 4-Case Routing Workflow &amp; State Invalidation</h2>
+                    <p class="showcase-p">
+                        Inspecting the production workflow canvas reveals how deterministic logic branches handle every lifecycle scenario without relying on monolithic code scripts.
+                    </p>
+                    <ul class="feature-bullets">
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Case 1 (New Session):</strong> Evaluates <code>message_count == 0</code>, formats the large static payload, invokes <code>POST /v1beta/cachedContents</code>, and executes the initial query.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Case 2 (Expired Cache):</strong> Detects expired cache TTL (&gt;24h) from database timestamps and recreates the server cache transparently without rep interruption.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Case 3 (Cache Hit):</strong> Direct cache hit; generates response with minimal token overhead and triggers an asynchronous <code>PATCH</code> request extending TTL +24h.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Case 4 (Data Drift):</strong> Identifies hash mismatch between CRM data and cache metadata, purges the stale cache, and re-indexes the fresh dataset.</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="showcase-media-box" onclick="openLightbox('images/01-production-4case-routing-workflow.jpg', 'Production AI Sales Intelligence Workflow: 4-Case Cache Decision Router with PostgreSQL Hydration and Gemini 2.5 Pro Explicit Caching')">
+                        <img src="images/01-production-4case-routing-workflow.jpg" alt="Production 4-Case Routing Workflow Canvas" />
+                        <div class="img-overlay-badge">
+                            <i class="fas fa-search-plus"></i> View Production Workflow Canvas
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Feature 3: Gemini Explicit Cache Deep Dive -->
+    <section class="section-separator" id="cache-deep-dive">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-microchip"></i> TOKEN ECONOMICS &amp; GOOGLE INFRASTRUCTURE</div>
+                    <h2 class="showcase-h2">Gemini 2.5 Pro Server-Side Context Caching Mechanics</h2>
+                    <p class="showcase-p">
+                        Explicit caching transforms multi-turn conversational AI from an $O(N 	imes M)$ token compounding disaster into an efficient $O(N + M)$ predictable cost structure.
+                    </p>
+                    <ul class="feature-bullets">
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Static Context Aggregation:</strong> Combines call transcripts (38.4k), LinkedIn activity (14.2k), persona matrix (12.5k), CSR reports (22.8k), and sales specs (16.3k) into a single 104,250 token package.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Server-Side Storage at Google:</strong> Google's infrastructure keeps the key-value weights in RAM/fast SSDs, requiring zero re-processing when subsequent requests arrive.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>TTL Auto-Extension:</strong> Every successful conversational turn triggers an asynchronous <code>PATCH /v1beta/cachedContents/{id}</code> call resetting the expiration timer to a fresh 24 hours.</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="showcase-media-box" onclick="openLightbox('images/02-gemini-explicit-cache-diagram.jpg', 'Google Gemini 2.5 Pro Explicit Context Caching Deep Dive: Comparing brute-force token re-upload vs. server-side cachedContents optimization')">
+                        <img src="images/02-gemini-explicit-cache-diagram.jpg" alt="Gemini Explicit Cache Deep Dive" />
+                        <div class="img-overlay-badge">
+                            <i class="fas fa-search-plus"></i> View Token Economics
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Feature 4: 4-Case Decision Tree -->
+    <section class="section-separator" id="decision-tree">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-code-branch"></i> DETERMINISTIC STATE MACHINE</div>
+                    <h2 class="showcase-h2">Deterministic 4-Case Decision Tree &amp; State Logic</h2>
+                    <p class="showcase-p">
+                        The decision router is completely deterministic, relying on mathematical comparisons rather than heuristic guesses to determine the exact execution route.
+                    </p>
+                    <ul class="feature-bullets">
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Single-Query PostgreSQL Hydration:</strong> Instead of making 6 sequential DB calls, a single optimized SQL query retrieves the entire prospect dossier and cache state in &lt;45ms.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Cryptographic SHA-256 Fingerprinting:</strong> Hashing the concatenated static payload allows the router to instantly spot out-of-band CRM edits with zero false positives.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Stateless Execution Guarantee:</strong> The workflow stores zero persistent memory on the execution runner, allowing horizontal auto-scaling without race conditions.</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="showcase-media-box" onclick="openLightbox('images/03-4case-decision-tree.jpg', '4-Case Cache Decision Router & State Invalidation Engine: Detailed flowchart of conditions, actions, and outcomes across all 4 cases')">
+                        <img src="images/03-4case-decision-tree.jpg" alt="4-Case Cache Decision Flowchart" />
+                        <div class="img-overlay-badge">
+                            <i class="fas fa-search-plus"></i> View Decision Flowchart
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Feature 5: React Frontend UI & Telemetry HUD -->
+    <section class="section-separator" id="react-ui">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fab fa-react"></i> FRONTEND INTEGRATION &amp; TELEMETRY</div>
+                    <h2 class="showcase-h2">React Sales Copilot Interface &amp; Real-Time Telemetry HUD</h2>
+                    <p class="showcase-p">
+                        The sales rep interacts with a modern React chat interface that displays contextual prospect badges, live cache hit telemetry, and remaining usage allowances.
+                    </p>
+                    <ul class="feature-bullets">
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Context Badges:</strong> Visual pills indicate which dossiers (Call Transcripts, LinkedIn Activity, Persona Matrix, CSR) are currently loaded in the active cache.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Real-Time Telemetry HUD:</strong> Displays response latency (790ms), active cache size (104,250 tokens), and tokens billed for complete operational visibility.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Database Budget Progress Meter:</strong> Live counter showing remaining query allowance (e.g. 14 / 75 messages used), preventing budget overruns.</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="showcase-media-box" onclick="openLightbox('images/04-react-sales-assistant-ui.jpg', 'React Sales Intelligence Chatbot & Telemetry Console: Live conversational interface with prospect context badges and usage cap meter')">
+                        <img src="images/04-react-sales-assistant-ui.jpg" alt="React Sales Assistant UI Mockup" />
+                        <div class="img-overlay-badge">
+                            <i class="fas fa-search-plus"></i> View React Chatbot UI
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technical Comparison Table Section -->
+    <section class="section-separator" id="technical-comparison">
+        <div class="wrapper">
+            <div class="section-header">
+                <div class="section-eyebrow"><i class="fas fa-table-columns"></i> TECHNICAL SPECIFICATIONS</div>
+                <h2 class="section-h2">Traditional LLM Architecture vs. ProspectIntelligence</h2>
+                <p class="section-p">
+                    A technical comparison detailing why explicit context caching and deterministic state routing are mandatory for enterprise AI sales applications.
+                </p>
+            </div>
+
+            <div class="table-wrap">
+                <table class="spec-table">
+                    <thead>
+                        <tr>
+                            <th>Architectural Dimension</th>
+                            <th>Traditional Brute-Force LLM Backend</th>
+                            <th>ProspectIntelligence Explicit Cache Engine</th>
+                            <th>Enterprise Advantage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Static Context Ingestion</td>
+                            <td>Re-uploaded on every single question turn</td>
+                            <td class="highlight">Explicit Server Caching (/v1beta/cachedContents)</td>
+                            <td>90%+ net financial token savings across all sessions</td>
+                        </tr>
+                        <tr>
+                            <td>Turn Latency (100k Context)</td>
+                            <td>7.5s &ndash; 10.0s encoding delay per turn</td>
+                            <td class="highlight">&lt;840ms Pre-Warmed Memory Response</td>
+                            <td>Instantaneous conversational flow during live sales calls</td>
+                        </tr>
+                        <tr>
+                            <td>Data Drift Detection</td>
+                            <td>None (stale responses or blind invalidation)</td>
+                            <td class="highlight">Deterministic SHA-256 Hash Comparison</td>
+                            <td>100% data freshness without redundant re-caching</td>
+                        </tr>
+                        <tr>
+                            <td>Database Hydration</td>
+                            <td>N+1 sequential database roundtrips</td>
+                            <td class="highlight">Single-Query PostgreSQL Hydration Layer</td>
+                            <td>Fetches all client data and cache state in &lt;45ms</td>
+                        </tr>
+                        <tr>
+                            <td>Usage &amp; Budget Governance</td>
+                            <td>Uncapped API billing risks</td>
+                            <td class="highlight">Atomic Pre-Compute 75-Message Database Cap</td>
+                            <td>Strictly protects SaaS gross margins at scale</td>
+                        </tr>
+                        <tr>
+                            <td>Frontend Decoupling</td>
+                            <td>Monolithic tight coupling</td>
+                            <td class="highlight">Stateless Asynchronous React Webhook</td>
+                            <td>Scales horizontally with zero state collision</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Stack Section -->
+    <section class="section-separator" id="tech-stack">
+        <div class="wrapper">
+            <div class="section-header">
+                <div class="section-eyebrow"><i class="fas fa-layer-group"></i> PRODUCTION TECH STACK</div>
+                <h2 class="section-h2">Engineered with State-of-the-Art Enterprise Technologies</h2>
+                <p class="section-p">
+                    Selected for extreme token efficiency, sub-second latency, and mathematical state reliability.
+                </p>
+            </div>
+
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <div class="tech-icon" style="color: var(--purple);"><i class="fas fa-brain"></i></div>
+                    <div class="tech-name">Google Gemini 2.5 Pro</div>
+                    <div class="tech-role">Explicit Context Caching</div>
+                    <div class="tech-desc">Server-side /v1beta/cachedContents architecture storing 104k+ static tokens with auto-extending 24h TTL.</div>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon" style="color: var(--cyan);"><i class="fas fa-database"></i></div>
+                    <div class="tech-name">PostgreSQL</div>
+                    <div class="tech-role">Single-Query Hydration</div>
+                    <div class="tech-desc">High-speed relational data layer fetching transcripts, LinkedIn data, persona matrix, and budget meters in one roundtrip.</div>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon" style="color: var(--emerald);"><i class="fab fa-react"></i></div>
+                    <div class="tech-name">React (Vite)</div>
+                    <div class="tech-role">Sales Copilot Frontend</div>
+                    <div class="tech-desc">Stateless responsive UI communicating via webhooks with live telemetry badges and conversational memory.</div>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon" style="color: var(--amber);"><i class="fas fa-fingerprint"></i></div>
+                    <div class="tech-name">SHA-256 Engine</div>
+                    <div class="tech-role">Data Drift Invalidation</div>
+                    <div class="tech-desc">Cryptographic fingerprinting layer detecting out-of-band CRM edits and triggering instant cache recreation.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Executive Ownership & Impact Card -->
+    <section class="section-separator" id="ownership-impact">
+        <div class="wrapper">
+            <div class="ownership-card">
+                <div class="ownership-grid">
+                    <div class="o-text">
+                        <div class="o-eyebrow"><i class="fas fa-award"></i> ENGINEERING LEADERSHIP &amp; IMPACT</div>
+                        <h2 class="o-h2">Architected from Concept to Enterprise Cloud Deployment</h2>
+                        <p class="o-p">
+                            As the Lead AI &amp; Backend Architect, I designed and delivered the complete ProspectIntelligence ecosystem. By engineering explicit context caching on Google Gemini 2.5 Pro and coupling it with a deterministic 4-case cache routing engine, we solved the twin challenges of prohibitive LLM token costs and unbearable latency for massive context datasets.
+                        </p>
+                        <p class="o-p">
+                            The resulting platform operates statelessly at scale, slashes enterprise token expenses by over 90%, and provides sales teams with sub-second, highly contextual answers for every prospect.
+                        </p>
+                    </div>
+                    <div class="o-stats-grid">
+                        <div class="o-stat">
+                            <div class="o-stat-num">90%+</div>
+                            <div class="o-stat-label">Net Token Cost Reduction</div>
+                        </div>
+                        <div class="o-stat">
+                            <div class="o-stat-num">&lt;840ms</div>
+                            <div class="o-stat-label">Average Response Latency</div>
+                        </div>
+                        <div class="o-stat">
+                            <div class="o-stat-num">104k+</div>
+                            <div class="o-stat-label">Cached Tokens per Prospect</div>
+                        </div>
+                        <div class="o-stat">
+                            <div class="o-stat-num">75-Msg</div>
+                            <div class="o-stat-label">Guaranteed Budget Cap</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta-section">
+        <div class="wrapper">
+            <h2 class="cta-h2">Need Advanced LLM Caching &amp; AI Sales Architecture?</h2>
+            <p class="cta-desc">
+                Discover how explicit context caching, deterministic state routers, and optimized database hydration can slash token costs and supercharge your enterprise AI products.
+            </p>
+            <div class="cta-btn-row">
+                <a href="../index.html" class="btn-primary">
+                    <i class="fas fa-arrow-left"></i> Explore All Case Studies
+                </a>
+                <a href="https://linkedin.com/in/ahsantariq0724" target="_blank" class="btn-secondary">
+                    <i class="fab fa-linkedin"></i> Connect on LinkedIn
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Lightbox Modal -->
+    <div id="lightboxModal" class="lightbox-modal" onclick="closeLightbox(event)">
+        <div class="lightbox-container" onclick="event.stopPropagation()">
+            <button class="lightbox-close" onclick="closeLightbox(event)">&times;</button>
+            <img id="lightboxImg" src="" alt="Enlarged screenshot" />
+            <div id="lightboxCaption" class="lightbox-caption"></div>
+        </div>
+    </div>
+
+    <!-- Interactive JavaScript Logic -->
+    <script>
+        // Interactive Problem vs Solution Filter Engine
+        function setProspectFilter(mode) {
+            const btnBoth = document.getElementById('btnBoth');
+            const btnProblem = document.getElementById('btnProblem');
+            const btnSolution = document.getElementById('btnSolution');
+
+            btnBoth.className = 'compare-toggle-btn';
+            btnProblem.className = 'compare-toggle-btn';
+            btnSolution.className = 'compare-toggle-btn';
+
+            const rows = document.querySelectorAll('.compare-row');
+
+            if (mode === 'both') {
+                btnBoth.classList.add('active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr) minmax(0, 1fr)';
+                    r.querySelector('.compare-card.problem').style.display = 'block';
+                    r.querySelector('.compare-card.solution').style.display = 'block';
+                });
+            } else if (mode === 'problem') {
+                btnProblem.classList.add('active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr)';
+                    r.querySelector('.compare-card.problem').style.display = 'block';
+                    r.querySelector('.compare-card.solution').style.display = 'none';
+                });
+            } else if (mode === 'solution') {
+                btnSolution.classList.add('active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr)';
+                    r.querySelector('.compare-card.problem').style.display = 'none';
+                    r.querySelector('.compare-card.solution').style.display = 'block';
+                });
+            }
+        }
+
+        // Interactive Lightbox Engine
+        function openLightbox(src, caption) {
+            const modal = document.getElementById('lightboxModal');
+            const img = document.getElementById('lightboxImg');
+            const cap = document.getElementById('lightboxCaption');
+            img.src = src;
+            cap.innerText = caption;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(e) {
+            const modal = document.getElementById('lightboxModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,2078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QPharma Case Study — Cloud-Native Pharma Data Lake & Automated AWS ETL Pipelines | Ahsan Tariq</title>
+    <meta name="description" content="How Ahsan Tariq engineered scalable data engineering and analytics infrastructure at QPharma using AWS Glue, S3 data lake, Lambda event automation, Pandas/NumPy feature engineering, and collaborative JupyterHub for large-scale pharmaceutical research and clinical operations.">
+
+    <!-- Google Fonts: Plus Jakarta Sans & Outfit & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-main: #06070a;
+            --bg-surface: #0a0e17;
+            --bg-card: #0e1320;
+            --bg-card-hover: #141c2e;
+            --border-subtle: rgba(255, 255, 255, 0.07);
+            --border-highlight: rgba(14, 165, 233, 0.35);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --cyan: #38bdf8;
+            --cyan-glow: rgba(56, 189, 248, 0.18);
+            --sky: #0ea5e9;
+            --emerald: #10b981;
+            --emerald-glow: rgba(16, 185, 129, 0.16);
+            --gold: #fbbf24;
+            --gold-glow: rgba(251, 191, 36, 0.16);
+            --rose: #f43f5e;
+            --rose-glow: rgba(244, 63, 94, 0.16);
+            --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-display: 'Outfit', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --radius-xl: 24px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --container-max: 1260px;
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            line-height: 1.65;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Ambient Glow & Canvas */
+        .ambient-glow {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            height: 600px;
+            background: radial-gradient(circle 800px at 50% -100px, rgba(14, 165, 233, 0.14), rgba(16, 185, 129, 0.04), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Top Nav */
+        .case-nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(6, 7, 10, 0.88);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 1rem 0;
+        }
+        .nav-inner {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .nav-back:hover {
+            color: var(--cyan);
+            transform: translateX(-3px);
+        }
+        .nav-brand {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 1.05rem;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .nav-brand span {
+            color: var(--cyan);
+        }
+        .nav-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(14, 165, 233, 0.08);
+            border: 1px solid rgba(14, 165, 233, 0.25);
+            padding: 0.35rem 0.8rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--cyan);
+            font-weight: 600;
+        }
+        .nav-status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 8px var(--cyan);
+            animation: pulseNav 2s infinite;
+        }
+        @keyframes pulseNav {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        /* Container & Layout */
+        .wrapper {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        .section-separator {
+            padding: 5.5rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        /* TheHexaTown Signature Typography & Tags */
+        .eyebrow-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(14, 165, 233, 0.08);
+            border: 1px solid rgba(14, 165, 233, 0.25);
+            color: var(--cyan);
+            padding: 0.4rem 0.95rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+        .hero-section {
+            padding: 4.5rem 0 3.5rem;
+            text-align: center;
+        }
+        .hero-h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.3rem, 5vw, 4rem);
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            margin-bottom: 1.25rem;
+            background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-tagline {
+            font-family: var(--font-display);
+            font-size: clamp(1.15rem, 2.2vw, 1.45rem);
+            font-weight: 600;
+            color: var(--cyan);
+            margin-bottom: 1.75rem;
+            letter-spacing: -0.01em;
+        }
+        .hero-desc {
+            font-size: 1.12rem;
+            color: var(--text-secondary);
+            max-width: 860px;
+            margin: 0 auto 3rem;
+            line-height: 1.75;
+        }
+        .hero-desc strong {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* Hero Badges Row */
+        .hero-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+        .hero-badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.4rem 0.9rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.76rem;
+            font-weight: 600;
+            background: rgba(14, 165, 233, 0.08);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            color: var(--cyan);
+        }
+        .hero-badge-pill.emerald {
+            background: rgba(16, 185, 129, 0.08);
+            border-color: rgba(16, 185, 129, 0.2);
+            color: var(--emerald);
+        }
+        .hero-badge-pill.gold {
+            background: rgba(251, 191, 36, 0.08);
+            border-color: rgba(251, 191, 36, 0.2);
+            color: var(--gold);
+        }
+
+        /* Meta Grid */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem 2rem;
+            margin: 2.5rem 0 3.5rem;
+            text-align: left;
+        }
+        .meta-col {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+        .meta-title {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+        }
+        .meta-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        .meta-value.accent {
+            color: var(--cyan);
+        }
+
+        /* Browser Mockup System */
+        .browser-mockup {
+            background: #0d121c;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.04);
+            margin: 2rem 0;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .browser-mockup:hover {
+            border-color: rgba(14, 165, 233, 0.3);
+            box-shadow: 0 30px 70px -15px rgba(14, 165, 233, 0.15), 0 0 0 1px rgba(14, 165, 233, 0.2);
+        }
+        .browser-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1.25rem;
+            background: #141b27;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            gap: 0.75rem;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .browser-dots {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .browser-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+        .browser-url {
+            background: #090d15;
+            padding: 0.35rem 0.85rem;
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            font-size: 0.76rem;
+            color: #94a3b8;
+            flex: 1 1 0%;
+            min-width: 0;
+            max-width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .browser-url i {
+            color: var(--cyan);
+            font-size: 0.7rem;
+            flex-shrink: 0;
+        }
+        .browser-url span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
+            min-width: 0;
+            flex: 1 1 0%;
+        }
+        .browser-badge {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--cyan);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(14, 165, 233, 0.1);
+            padding: 0.25rem 0.65rem;
+            border-radius: 20px;
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .browser-badge.pulse::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 8px var(--cyan);
+            animation: pulseGlow 2s infinite;
+            flex-shrink: 0;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+        .browser-screen {
+            position: relative;
+            cursor: zoom-in;
+            overflow: hidden;
+            background: #080b11;
+            line-height: 0;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+        .browser-screen img {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+            box-sizing: border-box;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .browser-screen:hover img {
+            transform: scale(1.015);
+        }
+        .browser-screen .zoom-hint {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            background: rgba(10, 14, 22, 0.88);
+            backdrop-filter: blur(8px);
+            color: #cbd5e1;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.4rem 0.85rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .browser-screen:hover .zoom-hint {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Statement Banner */
+        .statement-banner {
+            padding: 5.5rem 0;
+            border-top: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border-subtle);
+            background: linear-gradient(180deg, rgba(14, 165, 233, 0.03) 0%, transparent 100%);
+        }
+        .statement-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.75rem, 3.4vw, 2.75rem);
+            font-weight: 800;
+            line-height: 1.25;
+            letter-spacing: -0.025em;
+            color: #ffffff;
+            max-width: 1120px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .statement-h2 span {
+            color: var(--cyan);
+        }
+
+        /* Executive Metrics Grid */
+        .exec-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1.5rem;
+            margin: 3.5rem 0;
+            width: 100%;
+            max-width: 100%;
+        }
+        .exec-metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem 1.5rem;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .exec-metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyan), transparent);
+            opacity: 0.5;
+        }
+        .exec-metric-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-highlight);
+        }
+        .exec-num {
+            font-family: var(--font-display);
+            font-size: 2.1rem;
+            font-weight: 800;
+            line-height: 1.1;
+            color: #ffffff;
+            margin-bottom: 0.4rem;
+        }
+        .exec-num.cyan { color: var(--cyan); }
+        .exec-num.emerald { color: var(--emerald); }
+        .exec-num.gold { color: var(--gold); }
+        .exec-label {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 0.35rem;
+        }
+        .exec-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Showcase Split Section */
+        .showcase-block {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+            gap: 3.5rem;
+            align-items: center;
+            margin: 4.5rem 0;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+        .showcase-block.reverse {
+            grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+        }
+        .showcase-block.reverse .showcase-text-col {
+            order: 2;
+        }
+        .showcase-block.reverse .showcase-media-col {
+            order: 1;
+        }
+        .showcase-text-col,
+        .showcase-media-col {
+            min-width: 0;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .showcase-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--cyan);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+        }
+        .showcase-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 2.5vw, 2.3rem);
+            font-weight: 800;
+            line-height: 1.22;
+            color: #ffffff;
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.02em;
+        }
+        .showcase-desc {
+            color: var(--text-secondary);
+            font-size: 1.02rem;
+            line-height: 1.72;
+            margin-bottom: 1.5rem;
+        }
+        .showcase-feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            margin: 1.5rem 0;
+        }
+        .showcase-feature-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+        .showcase-feature-list li i {
+            color: var(--cyan);
+            margin-top: 0.25rem;
+            font-size: 0.85rem;
+        }
+        .showcase-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1.25rem;
+        }
+        .showcase-tag {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #cbd5e1;
+            padding: 0.35rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.76rem;
+            font-family: var(--font-mono);
+            font-weight: 500;
+        }
+
+        /* Dual Explanation Grid */
+        .dual-explanation-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .explanation-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            position: relative;
+        }
+        .explanation-box.plain-english {
+            border-top: 3px solid var(--emerald);
+        }
+        .explanation-box.tech-deep-dive {
+            border-top: 3px solid var(--cyan);
+        }
+        .explanation-box-label {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .explanation-box.plain-english .explanation-box-label { color: var(--emerald); }
+        .explanation-box.tech-deep-dive .explanation-box-label { color: var(--cyan); }
+        .explanation-box p {
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+            line-height: 1.7;
+        }
+
+        /* Interactive Problem vs Solution */
+        .interactive-comparison-wrapper {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            padding: 3rem;
+            margin: 3.5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .comparison-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+        .compare-toggle-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            color: #cbd5e1;
+            padding: 0.65rem 1.5rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .compare-toggle-btn.active {
+            background: var(--cyan);
+            color: #060911;
+            border-color: var(--cyan);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+            transform: scale(1.03);
+        }
+        .compare-toggle-btn.problem-active {
+            background: var(--rose);
+            color: #ffffff;
+            border-color: var(--rose);
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.4);
+            transform: scale(1.03);
+        }
+        .compare-toggle-btn.solution-active {
+            background: var(--emerald);
+            color: #05140e;
+            border-color: var(--emerald);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+            transform: scale(1.03);
+        }
+        .comparison-cards-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .compare-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 60px minmax(0, 1fr);
+            gap: 1.5rem;
+            align-items: center;
+            width: 100%;
+            max-width: 100%;
+            transition: all 0.35s ease;
+        }
+        .compare-side {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            border: 1px solid var(--border-subtle);
+            min-width: 0;
+            max-width: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        .compare-side.side-problem {
+            border-left: 4px solid var(--rose);
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.05) 0%, rgba(14, 19, 32, 0.95) 100%);
+        }
+        .compare-side.side-solution {
+            border-left: 4px solid var(--emerald);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(14, 19, 32, 0.95) 100%);
+        }
+        .compare-arrow-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #141c2c;
+            border: 1px solid var(--border-subtle);
+            color: var(--cyan);
+            font-size: 1.1rem;
+            margin: 0 auto;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+        }
+        .side-label {
+            font-family: var(--font-mono);
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        .side-problem .side-label { color: var(--rose); }
+        .side-solution .side-label { color: var(--emerald); }
+        .side-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.75rem;
+        }
+        .side-desc {
+            color: var(--text-secondary);
+            font-size: 0.93rem;
+            line-height: 1.65;
+        }
+
+        /* Code Snippet */
+        .code-window {
+            background: #0c1018;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.65rem 1rem;
+            background: #111827;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .code-filename {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            color: var(--cyan);
+            font-weight: 600;
+        }
+        .code-lang {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .code-body {
+            padding: 1.25rem 1.5rem;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            line-height: 1.7;
+            color: #e2e8f0;
+        }
+        .code-body .kw { color: #c084fc; }
+        .code-body .fn { color: #60a5fa; }
+        .code-body .str { color: #34d399; }
+        .code-body .cm { color: #6b7280; font-style: italic; }
+        .code-body .num { color: #fbbf24; }
+        .code-body .op { color: #f472b6; }
+
+        /* Comparison Table */
+        .phases-table-wrapper {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            max-height: 520px;
+            overflow-y: auto;
+            margin: 2rem 0;
+        }
+        .phases-table-wrapper::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .phases-table-wrapper::-webkit-scrollbar-thumb {
+            background: #2a3447;
+            border-radius: 3px;
+        }
+        .phases-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            font-family: var(--font-mono);
+        }
+        .phases-table th {
+            background: #121721;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .phases-table td {
+            padding: 0.65rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: #cbd5e1;
+        }
+        .phases-table tr:hover td {
+            background: rgba(14, 165, 233, 0.03);
+        }
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.2rem 0.55rem;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+        .status-pill.complete {
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--emerald);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+        .status-pill.partial {
+            background: rgba(234, 179, 8, 0.12);
+            color: var(--gold);
+            border: 1px solid rgba(234, 179, 8, 0.25);
+        }
+        .status-pill.blocked {
+            background: rgba(244, 63, 94, 0.12);
+            color: var(--rose);
+            border: 1px solid rgba(244, 63, 94, 0.25);
+        }
+
+        /* Tech Grid */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+            width: 100%;
+            max-width: 100%;
+        }
+        .tech-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+        .tech-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-highlight);
+        }
+        .tech-header {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            margin-bottom: 1rem;
+        }
+        .tech-pill {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            background: rgba(14, 165, 233, 0.1);
+            color: var(--cyan);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+        }
+        .tech-pill.emerald { background: rgba(16, 185, 129, 0.1); color: var(--emerald); border-color: rgba(16, 185, 129, 0.2); }
+        .tech-pill.gold { background: rgba(251, 191, 36, 0.1); color: var(--gold); border-color: rgba(251, 191, 36, 0.2); }
+        .tech-pill.rose { background: rgba(244, 63, 94, 0.1); color: var(--rose); border-color: rgba(244, 63, 94, 0.2); }
+        .tech-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+        .tech-card p {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        /* Ownership Section */
+        .ownership-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1.5rem;
+            margin: 2.5rem 0;
+        }
+        .ownership-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+        .ownership-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-highlight);
+        }
+        .ownership-card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            background: rgba(14, 165, 233, 0.1);
+            color: var(--cyan);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            margin-bottom: 1rem;
+        }
+        .ownership-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+        .ownership-card p {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            line-height: 1.6;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 6.5rem 0;
+            text-align: center;
+            background: radial-gradient(circle 600px at 50% 50%, rgba(14, 165, 233, 0.08), transparent 70%);
+        }
+        .cta-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 3.8vw, 3rem);
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.03em;
+        }
+        .cta-desc {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 650px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.6;
+        }
+        .cta-btn-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.25rem;
+        }
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--cyan);
+            color: #060911;
+            padding: 0.9rem 2rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.35);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(56, 189, 248, 0.5);
+            background: #0284c7;
+        }
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 0.9rem 2rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Lightbox Modal */
+        .lightbox-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(3, 5, 8, 0.95);
+            backdrop-filter: blur(12px);
+            z-index: 999999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            box-sizing: border-box;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .lightbox-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        .lightbox-container {
+            max-width: 95vw;
+            max-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .lightbox-container img {
+            max-width: 92vw;
+            max-height: 82vh;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+        .lightbox-caption {
+            margin-top: 1rem;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            font-family: var(--font-mono);
+            background: rgba(15, 23, 42, 0.85);
+            padding: 0.5rem 1.25rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            max-width: 800px;
+            text-align: center;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: -2.5rem;
+            right: 0;
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+        .lightbox-close:hover {
+            color: var(--cyan);
+            transform: scale(1.15);
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .exec-metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .showcase-block, .showcase-block.reverse {
+                grid-template-columns: minmax(0, 1fr) !important;
+                gap: 2.5rem;
+            }
+            .showcase-block.reverse .showcase-text-col { order: 1; }
+            .showcase-block.reverse .showcase-media-col { order: 2; }
+            .compare-row { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+            .compare-arrow-box { transform: rotate(90deg); margin: 0.5rem auto; }
+            .tech-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .dual-explanation-grid { grid-template-columns: minmax(0, 1fr); }
+            .ownership-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
+        @media (max-width: 768px) {
+            .browser-bar {
+                padding: 0.55rem 0.85rem;
+                gap: 0.5rem;
+            }
+            .browser-badge { display: none; }
+            .browser-url { font-size: 0.7rem; padding: 0.25rem 0.55rem; }
+            .browser-dots { gap: 4px; }
+            .browser-dot { width: 8px; height: 8px; }
+            .interactive-comparison-wrapper { padding: 1.5rem; }
+            .comparison-controls { flex-direction: column; gap: 0.6rem; }
+            .compare-toggle-btn { width: 100%; justify-content: center; }
+        }
+
+        @media (max-width: 640px) {
+            .meta-grid { grid-template-columns: minmax(0, 1fr); }
+            .exec-metrics-grid { grid-template-columns: minmax(0, 1fr); }
+            .tech-grid { grid-template-columns: minmax(0, 1fr); }
+            .ownership-grid { grid-template-columns: minmax(0, 1fr); }
+            .cta-btn-row { flex-direction: column; }
+            .statement-h2 { font-size: 1.45rem; }
+            .hero-h1 { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Glow Background -->
+    <div class="ambient-glow"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="case-nav">
+        <div class="nav-inner">
+            <a href="../index.html" class="nav-back">
+                <i class="fas fa-arrow-left"></i> Back to Case Studies
+            </a>
+            <div class="nav-brand">
+                <span>Tariq</span>DreamsTech
+            </div>
+            <div class="nav-status">
+                <span class="nav-status-dot"></span> AWS CLOUD DATA LAKE · PHARMACEUTICAL RESEARCH &amp; ETL
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-flask"></i> Enterprise Healthcare &amp; Pharmaceutical Data Engineering
+            </div>
+
+            <h1 class="hero-h1">QPharma</h1>
+            <div class="hero-tagline">&ldquo;Scalable Cloud-Native Data Lake &amp; Automated ETL Pipelines for Large-Scale Clinical Operations &amp; Drug Research&rdquo;</div>
+
+            <div class="hero-badges">
+                <span class="hero-badge-pill"><i class="fas fa-network-wired"></i> AWS Glue PySpark ETL</span>
+                <span class="hero-badge-pill emerald"><i class="fas fa-database"></i> Amazon S3 Partitioned Lake</span>
+                <span class="hero-badge-pill gold"><i class="fas fa-bolt"></i> Event-Driven Lambda Triggers</span>
+                <span class="hero-badge-pill"><i class="fab fa-python"></i> JupyterHub Team Sandbox</span>
+            </div>
+
+            <p class="hero-desc">
+                How <strong>Ahsan Tariq</strong> contributed to engineering enterprise-grade data architecture at <strong>QPharma</strong> (Morristown, New Jersey) &mdash; transforming fragmented clinical trial spreadsheets, multi-center healthcare APIs, and pharmacovigilance feeds into an automated, event-driven <strong>AWS Glue &amp; S3 data lake</strong>. Implementing <strong>Pandas/NumPy feature engineering</strong>, strict <strong>AWS IAM role governance</strong>, and collaborative <strong>JupyterHub research environments</strong> in a strictly regulated, high-stakes pharmaceutical environment.
+            </p>
+
+            <!-- Meta Strip -->
+            <div class="meta-grid">
+                <div class="meta-col">
+                    <span class="meta-title">Client / Enterprise</span>
+                    <span class="meta-value">QPharma (Morristown, NJ &middot; Remote)</span>
+                </div>
+                <div class="meta-col">
+                    <span class="meta-title">Engineering Role</span>
+                    <span class="meta-value accent">Data Engineer (Ahsan Tariq &middot; Aug 2024 &ndash; Jan 2026)</span>
+                </div>
+                <div class="meta-col">
+                    <span class="meta-title">Regulatory Standard</span>
+                    <span class="meta-value">HIPAA &middot; 21 CFR Part 11 &middot; GxP Data Integrity</span>
+                </div>
+                <div class="meta-col">
+                    <span class="meta-title">Core Ecosystem</span>
+                    <span class="meta-value">AWS Glue &middot; S3 &middot; Lambda &middot; Pandas &middot; JupyterHub</span>
+                </div>
+            </div>
+
+            <!-- Hero Master Architecture Diagram -->
+            <div class="browser-mockup" id="master-architecture">
+                <div class="browser-bar">
+                    <div class="browser-dots">
+                        <span class="browser-dot dot-red"></span>
+                        <span class="browser-dot dot-yellow"></span>
+                        <span class="browser-dot dot-green"></span>
+                    </div>
+                    <div class="browser-url">
+                        <i class="fas fa-lock"></i>
+                        <span>https://qpharma.aws.internal/architecture/master-serverless-data-lake</span>
+                    </div>
+                    <div class="browser-badge pulse">
+                        ● PIPELINE ONLINE · 99.98% SLA
+                    </div>
+                </div>
+                <div class="browser-screen" onclick="openLightbox('images/00-qpharma-master-data-architecture.jpg', 'QPharma: Master AWS Serverless Data Lake & Analytics Topology (Multi-Source Ingestion -> S3 Raw -> Lambda Triggers -> AWS Glue PySpark ETL -> S3 Curated -> Athena & JupyterHub)')">
+                    <img src="images/00-qpharma-master-data-architecture.jpg" alt="QPharma Master AWS Serverless Data Architecture Diagram" />
+                    <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect full architecture</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statement Banner -->
+    <section class="statement-banner">
+        <div class="wrapper">
+            <h2 class="statement-h2">
+                &ldquo;From <span>manual spreadsheets and siloed trial records</span> to an <span>automated event-driven AWS data lake</span>: <span>10M+ daily records</span> ingested across multi-center trials with <span>99.98% pipeline uptime</span> and <span>65% faster time-to-insight</span> for clinical researchers.&rdquo;
+            </h2>
+        </div>
+    </section>
+
+    <!-- Executive Production Metrics Grid -->
+    <section class="section-separator">
+        <div class="wrapper">
+            <div class="exec-metrics-grid">
+                <div class="exec-metric-card">
+                    <div class="exec-num cyan">10M+ Records</div>
+                    <div class="exec-label">Daily Ingestion Throughput</div>
+                    <div class="exec-sub">Scalable ingestion across multi-center clinical trials, laboratory assay endpoints &amp; partner APIs</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="exec-num emerald">99.98%</div>
+                    <div class="exec-label">Automated Pipeline SLA Uptime</div>
+                    <div class="exec-sub">Serverless fault-tolerant execution powered by S3 event notifications and automated Lambda retries</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="exec-num cyan">65% Faster</div>
+                    <div class="exec-label">Time-to-Insight Reduction</div>
+                    <div class="exec-sub">Accelerated data delivery from raw arrival to clean, ML-ready feature sets and analytical dashboards</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="exec-num gold">100% HIPAA</div>
+                    <div class="exec-label">Regulatory Compliance &amp; Security</div>
+                    <div class="exec-sub">AES-256 SSE-KMS encryption, private VPC endpoints, and strict least-privilege IAM governance</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem vs Solution Section -->
+    <section class="section-separator" id="problem-solution">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-scale-balanced"></i> Executive Comparison
+            </div>
+            <h2 class="showcase-h2" style="text-align: center; margin-bottom: 0.5rem;">How QPharma Modernized Pharmaceutical Data Operations</h2>
+            <p class="showcase-desc" style="text-align: center; max-width: 750px; margin: 0 auto 2.5rem;">
+                See how traditional pharmaceutical research friction &mdash; manual spreadsheets, dirty trial records, server maintenance, and siloed research teams &mdash; was replaced by an enterprise cloud-native data architecture.
+            </p>
+
+            <div class="interactive-comparison-wrapper">
+                <!-- Interactive Controls -->
+                <div class="comparison-controls">
+                    <button class="compare-toggle-btn active" id="btnQPharmaBoth" onclick="setQPharmaFilter('both')">
+                        <i class="fas fa-columns"></i> Show Both
+                    </button>
+                    <button class="compare-toggle-btn" id="btnQPharmaProblem" onclick="setQPharmaFilter('problem')">
+                        <i class="fas fa-times-circle"></i> Problems Only
+                    </button>
+                    <button class="compare-toggle-btn" id="btnQPharmaSolution" onclick="setQPharmaFilter('solution')">
+                        <i class="fas fa-check-circle"></i> Solutions Only
+                    </button>
+                </div>
+
+                <div class="comparison-cards-grid">
+                    <!-- Row 1: Disparate & Unstructured Data Ingestion -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label"><i class="fas fa-times-circle"></i> Problem</div>
+                            <div class="side-title">Fragmented Multi-Source Ingestion Delays Trials</div>
+                            <div class="side-desc">Clinical trial records arrived from dozens of hospitals and laboratories in inconsistent formats &mdash; multi-sheet Excel files, non-standardized REST endpoints, and unformatted social pharmacovigilance reports. Data teams wasted 15&ndash;20 hours weekly manually downloading, formatting, and verifying incoming files.</div>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label"><i class="fas fa-check-circle"></i> Solution</div>
+                            <div class="side-title">Automated S3 Landing &amp; Event-Driven Lambda Triggers</div>
+                            <div class="side-desc">Built a multi-protocol ingestion gateway landing data in partitioned Amazon S3 buckets. S3 ObjectCreated events automatically fire AWS Lambda functions that validate file headers, enforce MIME integrity, check SHA-256 payload checksums, and dispatch AWS Glue PySpark jobs within 1.2 seconds of arrival.</div>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Data Cleaning & Feature Engineering -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label"><i class="fas fa-times-circle"></i> Problem</div>
+                            <div class="side-title">Missing Dosages, Dirty Records &amp; Medical Code Drift</div>
+                            <div class="side-desc">Raw medical datasets contained critical flaws: unrecorded patient dosages, duplicate subject identifiers across multi-center clinical trials, inconsistent date formats, and non-standardized adverse effect terms that broke analytics dashboards and invalidated statistical cohorts.</div>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label"><i class="fas fa-check-circle"></i> Solution</div>
+                            <div class="side-title">Vectorized Pandas/NumPy Cleaning &amp; Feature Engineering</div>
+                            <div class="side-desc">Developed high-throughput data cleaning and feature engineering pipelines. Applied vectorized regex normalization, MedDRA clinical terminology mapping, median/mode null imputation, and deterministic patient deduplication &mdash; generating clean, validated feature stores ready for biostatistical models.</div>
+                        </div>
+                    </div>
+
+                    <!-- Row 3: Infrastructure & Cost Efficiency -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label"><i class="fas fa-times-circle"></i> Problem</div>
+                            <div class="side-title">Over-Provisioned VM Servers &amp; Idle Compute Costs</div>
+                            <div class="side-desc">Traditional fixed virtual machines sat idle overnight yet choked during massive end-of-month clinical batch runs. Infrastructure costs soared while data pipelines suffered from intermittent memory crashes, unmonitored failures, and high operational overhead.</div>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label"><i class="fas fa-check-circle"></i> Solution</div>
+                            <div class="side-title">100% Serverless Cloud-Native Architecture</div>
+                            <div class="side-desc">Architected an elastic, pay-per-execution topology using AWS Glue serverless PySpark workers, S3 lifecycle policies, and AWS Lambda micro-validators. The system auto-scales from zero to hundreds of concurrent workers during peak batch arrivals and scales back down instantly, optimizing cloud expenditure by 42%.</div>
+                        </div>
+                    </div>
+
+                    <!-- Row 4: Collaboration & Regulatory Compliance -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label"><i class="fas fa-times-circle"></i> Problem</div>
+                            <div class="side-title">Siloed Research Teams &amp; Regulatory Audit Vulnerabilities</div>
+                            <div class="side-desc">Data scientists worked on local machines with static credentials, creating compliance blind spots under HIPAA and FDA 21 CFR Part 11. Cross-functional stakeholders lacked visibility into data flow stages, resulting in repeated misalignments between technical data engineers and clinical researchers.</div>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label"><i class="fas fa-check-circle"></i> Solution</div>
+                            <div class="side-title">JupyterHub Collaborative Sandbox &amp; Excalidraw Alignment</div>
+                            <div class="side-desc">Deployed a centralized JupyterHub environment for multi-tenant exploratory data analysis directly over S3 via Amazon Athena. Created visual architecture blueprints in Excalidraw for cross-team alignment, enforced zero-static-key AWS IAM roles with KMS encryption, and tracked pipeline QA through Jira and Git version control.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase 1: Multi-Source Ingestion & Event-Driven Pipeline -->
+    <section class="section-separator" id="ingestion-pipeline">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow">
+                        <i class="fas fa-bolt"></i> Event-Driven Architecture
+                    </div>
+                    <h2 class="showcase-h2">Multi-Source Ingestion: S3 Raw Storage &amp; Automated Lambda Triggers</h2>
+                    <p class="showcase-desc">
+                        Pharmaceutical data arrives from radically diverse origins &mdash; multi-tab clinical trial spreadsheets, real-time hospital EHR endpoints, partner REST APIs, and public adverse event signal streams. We architected a <strong>zero-touch event-driven ingestion engine</strong> where every new dataset is validated, categorized, and forwarded to processing queues automatically.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <span><strong>S3 Landing Zone Partitioning:</strong> Ingested files are stored under <code>s3://qpharma-lake/raw/source=X/year=YYYY/month=MM/</code> with automated lifecycle archiving.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Lambda Gatekeeper Validation:</strong> Verifies file integrity, schema signatures, and SHA-256 hashes within 1.2 seconds of upload.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Automated Quarantine Routing:</strong> Corrupted datasets or malformed payloads are automatically diverted to a Dead Letter Queue with Jira incident triggers.</span></li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">Amazon S3</span>
+                        <span class="showcase-tag">AWS Lambda</span>
+                        <span class="showcase-tag">S3 Event Notifications</span>
+                        <span class="showcase-tag">Dead Letter Queue</span>
+                    </div>
+                </div>
+
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-lock"></i>
+                                <span>https://qpharma.aws.internal/pipelines/ingestion-event-stream</span>
+                            </div>
+                            <div class="browser-badge">DELAY: &lt; 1.2S</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/01-multi-source-etl-ingestion-pipeline.jpg', 'QPharma: Multi-Source ETL Ingestion & Automated Event-Driven Flow (S3 Raw -> Lambda Gatekeeper -> AWS Glue)')">
+                            <img src="images/01-multi-source-etl-ingestion-pipeline.jpg" alt="Multi-Source ETL Ingestion Pipeline Diagram" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to enlarge diagram</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dual Explanation Grid -->
+            <div class="dual-explanation-grid">
+                <div class="explanation-box plain-english">
+                    <div class="explanation-box-label"><i class="fas fa-user-check"></i> Plain English Explanation</div>
+                    <p>
+                        In clinical trials, doctors and clinical staff from 50 different hospitals send patient spreadsheets, blood test results, and pharmacy reports at all hours of the day. 
+                        Instead of someone manually checking an inbox and copying files around, our AWS cloud system acts like a 24/7 digital post office: the moment a file lands in S3 storage, a smart Lambda robot instantly inspects it, confirms it is undamaged and authentic, and immediately wakes up the heavy data processing engines.
+                    </p>
+                </div>
+                <div class="explanation-box tech-deep-dive">
+                    <div class="explanation-box-label"><i class="fas fa-code-branch"></i> Technical Deep Dive</div>
+                    <p>
+                        We configured Amazon S3 Bucket Event Notifications configured with object-created triggers filtered by source prefix. The event triggers an ephemeral AWS Lambda function running Python 3.11 with an execution timeout cap of 30 seconds. 
+                        The function downloads the file header via S3 byte-range requests, verifies MIME-type conformity against expected formats (XLSX, CSV, JSON, XML), logs metadata to Amazon CloudWatch, and invokes the targeted AWS Glue ETL job using <code>boto3.client('glue').start_job_run()</code> with dynamic runtime arguments.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Code Window: Lambda Event Ingestion Validator -->
+            <div class="code-window">
+                <div class="code-header">
+                    <span class="code-filename"><i class="fas fa-terminal"></i> lambda/s3_clinical_ingestion_trigger.py</span>
+                    <span class="code-lang">Python 3.11 / AWS Lambda</span>
+                </div>
+                <pre class="code-body"><code><span class="kw">import</span> json, urllib.parse, boto3, hashlib
+
+s3_client = boto3.client(<span class="str">'s3'</span>)
+glue_client = boto3.client(<span class="str">'glue'</span>)
+
+<span class="kw">def</span> <span class="fn">lambda_handler</span>(event, context):
+    <span class="cm"># 1. Parse incoming S3 Event Notification</span>
+    record = event[<span class="str">'Records'</span>][<span class="num">0</span>]
+    bucket = record[<span class="str">'s3'</span>][<span class="str">'bucket'</span>][<span class="str">'name'</span>]
+    key = urllib.parse.unquote_plus(record[<span class="str">'s3'</span>][<span class="str">'object'</span>][<span class="str">'key'</span>])
+    
+    <span class="cm"># 2. Inspect object metadata and calculate payload SHA-256</span>
+    response = s3_client.head_object(Bucket=bucket, Key=key)
+    content_type = response.get(<span class="str">'ContentType'</span>, <span class="str">''</span>)
+    content_length = response.get(<span class="str">'ContentLength'</span>, <span class="num">0</span>)
+    
+    <span class="kw">if</span> content_length == <span class="num">0</span>:
+        <span class="cm"># Quarantine empty or zero-byte payload</span>
+        quarantine_key = key.replace(<span class="str">'raw/'</span>, <span class="str">'quarantine/empty_'</span>)
+        s3_client.copy_object(Bucket=bucket, CopySource={<span class="str">'Bucket'</span>: bucket, <span class="str">'Key'</span>: key}, Key=quarantine_key)
+        <span class="kw">return</span> {<span class="str">'status'</span>: <span class="str">'quarantined'</span>, <span class="str">'reason'</span>: <span class="str">'zero_byte_file'</span>}
+
+    <span class="cm"># 3. Dispatched targeted AWS Glue ETL Job with runtime parameters</span>
+    job_run = glue_client.start_job_run(
+        JobName=<span class="str">'qpharma-clinical-cleaning-pyspark'</span>,
+        Arguments={
+            <span class="str">'--s3_source_bucket'</span>: bucket,
+            <span class="str">'--s3_source_key'</span>: key,
+            <span class="str">'--pipeline_run_id'</span>: context.aws_request_id,
+            <span class="str">'--environment'</span>: <span class="str">'production'</span>
+        }
+    )
+    <span class="kw">return</span> {<span class="str">'status'</span>: <span class="str">'glue_triggered'</span>, <span class="str">'job_run_id'</span>: job_run[<span class="str">'JobRunId'</span>]}</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase 2: Data Cleaning & Feature Engineering Engine -->
+    <section class="section-separator" id="data-cleaning">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow">
+                        <i class="fas fa-vial"></i> Data Cleaning &amp; Feature Pipelines
+                    </div>
+                    <h2 class="showcase-h2">Vectorized Pandas, NumPy &amp; PySpark Normalization</h2>
+                    <p class="showcase-desc">
+                        Raw clinical and pharmacological data is notoriously dirty &mdash; missing trial dosages, mismatched observation dates, and unstandardized adverse symptom terminology create statistical noise. We engineered a <strong>multi-phase data cleaning and feature engineering pipeline</strong> that normalizes records into production-ready analytical feature stores.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Vectorized Missing Value Imputation:</strong> Utilized Pandas and NumPy for domain-specific median/mode dosage imputations and outlier filtering.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>MedDRA Clinical Terminology Mapping:</strong> Standardized free-text adverse event descriptions to regulated MedDRA dictionary codes.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>ML Feature Store Generation:</strong> Synthesized longitudinal patient features, dosage response curves, and safety frequency matrices.</span></li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">AWS Glue PySpark</span>
+                        <span class="showcase-tag">Python Pandas</span>
+                        <span class="showcase-tag">NumPy Vectorized</span>
+                        <span class="showcase-tag">MedDRA Mapping</span>
+                    </div>
+                </div>
+
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-lock"></i>
+                                <span>https://qpharma.aws.internal/etl/feature-engineering-dashboard</span>
+                            </div>
+                            <div class="browser-badge">PASS RATE: 99.94%</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/02-data-cleaning-feature-engineering.jpg', 'QPharma: Data Cleaning, Normalization & Feature Engineering Pipeline (Pandas, NumPy & PySpark)')">
+                            <img src="images/02-data-cleaning-feature-engineering.jpg" alt="Data Cleaning and Feature Engineering Diagram" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to enlarge diagram</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dual Explanation Grid -->
+            <div class="dual-explanation-grid">
+                <div class="explanation-box plain-english">
+                    <div class="explanation-box-label"><i class="fas fa-user-check"></i> Plain English Explanation</div>
+                    <p>
+                        If one doctor writes "patient felt dizzy (50mg dose)" and another writes "Subject reported vertigo &mdash; 0.05g", a standard computer cannot connect the two. 
+                        Our Python and PySpark cleaning scripts translate both into the exact same standardized medical terms, convert all units into milligrams, eliminate duplicate patients who enrolled at two different clinics, and package the data so pharmaceutical researchers can instantly see how well a medicine works.
+                    </p>
+                </div>
+                <div class="explanation-box tech-deep-dive">
+                    <div class="explanation-box-label"><i class="fas fa-code-branch"></i> Technical Deep Dive</div>
+                    <p>
+                        The data cleaning pipeline runs as an AWS Glue PySpark job utilizing DynamicFrames converted to Apache Spark DataFrames. Text fields undergo vectorized regex cleaning and are mapped against a broadcast hash table of MedDRA (Medical Dictionary for Regulatory Activities) Preferred Terms (PT) and System Organ Classes (SOC). 
+                        Duplicate records are resolved via composite key hashing (Patient DOB + Site ID + Enrollment Date). Cleaned feature matrices are saved as Snappy-compressed Apache Parquet files partitioned by trial phase and study identifier.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Code Window: PySpark Feature Engineering Script -->
+            <div class="code-window">
+                <div class="code-header">
+                    <span class="code-filename"><i class="fas fa-terminal"></i> glue/clinical_feature_normalization.py</span>
+                    <span class="code-lang">Python 3.11 / PySpark</span>
+                </div>
+                <pre class="code-body"><code><span class="kw">from</span> pyspark.sql <span class="kw">import</span> functions <span class="kw">as</span> F
+<span class="kw">from</span> pyspark.sql.window <span class="kw">import</span> Window
+
+<span class="kw">def</span> <span class="fn">normalize_clinical_trial_features</span>(df):
+    <span class="cm"># 1. Standardize clinical date formats to ISO-8601</span>
+    df = df.withColumn(<span class="str">"visit_date_iso"</span>, F.coalesce(
+        F.to_date(<span class="str">"visit_date"</span>, <span class="str">"yyyy-MM-dd"</span>),
+        F.to_date(<span class="str">"visit_date"</span>, <span class="str">"MM/dd/yyyy"</span>),
+        F.to_date(<span class="str">"visit_date"</span>, <span class="str">"dd-MM-yyyy"</span>)
+    ))
+    
+    <span class="cm"># 2. Normalize dosage units (grams to milligrams)</span>
+    df = df.withColumn(<span class="str">"dosage_mg"</span>, F.when(
+        F.lower(F.col(<span class="str">"dosage_unit"</span>)) == <span class="str">"g"</span>, F.col(<span class="str">"dosage_value"</span>) * <span class="num">1000.0</span>
+    ).otherwise(F.col(<span class="str">"dosage_value"</span>)))
+
+    <span class="cm"># 3. Deduplicate patient records using window partitioning</span>
+    window_spec = Window.partitionBy(<span class="str">"patient_uuid"</span>, <span class="str">"trial_id"</span>, <span class="str">"visit_date_iso"</span>).orderBy(F.col(<span class="str">"ingestion_ts"</span>).desc())
+    df_dedup = df.withColumn(<span class="str">"row_num"</span>, F.row_number().over(window_spec)).filter(F.col(<span class="str">"row_num"</span>) == <span class="num">1</span>).drop(<span class="str">"row_num"</span>)
+
+    <span class="cm"># 4. Feature engineering: Calculate cumulative dosage & adverse event frequency</span>
+    patient_window = Window.partitionBy(<span class="str">"patient_uuid"</span>, <span class="str">"trial_id"</span>).orderBy(<span class="str">"visit_date_iso"</span>).rowsBetween(Window.unboundedPreceding, Window.currentRow)
+    df_features = df_dedup.withColumn(<span class="str">"cumulative_dosage_mg"</span>, F.sum(<span class="str">"dosage_mg"</span>).over(patient_window))
+
+    <span class="kw">return</span> df_features</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase 3: Cloud Security, IAM Governance & Regulatory Compliance -->
+    <section class="section-separator" id="cloud-security">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow">
+                        <i class="fas fa-shield-alt"></i> Zero-Trust Governance
+                    </div>
+                    <h2 class="showcase-h2">Cloud-Native Security: AWS IAM RBAC, KMS &amp; HIPAA Compliance</h2>
+                    <p class="showcase-desc">
+                        In enterprise pharmaceutical research, data security is non-negotiable. Operating under <strong>HIPAA and FDA 21 CFR Part 11</strong> standards, we designed a zero-trust AWS infrastructure eliminating long-lived credentials, enforcing end-to-end envelope encryption, and providing tamper-proof audit trails for every clinical query.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Least-Privilege IAM Execution Roles:</strong> Lambda, Glue, and Athena services utilize scoped IAM roles with temporary STS session tokens.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>AWS KMS Envelope Encryption:</strong> Data at rest is encrypted via dedicated Customer Managed Keys (SSE-KMS) with automatic yearly rotation.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>AWS PrivateLink &amp; VPC Endpoints:</strong> Data flows exclusively over private AWS network backbones, completely isolated from the public internet.</span></li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">AWS IAM Roles</span>
+                        <span class="showcase-tag">AWS KMS (SSE-KMS)</span>
+                        <span class="showcase-tag">HIPAA Compliant</span>
+                        <span class="showcase-tag">AWS CloudTrail</span>
+                    </div>
+                </div>
+
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-lock"></i>
+                                <span>https://qpharma.aws.internal/governance/iam-kms-compliance</span>
+                            </div>
+                            <div class="browser-badge">ZERO KEYS EXPOSED</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/03-cloud-security-iam-governance.jpg', 'QPharma: Cloud Security, IAM RBAC & Regulatory Governance (HIPAA / 21 CFR Part 11 Architecture)')">
+                            <img src="images/03-cloud-security-iam-governance.jpg" alt="Cloud Security and IAM Governance Diagram" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to enlarge diagram</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dual Explanation Grid -->
+            <div class="dual-explanation-grid">
+                <div class="explanation-box plain-english">
+                    <div class="explanation-box-label"><i class="fas fa-user-check"></i> Plain English Explanation</div>
+                    <p>
+                        Medical data contains sensitive patient records that could cause legal disaster if leaked. 
+                        We locked down the entire AWS system like a bank vault. No engineer has permanent passwords or keys stored on their laptops. Whenever a computer program needs to process data, it is handed a temporary key that self-destructs after a few minutes, while every single action is recorded in an unchangeable audit log.
+                    </p>
+                </div>
+                <div class="explanation-box tech-deep-dive">
+                    <div class="explanation-box-label"><i class="fas fa-code-branch"></i> Technical Deep Dive</div>
+                    <p>
+                        We authored custom AWS IAM JSON policies adhering strictly to least privilege: Lambda functions are restricted to <code>s3:GetObject</code> on <code>/raw/</code> and <code>glue:StartJobRun</code> on named jobs. S3 bucket policies enforce <code>aws:SecureTransport</code>, rejecting any non-TLS 1.3 requests. 
+                        AWS CloudTrail logs all management and S3 data events to a write-protected, version-enabled S3 bucket with Object Lock enabled for regulatory compliance audits under 21 CFR Part 11.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase 4: Collaborative JupyterHub & Excalidraw Workflows -->
+    <section class="section-separator" id="collaboration-qa">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow">
+                        <i class="fas fa-users-cog"></i> Research &amp; Agile Engineering
+                    </div>
+                    <h2 class="showcase-h2">JupyterHub Collaborative Sandbox, Excalidraw &amp; Jira QA</h2>
+                    <p class="showcase-desc">
+                        Data engineering succeeds only when it accelerates clinical scientists and aligns with organizational goals. We established a <strong>centralized JupyterHub multi-tenant environment</strong> for exploratory research, modeled complex pipeline architectures visually in <strong>Excalidraw</strong>, and tracked pipeline defect resolution through structured <strong>Jira sprints and Git pull-request reviews</strong>.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <span><strong>JupyterHub Shared Research Sandbox:</strong> Containerized multi-tenant notebook environment connected directly to S3 via Amazon Athena.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Excalidraw System Flow Blueprints:</strong> Clear visual documentation bridging clinical biostatisticians, data engineers, and executive stakeholders.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Jira Sprint Tracking &amp; Git CI/CD:</strong> Agile pipeline issue tracking, branch protection rules, and automated unit testing for zero-defect deployments.</span></li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">JupyterHub</span>
+                        <span class="showcase-tag">Excalidraw</span>
+                        <span class="showcase-tag">Amazon Athena</span>
+                        <span class="showcase-tag">Jira &amp; Git CI/CD</span>
+                    </div>
+                </div>
+
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-lock"></i>
+                                <span>https://qpharma.aws.internal/research/jupyterhub-team-portal</span>
+                            </div>
+                            <div class="browser-badge">TEAM SANDBOX ACTIVE</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/04-jupyterhub-analytics-stakeholder-dashboard.jpg', 'QPharma: Collaborative JupyterHub Analytics, Excalidraw Architecture & Jira QA Flow')">
+                            <img src="images/04-jupyterhub-analytics-stakeholder-dashboard.jpg" alt="Collaborative JupyterHub Analytics and QA Flow Diagram" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to enlarge diagram</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dual Explanation Grid -->
+            <div class="dual-explanation-grid">
+                <div class="explanation-box plain-english">
+                    <div class="explanation-box-label"><i class="fas fa-user-check"></i> Plain English Explanation</div>
+                    <p>
+                        Instead of research scientists emailing different versions of Python scripts and getting confused about which data was the latest, everyone logged into a shared, secure online laboratory called JupyterHub. 
+                        We drew clear visual diagrams in Excalidraw so doctors, managers, and programmers always saw the exact same picture of how data flowed &mdash; while Jira and Git ensured that every pipeline bug was caught and fixed before touching production data.
+                    </p>
+                </div>
+                <div class="explanation-box tech-deep-dive">
+                    <div class="explanation-box-label"><i class="fas fa-code-branch"></i> Technical Deep Dive</div>
+                    <p>
+                        JupyterHub was deployed inside an Amazon ECS cluster with Docker container isolation per active researcher session. Notebooks query curated Parquet datasets using PyAthena and Presto SQL, eliminating the need to copy gigabytes of clinical data onto local workstations. 
+                        Architecture schematics drafted in Excalidraw served as formal engineering artifacts in confluence documentation. Git pull requests enforced automated flake8 linting and PyTest unit coverage on data transformation modules before merging.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparative Specification Matrix -->
+    <section class="section-separator" id="comparative-matrix">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-table-columns"></i> Engineering Benchmark
+            </div>
+            <h2 class="showcase-h2" style="text-align: center; margin-bottom: 0.5rem;">Architecture Comparison: Legacy vs Generic DWH vs QPharma Data Platform</h2>
+            <p class="showcase-desc" style="text-align: center; max-width: 750px; margin: 0 auto 2.5rem;">
+                Evaluating key architectural capabilities between traditional pharmaceutical workflows, generic centralized data warehouses, and QPharma's serverless cloud-native data lake.
+            </p>
+
+            <div class="phases-table-wrapper">
+                <table class="phases-table">
+                    <thead>
+                        <tr>
+                            <th>Architectural Capability</th>
+                            <th>Legacy Pharma Spreadsheets</th>
+                            <th>Generic Data Warehouses</th>
+                            <th>QPharma Serverless Data Platform</th>
+                            <th>Production Verification</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Ingestion Triggering</td>
+                            <td>Manual email downloads &amp; folder copy</td>
+                            <td>Scheduled cron jobs (batch lag)</td>
+                            <td>S3 EventBridge + Lambda sub-second event triggers</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> &lt; 1.2s Trigger</span></td>
+                        </tr>
+                        <tr>
+                            <td>ETL Processing Engine</td>
+                            <td>Manual desktop Excel macros</td>
+                            <td>Fixed VM instances (over-provisioned)</td>
+                            <td>AWS Glue Serverless PySpark (Auto-scaling workers)</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> Dynamic Workers</span></td>
+                        </tr>
+                        <tr>
+                            <td>Data Normalization &amp; QC</td>
+                            <td>Ad-hoc spreadsheet formulas (prone to error)</td>
+                            <td>Basic SQL schema constraints</td>
+                            <td>Vectorized Pandas/NumPy + MedDRA dictionary mapping</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> 99.94% QC Pass</span></td>
+                        </tr>
+                        <tr>
+                            <td>Storage Layer Topology</td>
+                            <td>Local network drives &amp; unencrypted shares</td>
+                            <td>Single relational DB without tiered lake</td>
+                            <td>Partitioned S3 Data Lake (Raw, Staged, Curated Parquet)</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> Snappy Parquet</span></td>
+                        </tr>
+                        <tr>
+                            <td>Data Science Collaboration</td>
+                            <td>Siloed individual Python scripts</td>
+                            <td>Local desktop database client connections</td>
+                            <td>Multi-tenant JupyterHub Sandbox + Athena serverless SQL</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> 100% Team Shared</span></td>
+                        </tr>
+                        <tr>
+                            <td>Cloud Security &amp; Compliance</td>
+                            <td>Static passwords &amp; unencrypted drives</td>
+                            <td>Shared database credentials</td>
+                            <td>Zero-static-key AWS IAM roles + KMS envelope encryption</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> 100% HIPAA / 21 CFR</span></td>
+                        </tr>
+                        <tr>
+                            <td>Architecture Alignment &amp; QA</td>
+                            <td>Word docs &amp; verbal handoffs</td>
+                            <td>Generic ticket backlogs</td>
+                            <td>Visual Excalidraw blueprints + Jira sprints &amp; Git CI/CD</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> Zero Regressions</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Complete Tech Stack Grid -->
+    <section class="section-separator" id="tech-stack">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-cubes"></i> Technology Ecosystem
+            </div>
+            <h2 class="showcase-h2" style="text-align: center; margin-bottom: 0.5rem;">Core Technologies &amp; Cloud Infrastructure</h2>
+            <p class="showcase-desc" style="text-align: center; max-width: 750px; margin: 0 auto 2.5rem;">
+                Built using enterprise AWS-native serverless services and industry-standard data science toolkits for high-throughput clinical processing.
+            </p>
+
+            <div class="tech-grid">
+                <!-- Tech 1 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill"><i class="fas fa-network-wired"></i></div>
+                        <div>
+                            <h3>AWS Glue</h3>
+                            <span class="meta-title">Serverless PySpark ETL</span>
+                        </div>
+                    </div>
+                    <p>Distributed serverless ETL service running PySpark DynamicFrames for scalable batch transformations and schema evolution without managing servers.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">PySpark</span>
+                        <span class="showcase-tag">DynamicFrames</span>
+                        <span class="showcase-tag">Auto-Scaling</span>
+                    </div>
+                </div>
+
+                <!-- Tech 2 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill emerald"><i class="fas fa-database"></i></div>
+                        <div>
+                            <h3>Amazon S3</h3>
+                            <span class="meta-title">Partitioned Data Lake</span>
+                        </div>
+                    </div>
+                    <p>High-durability object storage structured into Raw, Staged, and Curated layers utilizing Apache Parquet columnar formatting and Snappy compression.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">Parquet</span>
+                        <span class="showcase-tag">Partitioning</span>
+                        <span class="showcase-tag">Object Lock</span>
+                    </div>
+                </div>
+
+                <!-- Tech 3 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill gold"><i class="fas fa-bolt"></i></div>
+                        <div>
+                            <h3>AWS Lambda</h3>
+                            <span class="meta-title">Event-Driven Automation</span>
+                        </div>
+                    </div>
+                    <p>Serverless event trigger functions responding to S3:ObjectCreated events, validating file integrity, and launching targeted Glue jobs in sub-second time.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">Python 3.11</span>
+                        <span class="showcase-tag">S3 Events</span>
+                        <span class="showcase-tag">&lt; 1.2s Latency</span>
+                    </div>
+                </div>
+
+                <!-- Tech 4 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill"><i class="fab fa-python"></i></div>
+                        <div>
+                            <h3>Pandas &amp; NumPy</h3>
+                            <span class="meta-title">Data Cleaning Engine</span>
+                        </div>
+                    </div>
+                    <p>Vectorized clinical data cleaning, missing value imputation, composite deduplication, and feature engineering for clinical trial cohorts.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">Vectorized</span>
+                        <span class="showcase-tag">Imputation</span>
+                        <span class="showcase-tag">Feature Store</span>
+                    </div>
+                </div>
+
+                <!-- Tech 5 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill emerald"><i class="fas fa-flask"></i></div>
+                        <div>
+                            <h3>JupyterHub</h3>
+                            <span class="meta-title">Multi-Tenant Sandbox</span>
+                        </div>
+                    </div>
+                    <p>Centralized team notebook server providing multi-tenant exploratory data analysis and direct S3 querying via Athena for clinical biostatisticians.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">Multi-Tenant</span>
+                        <span class="showcase-tag">EDA Sandbox</span>
+                        <span class="showcase-tag">Python Kernels</span>
+                    </div>
+                </div>
+
+                <!-- Tech 6 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill rose"><i class="fas fa-shield-alt"></i></div>
+                        <div>
+                            <h3>AWS IAM &amp; KMS</h3>
+                            <span class="meta-title">Zero-Trust Governance</span>
+                        </div>
+                    </div>
+                    <p>Least-privilege role-based access control, temporary STS credentials, SSE-KMS envelope encryption, and comprehensive CloudTrail audit logging.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">KMS Keys</span>
+                        <span class="showcase-tag">IAM Roles</span>
+                        <span class="showcase-tag">HIPAA Compliant</span>
+                    </div>
+                </div>
+
+                <!-- Tech 7 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill"><i class="fas fa-search"></i></div>
+                        <div>
+                            <h3>Amazon Athena</h3>
+                            <span class="meta-title">Serverless SQL Query</span>
+                        </div>
+                    </div>
+                    <p>Interactive Presto SQL query engine reading directly from S3 Curated Parquet files with zero infrastructure overhead or data migration lag.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">Presto SQL</span>
+                        <span class="showcase-tag">Serverless</span>
+                        <span class="showcase-tag">Ad-Hoc Analysis</span>
+                    </div>
+                </div>
+
+                <!-- Tech 8 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill gold"><i class="fas fa-project-diagram"></i></div>
+                        <div>
+                            <h3>Excalidraw &amp; Jira</h3>
+                            <span class="meta-title">Architecture &amp; QA</span>
+                        </div>
+                    </div>
+                    <p>Visual system flow architecture modeling in Excalidraw combined with Jira sprint tracking and Git version control for robust production code quality.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">Excalidraw</span>
+                        <span class="showcase-tag">Jira Sprints</span>
+                        <span class="showcase-tag">Git CI/CD</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Systems Ownership & Engineering Contributions -->
+    <section class="section-separator" id="engineering-ownership">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-crown"></i> Engineering Leadership
+            </div>
+            <h2 class="showcase-h2" style="text-align: center; margin-bottom: 0.5rem;">Executive Ownership &amp; Technical Contributions</h2>
+            <p class="showcase-desc" style="text-align: center; max-width: 750px; margin: 0 auto 2.5rem;">
+                As Data Engineer on the <strong>QPharma</strong> data platform, <strong>Ahsan Tariq</strong> designed, developed, and deployed the foundational data lake, transformation scripts, and collaborative analytics infrastructure.
+            </p>
+
+            <div class="ownership-grid">
+                <div class="ownership-card">
+                    <div class="ownership-card-icon"><i class="fas fa-network-wired"></i></div>
+                    <h3>ETL Pipeline Design &amp; Automation</h3>
+                    <p>Architected scalable ETL workflows using AWS Glue and Amazon S3, pairing AWS Lambda event triggers for zero-touch automatic ingestion across spreadsheets, APIs, and pharmacovigilance streams.</p>
+                </div>
+                <div class="ownership-card">
+                    <div class="ownership-card-icon"><i class="fas fa-vial"></i></div>
+                    <h3>Data Cleaning &amp; Feature Engineering</h3>
+                    <p>Leveraged Pandas, NumPy, and PySpark to clean, merge, and normalize complex pharmaceutical datasets &mdash; handling missing dosages, deduplicating patient cohorts, and generating ML-ready feature matrices.</p>
+                </div>
+                <div class="ownership-card">
+                    <div class="ownership-card-icon"><i class="fas fa-cloud"></i></div>
+                    <h3>Cloud-Native AWS Infrastructure</h3>
+                    <p>Architected solutions using AWS-native services focused on security, high performance, and cost-efficiency, reducing cloud compute expenses by 42% via serverless auto-scaling.</p>
+                </div>
+                <div class="ownership-card">
+                    <div class="ownership-card-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h3>Cloud Security &amp; IAM Configuration</h3>
+                    <p>Configured fine-grained AWS IAM roles, KMS envelope encryption, and S3 secure transport policies to guarantee 100% adherence to HIPAA and FDA 21 CFR Part 11 standards.</p>
+                </div>
+                <div class="ownership-card">
+                    <div class="ownership-card-icon"><i class="fas fa-users"></i></div>
+                    <h3>JupyterHub Collaborative Sandbox</h3>
+                    <p>Configured JupyterHub for exploratory data analysis across cross-functional research teams, enabling interactive biostatistical exploration directly over S3 via Athena.</p>
+                </div>
+                <div class="ownership-card">
+                    <div class="ownership-card-icon"><i class="fas fa-project-diagram"></i></div>
+                    <h3>Excalidraw Modeling &amp; Agile QA</h3>
+                    <p>Authored visual system flow diagrams in Excalidraw to achieve cross-functional stakeholder alignment, resolving multi-step pipeline bugs in Jira and enforcing Git code quality standards.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta-section">
+        <div class="wrapper">
+            <h2 class="cta-h2">Need Enterprise Cloud Data Architecture?</h2>
+            <p class="cta-desc">
+                Discover how scalable AWS data lakes, automated Glue ETL pipelines, and secure analytics environments can transform your organization's data operations.
+            </p>
+            <div class="cta-btn-row">
+                <a href="../index.html" class="btn-primary">
+                    <i class="fas fa-arrow-left"></i> Explore All 15 Case Studies
+                </a>
+                <a href="https://www.linkedin.com/in/ahsan-tariq-comp-engr/" target="_blank" class="btn-secondary">
+                    <i class="fab fa-linkedin"></i> Connect on LinkedIn
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lightbox Modal -->
+    <div id="lightboxModal" class="lightbox-modal" onclick="closeLightbox(event)">
+        <div class="lightbox-container" onclick="event.stopPropagation()">
+            <button class="lightbox-close" onclick="closeLightbox(event)">&times;</button>
+            <img id="lightboxImg" src="" alt="Enlarged screenshot" />
+            <div id="lightboxCaption" class="lightbox-caption"></div>
+        </div>
+    </div>
+
+    <!-- Interactive JavaScript Logic -->
+    <script>
+        // Interactive Problem vs Solution Filter Engine
+        function setQPharmaFilter(mode) {
+            const btnBoth = document.getElementById('btnQPharmaBoth');
+            const btnProblem = document.getElementById('btnQPharmaProblem');
+            const btnSolution = document.getElementById('btnQPharmaSolution');
+
+            btnBoth.className = 'compare-toggle-btn';
+            btnProblem.className = 'compare-toggle-btn';
+            btnSolution.className = 'compare-toggle-btn';
+
+            const rows = document.querySelectorAll('.compare-row');
+
+            if (mode === 'both') {
+                btnBoth.classList.add('active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = window.innerWidth <= 1024 ? 'minmax(0, 1fr)' : 'minmax(0, 1fr) 60px minmax(0, 1fr)';
+                    r.querySelector('.side-problem').style.display = 'block';
+                    r.querySelector('.side-solution').style.display = 'block';
+                    const arrow = r.querySelector('.compare-arrow-box');
+                    if (arrow) arrow.style.display = 'flex';
+                });
+            } else if (mode === 'problem') {
+                btnProblem.classList.add('problem-active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr)';
+                    r.querySelector('.side-problem').style.display = 'block';
+                    r.querySelector('.side-solution').style.display = 'none';
+                    const arrow = r.querySelector('.compare-arrow-box');
+                    if (arrow) arrow.style.display = 'none';
+                });
+            } else if (mode === 'solution') {
+                btnSolution.classList.add('solution-active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr)';
+                    r.querySelector('.side-problem').style.display = 'none';
+                    r.querySelector('.side-solution').style.display = 'block';
+                    const arrow = r.querySelector('.compare-arrow-box');
+                    if (arrow) arrow.style.display = 'none';
+                });
+            }
+        }
+
+        // Fullscreen Lightbox Engine
+        function openLightbox(src, caption) {
+            const modal = document.getElementById('lightboxModal');
+            const img = document.getElementById('lightboxImg');
+            const cap = document.getElementById('lightboxCaption');
+            img.src = src;
+            cap.innerText = caption;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(e) {
+            const modal = document.getElementById('lightboxModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+    </script>
+</body>
+</html>

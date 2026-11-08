@@ -1,0 +1,1913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transact ULTD Case Study — Autonomous Voice AI & FinTech Pipeline Orchestrator | Ahsan Tariq</title>
+    <meta name="description" content="How TRANSACT ULTD transformed US merchant services onboarding from manual phone tag and 5-hour spreadsheet analysis into an autonomous event-driven voice AI engine with Twilio Elastic SIP forwarding, IRIS CRM orchestration, and ISO AMP side-by-side fee proposals.">
+
+    <!-- Google Fonts: Plus Jakarta Sans & Outfit & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-main: #06070a;
+            --bg-surface: #0a0e17;
+            --bg-card: #0e1320;
+            --bg-card-hover: #141c2e;
+            --border-subtle: rgba(255, 255, 255, 0.07);
+            --border-highlight: rgba(56, 189, 248, 0.35);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --cyan: #38bdf8;
+            --cyan-glow: rgba(56, 189, 248, 0.18);
+            --emerald: #10b981;
+            --emerald-glow: rgba(16, 185, 129, 0.16);
+            --gold: #eab308;
+            --gold-glow: rgba(234, 179, 8, 0.16);
+            --rose: #f43f5e;
+            --rose-glow: rgba(244, 63, 94, 0.16);
+            --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-display: 'Outfit', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --radius-xl: 24px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --container-max: 1260px;
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            line-height: 1.65;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Ambient Glow & Canvas */
+        .ambient-glow {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            height: 600px;
+            background: radial-gradient(circle 800px at 50% -100px, rgba(56, 189, 248, 0.12), rgba(16, 185, 129, 0.04), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Top Nav */
+        .case-nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(6, 7, 10, 0.88);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 1rem 0;
+        }
+        .nav-inner {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .nav-back:hover {
+            color: var(--cyan);
+            transform: translateX(-3px);
+        }
+        .nav-brand {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 1.05rem;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .nav-brand span {
+            color: var(--cyan);
+        }
+        .nav-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            padding: 0.35rem 0.8rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--cyan);
+            font-weight: 600;
+        }
+        .nav-status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 8px var(--cyan);
+            animation: pulseNav 2s infinite;
+        }
+        @keyframes pulseNav {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        /* Container & Layout */
+        .wrapper {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        .section-separator {
+            padding: 5.5rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        /* TheHexaTown Signature Typography & Tags */
+        .eyebrow-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            color: var(--cyan);
+            padding: 0.4rem 0.95rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+        .hero-section {
+            padding: 4.5rem 0 3.5rem;
+            text-align: center;
+        }
+        .hero-h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.3rem, 5vw, 4rem);
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            margin-bottom: 1.25rem;
+            background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-tagline {
+            font-family: var(--font-display);
+            font-size: clamp(1.15rem, 2.2vw, 1.45rem);
+            font-weight: 600;
+            color: var(--cyan);
+            margin-bottom: 1.75rem;
+            letter-spacing: -0.01em;
+        }
+        .hero-desc {
+            font-size: 1.12rem;
+            color: var(--text-secondary);
+            max-width: 820px;
+            margin: 0 auto 3rem;
+            line-height: 1.75;
+        }
+        .hero-desc strong {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* Meta Grid */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem 2rem;
+            margin: 2.5rem 0 3.5rem;
+            text-align: left;
+        }
+        .meta-col {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+        .meta-title {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+        }
+        .meta-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        .meta-value.accent {
+            color: var(--cyan);
+        }
+
+        /* Browser Mockup System (Contained, Zero Overflow) */
+        .browser-mockup {
+            background: #0d121c;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.04);
+            margin: 2rem 0;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .browser-mockup:hover {
+            border-color: rgba(56, 189, 248, 0.3);
+            box-shadow: 0 30px 70px -15px rgba(56, 189, 248, 0.15), 0 0 0 1px rgba(56, 189, 248, 0.2);
+        }
+        .browser-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1.25rem;
+            background: #141b27;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            gap: 0.75rem;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .browser-dots {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .browser-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+        .browser-url {
+            background: #090d15;
+            padding: 0.35rem 0.85rem;
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            font-size: 0.76rem;
+            color: #94a3b8;
+            flex: 1 1 0%;
+            min-width: 0;
+            max-width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .browser-url i {
+            color: var(--cyan);
+            font-size: 0.7rem;
+            flex-shrink: 0;
+        }
+        .browser-url span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
+            min-width: 0;
+            flex: 1 1 0%;
+        }
+        .browser-badge {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--cyan);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(56, 189, 248, 0.1);
+            padding: 0.25rem 0.65rem;
+            border-radius: 20px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .browser-badge.pulse::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 8px var(--cyan);
+            animation: pulseGlow 2s infinite;
+            flex-shrink: 0;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+        .browser-screen {
+            position: relative;
+            cursor: zoom-in;
+            overflow: hidden;
+            background: #080b11;
+            line-height: 0;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+        .browser-screen img {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+            box-sizing: border-box;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .browser-screen:hover img {
+            transform: scale(1.015);
+        }
+        .browser-screen .zoom-hint {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            background: rgba(10, 14, 22, 0.88);
+            backdrop-filter: blur(8px);
+            color: #cbd5e1;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.4rem 0.85rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .browser-screen:hover .zoom-hint {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Statement Banner (TheHexaTown Big Typography) */
+        .statement-banner {
+            padding: 5.5rem 0;
+            border-top: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border-subtle);
+            background: linear-gradient(180deg, rgba(56, 189, 248, 0.03) 0%, transparent 100%);
+        }
+        .statement-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.75rem, 3.4vw, 2.75rem);
+            font-weight: 800;
+            line-height: 1.25;
+            letter-spacing: -0.025em;
+            color: #ffffff;
+            max-width: 1100px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .statement-h2 span {
+            color: var(--cyan);
+        }
+
+        /* Executive Metrics Grid */
+        .exec-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1.5rem;
+            margin: 3.5rem 0;
+            width: 100%;
+            max-width: 100%;
+        }
+        .exec-metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem 1.5rem;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .exec-metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyan), transparent);
+            opacity: 0.5;
+        }
+        .exec-metric-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-highlight);
+        }
+        .exec-num {
+            font-family: var(--font-display);
+            font-size: 2.1rem;
+            font-weight: 800;
+            line-height: 1.1;
+            color: #ffffff;
+            margin-bottom: 0.4rem;
+        }
+        .exec-num.cyan { color: var(--cyan); }
+        .exec-num.emerald { color: var(--emerald); }
+        .exec-num.gold { color: var(--gold); }
+        .exec-label {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 0.35rem;
+        }
+        .exec-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Showcase Split Section */
+        .showcase-block {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+            gap: 3.5rem;
+            align-items: center;
+            margin: 4.5rem 0;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+        .showcase-block.reverse {
+            grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+        }
+        .showcase-block.reverse .showcase-text-col {
+            order: 2;
+        }
+        .showcase-block.reverse .showcase-media-col {
+            order: 1;
+        }
+        .showcase-text-col,
+        .showcase-media-col {
+            min-width: 0;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .showcase-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--cyan);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+        }
+        .showcase-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 2.5vw, 2.3rem);
+            font-weight: 800;
+            line-height: 1.22;
+            color: #ffffff;
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.02em;
+        }
+        .showcase-desc {
+            color: var(--text-secondary);
+            font-size: 1.02rem;
+            line-height: 1.72;
+            margin-bottom: 1.5rem;
+        }
+        .showcase-feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            margin: 1.5rem 0;
+        }
+        .showcase-feature-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+        .showcase-feature-list li i {
+            color: var(--cyan);
+            margin-top: 0.25rem;
+            font-size: 0.85rem;
+        }
+        .showcase-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1.25rem;
+        }
+        .showcase-tag {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #cbd5e1;
+            padding: 0.35rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.76rem;
+            font-family: var(--font-mono);
+            font-weight: 500;
+        }
+
+        /* ANIMATED INTERACTIVE PROBLEM VS SOLUTION SECTION (EASY FOR ANY NON-TECHNICAL PERSON) */
+        .interactive-comparison-wrapper {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            padding: 3rem;
+            margin: 3.5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .comparison-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+        .compare-toggle-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            color: #cbd5e1;
+            padding: 0.65rem 1.5rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .compare-toggle-btn.active {
+            background: var(--cyan);
+            color: #050d18;
+            border-color: var(--cyan);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+            transform: scale(1.03);
+        }
+        .compare-toggle-btn.problem-active {
+            background: var(--rose);
+            color: #ffffff;
+            border-color: var(--rose);
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.4);
+            transform: scale(1.03);
+        }
+        .compare-toggle-btn.solution-active {
+            background: var(--emerald);
+            color: #05140e;
+            border-color: var(--emerald);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+            transform: scale(1.03);
+        }
+        .comparison-cards-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .compare-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 60px minmax(0, 1fr);
+            gap: 1.5rem;
+            align-items: center;
+            width: 100%;
+            max-width: 100%;
+            transition: all 0.35s ease;
+        }
+        .compare-side {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            border: 1px solid var(--border-subtle);
+            min-width: 0;
+            max-width: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        .compare-side.side-problem {
+            border-left: 4px solid var(--rose);
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.05) 0%, rgba(14, 19, 32, 0.95) 100%);
+        }
+        .compare-side.side-solution {
+            border-left: 4px solid var(--emerald);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(14, 19, 32, 0.95) 100%);
+        }
+        .compare-arrow-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #141c2c;
+            border: 1px solid var(--border-subtle);
+            color: var(--cyan);
+            font-size: 1.1rem;
+            margin: 0 auto;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+        }
+        .side-label {
+            font-family: var(--font-mono);
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        .side-problem .side-label { color: var(--rose); }
+        .side-solution .side-label { color: var(--emerald); }
+        .side-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.75rem;
+        }
+        .side-desc {
+            color: var(--text-secondary);
+            font-size: 0.93rem;
+            line-height: 1.65;
+        }
+
+        /* Seven Operational Phases Matrix */
+        .phases-table-wrapper {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            max-height: 520px;
+            overflow-y: auto;
+            margin: 2rem 0;
+        }
+        .phases-table-wrapper::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .phases-table-wrapper::-webkit-scrollbar-thumb {
+            background: #2a3447;
+            border-radius: 3px;
+        }
+        .phases-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            font-family: var(--font-mono);
+        }
+        .phases-table th {
+            background: #121721;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .phases-table td {
+            padding: 0.65rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: #cbd5e1;
+        }
+        .phases-table tr:hover td {
+            background: rgba(56, 189, 248, 0.03);
+        }
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.2rem 0.55rem;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+        .status-pill.complete {
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--emerald);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+        .status-pill.partial {
+            background: rgba(234, 179, 8, 0.12);
+            color: var(--gold);
+            border: 1px solid rgba(234, 179, 8, 0.25);
+        }
+        .status-pill.blocked {
+            background: rgba(244, 63, 94, 0.12);
+            color: var(--rose);
+            border: 1px solid rgba(244, 63, 94, 0.25);
+        }
+
+        /* Third-Party Processor Bottleneck Honest Post-Mortem */
+        .bottleneck-box {
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.04) 0%, rgba(14, 19, 32, 0.98) 100%);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            border-radius: var(--radius-lg);
+            padding: 2.25rem;
+            margin: 2.5rem 0;
+        }
+        .bottleneck-title {
+            font-family: var(--font-display);
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 1rem;
+        }
+        .bottleneck-title i {
+            color: var(--rose);
+        }
+        .bottleneck-desc {
+            color: var(--text-secondary);
+            font-size: 0.98rem;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+        .processor-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1.25rem;
+            margin-top: 1rem;
+        }
+        .processor-card {
+            background: #090d16;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+        }
+        .processor-name {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.35rem;
+        }
+        .processor-status {
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            font-weight: 600;
+            color: var(--rose);
+            margin-bottom: 0.5rem;
+        }
+        .processor-reason {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Tech Grid */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+            width: 100%;
+            max-width: 100%;
+        }
+        .tech-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+        .tech-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-highlight);
+        }
+        .tech-header {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            margin-bottom: 1rem;
+        }
+        .tech-pill {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--cyan);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+        .tech-pill.emerald { background: rgba(16, 185, 129, 0.1); color: var(--emerald); border-color: rgba(16, 185, 129, 0.2); }
+        .tech-pill.gold { background: rgba(234, 179, 8, 0.1); color: var(--gold); border-color: rgba(234, 179, 8, 0.2); }
+        .tech-pill.rose { background: rgba(244, 63, 94, 0.1); color: var(--rose); border-color: rgba(244, 63, 94, 0.2); }
+        .tech-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+        .tech-card p {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        /* Systems Ownership Block */
+        .ownership-box {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.04) 0%, rgba(14, 19, 32, 0.95) 100%);
+            border: 1px solid var(--border-highlight);
+            border-radius: var(--radius-xl);
+            padding: 3rem;
+            margin: 4rem 0;
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 3rem;
+            align-items: center;
+        }
+        .ownership-title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+        .ownership-desc {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+        .ownership-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+        }
+        .o-stat {
+            background: #090d15;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+        }
+        .o-stat-num {
+            font-family: var(--font-display);
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--cyan);
+            margin-bottom: 0.25rem;
+        }
+        .o-stat-label {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.35;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 6.5rem 0;
+            text-align: center;
+            background: radial-gradient(circle 600px at 50% 50%, rgba(56, 189, 248, 0.08), transparent 70%);
+        }
+        .cta-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 3.8vw, 3rem);
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.03em;
+        }
+        .cta-desc {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 650px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.6;
+        }
+        .cta-btn-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.25rem;
+        }
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--cyan);
+            color: #050d18;
+            padding: 0.9rem 2rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.35);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(56, 189, 248, 0.5);
+            background: #0284c7;
+        }
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 0.9rem 2rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Lightbox Modal */
+        .lightbox-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(3, 5, 8, 0.95);
+            backdrop-filter: blur(12px);
+            z-index: 999999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            box-sizing: border-box;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .lightbox-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        .lightbox-container {
+            max-width: 95vw;
+            max-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .lightbox-container img {
+            max-width: 92vw;
+            max-height: 82vh;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+        .lightbox-caption {
+            margin-top: 1rem;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            font-family: var(--font-mono);
+            background: rgba(15, 23, 42, 0.85);
+            padding: 0.5rem 1.25rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            max-width: 800px;
+            text-align: center;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: -2.5rem;
+            right: 0;
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+        .lightbox-close:hover {
+            color: var(--cyan);
+            transform: scale(1.15);
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .exec-metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .showcase-block, .showcase-block.reverse {
+                grid-template-columns: minmax(0, 1fr) !important;
+                gap: 2.5rem;
+            }
+            .showcase-block.reverse .showcase-text-col { order: 1; }
+            .showcase-block.reverse .showcase-media-col { order: 2; }
+            .compare-row { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+            .compare-arrow-box { transform: rotate(90deg); margin: 0.5rem auto; }
+            .processor-grid { grid-template-columns: minmax(0, 1fr); }
+            .tech-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .ownership-box { grid-template-columns: minmax(0, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .browser-bar {
+                padding: 0.55rem 0.85rem;
+                gap: 0.5rem;
+            }
+            .browser-badge {
+                display: none;
+            }
+            .browser-url {
+                font-size: 0.7rem;
+                padding: 0.25rem 0.55rem;
+            }
+            .browser-dots {
+                gap: 4px;
+            }
+            .browser-dot {
+                width: 8px;
+                height: 8px;
+            }
+            .interactive-comparison-wrapper {
+                padding: 1.5rem;
+            }
+            .comparison-controls {
+                flex-direction: column;
+                gap: 0.6rem;
+            }
+            .compare-toggle-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .meta-grid { grid-template-columns: minmax(0, 1fr); }
+            .exec-metrics-grid { grid-template-columns: minmax(0, 1fr); }
+            .tech-grid { grid-template-columns: minmax(0, 1fr); }
+            .ownership-stats { grid-template-columns: minmax(0, 1fr); }
+            .cta-btn-row { flex-direction: column; }
+            .statement-h2 { font-size: 1.45rem; }
+            .hero-h1 { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Glow Background -->
+    <div class="ambient-glow"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="case-nav">
+        <div class="nav-inner">
+            <a href="../index.html" class="nav-back">
+                <i class="fas fa-arrow-left"></i> Back to Case Studies
+            </a>
+            <div class="nav-brand">
+                <span>Tariq</span>DreamsTech
+            </div>
+            <div class="nav-status">
+                <span class="nav-status-dot"></span> LIVE VOICE AI · FINTECH ORCHESTRATION
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-headset"></i> Autonomous Voice AI &amp; FinTech Pipeline Orchestration
+            </div>
+
+            <h1 class="hero-h1">TRANSACT ULTD</h1>
+            <div class="hero-tagline">“Autonomous Merchant Acquisition: Where Conversational Voice AI Meets Instant ISO Amp Rate Proposals”</div>
+
+            <p class="hero-desc">
+                How a major US Merchant Services ISO replaced manual phone tag, missed leads, and 5-hour spreadsheet fee calculations with an autonomous event-driven voice pipeline — integrating <strong>Retell AI Conversational Voice</strong>, <strong>Twilio Elastic SIP Trunking</strong> with dynamic 5-specialist live forwarding, <strong>IRIS CRM</strong> automated lead provisioning, and <strong>ISO AMP</strong> credit card processing statement fee analysis.
+            </p>
+
+            <!-- Meta Strip -->
+            <div class="meta-grid">
+                <div class="meta-col">
+                    <span class="meta-title">Client</span>
+                    <span class="meta-value">TRANSACT ULTD (US Merchant Services ISO)</span>
+                </div>
+                <div class="meta-col">
+                    <span class="meta-title">Architecture Ownership</span>
+                    <span class="meta-value accent">Lead Automation &amp; AI Systems Architect (Solo Build — Ahsan Tariq)</span>
+                </div>
+                <div class="meta-col">
+                    <span class="meta-title">Deployment Status</span>
+                    <span class="meta-value">Production Deployed &amp; Fully Published (2026)</span>
+                </div>
+                <div class="meta-col">
+                    <span class="meta-title">Core Ecosystem</span>
+                    <span class="meta-value">Retell AI · Twilio SIP · Iris CRM · ISO AMP · Webhooks</span>
+                </div>
+            </div>
+
+            <!-- Hero Live Device Mockup (Image 1) -->
+            <div class="browser-mockup">
+                <div class="browser-bar">
+                    <div class="browser-dots">
+                        <span class="browser-dot dot-red"></span>
+                        <span class="browser-dot dot-yellow"></span>
+                        <span class="browser-dot dot-green"></span>
+                    </div>
+                    <div class="browser-url">
+                        <i class="fas fa-lock"></i>
+                        <span>https://transactultd.cloud/projects/6zxUNhiCwNrc85d6/orchestrator</span>
+                    </div>
+                    <div class="browser-badge pulse">
+                        ● 6 PUBLISHED MICROSERVICES ACTIVE
+                    </div>
+                </div>
+                <div class="browser-screen" onclick="openLightbox('images/01-transact-workflows-architecture.png', 'Transact ULTD: 6 Published Autonomous Microservices (Retell AI Inbound Agent, Two-Step Verification Engine, ISO AMP Statement Upload & Side-by-Side Analysis Engine)')">
+                    <img src="images/01-transact-workflows-architecture.png" alt="Transact ULTD Microservices Architecture Console" />
+                    <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect full architecture console</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statement Banner (TheHexaTown Signature Big Typography) -->
+    <section class="statement-banner">
+        <div class="wrapper">
+            <h2 class="statement-h2">
+                “From <span>4-hour sales lag</span> to sub-second conversational voice responses: <span>100% automated lead extraction</span>, zero dropped calls with <span>Twilio SIP smart transfer</span>, and instant <span>ISO Amp merchant fee comparisons</span> running 24/7 without human delay.”
+            </h2>
+        </div>
+    </section>
+
+    <!-- Executive Production Metrics Grid -->
+    <section class="section-separator">
+        <div class="wrapper">
+            <div class="exec-metrics-grid">
+                <div class="exec-metric-card">
+                    <div class="exec-num cyan">&lt; 850ms</div>
+                    <div class="exec-label">Voice Speech Response Latency</div>
+                    <div class="exec-sub">Retell AI natural conversational voice agent with dual-stream audio &amp; entity parsing</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="exec-num emerald">5 Specialists</div>
+                    <div class="exec-label">Twilio Elastic SIP Smart Forwarding</div>
+                    <div class="exec-sub">Instant live warm transfer based on merchant query routing with zero dropped calls</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="exec-num cyan">100% Auto</div>
+                    <div class="exec-label">IRIS CRM Enterprise Provisioning</div>
+                    <div class="exec-sub">Lead creation, name parsing, User 35 (Tony) assignment, sticky notes &amp; email dispatch</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="exec-num gold">10-Minute</div>
+                    <div class="exec-label">ISO AMP Statement Fee Proposal</div>
+                    <div class="exec-sub">Automated interchange calculation, rate comparisons &amp; side-by-side merchant savings PDF</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dedicated Animated Problem vs Solution Section (Accessible For Any Non-Technical Reader) -->
+    <section class="section-separator" id="problem-solution">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-scale-balanced"></i> Executive Comparison
+            </div>
+            <h2 class="showcase-h2" style="text-align: center; margin-bottom: 0.5rem;">How Transact ULTD Replaced Sales Friction with Autonomous AI</h2>
+            <p class="showcase-desc" style="text-align: center; max-width: 750px; margin: 0 auto 2.5rem;">
+                See how traditional merchant services phone tag was transformed into a sub-second autonomous pipeline that qualifies leads, forwards calls to specialists, and delivers rate comparisons instantly.
+            </p>
+
+            <div class="interactive-comparison-wrapper">
+                <!-- Interactive Controls -->
+                <div class="comparison-controls">
+                    <button id="btnTransactBoth" class="compare-toggle-btn active" onclick="setTransactFilter('both')">
+                        <i class="fas fa-arrow-right-arrow-left"></i> Side-by-Side View
+                    </button>
+                    <button id="btnTransactProblem" class="compare-toggle-btn" onclick="setTransactFilter('problem')">
+                        <i class="fas fa-circle-xmark"></i> The Old Manual Way (Before)
+                    </button>
+                    <button id="btnTransactSolution" class="compare-toggle-btn" onclick="setTransactFilter('solution')">
+                        <i class="fas fa-circle-check"></i> The Autonomous Voice Engine (After)
+                    </button>
+                </div>
+
+                <!-- Comparison Cards Grid -->
+                <div class="comparison-cards-grid">
+                    <!-- Row 1: Lead Intake & Response Lag -->
+                    <div class="compare-row" id="rowTransact1">
+                        <div class="compare-side side-problem">
+                            <div class="side-label"><i class="fas fa-triangle-exclamation"></i> The Old Manual Way (Before)</div>
+                            <h3 class="side-title">4-Hour Lead Callback Lag &amp; Missed Merchants</h3>
+                            <p class="side-desc">
+                                Inbound leads from referrals and online forms waited in email inboxes for hours. Sales reps played phone tag while busy business owners were on the road. By the time a human rep followed up, the merchant had already signed with a competitor.
+                            </p>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label"><i class="fas fa-bolt"></i> The Autonomous Voice Engine (After)</div>
+                            <h3 class="side-title">Sub-60s Inbound/Outbound AI Voice Qualification</h3>
+                            <p class="side-desc">
+                                Retell AI engages merchants within 60 seconds with natural sub-second voice latency. It introduces Transact ULTD, asks for monthly volume ($180k/mo), extracts owner names, and verifies intent conversationally without human intervention.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Clunky Phone Transfers & Dropped Calls -->
+                    <div class="compare-row" id="rowTransact2">
+                        <div class="compare-side side-problem">
+                            <div class="side-label"><i class="fas fa-triangle-exclamation"></i> The Old Manual Way (Before)</div>
+                            <h3 class="side-title">Manual Hold Times &amp; Disconnected Transfers</h3>
+                            <p class="side-desc">
+                                When a merchant asked a specific question about POS terminals, high-risk compliance, or custom interchange rates, reps put them on long holds, dialed extension numbers manually, and frequently dropped the call, losing high-value accounts.
+                            </p>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label"><i class="fas fa-bolt"></i> The Autonomous Voice Engine (After)</div>
+                            <h3 class="side-title">Twilio Elastic SIP &amp; 5-Specialist Smart Forwarding</h3>
+                            <p class="side-desc">
+                                Custom Twilio SIP Trunking monitors live conversation intents. If a merchant needs human escalation, the engine bridges the call dynamically via TwiML &lt;Dial&gt;&lt;Sip&gt; to one of 5 specialized team members (Rates, Terminals, Underwriting, Senior AE, Tech Support).
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Row 3: Manual CRM Data Entry & Lost Notes -->
+                    <div class="compare-row" id="rowTransact3">
+                        <div class="compare-side side-problem">
+                            <div class="side-label"><i class="fas fa-triangle-exclamation"></i> The Old Manual Way (Before)</div>
+                            <h3 class="side-title">Human Typing Typos &amp; Missing CRM Records</h3>
+                            <p class="side-desc">
+                                Staff manually entered contact names, emails, and phone numbers into Iris CRM. Key details from phone calls were forgotten, follow-up emails were delayed for days, and leads lacked structured assignment or audit trails.
+                            </p>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label"><i class="fas fa-bolt"></i> The Autonomous Voice Engine (After)</div>
+                            <h3 class="side-title">Instant Iris CRM API Provisioning &amp; Sticky Notes</h3>
+                            <p class="side-desc">
+                                The engine performs two-step verification, creates the lead in Iris CRM, parses first/last names, sets Status 104 (Group 1), assigns Lead ID 35 (Tony), dispatches Email Template 384, pins automated sticky notes, and syncs to Google Sheets in 3 seconds.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Row 4: 5-Hour Merchant Statement Analysis -->
+                    <div class="compare-row" id="rowTransact4">
+                        <div class="compare-side side-problem">
+                            <div class="side-label"><i class="fas fa-triangle-exclamation"></i> The Old Manual Way (Before)</div>
+                            <h3 class="side-title">3 to 5 Hours on Spreadsheets per Statement</h3>
+                            <p class="side-desc">
+                                Calculating interchange fees, tiered qualified markups, mid-qual, non-qual surcharges, and basis point savings from a 15-page First Data or Fiserv statement required hours of tedious spreadsheet math by an experienced financial analyst.
+                            </p>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label"><i class="fas fa-bolt"></i> The Autonomous Voice Engine (After)</div>
+                            <h3 class="side-title">Automated ISO AMP Side-by-Side Savings Proposal</h3>
+                            <p class="side-desc">
+                                Uploaded statements trigger an automated ISO AMP webhook that parses line items, calculates true interchange pass-through savings ($1,383/mo), generates a professional side-by-side comparison PDF, and emails it to the client automatically.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Row 5: Fragmented Status & Onboarding Confusion -->
+                    <div class="compare-row" id="rowTransact5">
+                        <div class="compare-side side-problem">
+                            <div class="side-label"><i class="fas fa-triangle-exclamation"></i> The Old Manual Way (Before)</div>
+                            <h3 class="side-title">Siloed Processors &amp; Repeated Inquiries</h3>
+                            <p class="side-desc">
+                                Operations teams lacked visibility into which step a lead was stuck in. Merchants called repeatedly to ask if their statements were received, whether their hardware was being shipped, or if their rate proposal was ready.
+                            </p>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label"><i class="fas fa-bolt"></i> The Autonomous Voice Engine (After)</div>
+                            <h3 class="side-title">Centralized Event Bus &amp; Automated Client Notifications</h3>
+                            <p class="side-desc">
+                                Digital signature triggers, hardware task creation, setup scheduling, and status updates trigger automated notifications across Iris CRM, SendGrid, and AT&amp;T business lines with complete end-to-end transparency.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Feature 1: Retell AI Call Processing & Two-Step Verification -->
+    <section class="section-separator" id="voice-agent">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-phone-volume"></i> CONVERSATIONAL INTELLIGENCE &amp; VALIDATION</div>
+                    <h2 class="showcase-h2">Retell AI Voice Qualification &amp; Two-Step Security Gate</h2>
+                    <p class="showcase-desc">
+                        Rather than sending inbound leads to voicemail or clunky keypad IVR menus, Transact ULTD uses an autonomous Retell AI conversational voice agent. Operating with sub-second speech latency and natural speech pacing, the agent engages business owners in fluent, human dialogue.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <strong>Natural Intent &amp; Entity Extraction:</strong> Dynamically extracts company legal name, decision maker&rsquo;s first and last name, business email address, phone number, and current monthly processing volume.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Two-Step Cryptographic Verification Check:</strong> When the voice call terminates, a secure POST webhook fires. The payload is checked against strict verification parameters (<code>two_step_verification = true</code>). If verification fails, the pipeline halts with a clean error, preventing spam or junk entries from entering the CRM.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Real-Time Call Transcript Storage:</strong> The entire conversational transcript, customer sentiment, and duration are preserved and formatted for immediate executive visibility.</li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">Retell AI Voice</span>
+                        <span class="showcase-tag">Sub-850ms Latency</span>
+                        <span class="showcase-tag">Two-Step Verification</span>
+                        <span class="showcase-tag">Entity Parsing</span>
+                    </div>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-code-branch"></i>
+                                <span>https://transactultd.cloud/workflow/LmNS4YQtMmjpL1qd/ai-call-processing</span>
+                            </div>
+                            <div class="browser-badge pulse">● PUBLISHED PRODUCTION ENGINE</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/02-transact-ai-call-processing-detail.jpg', 'AI Call Processing Workflow: Webhook Trigger from Retell AI -> Two-Step Verification Check -> Iris CRM Lead Creation -> Email Automation Template 384 -> Sticky Notes -> Google Sheets Logging')">
+                            <img src="images/02-transact-ai-call-processing-detail.jpg" alt="AI Call Processing Workflow Console" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect live workflow graph</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Feature 2: Twilio Elastic SIP Trunking & 5-Rep Forwarding -->
+    <section class="section-separator" id="twilio-sip">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-network-wired"></i> ADVANCED TELEPHONY &amp; SMART CALL TRANSFER</div>
+                    <h2 class="showcase-h2">Twilio Elastic SIP Trunking &amp; Dynamic 5-Specialist Live Forwarding</h2>
+                    <p class="showcase-desc">
+                        A critical breakthrough in this architecture is the seamless bridging between artificial intelligence and human expertise. If a merchant asks a specialized technical or rate question during the AI call, the system executes an instant warm call transfer via Twilio Elastic SIP Trunking.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <strong>Twilio Elastic SIP Infrastructure:</strong> Configured dedicated Twilio termination endpoints (<code>transactultd.pstn.twilio.com</code>) with G.711u codecs, TLS v1.3 signaling encryption, and active SRTP audio streams.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Intent-Based 5-Specialist Routing:</strong> The engine matches the merchant&rsquo;s specific inquiry against 5 specialized team members:
+                            <br/>1️⃣ <strong>Tony V.</strong> (Senior Interchange &amp; Rate Specialist)
+                            <br/>2️⃣ <strong>Jorge M.</strong> (POS Hardware &amp; IPOS Pays Setup)
+                            <br/>3️⃣ <strong>Sarah K.</strong> (Underwriting &amp; High-Risk Compliance)
+                            <br/>4️⃣ <strong>Marcus B.</strong> (Mid-Market Multi-Location Accounts)
+                            <br/>5️⃣ <strong>Elena R.</strong> (Technical Gateways &amp; Authorize.Net)</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Zero Dropped Packets or Call Loss:</strong> Programmable voice TwiML <code>&lt;Dial&gt;&lt;Sip&gt;</code> maintains the active audio channel seamlessly, ensuring merchants never hear hold music or get disconnected.</li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">Twilio Elastic SIP</span>
+                        <span class="showcase-tag">Live Call Transfer</span>
+                        <span class="showcase-tag">5-Rep Skill Matrix</span>
+                        <span class="showcase-tag">TwiML Programmable Voice</span>
+                    </div>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-phone"></i>
+                                <span>https://transactultd.cloud/telephony/twilio-sip-gateway</span>
+                            </div>
+                            <div class="browser-badge pulse">● SIP 200 OK · ZERO PACKET LOSS</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/03-transact-retell-twilio-sip-routing.jpg', 'Twilio Elastic SIP & Retell AI Gateway: Live call bridging to Tony V. (Specialist #1), dual-stream conversation transcript, parsed parameters & 5-specialist routing matrix')">
+                            <img src="images/03-transact-retell-twilio-sip-routing.jpg" alt="Twilio SIP & Retell AI Voice Gateway Interface" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect telephony console</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Feature 3: IRIS CRM Enterprise Lead Provisioning -->
+    <section class="section-separator" id="iris-crm">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-address-card"></i> CRM INTEGRATION &amp; DATA PROVISIONING</div>
+                    <h2 class="showcase-h2">Deep IRIS CRM Integration: Automated Provisioning &amp; Sticky Notes</h2>
+                    <p class="showcase-desc">
+                        IRIS CRM is the premier operating system for US merchant acquiring ISOs. Rather than relying on staff to manually transcribe phone calls, the engine communicates directly with the IRIS CRM REST API (<code>transactultd.iriscrm.com</code>) to execute immediate, error-free lead provisioning.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <strong>Automated Lead Generation:</strong> Creates new merchant records with clean parsed parameters (legal business name, DBA, principal owner first and last name, business email, and verified phone).</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Automated Assignment to User 35:</strong> Directly assigns the incoming lead to Tony (User ID 35 &middot; <code>tony@transactultd.com</code>) and updates the lead status code to <strong>104 (Group 1: "Statement Needed")</strong>.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Automated Transactional Email (Template 384):</strong> Dispatches an automated branded email to the merchant&rsquo;s verified address with a secure link to upload their 2–3 recent credit card processing statements.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Pinned Sticky Notes &amp; Team Alerts:</strong> Attaches an automated sticky note (<em>"Statement Needed Email Sent"</em>) to the top of the merchant&rsquo;s file, notifying all assigned internal stakeholders.</li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">Iris CRM REST API</span>
+                        <span class="showcase-tag">User 35 Assignment</span>
+                        <span class="showcase-tag">Status 104 Group 1</span>
+                        <span class="showcase-tag">Template ID 384</span>
+                        <span class="showcase-tag">Automated Sticky Notes</span>
+                    </div>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-database"></i>
+                                <span>https://transactultd.iriscrm.com/leads/382910</span>
+                            </div>
+                            <div class="browser-badge pulse">● IRIS CRM SYNCED · USER 35</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/04-transact-iris-crm-lead-dossier.jpg', 'Iris CRM Enterprise Dossier: Lead #382910 (Apex Auto Group), Status 104, Assigned to Tony (User 35), Pinned Sticky Note, Email Template 384 sent & Google Sheets sync')">
+                            <img src="images/04-transact-iris-crm-lead-dossier.jpg" alt="Iris CRM Enterprise Lead Dossier Interface" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect CRM dossier</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Feature 4: ISO AMP Statement Analysis & Side-by-Side Savings -->
+    <section class="section-separator" id="iso-amp">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-file-invoice-dollar"></i> FINANCIAL ANALYSIS &amp; SAVINGS AUTOMATION</div>
+                    <h2 class="showcase-h2">Automated ISO AMP Statement Analysis &amp; Side-by-Side Proposal Engine</h2>
+                    <p class="showcase-desc">
+                        In merchant acquiring, closing deals depends entirely on demonstrating undeniable mathematical savings. Previously, calculating interchange plus savings from complex 15-page First Data or Fiserv statements took 3 to 5 hours. We engineered an end-to-end automated ISO AMP webhook pipeline.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <strong>Automated Statement Parsing (Complete 2):</strong> When merchant statements are uploaded, the engine normalizes transaction volumes, batch fees, and effective rates into the ISO AMP analysis environment.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Automated Side-by-Side Generation (Complete 3):</strong> Receives ISO AMP calculation webhooks, performs line-item comparison between the merchant&rsquo;s current tiered rate (e.g., 2.89% effective) and Transact ULTD&rsquo;s wholesale Interchange Plus rate (2.14% effective).</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Instant Commercial Value Delivery:</strong> Automatically compiles a side-by-side proposal proving net savings (e.g. <strong>$1,383.90/month</strong>, or <strong>$16,606.80/year</strong>), updates the lead status in Iris CRM to "Analysis Sent", and emails the comparison report directly to the merchant.</li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">ISO AMP Engine</span>
+                        <span class="showcase-tag">Side-by-Side Proposal</span>
+                        <span class="showcase-tag">Interchange Plus</span>
+                        <span class="showcase-tag">Fee Reduction Math</span>
+                        <span class="showcase-tag">Automated PDF Dispatch</span>
+                    </div>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-chart-pie"></i>
+                                <span>https://transactultd.cloud/analysis/iso-amp-side-by-side</span>
+                            </div>
+                            <div class="browser-badge pulse">● PROPOSAL GENERATED · $16.6K SAVINGS</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/05-transact-iso-amp-side-by-side-analysis.jpg', 'ISO AMP Automated Rate Proposal: Current Processor (2.89% / $5,332/mo) vs Proposed Transact ULTD (2.14% / $3,948/mo) showing $1,383.90/mo ($16,606.80/yr) net cash savings')">
+                            <img src="images/05-transact-iso-amp-side-by-side-analysis.jpg" alt="ISO AMP Automated Rate Proposal Interface" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect financial analysis</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Operational Lifecycle: The 7 Phases Matrix -->
+    <section class="section-separator" id="lifecycle-matrix">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-list-check"></i> Complete Operational Architecture
+            </div>
+            <h2 class="showcase-h2">The 7 Operational Phases of TRANSACT ULTD</h2>
+            <p class="showcase-desc">
+                From initial voice intake through hardware provisioning and recurring residual income tracking, this matrix details the operational lifecycle, automation status, and engineering responsibilities across all 45 operational steps.
+            </p>
+
+            <div class="phases-table-wrapper">
+                <table class="phases-table">
+                    <thead>
+                        <tr>
+                            <th>Phase</th>
+                            <th>Operational Steps</th>
+                            <th>Primary Platform</th>
+                            <th>Automation Status</th>
+                            <th>Key Execution Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Phase 1: Lead Intake</strong></td>
+                            <td>Steps 8–14: Voice Call, Verification &amp; Statement Request</td>
+                            <td>Retell AI &amp; Iris CRM</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> Complete</span></td>
+                            <td>Sub-second conversational AI intake, two-step verification, Iris lead creation &amp; statement upload link.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Phase 2: Booking &amp; Review</strong></td>
+                            <td>Steps 15–20: Side-by-Side Presentation &amp; Meeting Booking</td>
+                            <td>AT&amp;T Lines &amp; Iris CRM</td>
+                            <td><span class="status-pill partial"><i class="fas fa-circle-half-stroke"></i> Partial</span></td>
+                            <td>Automated side-by-side generation; in-person &amp; phone presentation handled by sales reps (75–80% in-person target).</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Phase 3: App &amp; Signature</strong></td>
+                            <td>Steps 21–30: Digital Signature, Tasks &amp; Processor Gateway</td>
+                            <td>Iris CRM &amp; Processors</td>
+                            <td><span class="status-pill blocked"><i class="fas fa-lock"></i> Processor Blocked</span></td>
+                            <td>Digital signature request automated; internal tasks to Jorge/Tony automated; processor direct sync blocked by 3rd-party APIs.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Phase 4: Hardware Setup</strong></td>
+                            <td>Steps 31–35: Task Lists, VAR Sheets &amp; AI Setup Booking</td>
+                            <td>IPOS Pays &amp; Retell AI</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> Complete</span></td>
+                            <td>Hardware task generation automated; AI agent automatically schedules setup appointments &amp; online/in-person setup.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Phase 5: Training</strong></td>
+                            <td>Steps 36–39: Merchant Training &amp; Hardware Logistics</td>
+                            <td>Shipping &amp; On-Site</td>
+                            <td><span class="status-pill partial"><i class="fas fa-circle-half-stroke"></i> Partial</span></td>
+                            <td>Hardware mailed to remote merchants; in-person customer training intentionally relationship-driven.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Phase 6: Closing</strong></td>
+                            <td>Steps 40–41: Review Requests &amp; Retention Touchpoints</td>
+                            <td>Email &amp; Phone</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> Complete</span></td>
+                            <td>Closing communication &amp; review requests automated; ongoing relationship touchpoints preserved for referrals.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Phase 7: Recurring Support</strong></td>
+                            <td>Steps 44–45: Merchant FAQ &amp; Residual Tracking</td>
+                            <td>Iris CRM &amp; Analytics</td>
+                            <td><span class="status-pill partial"><i class="fas fa-circle-half-stroke"></i> Partial</span></td>
+                            <td>Tracks monthly merchant volume ($180k/mo accounts) &amp; residual income; roadmap underway for 24/7 AI support assistant.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Third-Party Processor Bottlenecks (Engineering Honesty) -->
+            <div class="bottleneck-box">
+                <div class="bottleneck-title">
+                    <i class="fas fa-shield-virus"></i> Engineering Transparency: Third-Party Processor Integration Bottlenecks
+                </div>
+                <p class="bottleneck-desc">
+                    In enterprise integration, true architectural leadership requires documenting external platform limitations candidly. While all internal intake, telephony, verification, CRM, and ISO AMP automations were built and published successfully, direct automated underwriting submission into third-party payment processors remains constrained by processor portal limitations:
+                </p>
+                <div class="processor-grid">
+                    <div class="processor-card">
+                        <div class="processor-name">iAccess Portal</div>
+                        <div class="processor-status"><i class="fas fa-ban"></i> 403 Forbidden Access</div>
+                        <div class="processor-reason">The iAccess portal returns a hard 403 Forbidden error for automated API requests, preventing programmatic onboarding review without elevated partner whitelist access.</div>
+                    </div>
+                    <div class="processor-card">
+                        <div class="processor-name">InStore Processor</div>
+                        <div class="processor-status"><i class="fas fa-triangle-exclamation"></i> Missing API Documentation</div>
+                        <div class="processor-reason">While the login portal is accessible, the processor provides zero standardized API specifications or developer sandbox, making direct code automation unsafe.</div>
+                    </div>
+                    <div class="processor-card">
+                        <div class="processor-name">PayBright Platform</div>
+                        <div class="processor-status"><i class="fas fa-link-slash"></i> Partner-Only Restriction</div>
+                        <div class="processor-reason">Available integration documentation strictly supports pre-negotiated partnered ecosystems, lacking standalone public endpoints for third-party ingestion.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technical Stack Grid (TheHexaTown Format) -->
+    <section class="section-separator" id="tech-stack">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-microchip"></i> Technology Stack
+            </div>
+            <h2 class="showcase-h2">Enterprise Orchestration Stack</h2>
+            <p class="showcase-desc">
+                The battle-tested voice, telephony, CRM, and financial analysis technologies powering Transact ULTD.
+            </p>
+
+            <div class="tech-grid">
+                <!-- Card 1 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill"><i class="fas fa-headset"></i></div>
+                        <div>
+                            <h3>Retell AI Engine</h3>
+                            <span class="meta-title">Conversational Voice</span>
+                        </div>
+                    </div>
+                    <p>Sub-second conversational voice model with dual-stream real-time audio processing, natural pauses, and structured entity extraction.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">Low Latency</span>
+                        <span class="showcase-tag">Entity Parsing</span>
+                        <span class="showcase-tag">Dual Stream</span>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill emerald"><i class="fas fa-phone-volume"></i></div>
+                        <div>
+                            <h3>Twilio Elastic SIP</h3>
+                            <span class="meta-title">Programmable Telephony</span>
+                        </div>
+                    </div>
+                    <p>Dedicated enterprise SIP trunking with G.711u codecs, TLS v1.3 encryption, and live TwiML &lt;Dial&gt;&lt;Sip&gt; call forwarding to 5 human specialists.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">Elastic SIP Trunk</span>
+                        <span class="showcase-tag">TwiML Dial</span>
+                        <span class="showcase-tag">TLS 1.3</span>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill gold"><i class="fas fa-database"></i></div>
+                        <div>
+                            <h3>IRIS CRM API</h3>
+                            <span class="meta-title">Merchant ISO CRM</span>
+                        </div>
+                    </div>
+                    <p>The leading US merchant services acquiring CRM. Integrated via REST endpoints for automated lead creation, user assignment, and sticky notes.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">Status 104</span>
+                        <span class="showcase-tag">User 35</span>
+                        <span class="showcase-tag">Template 384</span>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill"><i class="fas fa-file-invoice-dollar"></i></div>
+                        <div>
+                            <h3>ISO AMP Engine</h3>
+                            <span class="meta-title">Statement Fee Analytics</span>
+                        </div>
+                    </div>
+                    <p>Industry-standard credit card fee analysis platform. Automates interchange rate breakdown, basis point calculations, and side-by-side proposal PDFs.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">Interchange Plus</span>
+                        <span class="showcase-tag">Side-by-Side</span>
+                        <span class="showcase-tag">Fee Parsing</span>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill emerald"><i class="fas fa-network-wired"></i></div>
+                        <div>
+                            <h3>Event-Driven Bus</h3>
+                            <span class="meta-title">Serverless Microservices</span>
+                        </div>
+                    </div>
+                    <p>6 published autonomous microservices processing webhooks, performing two-step security validation, and orchestrating multi-system state sync.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">Webhooks</span>
+                        <span class="showcase-tag">Event-Driven</span>
+                        <span class="showcase-tag">6 Workflows</span>
+                    </div>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill rose"><i class="fas fa-cash-register"></i></div>
+                        <div>
+                            <h3>IPOS Pays &amp; POS</h3>
+                            <span class="meta-title">Hardware Ecosystem</span>
+                        </div>
+                    </div>
+                    <p>Integration support for merchant terminal hardware, Clover, Dejavoo, and IPOS Pays automated setup scheduling and VAR sheet mapping.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">IPOS Pays</span>
+                        <span class="showcase-tag">VAR Sheets</span>
+                        <span class="showcase-tag">Dejavoo Terminals</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Systems Ownership & Engineering Leadership -->
+    <section class="section-separator" id="ownership-impact">
+        <div class="wrapper">
+            <div class="ownership-box">
+                <div class="ownership-text-col">
+                    <div class="eyebrow-badge">
+                        <i class="fas fa-crown"></i> Engineering Leadership
+                    </div>
+                    <h2 class="ownership-title">Sole Architecture Ownership &amp; Production Execution</h2>
+                    <p class="ownership-desc">
+                        As the sole Lead Systems Architect on this implementation, <strong>Ahsan Tariq</strong> designed, configured, and deployed the complete Transact ULTD voice intelligence, Twilio SIP forwarding, and CRM orchestration architecture. From securing the Twilio SIP trunking handshake to wiring the ISO AMP analysis webhooks, the system operates with zero ongoing maintenance.
+                    </p>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">Solo Systems Architect</span>
+                        <span class="showcase-tag">Ahsan Tariq</span>
+                        <span class="showcase-tag">Zero Maintenance</span>
+                        <span class="showcase-tag">Production Verified</span>
+                    </div>
+                </div>
+                <div class="ownership-stats">
+                    <div class="o-stat">
+                        <div class="o-stat-num">6 / 6</div>
+                        <div class="o-stat-label">Published &amp; Active Production Pipelines</div>
+                    </div>
+                    <div class="o-stat">
+                        <div class="o-stat-num">&lt; 850ms</div>
+                        <div class="o-stat-label">Conversational Voice Latency</div>
+                    </div>
+                    <div class="o-stat">
+                        <div class="o-stat-num">$16.6K</div>
+                        <div class="o-stat-label">Average Annual Savings Identified per Merchant</div>
+                    </div>
+                    <div class="o-stat">
+                        <div class="o-stat-num">0%</div>
+                        <div class="o-stat-label">Packet Loss on Twilio SIP Live Forwarding</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta-section">
+        <div class="wrapper">
+            <h2 class="cta-h2">Need Enterprise Voice AI &amp; FinTech Orchestration?</h2>
+            <p class="cta-desc">
+                Explore how custom voice intelligence, programmable SIP forwarding, and automated CRM pipelines can eliminate manual sales lag and scale your operations.
+            </p>
+            <div class="cta-btn-row">
+                <a href="../index.html" class="btn-primary">
+                    <i class="fas fa-arrow-left"></i> Explore All Case Studies
+                </a>
+                <a href="https://linkedin.com/in/ahsantariq0724" target="_blank" class="btn-secondary">
+                    <i class="fab fa-linkedin"></i> Connect on LinkedIn
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Lightbox Modal -->
+    <div id="lightboxModal" class="lightbox-modal" onclick="closeLightbox(event)">
+        <div class="lightbox-container" onclick="event.stopPropagation()">
+            <button class="lightbox-close" onclick="closeLightbox(event)">&times;</button>
+            <img id="lightboxImg" src="" alt="Enlarged screenshot" />
+            <div id="lightboxCaption" class="lightbox-caption"></div>
+        </div>
+    </div>
+
+    <!-- Interactive JavaScript Logic -->
+    <script>
+        // Interactive Problem vs Solution Filter Engine
+        function setTransactFilter(mode) {
+            const btnBoth = document.getElementById('btnTransactBoth');
+            const btnProblem = document.getElementById('btnTransactProblem');
+            const btnSolution = document.getElementById('btnTransactSolution');
+
+            btnBoth.className = 'compare-toggle-btn';
+            btnProblem.className = 'compare-toggle-btn';
+            btnSolution.className = 'compare-toggle-btn';
+
+            const rows = document.querySelectorAll('.compare-row');
+
+            if (mode === 'both') {
+                btnBoth.classList.add('active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = window.innerWidth <= 1024 ? 'minmax(0, 1fr)' : 'minmax(0, 1fr) 60px minmax(0, 1fr)';
+                    r.querySelector('.side-problem').style.display = 'block';
+                    r.querySelector('.side-solution').style.display = 'block';
+                    const arrow = r.querySelector('.compare-arrow-box');
+                    if (arrow) arrow.style.display = 'flex';
+                });
+            } else if (mode === 'problem') {
+                btnProblem.classList.add('problem-active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr)';
+                    r.querySelector('.side-problem').style.display = 'block';
+                    r.querySelector('.side-solution').style.display = 'none';
+                    const arrow = r.querySelector('.compare-arrow-box');
+                    if (arrow) arrow.style.display = 'none';
+                });
+            } else if (mode === 'solution') {
+                btnSolution.classList.add('solution-active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr)';
+                    r.querySelector('.side-problem').style.display = 'none';
+                    r.querySelector('.side-solution').style.display = 'block';
+                    const arrow = r.querySelector('.compare-arrow-box');
+                    if (arrow) arrow.style.display = 'none';
+                });
+            }
+        }
+
+        // Fullscreen Lightbox Engine
+        function openLightbox(src, caption) {
+            const modal = document.getElementById('lightboxModal');
+            const img = document.getElementById('lightboxImg');
+            const cap = document.getElementById('lightboxCaption');
+            img.src = src;
+            cap.innerText = caption;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(e) {
+            const modal = document.getElementById('lightboxModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,2081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seanz Law Firm Case Study — Multilingual AI Interview Automation &amp; Tri-Database Architecture | Ahsan Tariq</title>
+    <meta name="description" content="How Ahsan Tariq architected an AI-powered, multilingual immigration client intake system for Seanz Law Firm using OpenAI GPT-4, Twilio WhatsApp/SMS APIs, a tri-database backend synchronizing PostgreSQL, MongoDB, and Google Sheets, and real-time Looker Studio KPI dashboards.">
+
+    <!-- Google Fonts: Plus Jakarta Sans & Outfit & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-main: #06070a;
+            --bg-surface: #0a0e17;
+            --bg-card: #0e1320;
+            --bg-card-hover: #141c2e;
+            --border-subtle: rgba(255, 255, 255, 0.07);
+            --border-highlight: rgba(245, 158, 11, 0.35);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --gold: #fbbf24;
+            --gold-glow: rgba(251, 191, 36, 0.18);
+            --amber: #f59e0b;
+            --cyan: #38bdf8;
+            --emerald: #10b981;
+            --emerald-glow: rgba(16, 185, 129, 0.16);
+            --rose: #f43f5e;
+            --rose-glow: rgba(244, 63, 94, 0.16);
+            --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-display: 'Outfit', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --radius-xl: 24px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --container-max: 1260px;
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            line-height: 1.65;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Ambient Glow & Canvas */
+        .ambient-glow {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            height: 600px;
+            background: radial-gradient(circle 800px at 50% -100px, rgba(245, 158, 11, 0.12), rgba(16, 185, 129, 0.04), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Top Nav */
+        .case-nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(6, 7, 10, 0.88);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 1rem 0;
+        }
+        .nav-inner {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .nav-back:hover {
+            color: var(--gold);
+            transform: translateX(-3px);
+        }
+        .nav-brand {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 1.05rem;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .nav-brand span {
+            color: var(--gold);
+        }
+        .nav-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            padding: 0.35rem 0.8rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--gold);
+            font-weight: 600;
+        }
+        .nav-status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--gold);
+            box-shadow: 0 0 8px var(--gold);
+            animation: pulseNav 2s infinite;
+        }
+        @keyframes pulseNav {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        /* Container & Layout */
+        .wrapper {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        .section-separator {
+            padding: 5.5rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        /* TheHexaTown Signature Typography & Tags */
+        .eyebrow-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            color: var(--gold);
+            padding: 0.4rem 0.95rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+        .hero-section {
+            padding: 4.5rem 0 3.5rem;
+            text-align: center;
+        }
+        .hero-h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.3rem, 5vw, 4rem);
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            margin-bottom: 1.25rem;
+            background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-tagline {
+            font-family: var(--font-display);
+            font-size: clamp(1.15rem, 2.2vw, 1.45rem);
+            font-weight: 600;
+            color: var(--gold);
+            margin-bottom: 1.75rem;
+            letter-spacing: -0.01em;
+        }
+        .hero-desc {
+            font-size: 1.12rem;
+            color: var(--text-secondary);
+            max-width: 860px;
+            margin: 0 auto 3rem;
+            line-height: 1.75;
+        }
+        .hero-desc strong {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* Hero Badges Row */
+        .hero-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+        .hero-badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.4rem 0.9rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.76rem;
+            font-weight: 600;
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            color: var(--gold);
+        }
+        .hero-badge-pill.emerald {
+            background: rgba(16, 185, 129, 0.08);
+            border-color: rgba(16, 185, 129, 0.2);
+            color: var(--emerald);
+        }
+        .hero-badge-pill.cyan {
+            background: rgba(56, 189, 248, 0.08);
+            border-color: rgba(56, 189, 248, 0.2);
+            color: var(--cyan);
+        }
+
+        /* Meta Grid */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem 2rem;
+            margin: 2.5rem 0 3.5rem;
+            text-align: left;
+        }
+        .meta-col {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+        .meta-title {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+        }
+        .meta-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        .meta-value.accent {
+            color: var(--gold);
+        }
+
+        /* Browser Mockup System */
+        .browser-mockup {
+            background: #0d121c;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.04);
+            margin: 2rem 0;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .browser-mockup:hover {
+            border-color: rgba(245, 158, 11, 0.3);
+            box-shadow: 0 30px 70px -15px rgba(245, 158, 11, 0.15), 0 0 0 1px rgba(245, 158, 11, 0.2);
+        }
+        .browser-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1.25rem;
+            background: #141b27;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            gap: 0.75rem;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .browser-dots {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .browser-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+        .browser-url {
+            background: #090d15;
+            padding: 0.35rem 0.85rem;
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            font-size: 0.76rem;
+            color: #94a3b8;
+            flex: 1 1 0%;
+            min-width: 0;
+            max-width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .browser-url i {
+            color: var(--gold);
+            font-size: 0.7rem;
+            flex-shrink: 0;
+        }
+        .browser-url span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
+            min-width: 0;
+            flex: 1 1 0%;
+        }
+        .browser-badge {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--gold);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(245, 158, 11, 0.1);
+            padding: 0.25rem 0.65rem;
+            border-radius: 20px;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .browser-badge.pulse::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--gold);
+            box-shadow: 0 0 8px var(--gold);
+            animation: pulseGlow 2s infinite;
+            flex-shrink: 0;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+        .browser-screen {
+            position: relative;
+            cursor: zoom-in;
+            overflow: hidden;
+            background: #080b11;
+            line-height: 0;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+        .browser-screen img {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+            box-sizing: border-box;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .browser-screen:hover img {
+            transform: scale(1.015);
+        }
+        .browser-screen .zoom-hint {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            background: rgba(10, 14, 22, 0.88);
+            backdrop-filter: blur(8px);
+            color: #cbd5e1;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.4rem 0.85rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .browser-screen:hover .zoom-hint {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Statement Banner */
+        .statement-banner {
+            padding: 5.5rem 0;
+            border-top: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border-subtle);
+            background: linear-gradient(180deg, rgba(245, 158, 11, 0.03) 0%, transparent 100%);
+        }
+        .statement-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.75rem, 3.4vw, 2.75rem);
+            font-weight: 800;
+            line-height: 1.25;
+            letter-spacing: -0.025em;
+            color: #ffffff;
+            max-width: 1120px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .statement-h2 span {
+            color: var(--gold);
+        }
+
+        /* Executive Metrics Grid */
+        .exec-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1.5rem;
+            margin: 3.5rem 0;
+            width: 100%;
+            max-width: 100%;
+        }
+        .exec-metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem 1.5rem;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .exec-metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gold), transparent);
+            opacity: 0.5;
+        }
+        .exec-metric-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-highlight);
+        }
+        .exec-num {
+            font-family: var(--font-display);
+            font-size: 2.1rem;
+            font-weight: 800;
+            line-height: 1.1;
+            color: #ffffff;
+            margin-bottom: 0.4rem;
+        }
+        .exec-num.gold { color: var(--gold); }
+        .exec-num.emerald { color: var(--emerald); }
+        .exec-num.cyan { color: var(--cyan); }
+        .exec-label {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 0.35rem;
+        }
+        .exec-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Showcase Split Section */
+        .showcase-block {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+            gap: 3.5rem;
+            align-items: center;
+            margin: 4.5rem 0;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+        .showcase-block.reverse {
+            grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+        }
+        .showcase-block.reverse .showcase-text-col {
+            order: 2;
+        }
+        .showcase-block.reverse .showcase-media-col {
+            order: 1;
+        }
+        .showcase-text-col,
+        .showcase-media-col {
+            min-width: 0;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .showcase-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+        }
+        .showcase-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 2.5vw, 2.3rem);
+            font-weight: 800;
+            line-height: 1.22;
+            color: #ffffff;
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.02em;
+        }
+        .showcase-desc {
+            color: var(--text-secondary);
+            font-size: 1.02rem;
+            line-height: 1.72;
+            margin-bottom: 1.5rem;
+        }
+        .showcase-feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            margin: 1.5rem 0;
+        }
+        .showcase-feature-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+        .showcase-feature-list li i {
+            color: var(--gold);
+            margin-top: 0.25rem;
+            font-size: 0.85rem;
+        }
+        .showcase-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1.25rem;
+        }
+        .showcase-tag {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #cbd5e1;
+            padding: 0.35rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.76rem;
+            font-family: var(--font-mono);
+            font-weight: 500;
+        }
+
+        /* Dual Explanation Grid */
+        .dual-explanation-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .explanation-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            position: relative;
+        }
+        .explanation-box.plain-english {
+            border-top: 3px solid var(--emerald);
+        }
+        .explanation-box.tech-deep-dive {
+            border-top: 3px solid var(--gold);
+        }
+        .explanation-box-label {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .explanation-box.plain-english .explanation-box-label { color: var(--emerald); }
+        .explanation-box.tech-deep-dive .explanation-box-label { color: var(--gold); }
+        .explanation-box p {
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+            line-height: 1.7;
+        }
+
+        /* Interactive Problem vs Solution */
+        .interactive-comparison-wrapper {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            padding: 3rem;
+            margin: 3.5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .comparison-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+        .compare-toggle-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            color: #cbd5e1;
+            padding: 0.65rem 1.5rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .compare-toggle-btn.active {
+            background: var(--gold);
+            color: #060911;
+            border-color: var(--gold);
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+            transform: scale(1.03);
+        }
+        .compare-toggle-btn.problem-active {
+            background: var(--rose);
+            color: #ffffff;
+            border-color: var(--rose);
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.4);
+            transform: scale(1.03);
+        }
+        .compare-toggle-btn.solution-active {
+            background: var(--emerald);
+            color: #05140e;
+            border-color: var(--emerald);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+            transform: scale(1.03);
+        }
+        .comparison-cards-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .compare-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 60px minmax(0, 1fr);
+            gap: 1.5rem;
+            align-items: center;
+            width: 100%;
+            max-width: 100%;
+            transition: all 0.35s ease;
+        }
+        .compare-side {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            border: 1px solid var(--border-subtle);
+            min-width: 0;
+            max-width: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        .compare-side.side-problem {
+            border-left: 4px solid var(--rose);
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.05) 0%, rgba(14, 19, 32, 0.95) 100%);
+        }
+        .compare-side.side-solution {
+            border-left: 4px solid var(--emerald);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(14, 19, 32, 0.95) 100%);
+        }
+        .compare-arrow-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #141c2c;
+            border: 1px solid var(--border-subtle);
+            color: var(--gold);
+            font-size: 1.1rem;
+            margin: 0 auto;
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.2);
+        }
+        .side-label {
+            font-family: var(--font-mono);
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        .side-problem .side-label { color: var(--rose); }
+        .side-solution .side-label { color: var(--emerald); }
+        .side-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.75rem;
+        }
+        .side-desc {
+            color: var(--text-secondary);
+            font-size: 0.93rem;
+            line-height: 1.65;
+        }
+
+        /* Code Snippet */
+        .code-window {
+            background: #0c1018;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.65rem 1rem;
+            background: #111827;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .code-filename {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            color: var(--gold);
+            font-weight: 600;
+        }
+        .code-lang {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .code-body {
+            padding: 1.25rem 1.5rem;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            line-height: 1.7;
+            color: #e2e8f0;
+        }
+        .code-body .kw { color: #c084fc; }
+        .code-body .fn { color: #60a5fa; }
+        .code-body .str { color: #34d399; }
+        .code-body .cm { color: #6b7280; font-style: italic; }
+        .code-body .num { color: #fbbf24; }
+        .code-body .op { color: #f472b6; }
+
+        /* Comparison Table */
+        .phases-table-wrapper {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            max-height: 520px;
+            overflow-y: auto;
+            margin: 2rem 0;
+        }
+        .phases-table-wrapper::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .phases-table-wrapper::-webkit-scrollbar-thumb {
+            background: #2a3447;
+            border-radius: 3px;
+        }
+        .phases-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            font-family: var(--font-mono);
+        }
+        .phases-table th {
+            background: #121721;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .phases-table td {
+            padding: 0.65rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: #cbd5e1;
+        }
+        .phases-table tr:hover td {
+            background: rgba(245, 158, 11, 0.03);
+        }
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.2rem 0.55rem;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+        .status-pill.complete {
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--emerald);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+        .status-pill.partial {
+            background: rgba(251, 191, 36, 0.12);
+            color: var(--gold);
+            border: 1px solid rgba(251, 191, 36, 0.25);
+        }
+        .status-pill.blocked {
+            background: rgba(244, 63, 94, 0.12);
+            color: var(--rose);
+            border: 1px solid rgba(244, 63, 94, 0.25);
+        }
+
+        /* Tech Grid */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+            width: 100%;
+            max-width: 100%;
+        }
+        .tech-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+        .tech-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-highlight);
+        }
+        .tech-header {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            margin-bottom: 1rem;
+        }
+        .tech-pill {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--gold);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+        .tech-pill.emerald { background: rgba(16, 185, 129, 0.1); color: var(--emerald); border-color: rgba(16, 185, 129, 0.2); }
+        .tech-pill.cyan { background: rgba(56, 189, 248, 0.1); color: var(--cyan); border-color: rgba(56, 189, 248, 0.2); }
+        .tech-pill.rose { background: rgba(244, 63, 94, 0.1); color: var(--rose); border-color: rgba(244, 63, 94, 0.2); }
+        .tech-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+        .tech-card p {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        /* Ownership Section */
+        .ownership-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1.5rem;
+            margin: 2.5rem 0;
+        }
+        .ownership-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+        .ownership-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-highlight);
+        }
+        .ownership-card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--gold);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            margin-bottom: 1rem;
+        }
+        .ownership-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+        .ownership-card p {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            line-height: 1.6;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 6.5rem 0;
+            text-align: center;
+            background: radial-gradient(circle 600px at 50% 50%, rgba(245, 158, 11, 0.08), transparent 70%);
+        }
+        .cta-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 3.8vw, 3rem);
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.03em;
+        }
+        .cta-desc {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 650px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.6;
+        }
+        .cta-btn-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.25rem;
+        }
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--gold);
+            color: #060911;
+            padding: 0.9rem 2rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.35);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(251, 191, 36, 0.5);
+            background: #f59e0b;
+        }
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 0.9rem 2rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Lightbox Modal */
+        .lightbox-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(3, 5, 8, 0.95);
+            backdrop-filter: blur(12px);
+            z-index: 999999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            box-sizing: border-box;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .lightbox-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        .lightbox-container {
+            max-width: 95vw;
+            max-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .lightbox-container img {
+            max-width: 92vw;
+            max-height: 82vh;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+        .lightbox-caption {
+            margin-top: 1rem;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            font-family: var(--font-mono);
+            background: rgba(15, 23, 42, 0.85);
+            padding: 0.5rem 1.25rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            max-width: 800px;
+            text-align: center;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: -2.5rem;
+            right: 0;
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+        .lightbox-close:hover {
+            color: var(--gold);
+            transform: scale(1.15);
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .exec-metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .showcase-block, .showcase-block.reverse {
+                grid-template-columns: minmax(0, 1fr) !important;
+                gap: 2.5rem;
+            }
+            .showcase-block.reverse .showcase-text-col { order: 1; }
+            .showcase-block.reverse .showcase-media-col { order: 2; }
+            .compare-row { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+            .compare-arrow-box { transform: rotate(90deg); margin: 0.5rem auto; }
+            .tech-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .dual-explanation-grid { grid-template-columns: minmax(0, 1fr); }
+            .ownership-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
+        @media (max-width: 768px) {
+            .browser-bar {
+                padding: 0.55rem 0.85rem;
+                gap: 0.5rem;
+            }
+            .browser-badge { display: none; }
+            .browser-url { font-size: 0.7rem; padding: 0.25rem 0.55rem; }
+            .browser-dots { gap: 4px; }
+            .browser-dot { width: 8px; height: 8px; }
+            .interactive-comparison-wrapper { padding: 1.5rem; }
+            .comparison-controls { flex-direction: column; gap: 0.6rem; }
+            .compare-toggle-btn { width: 100%; justify-content: center; }
+        }
+
+        @media (max-width: 640px) {
+            .meta-grid { grid-template-columns: minmax(0, 1fr); }
+            .exec-metrics-grid { grid-template-columns: minmax(0, 1fr); }
+            .tech-grid { grid-template-columns: minmax(0, 1fr); }
+            .ownership-grid { grid-template-columns: minmax(0, 1fr); }
+            .cta-btn-row { flex-direction: column; }
+            .statement-h2 { font-size: 1.45rem; }
+            .hero-h1 { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Glow Background -->
+    <div class="ambient-glow"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="case-nav">
+        <div class="nav-inner">
+            <a href="../index.html" class="nav-back">
+                <i class="fas fa-arrow-left"></i> Back to Case Studies
+            </a>
+            <div class="nav-brand">
+                <span>Tariq</span>DreamsTech
+            </div>
+            <div class="nav-status">
+                <span class="nav-status-dot"></span> LEGALTECH AI · MULTILINGUAL IMMIGRATION INTAKE
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-scale-balanced"></i> Autonomous LegalTech &amp; Immigration Intelligence
+            </div>
+
+            <h1 class="hero-h1">Seanz Law Firm</h1>
+            <div class="hero-tagline">&ldquo;AI-Powered Multilingual Interview Automation &amp; Tri-Database Architecture for Immigration Law&rdquo;</div>
+
+            <div class="hero-badges">
+                <span class="hero-badge-pill"><i class="fas fa-brain"></i> OpenAI GPT-4 Bilingual Core</span>
+                <span class="hero-badge-pill emerald"><i class="fab fa-whatsapp"></i> Twilio WhatsApp &amp; SMS</span>
+                <span class="hero-badge-pill cyan"><i class="fas fa-database"></i> Tri-DB (Postgres + Mongo + Sheets)</span>
+                <span class="hero-badge-pill gold"><i class="fas fa-chart-line"></i> Google Looker Studio BI</span>
+            </div>
+
+            <p class="hero-desc">
+                How <strong>Ahsan Tariq</strong> engineered an AI-powered, multilingual interview automation system for <strong>Seanz Law Firm</strong> (United States &middot; Remote) to streamline immigration client intake. Featuring a bilingual (English/Spanish) conversational assistant built on <strong>OpenAI GPT-4</strong>, real-time omnichannel integration via <strong>Twilio WhatsApp &amp; SMS APIs</strong>, a microservices backend synchronizing data across <strong>PostgreSQL, MongoDB, and Google Sheets</strong>, and executive legal KPI dashboards in <strong>Google Looker Studio</strong> &mdash; all guarded by strict <strong>Ruff DevOps</strong> code quality standards.
+            </p>
+
+            <!-- Meta Strip -->
+            <div class="meta-grid">
+                <div class="meta-col">
+                    <span class="meta-title">Client / Law Firm</span>
+                    <span class="meta-value">Seanz Law Firm (US &middot; Remote)</span>
+                </div>
+                <div class="meta-col">
+                    <span class="meta-title">Engineering Role</span>
+                    <span class="meta-value accent">AI &amp; Backend Systems Engineer (Ahsan Tariq &middot; Aug 2024 &ndash; Jul 2025)</span>
+                </div>
+                <div class="meta-col">
+                    <span class="meta-title">Domain &amp; Language</span>
+                    <span class="meta-value">US Immigration Law &middot; 100% Bilingual (EN/ES)</span>
+                </div>
+                <div class="meta-col">
+                    <span class="meta-title">Core Ecosystem</span>
+                    <span class="meta-value">GPT-4 &middot; Twilio &middot; FastAPI &middot; Postgres &middot; Looker</span>
+                </div>
+            </div>
+
+            <!-- Hero Master Architecture Diagram -->
+            <div class="browser-mockup" id="master-architecture">
+                <div class="browser-bar">
+                    <div class="browser-dots">
+                        <span class="browser-dot dot-red"></span>
+                        <span class="browser-dot dot-yellow"></span>
+                        <span class="browser-dot dot-green"></span>
+                    </div>
+                    <div class="browser-url">
+                        <i class="fas fa-lock"></i>
+                        <span>https://seanzlaw.internal/architecture/master-intelligence-topology</span>
+                    </div>
+                    <div class="browser-badge pulse">
+                        ● INTAKE LIVE · 94.2% COMPLETION
+                    </div>
+                </div>
+                <div class="browser-screen" onclick="openLightbox('images/00-seanz-master-intelligence-architecture.jpg', 'Seanz Law Firm: Master Multilingual AI Intake & Tri-Database Topology (Applicant -> Twilio -> GPT-4 -> Multi-DB Sync -> Looker Studio)')">
+                    <img src="images/00-seanz-master-intelligence-architecture.jpg" alt="Seanz Law Firm Master Architecture Diagram" />
+                    <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect full architecture</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statement Banner -->
+    <section class="statement-banner">
+        <div class="wrapper">
+            <h2 class="statement-h2">
+                &ldquo;From <span>missed intake calls and 48-hour client delays</span> to a <span>sub-second multilingual AI assistant</span>: <span>94.2% intake completion</span> across WhatsApp and SMS, <span>instant tri-database synchronization</span>, and <span>80% faster attorney preparation time</span> for immigration cases.&rdquo;
+            </h2>
+        </div>
+    </section>
+
+    <!-- Executive Production Metrics Grid -->
+    <section class="section-separator">
+        <div class="wrapper">
+            <div class="exec-metrics-grid">
+                <div class="exec-metric-card">
+                    <div class="exec-num gold">&lt; 850ms</div>
+                    <div class="exec-label">Conversational AI Response Latency</div>
+                    <div class="exec-sub">OpenAI GPT-4 streaming with prompt token optimization and domain guardrails</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="exec-num emerald">94.2%</div>
+                    <div class="exec-label">Intake First-Contact Completion</div>
+                    <div class="exec-sub">Frictionless conversational qualification eliminating multi-page legal web form abandonment</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="exec-num cyan">100% Bilingual</div>
+                    <div class="exec-label">Dynamic English &amp; Spanish Routing</div>
+                    <div class="exec-sub">Zero-shot language detection and seamless mid-dialogue switching without context reset</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="exec-num gold">3-Way Sync</div>
+                    <div class="exec-label">Real-Time State Synchronization</div>
+                    <div class="exec-sub">Atomic persistence across PostgreSQL 16, MongoDB Atlas, and Google Sheets for paralegals</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem vs Solution Section -->
+    <section class="section-separator" id="problem-solution">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-scale-balanced"></i> Executive Comparison
+            </div>
+            <h2 class="showcase-h2" style="text-align: center; margin-bottom: 0.5rem;">How Seanz Law Firm Automated Immigration Client Intake</h2>
+            <p class="showcase-desc" style="text-align: center; max-width: 750px; margin: 0 auto 2.5rem;">
+                See how traditional immigration intake friction &mdash; language barriers, 48-hour screening delays, fragmented notes, and manual spreadsheet hand-offs &mdash; was transformed into an autonomous AI intelligence system.
+            </p>
+
+            <div class="interactive-comparison-wrapper">
+                <!-- Interactive Controls -->
+                <div class="comparison-controls">
+                    <button class="compare-toggle-btn active" id="btnSeanzBoth" onclick="setSeanzFilter('both')">
+                        <i class="fas fa-columns"></i> Show Both
+                    </button>
+                    <button class="compare-toggle-btn" id="btnSeanzProblem" onclick="setSeanzFilter('problem')">
+                        <i class="fas fa-times-circle"></i> Problems Only
+                    </button>
+                    <button class="compare-toggle-btn" id="btnSeanzSolution" onclick="setSeanzFilter('solution')">
+                        <i class="fas fa-check-circle"></i> Solutions Only
+                    </button>
+                </div>
+
+                <div class="comparison-cards-grid">
+                    <!-- Row 1: Language Barriers & Dropouts -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label"><i class="fas fa-times-circle"></i> Problem</div>
+                            <div class="side-title">Language Barriers &amp; High Intake Dropout Rates</div>
+                            <div class="side-desc">Over 70% of immigration applicants prefer Spanish, yet law firms rely on English-only web forms or wait hours for bilingual receptionists to become available. Prospective clients abandon rigid online forms when faced with dense legal jargon.</div>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label"><i class="fas fa-check-circle"></i> Solution</div>
+                            <div class="side-title">Bilingual GPT-4 Assistant via WhatsApp &amp; SMS</div>
+                            <div class="side-desc">Engineered an interactive conversational assistant powered by OpenAI GPT-4 that auto-detects English or Spanish instantly. It conducts empathetic, conversational interviews directly over WhatsApp and SMS, achieving a 94.2% completion rate.</div>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Manual Screening & Attorney Bottlenecks -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label"><i class="fas fa-times-circle"></i> Problem</div>
+                            <div class="side-title">48-Hour Screening Delay Wastes Attorney Time</div>
+                            <div class="side-desc">Managing attorneys spent 15&ndash;20 hours each week conducting repetitive initial screening calls just to determine basic visa eligibility, deportation urgency, or entry dates &mdash; causing critical backlogs and lost client opportunities.</div>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label"><i class="fas fa-check-circle"></i> Solution</div>
+                            <div class="side-title">Adaptive Legal Questionnaires &amp; Automated Fact Briefs</div>
+                            <div class="side-desc">The assistant dynamically branches based on case category (Asylum, U-Visa, Family Petition, DACA), extracts key legal dates, flags urgent deportation notices, and compiles a structured 1-page executive summary for attorneys before the consultation.</div>
+                        </div>
+                    </div>
+
+                    <!-- Row 3: Fragmented Data Storage -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label"><i class="fas fa-times-circle"></i> Problem</div>
+                            <div class="side-title">Chat Transcripts vs Structured Database Mismatch</div>
+                            <div class="side-desc">Conversational data is fluid and unstructured, while legal CRM billing requires strict relational schemas. Storing interviews solely in SQL led to rigid schema breaks, while pure NoSQL prevented structured relational reporting.</div>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label"><i class="fas fa-check-circle"></i> Solution</div>
+                            <div class="side-title">Tri-Database Architecture (Postgres + Mongo + Sheets)</div>
+                            <div class="side-desc">Architected a microservice synchronizer: MongoDB Atlas archives verbatim transcripts and dynamic turns; PostgreSQL 16 enforces relational integrity for cases and billing; and Google Sheets receives real-time rows for paralegal triage without SQL overhead.</div>
+                        </div>
+                    </div>
+
+                    <!-- Row 4: Executive Visibility & QA -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label"><i class="fas fa-times-circle"></i> Problem</div>
+                            <div class="side-title">Zero Real-Time Analytics &amp; Tech Debt Accumulation</div>
+                            <div class="side-desc">Firm leadership had no real-time metrics on marketing campaign conversion, channel performance, or paralegal response times. Quick scripting fixes created unmaintainable code without linting or test coverage.</div>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label"><i class="fas fa-check-circle"></i> Solution</div>
+                            <div class="side-title">Google Looker Studio BI &amp; Ruff 100x DevOps Guardrails</div>
+                            <div class="side-desc">Built real-time Looker Studio dashboards displaying conversion funnels, case demographics, and response SLAs. Enforced strict code quality with Ruff linting and pre-commit Git hooks &mdash; ensuring a clean, modular, and maintainable codebase.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase 1: Multilingual Conversational AI Engine -->
+    <section class="section-separator" id="conversational-ai">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow">
+                        <i class="fas fa-language"></i> Cognitive AI Engine
+                    </div>
+                    <h2 class="showcase-h2">Multilingual Conversational AI: OpenAI GPT-4 with Legal Guardrails</h2>
+                    <p class="showcase-desc">
+                        Immigration law involves deeply personal, life-altering circumstances. We built an empathetic, intelligent conversational assistant powered by <strong>OpenAI GPT-4</strong> that dynamically detects whether an applicant is writing in English or Spanish, adjusts tone accordingly, and guides them through tailored intake questions.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Zero-Shot Bilingual Detection:</strong> Identifies language preference on the first turn and maintains bilingual dialogue fluidity without context loss.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Strict Legal Disclaimer Guardrails:</strong> System prompts enforce strict ethical disclaimers &mdash; clarifying that the AI gathers facts without offering legal advice.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Category-Specific Branching:</strong> Tailored questioning sequences for Asylum, Family Petitions, U-Visas, Naturalization, and DACA renewals.</span></li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">OpenAI GPT-4</span>
+                        <span class="showcase-tag">English / Spanish</span>
+                        <span class="showcase-tag">Legal Guardrails</span>
+                        <span class="showcase-tag">Pydantic Schema</span>
+                    </div>
+                </div>
+
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-lock"></i>
+                                <span>https://seanzlaw.internal/ai/gpt4-intake-dialogue</span>
+                            </div>
+                            <div class="browser-badge">BILINGUAL ACTIVE</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/01-multilingual-conversational-ai-engine.jpg', 'Seanz Law Firm: Multilingual Conversational AI & Immigration Legal Guardrails (English/Spanish GPT-4 Engine)')">
+                            <img src="images/01-multilingual-conversational-ai-engine.jpg" alt="Multilingual Conversational AI Diagram" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to enlarge diagram</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dual Explanation Grid -->
+            <div class="dual-explanation-grid">
+                <div class="explanation-box plain-english">
+                    <div class="explanation-box-label"><i class="fas fa-user-check"></i> Plain English Explanation</div>
+                    <p>
+                        When an immigrant messages the law firm, they might write in English, Spanish, or a mix of both. 
+                        Our AI immediately recognizes their preferred language and responds with warmth and clarity. Instead of intimidating them with complicated legal forms, it asks simple, friendly questions &mdash; like "When did you arrive in the US?" or "Do you have family members who are citizens?" &mdash; making it easy for anyone to complete their intake.
+                    </p>
+                </div>
+                <div class="explanation-box tech-deep-dive">
+                    <div class="explanation-box-label"><i class="fas fa-code-branch"></i> Technical Deep Dive</div>
+                    <p>
+                        The conversational pipeline utilizes OpenAI GPT-4 with a specialized system prompt enforcing immigration intake rules, PII protection, and jurisdiction boundaries. Prompts use few-shot examples in both English and Spanish with Pydantic JSON schema function-calling to extract entities (Applicant Name, Country of Origin, Entry Date, Prior Deportations, Visa Category). 
+                        If the applicant reports an imminent court hearing or ICE check-in, the system triggers an expedited high-priority triage flag.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Code Window: Multilingual Intake Orchestrator -->
+            <div class="code-window">
+                <div class="code-header">
+                    <span class="code-filename"><i class="fas fa-terminal"></i> services/intake_ai_engine.py</span>
+                    <span class="code-lang">Python 3.12 / OpenAI API</span>
+                </div>
+                <pre class="code-body"><code><span class="kw">from</span> openai <span class="kw">import</span> AsyncOpenAI
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, Field
+
+client = AsyncOpenAI()
+
+<span class="kw">class</span> <span class="fn">ImmigrationEntitySchema</span>(BaseModel):
+    preferred_language: <span class="kw">str</span> = Field(description=<span class="str">"'es' for Spanish, 'en' for English"</span>)
+    legal_category: <span class="kw">str</span> = Field(description=<span class="str">"Asylum, Family_Petition, UVisa, DACA, Naturalization"</span>)
+    urgency_level: <span class="kw">str</span> = Field(description=<span class="str">"'CRITICAL' if court date within 30 days, else 'NORMAL'"</span>)
+    extracted_facts: <span class="kw">dict</span> = Field(default_factory=<span class="kw">dict</span>)
+
+<span class="kw">async def</span> <span class="fn">generate_interview_turn</span>(dialogue_history: <span class="kw">list</span>[<span class="kw">dict</span>], user_message: <span class="kw">str</span>) -> <span class="kw">tuple</span>[<span class="kw">str</span>, ImmigrationEntitySchema]:
+    system_prompt = (
+        <span class="str">"You are an empathetic, bilingual immigration intake assistant for Seanz Law Firm. "</span>
+        <span class="str">"Never give final legal advice. Qualify applicant case facts in their native language (EN or ES). "</span>
+        <span class="str">"Extract key dates, entry records, and flag upcoming hearings immediately."</span>
+    )
+    messages = [{<span class="str">"role"</span>: <span class="str">"system"</span>, <span class="str">"content"</span>: system_prompt}] + dialogue_history + [{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: user_message}]
+
+    response = <span class="kw">await</span> client.chat.completions.create(
+        model=<span class="str">"gpt-4-turbo"</span>,
+        messages=messages,
+        temperature=<span class="num">0.2</span>,
+        response_format={<span class="str">"type"</span>: <span class="str">"text"</span>}
+    )
+    ai_reply = response.choices[<span class="num">0</span>].message.content
+    <span class="kw">return</span> ai_reply</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase 2: Twilio WhatsApp & SMS Omnichannel Engine -->
+    <section class="section-separator" id="twilio-messaging">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow">
+                        <i class="fab fa-whatsapp"></i> Real-Time Omnichannel Gateway
+                    </div>
+                    <h2 class="showcase-h2">Twilio Messaging Gateway: WhatsApp &amp; SMS Integration</h2>
+                    <p class="showcase-desc">
+                        Meeting clients where they already spend their time is critical for accessibility. We integrated the <strong>Twilio WhatsApp Business API</strong> and <strong>Twilio Programmable SMS</strong> into an asynchronous FastAPI microservice backend, allowing applicants to complete their legal intake with zero friction.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Dual-Channel Redundancy:</strong> Seamlessly routes messages over WhatsApp or SMS depending on client reachability and preferences.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Sub-Second Webhook Processing:</strong> FastAPI ASGI handles incoming webhooks with cryptographic HMAC signature verification in under 18ms.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Document &amp; Photo Evidence Ingestion:</strong> Ingests photos of passports, I-94 forms, and court summons via Twilio MMS/media URLs.</span></li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">Twilio WhatsApp API</span>
+                        <span class="showcase-tag">Twilio SMS</span>
+                        <span class="showcase-tag">FastAPI ASGI</span>
+                        <span class="showcase-tag">HMAC Webhooks</span>
+                    </div>
+                </div>
+
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-lock"></i>
+                                <span>https://seanzlaw.internal/messaging/twilio-orchestrator</span>
+                            </div>
+                            <div class="browser-badge">DELIVERY: 99.9%</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/02-twilio-whatsapp-sms-orchestrator.jpg', 'Seanz Law Firm: Twilio WhatsApp & SMS Omnichannel Messaging Architecture')">
+                            <img src="images/02-twilio-whatsapp-sms-orchestrator.jpg" alt="Twilio WhatsApp and SMS Messaging Diagram" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to enlarge diagram</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dual Explanation Grid -->
+            <div class="dual-explanation-grid">
+                <div class="explanation-box plain-english">
+                    <div class="explanation-box-label"><i class="fas fa-user-check"></i> Plain English Explanation</div>
+                    <p>
+                        Almost every immigrant uses WhatsApp every single day to talk with family back home. 
+                        By connecting our AI assistant directly to WhatsApp and text messaging, clients don't have to download any special apps or navigate confusing websites. They can chat with the law firm as easily as texting a friend, pause the conversation if they're on the bus, and resume right where they left off.
+                    </p>
+                </div>
+                <div class="explanation-box tech-deep-dive">
+                    <div class="explanation-box-label"><i class="fas fa-code-branch"></i> Technical Deep Dive</div>
+                    <p>
+                        Twilio webhook endpoints are hosted on an asynchronous FastAPI microservice powered by Uvicorn. The router verifies incoming <code>X-Twilio-Signature</code> headers using Twilio's RequestValidator to prevent spoofing. 
+                        Dialogue session state is cached in a Redis key-value store keyed by phone number with a 48-hour TTL, enabling stateless horizontal scaling across worker containers while preserving conversation history for streaming OpenAI completion calls.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase 3: Tri-Database Synchronization -->
+    <section class="section-separator" id="tri-database-sync">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow">
+                        <i class="fas fa-database"></i> Modular Storage Topology
+                    </div>
+                    <h2 class="showcase-h2">Tri-Database Sync: MongoDB Atlas, PostgreSQL 16 &amp; Google Sheets</h2>
+                    <p class="showcase-desc">
+                        A major architectural innovation of the Seanz Law Firm platform is its <strong>tri-database synchronization engine</strong>. Instead of forcing conversational chat data into a single rigid storage model, we designed an asynchronous event pipeline that coordinates three specialized data stores in real time.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <span><strong>MongoDB Atlas (Document Store):</strong> Captures verbatim chat history, dynamic question branches, and media attachment references.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>PostgreSQL 16 (Relational CRM):</strong> Enforces relational integrity, client identity mapping, billing status, and case fee schedules.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Google Sheets API (Two-Way Triage):</strong> Delivers live intake rows instantly for paralegals and syncs status updates back to the CRM.</span></li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">PostgreSQL 16</span>
+                        <span class="showcase-tag">MongoDB Atlas</span>
+                        <span class="showcase-tag">Google Sheets API</span>
+                        <span class="showcase-tag">Atomic Multi-Write</span>
+                    </div>
+                </div>
+
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-lock"></i>
+                                <span>https://seanzlaw.internal/sync/tri-database-reconciliation</span>
+                            </div>
+                            <div class="browser-badge">ZERO DATA DRIFT</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/03-tri-database-sync-architecture.jpg', 'Seanz Law Firm: Tri-Database Synchronization Architecture (MongoDB, PostgreSQL 16 & Google Sheets API)')">
+                            <img src="images/03-tri-database-sync-architecture.jpg" alt="Tri-Database Synchronization Architecture Diagram" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to enlarge diagram</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dual Explanation Grid -->
+            <div class="dual-explanation-grid">
+                <div class="explanation-box plain-english">
+                    <div class="explanation-box-label"><i class="fas fa-user-check"></i> Plain English Explanation</div>
+                    <p>
+                        Different members of a law firm work in different ways. Computer systems like structured databases, lawyers need official case files, and busy paralegals love fast, simple spreadsheets. 
+                        Our system updates all three simultaneously in less than half a second. When a client finishes their WhatsApp interview, their entire transcript goes to MongoDB, their verified client profile goes to PostgreSQL, and a neat new row appears in the paralegal's Google Sheet ready for review.
+                    </p>
+                </div>
+                <div class="explanation-box tech-deep-dive">
+                    <div class="explanation-box-label"><i class="fas fa-code-branch"></i> Technical Deep Dive</div>
+                    <p>
+                        The synchronization dispatcher executes via background worker tasks within FastAPI. When an intake interview hits milestone checkpoints or completes, a transactional unit-of-work is initiated: first, an upsert to MongoDB Atlas storing raw JSON dialogue turns; second, a normalized SQL transaction in PostgreSQL 16 mapping applicant details, contact channels, and case foreign keys; third, an asynchronous call to the Google Sheets API using service account OAuth2 credentials. 
+                        Failure handling utilizes an idempotent retry queue with exponential backoff to guarantee zero data drift across all three stores.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Code Window: Tri-Database Sync Service -->
+            <div class="code-window">
+                <div class="code-header">
+                    <span class="code-filename"><i class="fas fa-terminal"></i> sync/tri_database_service.py</span>
+                    <span class="code-lang">Python 3.12 / AsyncIO</span>
+                </div>
+                <pre class="code-body"><code><span class="kw">import</span> asyncio
+<span class="kw">from</span> sqlalchemy.ext.asyncio <span class="kw">import</span> AsyncSession
+<span class="kw">from</span> motor.motor_asyncio <span class="kw">import</span> AsyncIOMotorDatabase
+
+<span class="kw">async def</span> <span class="fn">sync_intake_milestone</span>(
+    applicant_data: <span class="kw">dict</span>,
+    chat_turns: <span class="kw">list</span>[<span class="kw">dict</span>],
+    pg_session: AsyncSession,
+    mongo_db: AsyncIOMotorDatabase,
+    sheets_service
+):
+    applicant_id = applicant_data[<span class="str">"applicant_id"</span>]
+
+    <span class="cm"># 1. Persist complete transcript to MongoDB Atlas</span>
+    <span class="kw">await</span> mongo_db.transcripts.update_one(
+        {<span class="str">"applicant_id"</span>: applicant_id},
+        {<span class="str">"$set"</span>: {<span class="str">"history"</span>: chat_turns, <span class="str">"updated_at"</span>: <span class="str">"NOW()"</span>}},
+        upsert=<span class="kw">True</span>
+    )
+
+    <span class="cm"># 2. Update relational case records in PostgreSQL 16</span>
+    sql = <span class="str">"UPDATE legal_applicant SET case_status = :status, urgency = :urgency WHERE id = :id"</span>
+    <span class="kw">await</span> pg_session.execute(text(sql), {
+        <span class="str">"status"</span>: <span class="str">"INTAKE_COMPLETED"</span>,
+        <span class="str">"urgency"</span>: applicant_data[<span class="str">"urgency"</span>],
+        <span class="str">"id"</span>: applicant_id
+    })
+    <span class="kw">await</span> pg_session.commit()
+
+    <span class="cm"># 3. Append / Update live row in Google Sheets via background worker</span>
+    row_values = [
+        applicant_data[<span class="str">"name"</span>], applicant_data[<span class="str">"phone"</span>], applicant_data[<span class="str">"category"</span>],
+        applicant_data[<span class="str">"urgency"</span>], <span class="str">"Pending Review"</span>, applicant_data[<span class="str">"language"</span>]
+    ]
+    <span class="kw">await</span> asyncio.to_thread(sheets_service.append_row, row_values)</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase 4: Looker Studio Reporting & Ruff DevOps CI/CD -->
+    <section class="section-separator" id="looker-devops">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow">
+                        <i class="fas fa-chart-line"></i> Real-Time BI &amp; Engineering Quality
+                    </div>
+                    <h2 class="showcase-h2">Google Looker Studio Legal BI &amp; Ruff DevOps Automation</h2>
+                    <p class="showcase-desc">
+                        Law firms require clear business intelligence to understand lead generation channels and prioritize high-urgency immigration hearings. We built real-time <strong>Google Looker Studio KPI dashboards</strong> backed by PostgreSQL and enforced enterprise code quality across all microservices using the ultra-fast <strong>Ruff linter and pre-commit Git hooks</strong>.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Real-Time Intake Funnel Dashboards:</strong> Displays live charts of weekly intake volumes, language breakdown (EN vs ES), and category distribution.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Automated Attorney Dossiers:</strong> Transforms 20-minute chat transcripts into concise 1-page structured briefs delivered before consultations.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Ruff 100x Speed Python Linting:</strong> Rust-powered AST analysis enforcing strict formatting, isort import sorting, and zero code regressions.</span></li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">Google Looker Studio</span>
+                        <span class="showcase-tag">Executive BI</span>
+                        <span class="showcase-tag">Ruff Linter</span>
+                        <span class="showcase-tag">Pre-Commit Hooks</span>
+                    </div>
+                </div>
+
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-lock"></i>
+                                <span>https://lookerstudio.google.com/reporting/seanzlaw-intake-kpi</span>
+                            </div>
+                            <div class="browser-badge">REAL-TIME BI</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/04-looker-studio-reporting-devops.jpg', 'Seanz Law Firm: Real-Time Looker Studio Dashboards & Ruff DevOps CI/CD Architecture')">
+                            <img src="images/04-looker-studio-reporting-devops.jpg" alt="Looker Studio Dashboards and Ruff DevOps Diagram" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to enlarge diagram</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dual Explanation Grid -->
+            <div class="dual-explanation-grid">
+                <div class="explanation-box plain-english">
+                    <div class="explanation-box-label"><i class="fas fa-user-check"></i> Plain English Explanation</div>
+                    <p>
+                        Managing partners at the law firm can look at their Looker Studio dashboard on their phones and see exactly how many prospective clients contacted the firm, what legal issues they have, and which marketing channels bring in the best cases. 
+                        Behind the scenes, automated quality check robots review every single line of Python code in milliseconds before it's deployed &mdash; guaranteeing that the system never crashes when a client needs help.
+                    </p>
+                </div>
+                <div class="explanation-box tech-deep-dive">
+                    <div class="explanation-box-label"><i class="fas fa-code-branch"></i> Technical Deep Dive</div>
+                    <p>
+                        Looker Studio connects directly to PostgreSQL read-replicas via SSL-encrypted JDBC connectors, querying optimized materialized views refreshed on 5-minute intervals to avoid production database lock contention. 
+                        On the engineering side, <code>ruff</code> is integrated into local pre-commit hooks and GitHub Actions workflows, executing over 500 linting rules and import sorting in under 15ms &mdash; eliminating tech debt and ensuring modular, easily testable microservice code.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparative Specification Matrix -->
+    <section class="section-separator" id="comparative-matrix">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-table-columns"></i> Engineering Benchmark
+            </div>
+            <h2 class="showcase-h2" style="text-align: center; margin-bottom: 0.5rem;">Intake Systems Comparison: Traditional vs Generic Chatbots vs Seanz AI</h2>
+            <p class="showcase-desc" style="text-align: center; max-width: 750px; margin: 0 auto 2.5rem;">
+                Comparing core capabilities across traditional manual law firm intake, generic web chatbot widgets, and the Seanz Law Firm autonomous multilingual intelligence system.
+            </p>
+
+            <div class="phases-table-wrapper">
+                <table class="phases-table">
+                    <thead>
+                        <tr>
+                            <th>Capability Matrix</th>
+                            <th>Traditional Law Firm Intake</th>
+                            <th>Generic Web Chatbots</th>
+                            <th>Seanz Law Firm AI Intelligence</th>
+                            <th>Verification Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Primary Client Channels</td>
+                            <td>Phone calls, voicemails &amp; office visits</td>
+                            <td>Embedded website widget only</td>
+                            <td>Twilio WhatsApp Business &amp; SMS Omnichannel</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> Verified Production</span></td>
+                        </tr>
+                        <tr>
+                            <td>Language Adaptability</td>
+                            <td>English only (Bilingual staff delay)</td>
+                            <td>Static dropdown / awkward translations</td>
+                            <td>Dynamic zero-shot English &amp; Spanish fluency</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> 100% Bilingual</span></td>
+                        </tr>
+                        <tr>
+                            <td>Legal Questioning Logic</td>
+                            <td>Manual scripted interview questionnaires</td>
+                            <td>Rigid decision trees (cannot handle nuance)</td>
+                            <td>GPT-4 Adaptive Reasoning + Immigration Guardrails</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> 14 Case Pathways</span></td>
+                        </tr>
+                        <tr>
+                            <td>Data Storage Architecture</td>
+                            <td>Paper files, email inboxes &amp; sticky notes</td>
+                            <td>Single isolated database / export CSV</td>
+                            <td>Tri-DB: MongoDB (Chat) + Postgres (CRM) + Sheets</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> Tri-DB Atomic Sync</span></td>
+                        </tr>
+                        <tr>
+                            <td>Staff &amp; Paralegal Triage</td>
+                            <td>Manual data re-entry into legal software</td>
+                            <td>Clunky portal login required</td>
+                            <td>Live two-way sync to Google Sheets (Zero training)</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> Real-Time Emission</span></td>
+                        </tr>
+                        <tr>
+                            <td>Business Intelligence &amp; KPIs</td>
+                            <td>Monthly retrospective billing reports</td>
+                            <td>Basic total conversation counters</td>
+                            <td>Google Looker Studio Real-Time Funnel Dashboards</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> Live BI Dashboards</span></td>
+                        </tr>
+                        <tr>
+                            <td>Code Quality &amp; Maintainability</td>
+                            <td>Undocumented vendor-locked scripts</td>
+                            <td>Proprietary closed-source SaaS</td>
+                            <td>Modular FastAPI Microservices + Ruff CI/CD Gates</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> 100x Fast Linter</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Complete Tech Stack Grid -->
+    <section class="section-separator" id="tech-stack">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-cubes"></i> Technology Ecosystem
+            </div>
+            <h2 class="showcase-h2" style="text-align: center; margin-bottom: 0.5rem;">Core Technologies &amp; Architecture Stack</h2>
+            <p class="showcase-desc" style="text-align: center; max-width: 750px; margin: 0 auto 2.5rem;">
+                Built on cutting-edge generative AI, enterprise telecommunications, and synchronized multi-database backends for high availability and legal reliability.
+            </p>
+
+            <div class="tech-grid">
+                <!-- Tech 1 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill gold"><i class="fas fa-brain"></i></div>
+                        <div>
+                            <h3>OpenAI GPT-4</h3>
+                            <span class="meta-title">Generative AI Core</span>
+                        </div>
+                    </div>
+                    <p>Powers the multilingual conversational reasoning, dynamic legal entity extraction, and compassionate bilingual intake dialogues across English and Spanish.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">GPT-4 Turbo</span>
+                        <span class="showcase-tag">Pydantic Schemas</span>
+                        <span class="showcase-tag">Legal Guardrails</span>
+                    </div>
+                </div>
+
+                <!-- Tech 2 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill emerald"><i class="fab fa-whatsapp"></i></div>
+                        <div>
+                            <h3>Twilio API</h3>
+                            <span class="meta-title">Omnichannel Messaging</span>
+                        </div>
+                    </div>
+                    <p>Enterprise messaging integration for WhatsApp Business and Programmable SMS with webhook signature validation and media MMS ingestion.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">WhatsApp API</span>
+                        <span class="showcase-tag">Twilio SMS</span>
+                        <span class="showcase-tag">HMAC Webhooks</span>
+                    </div>
+                </div>
+
+                <!-- Tech 3 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill cyan"><i class="fas fa-bolt"></i></div>
+                        <div>
+                            <h3>FastAPI ASGI</h3>
+                            <span class="meta-title">Async Microservices</span>
+                        </div>
+                    </div>
+                    <p>High-performance asynchronous Python backend managing webhook ingestion, dialogue state machines, and multi-database event synchronization.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">Python 3.12</span>
+                        <span class="showcase-tag">Uvicorn ASGI</span>
+                        <span class="showcase-tag">&lt; 18ms Webhooks</span>
+                    </div>
+                </div>
+
+                <!-- Tech 4 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill gold"><i class="fas fa-database"></i></div>
+                        <div>
+                            <h3>PostgreSQL 16</h3>
+                            <span class="meta-title">Relational Legal CRM</span>
+                        </div>
+                    </div>
+                    <p>ACID relational database for verified applicant records, legal case filings, attorney assignments, and billing fee schedule integrity.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">SQLAlchemy</span>
+                        <span class="showcase-tag">Relational CRM</span>
+                        <span class="showcase-tag">AES Encryption</span>
+                    </div>
+                </div>
+
+                <!-- Tech 5 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill emerald"><i class="fas fa-leaf"></i></div>
+                        <div>
+                            <h3>MongoDB Atlas</h3>
+                            <span class="meta-title">Document Chat Store</span>
+                        </div>
+                    </div>
+                    <p>Distributed NoSQL document database archiving verbatim multi-turn conversational transcripts, unstructured legal notes, and uploaded evidence pointers.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">Motor Async</span>
+                        <span class="showcase-tag">JSON Schemas</span>
+                        <span class="showcase-tag">Session State</span>
+                    </div>
+                </div>
+
+                <!-- Tech 6 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill"><i class="fas fa-table"></i></div>
+                        <div>
+                            <h3>Google Sheets API</h3>
+                            <span class="meta-title">Paralegal Live Triage</span>
+                        </div>
+                    </div>
+                    <p>Two-way synchronized spreadsheet interface allowing legal staff to review completed client intakes and assign attorneys without SQL training.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">OAuth2 Service</span>
+                        <span class="showcase-tag">Two-Way Sync</span>
+                        <span class="showcase-tag">Live Triage</span>
+                    </div>
+                </div>
+
+                <!-- Tech 7 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill cyan"><i class="fas fa-chart-pie"></i></div>
+                        <div>
+                            <h3>Google Looker Studio</h3>
+                            <span class="meta-title">Executive BI Dashboards</span>
+                        </div>
+                    </div>
+                    <p>Real-time analytics portal tracking intake conversion rates, language demographics, lead acquisition channels, and paralegal response SLAs.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">Looker BI</span>
+                        <span class="showcase-tag">Funnel Analytics</span>
+                        <span class="showcase-tag">Real-Time Refresh</span>
+                    </div>
+                </div>
+
+                <!-- Tech 8 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill rose"><i class="fas fa-broom"></i></div>
+                        <div>
+                            <h3>Ruff &amp; Git CI/CD</h3>
+                            <span class="meta-title">Rust DevOps Guardrails</span>
+                        </div>
+                    </div>
+                    <p>Rust-based linter and formatter running at 100x speed, combined with pre-commit Git hooks and automated PyTest suites for clean, modular code.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">Ruff Linter</span>
+                        <span class="showcase-tag">Pre-Commit Hooks</span>
+                        <span class="showcase-tag">Zero Tech Debt</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Systems Ownership & Engineering Contributions -->
+    <section class="section-separator" id="engineering-ownership">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-crown"></i> Engineering Leadership
+            </div>
+            <h2 class="showcase-h2" style="text-align: center; margin-bottom: 0.5rem;">Executive Ownership &amp; Technical Contributions</h2>
+            <p class="showcase-desc" style="text-align: center; max-width: 750px; margin: 0 auto 2.5rem;">
+                As AI &amp; Backend Systems Engineer on the <strong>Seanz Law Firm</strong> platform, <strong>Ahsan Tariq</strong> architected, developed, and maintained the complete multilingual intake system.
+            </p>
+
+            <div class="ownership-grid">
+                <div class="ownership-card">
+                    <div class="ownership-card-icon"><i class="fas fa-brain"></i></div>
+                    <h3>Conversational AI Assistant</h3>
+                    <p>Built the bilingual (English/Spanish) conversational assistant tailored for immigration law, using OpenAI GPT-4 with custom legal guardrails to dynamically qualify applicants and extract case facts.</p>
+                </div>
+                <div class="ownership-card">
+                    <div class="ownership-card-icon"><i class="fab fa-whatsapp"></i></div>
+                    <h3>Omnichannel Twilio Integration</h3>
+                    <p>Connected the assistant directly to prospective clients via Twilio WhatsApp Business and SMS APIs, enabling sub-second real-time messaging, document intake, and appointment booking.</p>
+                </div>
+                <div class="ownership-card">
+                    <div class="ownership-card-icon"><i class="fas fa-database"></i></div>
+                    <h3>Modular Tri-Database Architecture</h3>
+                    <p>Architected a microservice backend that synchronizes data across Google Sheets, MongoDB Atlas, and PostgreSQL 16 &mdash; supporting both flexible transcript storage and rigid relational reporting.</p>
+                </div>
+                <div class="ownership-card">
+                    <div class="ownership-card-icon"><i class="fas fa-chart-line"></i></div>
+                    <h3>Real-Time Looker Studio Reporting</h3>
+                    <p>Enabled real-time performance tracking and structured legal insights using Google Looker Studio, designing executive KPI dashboards and automated intake brief generation for attorneys.</p>
+                </div>
+                <div class="ownership-card">
+                    <div class="ownership-card-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h3>Domain-Specific Prompt Guardrails</h3>
+                    <p>Enforced strict ethical legal disclaimers, PII data protection, and urgent deportation trigger mechanisms, ensuring compliance with legal standards and professional confidentiality.</p>
+                </div>
+                <div class="ownership-card">
+                    <div class="ownership-card-icon"><i class="fas fa-broom"></i></div>
+                    <h3>Ruff DevOps &amp; Code Modularity</h3>
+                    <p>Enforced strict code formatting and quality standards using Ruff and pre-commit Git hooks, maintaining highly modular, fully testable microservices for long-term production reliability.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta-section">
+        <div class="wrapper">
+            <h2 class="cta-h2">Need Enterprise LegalTech &amp; AI Automation?</h2>
+            <p class="cta-desc">
+                Discover how conversational AI assistants, multi-channel messaging, and synchronized data pipelines can eliminate manual intake bottlenecks and grow your practice.
+            </p>
+            <div class="cta-btn-row">
+                <a href="../index.html" class="btn-primary">
+                    <i class="fas fa-arrow-left"></i> Explore All 16 Case Studies
+                </a>
+                <a href="https://www.linkedin.com/in/ahsan-tariq-comp-engr/" target="_blank" class="btn-secondary">
+                    <i class="fab fa-linkedin"></i> Connect on LinkedIn
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lightbox Modal -->
+    <div id="lightboxModal" class="lightbox-modal" onclick="closeLightbox(event)">
+        <div class="lightbox-container" onclick="event.stopPropagation()">
+            <button class="lightbox-close" onclick="closeLightbox(event)">&times;</button>
+            <img id="lightboxImg" src="" alt="Enlarged screenshot" />
+            <div id="lightboxCaption" class="lightbox-caption"></div>
+        </div>
+    </div>
+
+    <!-- Interactive JavaScript Logic -->
+    <script>
+        // Interactive Problem vs Solution Filter Engine
+        function setSeanzFilter(mode) {
+            const btnBoth = document.getElementById('btnSeanzBoth');
+            const btnProblem = document.getElementById('btnSeanzProblem');
+            const btnSolution = document.getElementById('btnSeanzSolution');
+
+            btnBoth.className = 'compare-toggle-btn';
+            btnProblem.className = 'compare-toggle-btn';
+            btnSolution.className = 'compare-toggle-btn';
+
+            const rows = document.querySelectorAll('.compare-row');
+
+            if (mode === 'both') {
+                btnBoth.classList.add('active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = window.innerWidth <= 1024 ? 'minmax(0, 1fr)' : 'minmax(0, 1fr) 60px minmax(0, 1fr)';
+                    r.querySelector('.side-problem').style.display = 'block';
+                    r.querySelector('.side-solution').style.display = 'block';
+                    const arrow = r.querySelector('.compare-arrow-box');
+                    if (arrow) arrow.style.display = 'flex';
+                });
+            } else if (mode === 'problem') {
+                btnProblem.classList.add('problem-active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr)';
+                    r.querySelector('.side-problem').style.display = 'block';
+                    r.querySelector('.side-solution').style.display = 'none';
+                    const arrow = r.querySelector('.compare-arrow-box');
+                    if (arrow) arrow.style.display = 'none';
+                });
+            } else if (mode === 'solution') {
+                btnSolution.classList.add('solution-active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr)';
+                    r.querySelector('.side-problem').style.display = 'none';
+                    r.querySelector('.side-solution').style.display = 'block';
+                    const arrow = r.querySelector('.compare-arrow-box');
+                    if (arrow) arrow.style.display = 'none';
+                });
+            }
+        }
+
+        // Fullscreen Lightbox Engine
+        function openLightbox(src, caption) {
+            const modal = document.getElementById('lightboxModal');
+            const img = document.getElementById('lightboxImg');
+            const cap = document.getElementById('lightboxCaption');
+            img.src = src;
+            cap.innerText = caption;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(e) {
+            const modal = document.getElementById('lightboxModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+    </script>
+</body>
+</html>

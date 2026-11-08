@@ -1,0 +1,2089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jericho AI Case Study — Autonomous GenAI Ops &amp; Multi-Cloud Orchestration | Ahsan Tariq</title>
+    <meta name="description" content="How Ahsan Tariq engineered Jericho AI (https://jerichoai.io/) — an advanced GenAI Ops and multi-cloud orchestration platform unifying AWS, Azure, GCP, IBM Cloud, and OCI with autonomous AI swarms, real-time cost optimization, and self-healing cloud infrastructure.">
+
+    <!-- Google Fonts: Plus Jakarta Sans & Outfit & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-main: #060911;
+            --bg-surface: #0a0e1a;
+            --bg-card: #0e1424;
+            --bg-card-hover: #141c32;
+            --border-subtle: rgba(255, 255, 255, 0.07);
+            --border-highlight: rgba(139, 92, 246, 0.35);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --purple: #8b5cf6;
+            --purple-glow: rgba(139, 92, 246, 0.18);
+            --indigo: #6366f1;
+            --cyan: #38bdf8;
+            --emerald: #10b981;
+            --emerald-glow: rgba(16, 185, 129, 0.16);
+            --gold: #fbbf24;
+            --rose: #f43f5e;
+            --rose-glow: rgba(244, 63, 94, 0.16);
+            --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-display: 'Outfit', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --radius-xl: 24px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --container-max: 1260px;
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            line-height: 1.65;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Ambient Glow & Canvas */
+        .ambient-glow {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            height: 600px;
+            background: radial-gradient(circle 800px at 50% -100px, rgba(139, 92, 246, 0.14), rgba(56, 189, 248, 0.04), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Top Nav */
+        .case-nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(6, 9, 17, 0.88);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 1rem 0;
+        }
+        .nav-inner {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .nav-back:hover {
+            color: var(--purple);
+            transform: translateX(-3px);
+        }
+        .nav-brand {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 1.05rem;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .nav-brand span {
+            color: var(--purple);
+        }
+        .nav-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(139, 92, 246, 0.08);
+            border: 1px solid rgba(139, 92, 246, 0.25);
+            padding: 0.35rem 0.8rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: #c084fc;
+            font-weight: 600;
+        }
+        .nav-status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--purple);
+            box-shadow: 0 0 8px var(--purple);
+            animation: pulseNav 2s infinite;
+        }
+        @keyframes pulseNav {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        /* Container & Layout */
+        .wrapper {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        .section-separator {
+            padding: 5.5rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        /* Typography & Badges */
+        .eyebrow-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(139, 92, 246, 0.08);
+            border: 1px solid rgba(139, 92, 246, 0.25);
+            color: #c084fc;
+            padding: 0.4rem 0.95rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+        .hero-section {
+            padding: 4.5rem 0 3.5rem;
+            text-align: center;
+        }
+        .hero-h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.3rem, 5vw, 4rem);
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            margin-bottom: 1.25rem;
+            background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-tagline {
+            font-family: var(--font-display);
+            font-size: clamp(1.15rem, 2.2vw, 1.45rem);
+            font-weight: 600;
+            color: #c084fc;
+            margin-bottom: 1.75rem;
+            letter-spacing: -0.01em;
+        }
+        .hero-desc {
+            font-size: 1.12rem;
+            color: var(--text-secondary);
+            max-width: 880px;
+            margin: 0 auto 3rem;
+            line-height: 1.75;
+        }
+        .hero-desc strong {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* Hero Badges Row */
+        .hero-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+        .hero-badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.4rem 0.9rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.76rem;
+            font-weight: 600;
+            background: rgba(139, 92, 246, 0.08);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            color: #c084fc;
+        }
+        .hero-badge-pill.cyan {
+            background: rgba(56, 189, 248, 0.08);
+            border-color: rgba(56, 189, 248, 0.2);
+            color: var(--cyan);
+        }
+        .hero-badge-pill.emerald {
+            background: rgba(16, 185, 129, 0.08);
+            border-color: rgba(16, 185, 129, 0.2);
+            color: var(--emerald);
+        }
+        .hero-badge-pill.gold {
+            background: rgba(251, 191, 36, 0.08);
+            border-color: rgba(251, 191, 36, 0.2);
+            color: var(--gold);
+        }
+
+        /* Meta Grid */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem 2rem;
+            margin: 2.5rem 0 3.5rem;
+            text-align: left;
+        }
+        .meta-col {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+        .meta-title {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+        }
+        .meta-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        .meta-value.accent {
+            color: #c084fc;
+        }
+
+        /* Browser Mockup System */
+        .browser-mockup {
+            background: #0d121c;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.04);
+            margin: 2rem 0;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .browser-mockup:hover {
+            border-color: rgba(139, 92, 246, 0.3);
+            box-shadow: 0 30px 70px -15px rgba(139, 92, 246, 0.15), 0 0 0 1px rgba(139, 92, 246, 0.2);
+        }
+        .browser-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1.25rem;
+            background: #141b27;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            gap: 0.75rem;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .browser-dots {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .browser-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+        .browser-url {
+            background: #090d15;
+            padding: 0.35rem 0.85rem;
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            font-size: 0.76rem;
+            color: #94a3b8;
+            flex: 1 1 0%;
+            min-width: 0;
+            max-width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .browser-url i {
+            color: #c084fc;
+            font-size: 0.7rem;
+            flex-shrink: 0;
+        }
+        .browser-url span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
+            min-width: 0;
+            flex: 1 1 0%;
+        }
+        .browser-badge {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #c084fc;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(139, 92, 246, 0.1);
+            padding: 0.25rem 0.65rem;
+            border-radius: 20px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .browser-badge.pulse::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--purple);
+            box-shadow: 0 0 8px var(--purple);
+            animation: pulseGlow 2s infinite;
+            flex-shrink: 0;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+        .browser-screen {
+            position: relative;
+            cursor: zoom-in;
+            overflow: hidden;
+            background: #080b11;
+            line-height: 0;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+        .browser-screen img {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+            box-sizing: border-box;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .browser-screen:hover img {
+            transform: scale(1.015);
+        }
+        .browser-screen .zoom-hint {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            background: rgba(10, 14, 22, 0.88);
+            backdrop-filter: blur(8px);
+            color: #cbd5e1;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.4rem 0.85rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .browser-screen:hover .zoom-hint {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Statement Banner */
+        .statement-banner {
+            padding: 5.5rem 0;
+            border-top: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border-subtle);
+            background: linear-gradient(180deg, rgba(139, 92, 246, 0.03) 0%, transparent 100%);
+        }
+        .statement-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.75rem, 3.4vw, 2.75rem);
+            font-weight: 800;
+            line-height: 1.25;
+            letter-spacing: -0.025em;
+            color: #ffffff;
+            max-width: 1120px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .statement-h2 span {
+            color: #c084fc;
+        }
+
+        /* Executive Metrics Grid */
+        .exec-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1.5rem;
+            margin: 3.5rem 0;
+            width: 100%;
+            max-width: 100%;
+        }
+        .exec-metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem 1.5rem;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .exec-metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--purple), transparent);
+            opacity: 0.5;
+        }
+        .exec-metric-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-highlight);
+        }
+        .exec-num {
+            font-family: var(--font-display);
+            font-size: 2.1rem;
+            font-weight: 800;
+            line-height: 1.1;
+            color: #ffffff;
+            margin-bottom: 0.4rem;
+        }
+        .exec-num.purple { color: #c084fc; }
+        .exec-num.emerald { color: var(--emerald); }
+        .exec-num.cyan { color: var(--cyan); }
+        .exec-num.gold { color: var(--gold); }
+        .exec-label {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 0.35rem;
+        }
+        .exec-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Showcase Split Section */
+        .showcase-block {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+            gap: 3.5rem;
+            align-items: center;
+            margin: 4.5rem 0;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+        .showcase-block.reverse {
+            grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+        }
+        .showcase-block.reverse .showcase-text-col {
+            order: 2;
+        }
+        .showcase-block.reverse .showcase-media-col {
+            order: 1;
+        }
+        .showcase-text-col,
+        .showcase-media-col {
+            min-width: 0;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .showcase-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #c084fc;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+        }
+        .showcase-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 2.5vw, 2.3rem);
+            font-weight: 800;
+            line-height: 1.22;
+            color: #ffffff;
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.02em;
+        }
+        .showcase-desc {
+            color: var(--text-secondary);
+            font-size: 1.02rem;
+            line-height: 1.72;
+            margin-bottom: 1.5rem;
+        }
+        .showcase-feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            margin: 1.5rem 0;
+        }
+        .showcase-feature-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+        .showcase-feature-list li i {
+            color: #c084fc;
+            margin-top: 0.25rem;
+            font-size: 0.85rem;
+        }
+        .showcase-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1.25rem;
+        }
+        .showcase-tag {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #cbd5e1;
+            padding: 0.35rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.76rem;
+            font-family: var(--font-mono);
+            font-weight: 500;
+        }
+
+        /* Dual Explanation Grid */
+        .dual-explanation-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .explanation-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            position: relative;
+        }
+        .explanation-box.plain-english {
+            border-top: 3px solid var(--emerald);
+        }
+        .explanation-box.tech-deep-dive {
+            border-top: 3px solid var(--purple);
+        }
+        .explanation-box-label {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .explanation-box.plain-english .explanation-box-label { color: var(--emerald); }
+        .explanation-box.tech-deep-dive .explanation-box-label { color: #c084fc; }
+        .explanation-box p {
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+            line-height: 1.7;
+        }
+
+        /* Interactive Problem vs Solution */
+        .interactive-comparison-wrapper {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            padding: 3rem;
+            margin: 3.5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .comparison-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+        .compare-toggle-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            color: #cbd5e1;
+            padding: 0.65rem 1.5rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .compare-toggle-btn.active {
+            background: var(--purple);
+            color: #ffffff;
+            border-color: var(--purple);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+            transform: scale(1.03);
+        }
+        .compare-toggle-btn.problem-active {
+            background: var(--rose);
+            color: #ffffff;
+            border-color: var(--rose);
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.4);
+            transform: scale(1.03);
+        }
+        .compare-toggle-btn.solution-active {
+            background: var(--emerald);
+            color: #05140e;
+            border-color: var(--emerald);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+            transform: scale(1.03);
+        }
+        .comparison-cards-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .compare-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 60px minmax(0, 1fr);
+            gap: 1.5rem;
+            align-items: center;
+            width: 100%;
+            max-width: 100%;
+            transition: all 0.35s ease;
+        }
+        .compare-side {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            border: 1px solid var(--border-subtle);
+            min-width: 0;
+            max-width: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        .compare-side.side-problem {
+            border-left: 4px solid var(--rose);
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.05) 0%, rgba(14, 20, 36, 0.95) 100%);
+        }
+        .compare-side.side-solution {
+            border-left: 4px solid var(--emerald);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(14, 20, 36, 0.95) 100%);
+        }
+        .compare-arrow-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #141c2c;
+            border: 1px solid var(--border-subtle);
+            color: #c084fc;
+            font-size: 1.1rem;
+            margin: 0 auto;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+        }
+        .side-label {
+            font-family: var(--font-mono);
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        .side-problem .side-label { color: var(--rose); }
+        .side-solution .side-label { color: var(--emerald); }
+        .side-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.75rem;
+        }
+        .side-desc {
+            color: var(--text-secondary);
+            font-size: 0.93rem;
+            line-height: 1.65;
+        }
+
+        /* Code Snippet */
+        .code-window {
+            background: #0c1018;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.65rem 1rem;
+            background: #111827;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .code-filename {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            color: #c084fc;
+            font-weight: 600;
+        }
+        .code-lang {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .code-body {
+            padding: 1.25rem 1.5rem;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            line-height: 1.7;
+            color: #e2e8f0;
+        }
+        .code-body .kw { color: #c084fc; }
+        .code-body .fn { color: #60a5fa; }
+        .code-body .str { color: #34d399; }
+        .code-body .cm { color: #6b7280; font-style: italic; }
+        .code-body .num { color: #fbbf24; }
+        .code-body .op { color: #f472b6; }
+
+        /* Comparison Table */
+        .phases-table-wrapper {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            max-height: 520px;
+            overflow-y: auto;
+            margin: 2rem 0;
+        }
+        .phases-table-wrapper::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .phases-table-wrapper::-webkit-scrollbar-thumb {
+            background: #2a3447;
+            border-radius: 3px;
+        }
+        .phases-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            font-family: var(--font-mono);
+        }
+        .phases-table th {
+            background: #121721;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .phases-table td {
+            padding: 0.65rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: #cbd5e1;
+        }
+        .phases-table tr:hover td {
+            background: rgba(139, 92, 246, 0.03);
+        }
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.2rem 0.55rem;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+        .status-pill.complete {
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--emerald);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+        .status-pill.partial {
+            background: rgba(251, 191, 36, 0.12);
+            color: var(--gold);
+            border: 1px solid rgba(251, 191, 36, 0.25);
+        }
+        .status-pill.blocked {
+            background: rgba(244, 63, 94, 0.12);
+            color: var(--rose);
+            border: 1px solid rgba(244, 63, 94, 0.25);
+        }
+
+        /* Tech Grid */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+            width: 100%;
+            max-width: 100%;
+        }
+        .tech-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+        .tech-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-highlight);
+        }
+        .tech-header {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            margin-bottom: 1rem;
+        }
+        .tech-pill {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            background: rgba(139, 92, 246, 0.1);
+            color: #c084fc;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+        .tech-pill.emerald { background: rgba(16, 185, 129, 0.1); color: var(--emerald); border-color: rgba(16, 185, 129, 0.2); }
+        .tech-pill.cyan { background: rgba(56, 189, 248, 0.1); color: var(--cyan); border-color: rgba(56, 189, 248, 0.2); }
+        .tech-pill.gold { background: rgba(251, 191, 36, 0.1); color: var(--gold); border-color: rgba(251, 191, 36, 0.2); }
+        .tech-pill.rose { background: rgba(244, 63, 94, 0.1); color: var(--rose); border-color: rgba(244, 63, 94, 0.2); }
+        .tech-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+        .tech-card p {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        /* Ownership Section */
+        .ownership-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1.5rem;
+            margin: 2.5rem 0;
+        }
+        .ownership-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+        .ownership-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-highlight);
+        }
+        .ownership-card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            background: rgba(139, 92, 246, 0.1);
+            color: #c084fc;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            margin-bottom: 1rem;
+        }
+        .ownership-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+        .ownership-card p {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            line-height: 1.6;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 6.5rem 0;
+            text-align: center;
+            background: radial-gradient(circle 600px at 50% 50%, rgba(139, 92, 246, 0.08), transparent 70%);
+        }
+        .cta-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 3.8vw, 3rem);
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.03em;
+        }
+        .cta-desc {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 650px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.6;
+        }
+        .cta-btn-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.25rem;
+        }
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--purple);
+            color: #ffffff;
+            padding: 0.9rem 2rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.35);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(139, 92, 246, 0.5);
+            background: #7c3aed;
+        }
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 0.9rem 2rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Lightbox Modal */
+        .lightbox-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(3, 5, 8, 0.95);
+            backdrop-filter: blur(12px);
+            z-index: 999999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            box-sizing: border-box;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .lightbox-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        .lightbox-container {
+            max-width: 95vw;
+            max-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .lightbox-container img {
+            max-width: 92vw;
+            max-height: 82vh;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+        .lightbox-caption {
+            margin-top: 1rem;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            font-family: var(--font-mono);
+            background: rgba(15, 23, 42, 0.85);
+            padding: 0.5rem 1.25rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            max-width: 800px;
+            text-align: center;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: -2.5rem;
+            right: 0;
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+        .lightbox-close:hover {
+            color: #c084fc;
+            transform: scale(1.15);
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .exec-metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .showcase-block, .showcase-block.reverse {
+                grid-template-columns: minmax(0, 1fr) !important;
+                gap: 2.5rem;
+            }
+            .showcase-block.reverse .showcase-text-col { order: 1; }
+            .showcase-block.reverse .showcase-media-col { order: 2; }
+            .compare-row { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+            .compare-arrow-box { transform: rotate(90deg); margin: 0.5rem auto; }
+            .tech-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .dual-explanation-grid { grid-template-columns: minmax(0, 1fr); }
+            .ownership-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
+        @media (max-width: 768px) {
+            .browser-bar {
+                padding: 0.55rem 0.85rem;
+                gap: 0.5rem;
+            }
+            .browser-badge { display: none; }
+            .browser-url { font-size: 0.7rem; padding: 0.25rem 0.55rem; }
+            .browser-dots { gap: 4px; }
+            .browser-dot { width: 8px; height: 8px; }
+            .interactive-comparison-wrapper { padding: 1.5rem; }
+            .comparison-controls { flex-direction: column; gap: 0.6rem; }
+            .compare-toggle-btn { width: 100%; justify-content: center; }
+        }
+
+        @media (max-width: 640px) {
+            .meta-grid { grid-template-columns: minmax(0, 1fr); }
+            .exec-metrics-grid { grid-template-columns: minmax(0, 1fr); }
+            .tech-grid { grid-template-columns: minmax(0, 1fr); }
+            .ownership-grid { grid-template-columns: minmax(0, 1fr); }
+            .cta-btn-row { flex-direction: column; }
+            .statement-h2 { font-size: 1.45rem; }
+            .hero-h1 { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Glow Background -->
+    <div class="ambient-glow"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="case-nav">
+        <div class="nav-inner">
+            <a href="../index.html" class="nav-back">
+                <i class="fas fa-arrow-left"></i> Back to Case Studies
+            </a>
+            <div class="nav-brand">
+                <span>Tariq</span>DreamsTech
+            </div>
+            <div class="nav-status">
+                <span class="nav-status-dot"></span> GENAI OPS · MULTI-CLOUD ORCHESTRATION (AWS·AZURE·GCP·IBM·OCI)
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-network-wired"></i> Enterprise GenAI Ops &amp; Multi-Cloud Orchestration
+            </div>
+
+            <h1 class="hero-h1">Jericho AI</h1>
+            <div class="hero-tagline">&ldquo;Autonomous Multi-Cloud Orchestration &amp; Real-Time GenAI Cost Optimization Across AWS, Azure, GCP, IBM &amp; OCI&rdquo;</div>
+
+            <div class="hero-badges">
+                <span class="hero-badge-pill"><i class="fas fa-cloud"></i> Multi-Cloud Fabric (5 Clouds)</span>
+                <span class="hero-badge-pill cyan"><i class="fas fa-robot"></i> Autonomous AI Agent Swarm</span>
+                <span class="hero-badge-pill emerald"><i class="fas fa-coins"></i> 38.4% Cost Arbitrage &amp; Rightsizing</span>
+                <span class="hero-badge-pill gold"><i class="fas fa-heart-pulse"></i> Self-Healing Workload Engine</span>
+            </div>
+
+            <p class="hero-desc">
+                How <strong>Ahsan Tariq</strong> architected and deployed <strong>Jericho AI</strong> (<a href="https://jerichoai.io/" target="_blank" style="color: #c084fc; text-decoration: none;">jerichoai.io</a> &middot; St. Petersburg, Florida) &mdash; an advanced GenAI Ops and multi-cloud orchestration platform. Unifying <strong>AWS, Microsoft Azure, Google Cloud (GCP), IBM Cloud, and Oracle Cloud (OCI)</strong> into an autonomous, self-healing infrastructure fabric powered by a <strong>multi-agent AI swarm</strong> that continuously monitors, restructures workloads, and eliminates cloud waste in real time without human delay.
+            </p>
+
+            <!-- Meta Strip -->
+            <div class="meta-grid">
+                <div class="meta-col">
+                    <span class="meta-title">Client / Enterprise</span>
+                    <span class="meta-value">Jericho AI (St. Petersburg, FL &middot; <a href="https://jerichoai.io/" target="_blank" style="color: #c084fc; text-decoration: none;">jerichoai.io</a>)</span>
+                </div>
+                <div class="meta-col">
+                    <span class="meta-title">Engineering Role</span>
+                    <span class="meta-value accent">Lead Cloud &amp; AI Infrastructure Architect (Ahsan Tariq)</span>
+                </div>
+                <div class="meta-col">
+                    <span class="meta-title">Industry &amp; Domain</span>
+                    <span class="meta-value">GenAI Ops &middot; DevOps Analytics &middot; Multi-Cloud</span>
+                </div>
+                <div class="meta-col">
+                    <span class="meta-title">Multi-Cloud Fabric</span>
+                    <span class="meta-value">AWS &middot; Azure &middot; GCP &middot; IBM Cloud &middot; OCI &middot; K8s</span>
+                </div>
+            </div>
+
+            <!-- Hero Master Architecture Diagram -->
+            <div class="browser-mockup" id="master-architecture">
+                <div class="browser-bar">
+                    <div class="browser-dots">
+                        <span class="browser-dot dot-red"></span>
+                        <span class="browser-dot dot-yellow"></span>
+                        <span class="browser-dot dot-green"></span>
+                    </div>
+                    <div class="browser-url">
+                        <i class="fas fa-lock"></i>
+                        <span>https://jerichoai.io/platform/master-multicloud-orchestrator</span>
+                    </div>
+                    <div class="browser-badge pulse">
+                        ● 5 CLOUD FABRIC ACTIVE · 99.99% SLA
+                    </div>
+                </div>
+                <div class="browser-screen" onclick="openLightbox('images/00-jericho-master-multicloud-orchestrator.jpg', 'Jericho AI: Master Multi-Cloud GenAI Ops & Autonomous Swarm Architecture (AWS, Azure, GCP, IBM & OCI Ingress -> Unified Fabric -> AI Swarm -> Ops Console)')">
+                    <img src="images/00-jericho-master-multicloud-orchestrator.jpg" alt="Jericho AI Master Multi-Cloud Orchestration Diagram" />
+                    <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect full architecture</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statement Banner -->
+    <section class="statement-banner">
+        <div class="wrapper">
+            <h2 class="statement-h2">
+                &ldquo;From <span>fragmented cloud consoles and runaway AI infrastructure spend</span> to an <span>autonomous multi-cloud intelligence fabric</span>: <span>38.4% average cost reduction</span> across 5 major cloud providers with <span>sub-200ms autonomous self-healing</span> and <span>zero vendor lock-in</span>.&rdquo;
+            </h2>
+        </div>
+    </section>
+
+    <!-- Executive Production Metrics Grid -->
+    <section class="section-separator">
+        <div class="wrapper">
+            <div class="exec-metrics-grid">
+                <div class="exec-metric-card">
+                    <div class="exec-num emerald">38.4%</div>
+                    <div class="exec-label">Cloud &amp; AI Cost Reduction</div>
+                    <div class="exec-sub">Automated waste elimination, spot instance bidding arbitrage, and pod rightsizing</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="exec-num purple">5 Clouds</div>
+                    <div class="exec-label">Unified Multi-Cloud Fabric</div>
+                    <div class="exec-sub">Normalized abstraction across AWS, Microsoft Azure, GCP, IBM Cloud, and Oracle OCI</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="exec-num cyan">&lt; 200ms</div>
+                    <div class="exec-label">Autonomous Incident Remediation</div>
+                    <div class="exec-sub">Self-healing AI agent swarm detects failures and executes cross-cloud pod shifts</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="exec-num gold">99.99%</div>
+                    <div class="exec-label">High-Availability Uptime SLA</div>
+                    <div class="exec-sub">Continuous cross-cloud load balancing and zero-downtime failover orchestration</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem vs Solution Section -->
+    <section class="section-separator" id="problem-solution">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-scale-balanced"></i> Executive Comparison
+            </div>
+            <h2 class="showcase-h2" style="text-align: center; margin-bottom: 0.5rem;">How Jericho AI Transformed Modern Cloud &amp; GenAI Operations</h2>
+            <p class="showcase-desc" style="text-align: center; max-width: 750px; margin: 0 auto 2.5rem;">
+                See how modern enterprises replaced multi-cloud tool sprawl, runaway GPU invoices, and manual DevOps firefighting with Jericho AI's autonomous multi-agent swarm.
+            </p>
+
+            <div class="interactive-comparison-wrapper">
+                <!-- Interactive Controls -->
+                <div class="comparison-controls">
+                    <button class="compare-toggle-btn active" id="btnJerichoBoth" onclick="setJerichoFilter('both')">
+                        <i class="fas fa-columns"></i> Show Both
+                    </button>
+                    <button class="compare-toggle-btn" id="btnJerichoProblem" onclick="setJerichoFilter('problem')">
+                        <i class="fas fa-times-circle"></i> Problems Only
+                    </button>
+                    <button class="compare-toggle-btn" id="btnJerichoSolution" onclick="setJerichoFilter('solution')">
+                        <i class="fas fa-check-circle"></i> Solutions Only
+                    </button>
+                </div>
+
+                <div class="comparison-cards-grid">
+                    <!-- Row 1: Complex Multi-Cloud Integration -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label"><i class="fas fa-times-circle"></i> Problem</div>
+                            <div class="side-title">Multi-Cloud Provider Fragmentation &amp; Console Fatigue</div>
+                            <div class="side-desc">Enterprises running workloads across AWS, Azure, GCP, and OCI face massive tool sprawl. Each cloud uses disparate IAM models, conflicting APIs, and isolated monitoring consoles &mdash; forcing engineers to constantly switch tools and creating blind spots.</div>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label"><i class="fas fa-check-circle"></i> Solution</div>
+                            <div class="side-title">Unified Multi-Cloud Abstraction Fabric</div>
+                            <div class="side-desc">Built a normalized cross-cloud abstraction layer that unifies compute, storage, and networking across AWS, Azure, GCP, IBM Cloud, and OCI into a single control plane &mdash; managing 10,000+ active cross-cloud nodes without tool switching.</div>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Runaway AI & GPU Costs -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label"><i class="fas fa-times-circle"></i> Problem</div>
+                            <div class="side-title">Runaway GenAI GPU Costs &amp; Zombie Cloud Waste</div>
+                            <div class="side-desc">Generative AI models and high-performance GPU instances (H100/A100) run 24/7 even during low demand. Over-provisioned virtual machines, unattached storage volumes, and cross-region egress fees create massive 30-50% cloud budget waste.</div>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label"><i class="fas fa-check-circle"></i> Solution</div>
+                            <div class="side-title">Predictive Cost Optimizer &amp; Spot Instance Arbitrage</div>
+                            <div class="side-desc">Engineered an automated cost reduction engine that continuously detects idle resources, rightsizes over-provisioned pods, and dynamically bids across AWS Spot, Azure Spot, and GCP Preemptible pools &mdash; slashing monthly cloud bills by 38.4%.</div>
+                        </div>
+                    </div>
+
+                    <!-- Row 3: Manual Operations & Coordination -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label"><i class="fas fa-times-circle"></i> Problem</div>
+                            <div class="side-title">Manual Incident Triage &amp; Human Operations Delay</div>
+                            <div class="side-desc">When a cloud region suffers degradation or GPU memory runs out, human on-call engineers take 30&ndash;60 minutes to notice, diagnose, and restart services. Downtime during peak AI traffic leads to degraded customer response and revenue loss.</div>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label"><i class="fas fa-check-circle"></i> Solution</div>
+                            <div class="side-title">Autonomous AI Agent Swarm &amp; Sub-200ms Self-Healing</div>
+                            <div class="side-desc">Implemented a multi-agent AI swarm where specialized agents (Watcher, Cost Optimizer, Rebalancer, Healer) cooperate. The Healer agent detects pod crashes and cross-cloud bottlenecks, executing autonomous workload migrations in under 200ms.</div>
+                        </div>
+                    </div>
+
+                    <!-- Row 4: Visibility & Executive Governance -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label"><i class="fas fa-times-circle"></i> Problem</div>
+                            <div class="side-title">Opaque Cost Predictions &amp; Lack of Executive Insights</div>
+                            <div class="side-desc">Engineering leadership receives cloud bills 30 days after the money is spent. Retrospective billing reports fail to explain which GenAI model or tenant drove the cost spike, leaving CTOs powerless to control budget overruns.</div>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label"><i class="fas fa-check-circle"></i> Solution</div>
+                            <div class="side-title">Live GenAI Ops Telemetry &amp; AI Recommendations Portal</div>
+                            <div class="side-desc">Shipped an executive decision dashboard at jerichoai.io displaying live sub-second infrastructure health, unit economics per AI model, predictive 30-day spend forecasting with 97.8% accuracy, and 1-click autonomous optimization recommendations.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase 1: Unified Multi-Cloud Infrastructure Fabric -->
+    <section class="section-separator" id="multicloud-fabric">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow">
+                        <i class="fas fa-cloud"></i> Infrastructure Fabric
+                    </div>
+                    <h2 class="showcase-h2">Unified Multi-Cloud Fabric: AWS, Azure, GCP, IBM Cloud &amp; OCI</h2>
+                    <p class="showcase-desc">
+                        Managing workloads across multiple public clouds traditionally requires juggling different CLIs, conflicting IAM policies, and incompatible network meshes. We designed a <strong>universal cloud abstraction fabric</strong> that normalizes cloud primitives &mdash; compute instances, Kubernetes clusters, object storage, and GPU rigs &mdash; into a single harmonized control API.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <span><strong>5-Cloud Provider Connectors:</strong> Standardized adapter drivers for AWS (Boto3/STS), Azure (ARM SDK), Google Cloud (Compute Engine), IBM Cloud, and Oracle OCI.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Cross-Cloud WireGuard Mesh:</strong> Low-latency encrypted inter-cloud tunnels allowing seamless pod migration between AWS and GCP without public exposure.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Sub-35ms Translation Gateway:</strong> Microsecond translation from universal Jericho AI JSON directives to vendor-specific cloud APIs.</span></li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">AWS · Azure · GCP · IBM · OCI</span>
+                        <span class="showcase-tag">Unified Fabric</span>
+                        <span class="showcase-tag">Cross-Cloud Mesh</span>
+                        <span class="showcase-tag">Zero Lock-in</span>
+                    </div>
+                </div>
+
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-lock"></i>
+                                <span>https://jerichoai.io/infrastructure/multicloud-fabric</span>
+                            </div>
+                            <div class="browser-badge">5 CLOUDS CONNECTED</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/01-unified-multicloud-abstraction-layer.jpg', 'Jericho AI: Unified Multi-Cloud Infrastructure Fabric (Standardizing AWS, Azure, GCP, IBM Cloud & OCI)')">
+                            <img src="images/01-unified-multicloud-abstraction-layer.jpg" alt="Unified Multi-Cloud Infrastructure Fabric Diagram" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to enlarge diagram</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dual Explanation Grid -->
+            <div class="dual-explanation-grid">
+                <div class="explanation-box plain-english">
+                    <div class="explanation-box-label"><i class="fas fa-user-check"></i> Plain English Explanation</div>
+                    <p>
+                        Imagine having five different bank accounts, each with its own confusing website, different currencies, and separate login cards. 
+                        Jericho AI is like a universal master financial card: it connects AWS, Microsoft Azure, Google Cloud, IBM, and Oracle together under one clean screen. You can launch an AI model or relocate servers across any of the five clouds with a single click, without having to log into five different websites.
+                    </p>
+                </div>
+                <div class="explanation-box tech-deep-dive">
+                    <div class="explanation-box-label"><i class="fas fa-code-branch"></i> Technical Deep Dive</div>
+                    <p>
+                        The unified fabric is built on asynchronous Python and Go microservices implementing a common <code>CloudProviderInterface</code>. Each provider adapter maps native instance types (e.g., AWS <code>p4de.24xlarge</code>, Azure <code>ND96asr_v4</code>, GCP <code>a2-highgpu-8g</code>) to normalized capability descriptors (GPU VRAM, CUDA cores, interconnect bandwidth, spot availability). 
+                        Cross-cloud orchestration uses mutual TLS (mTLS) with WireGuard tunnels, enforcing zero-trust transport across public internet boundaries.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Code Window: Unified Multi-Cloud Adapter -->
+            <div class="code-window">
+                <div class="code-header">
+                    <span class="code-filename"><i class="fas fa-terminal"></i> orchestrator/multicloud_adapter.py</span>
+                    <span class="code-lang">Python 3.12 / Multi-Cloud SDK</span>
+                </div>
+                <pre class="code-body"><code><span class="kw">from</span> enum <span class="kw">import</span> Enum
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+
+<span class="kw">class</span> <span class="fn">CloudProvider</span>(str, Enum):
+    AWS = <span class="str">"aws"</span>
+    AZURE = <span class="str">"azure"</span>
+    GCP = <span class="str">"gcp"</span>
+    IBM = <span class="str">"ibm"</span>
+    OCI = <span class="str">"oci"</span>
+
+<span class="kw">class</span> <span class="fn">UnifiedComputeNode</span>(BaseModel):
+    provider: CloudProvider
+    region: <span class="kw">str</span>
+    node_id: <span class="kw">str</span>
+    gpu_type: <span class="kw">str</span> | <span class="kw">None</span>
+    vram_gb: <span class="kw">int</span>
+    hourly_rate_usd: <span class="kw">float</span>
+    is_spot: <span class="kw">bool</span>
+    utilization_pct: <span class="kw">float</span>
+
+<span class="kw">async def</span> <span class="fn">query_cheapest_gpu_node</span>(min_vram_gb: <span class="kw">int</span> = <span class="num">80</span>) -> UnifiedComputeNode:
+    <span class="cm"># Concurrently query spot pricing pools across all 5 providers</span>
+    tasks = [
+        aws_client.get_spot_pricing(min_vram_gb),
+        azure_client.get_spot_pricing(min_vram_gb),
+        gcp_client.get_preemptible_pricing(min_vram_gb),
+        oci_client.get_gpu_pricing(min_vram_gb)
+    ]
+    candidate_nodes = <span class="kw">await</span> asyncio.gather(*tasks)
+    <span class="cm"># Select lowest cost candidate satisfying latency & reliability SLAs</span>
+    optimal_node = min([n <span class="kw">for</span> sub <span class="kw">in</span> candidate_nodes <span class="kw">for</span> n <span class="kw">in</span> sub], key=<span class="kw">lambda</span> x: x.hourly_rate_usd)
+    <span class="kw">return</span> optimal_node</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase 2: AI Swarm Autonomous Orchestration Model -->
+    <section class="section-separator" id="ai-swarm">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow">
+                        <i class="fas fa-robot"></i> Multi-Agent Intelligence
+                    </div>
+                    <h2 class="showcase-h2">Autonomous AI Swarm: Watcher, Optimizer &amp; Self-Healing Healer</h2>
+                    <p class="showcase-desc">
+                        Human DevOps teams cannot react to sub-second cloud anomalies or continuously calculate price fluctuations across thousands of instances. Jericho AI deploys a <strong>collaborative multi-agent AI swarm</strong> where specialized autonomous agents monitor telemetry, optimize spending, and remediate infrastructure failures in real time.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Watcher Agent:</strong> Ingests 100,000+ telemetry events per second via OpenTelemetry, detecting latency anomalies and GPU memory leaks.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Workload Rebalancer Agent:</strong> Dynamically calculates cross-cloud pod distribution to maintain peak throughput during traffic surges.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Self-Healing Healer Agent:</strong> Executes automated failure remediation, pod draining, and failover routing in under 200ms without human ops delay.</span></li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">AI Swarm Core</span>
+                        <span class="showcase-tag">Self-Healing &lt; 200ms</span>
+                        <span class="showcase-tag">Zero Agent Conflict</span>
+                        <span class="showcase-tag">Autonomous Ops</span>
+                    </div>
+                </div>
+
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-lock"></i>
+                                <span>https://jerichoai.io/swarm/multi-agent-coordination</span>
+                            </div>
+                            <div class="browser-badge">SWARM ACTIVE · ZERO CONFLICT</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/02-ai-swarm-autonomous-orchestration.jpg', 'Jericho AI: Autonomous Multi-Agent AI Swarm Orchestration Model')">
+                            <img src="images/02-ai-swarm-autonomous-orchestration.jpg" alt="Autonomous AI Swarm Orchestration Diagram" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to enlarge diagram</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dual Explanation Grid -->
+            <div class="dual-explanation-grid">
+                <div class="explanation-box plain-english">
+                    <div class="explanation-box-label"><i class="fas fa-user-check"></i> Plain English Explanation</div>
+                    <p>
+                        Think of the AI swarm like an elite racing pit-crew working on your cloud servers 24 hours a day. 
+                        One agent constantly watches the engine temperature (server memory and speed). Another agent scouts for cheaper fuel (discounted cloud pricing). A third agent instantly swaps out a broken tire (moving an AI workload to a healthy server) in less than a second &mdash; so your website never crashes even when an entire cloud region goes down.
+                    </p>
+                </div>
+                <div class="explanation-box tech-deep-dive">
+                    <div class="explanation-box-label"><i class="fas fa-code-branch"></i> Technical Deep Dive</div>
+                    <p>
+                        The AI swarm coordination engine uses an asynchronous event-driven state machine backed by Redis Cluster. Agents communicate through a pub/sub event bus with deterministic conflict resolution rules modeled as Directed Acyclic Graphs (DAGs). 
+                        If the Watcher agent detects a pod memory leak (OOM kill imminent), it triggers the Healer agent to spin up a hot-standby pod in an alternate region, drain ingress connections gracefully via Envoy proxy, and terminate the degraded pod in under 180ms.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase 3: Real-Time Cost Optimization Engine -->
+    <section class="section-separator" id="cost-optimization">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow">
+                        <i class="fas fa-coins"></i> Cloud Cost Engineering
+                    </div>
+                    <h2 class="showcase-h2">Predictive Cost Optimization &amp; Spot Arbitrage Engine</h2>
+                    <p class="showcase-desc">
+                        Cloud waste is the single largest drain on modern AI enterprises. Jericho AI incorporates a <strong>predictive cost reduction engine</strong> that continuously identifies zombie compute, rightsizes over-provisioned Kubernetes pods, and dynamically arbitrages spot and preemptible GPU instances across providers.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Spot &amp; Preemptible Arbitrage:</strong> Automatically runs stateless AI batch jobs on deeply discounted spot pools (up to 72% cheaper).</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Pre-Termination Eviction Handling:</strong> Detects 2-minute cloud termination notices and autonomously migrates checkpoints with zero lost data.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>97.8% Spend Forecast Precision:</strong> Machine learning models project next-month invoices, accounting for model release cycles and traffic trends.</span></li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">38.4% Cost Reduction</span>
+                        <span class="showcase-tag">Spot Arbitrage (72% Off)</span>
+                        <span class="showcase-tag">Predictive Spend AI</span>
+                        <span class="showcase-tag">Idle Reclaim</span>
+                    </div>
+                </div>
+
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-lock"></i>
+                                <span>https://jerichoai.io/cost/predictive-arbitrage</span>
+                            </div>
+                            <div class="browser-badge">SAVINGS: 38.4% AVG</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/03-realtime-cost-optimization-predictive-engine.jpg', 'Jericho AI: Real-Time Cloud Cost Optimization & Predictive Waste Reduction Engine')">
+                            <img src="images/03-realtime-cost-optimization-predictive-engine.jpg" alt="Real-Time Cost Optimization Diagram" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to enlarge diagram</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dual Explanation Grid -->
+            <div class="dual-explanation-grid">
+                <div class="explanation-box plain-english">
+                    <div class="explanation-box-label"><i class="fas fa-user-check"></i> Plain English Explanation</div>
+                    <p>
+                        Most companies accidentally pay for expensive cloud computers that are sitting completely empty overnight. 
+                        Jericho AI acts like a brilliant automated accountant: it constantly looks across AWS, Google, and Azure, spots unneeded computers and turns them off, and buys server time at massive 70% discounts during off-peak hours. Companies save an average of 38.4% on their monthly bills without their engineers doing any manual work.
+                    </p>
+                </div>
+                <div class="explanation-box tech-deep-dive">
+                    <div class="explanation-box-label"><i class="fas fa-code-branch"></i> Technical Deep Dive</div>
+                    <p>
+                        The cost engine computes P99 CPU, memory, and GPU utilization over rolling 14-day sliding windows stored in TimescaleDB. Using linear programming optimization, it solves multi-cloud scheduling matrices to minimize <code>Cost = f(Cloud, Region, SpotDiscount, EgressFee)</code> subject to strict latency SLAs. 
+                        When cloud providers emit termination notices (e.g., AWS EC2 Spot Interruption Warnings via CloudWatch Events), the engine triggers an immediate live snapshot and re-provisions the container on Azure or GCP within 45 seconds.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Code Window: Predictive Cost Arbitrage Script -->
+            <div class="code-window">
+                <div class="code-header">
+                    <span class="code-filename"><i class="fas fa-terminal"></i> cost_engine/spot_arbitrage_scheduler.py</span>
+                    <span class="code-lang">Python 3.12 / TimescaleDB</span>
+                </div>
+                <pre class="code-body"><code><span class="kw">import</span> asyncio
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+
+<span class="kw">@dataclass</span>
+<span class="kw">class</span> <span class="fn">SpotBidDecision</span>:
+    target_cloud: <span class="kw">str</span>
+    instance_type: <span class="kw">str</span>
+    hourly_savings_usd: <span class="kw">float</span>
+    projected_monthly_savings: <span class="kw">float</span>
+    action: <span class="kw">str</span>
+
+<span class="kw">async def</span> <span class="fn">evaluate_and_rebalance_workload</span>(workload_id: <span class="kw">str</span>, current_cost_per_hour: <span class="kw">float</span>) -> SpotBidDecision:
+    <span class="cm"># 1. Fetch real-time spot capacity across 5 clouds</span>
+    available_pools = <span class="kw">await</span> telemetry_store.get_live_spot_pools()
+    
+    <span class="cm"># 2. Filter pools with > 98% uninterrupted history in past 7 days</span>
+    reliable_pools = [p <span class="kw">for</span> p <span class="kw">in</span> available_pools <span class="kw">if</span> p.eviction_rate_pct < <span class="num">2.0</span>]
+    cheapest = min(reliable_pools, key=<span class="kw">lambda</span> p: p.current_spot_price)
+    
+    savings = current_cost_per_hour - cheapest.current_spot_price
+    <span class="kw">if</span> savings > <span class="num">1.50</span>:  <span class="cm"># Minimum threshold to justify cross-cloud pod migration</span>
+        <span class="kw">await</span> orchestrator.migrate_workload(workload_id, cheapest.target_cloud, cheapest.instance_type)
+        <span class="kw">return</span> SpotBidDecision(
+            target_cloud=cheapest.target_cloud,
+            instance_type=cheapest.instance_type,
+            hourly_savings_usd=savings,
+            projected_monthly_savings=savings * <span class="num">720</span>,
+            action=<span class="str">"AUTONOMOUS_MIGRATION_COMPLETED"</span>
+        )
+    <span class="kw">return</span> SpotBidDecision(target_cloud=<span class="str">"NONE"</span>, instance_type=<span class="str">"NONE"</span>, hourly_savings_usd=<span class="num">0.0</span>, projected_monthly_savings=<span class="num">0.0</span>, action=<span class="str">"HOLD_CURRENT_POD"</span>)</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase 4: GenAI Ops Telemetry Dashboard & Executive Governance -->
+    <section class="section-separator" id="telemetry-dashboard">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow">
+                        <i class="fas fa-chart-line"></i> Real-Time Telemetry &amp; BI
+                    </div>
+                    <h2 class="showcase-h2">GenAI Ops Live Monitoring &amp; Executive Decision Console</h2>
+                    <p class="showcase-desc">
+                        Engineering leadership and FinOps managers require crystal-clear visibility into cross-cloud spending and AI model health. We built an <strong>interactive GenAI Ops monitoring console</strong> accessible at <a href="https://jerichoai.io/" target="_blank" style="color: #c084fc; text-decoration: none;">jerichoai.io</a> that streams real-time health metrics, unit economics, and 1-click autonomous optimization recommendations.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Sub-Second Infrastructure Telemetry:</strong> Live visualization of active cluster nodes, GPU VRAM saturation, and token latency across all 5 clouds.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>AI Recommendation Engine:</strong> Generates plain-language optimization recommendations with 1-click autonomous execution.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Unit Economics Attribution:</strong> Breaks down infrastructure cost per GenAI query, customer tier, and microservice namespace.</span></li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">jerichoai.io Console</span>
+                        <span class="showcase-tag">10,000+ Nodes</span>
+                        <span class="showcase-tag">Unit Economics</span>
+                        <span class="showcase-tag">Sub-Second Stream</span>
+                    </div>
+                </div>
+
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-lock"></i>
+                                <span>https://jerichoai.io/dashboard/executive-overview</span>
+                            </div>
+                            <div class="browser-badge">LIVE TELEMETRY STREAMING</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/04-genai-ops-telemetry-dashboard.jpg', 'Jericho AI: GenAI Ops Live Monitoring & Executive Governance Dashboard (jerichoai.io)')">
+                            <img src="images/04-genai-ops-telemetry-dashboard.jpg" alt="GenAI Ops Live Monitoring Dashboard Diagram" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to enlarge diagram</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dual Explanation Grid -->
+            <div class="dual-explanation-grid">
+                <div class="explanation-box plain-english">
+                    <div class="explanation-box-label"><i class="fas fa-user-check"></i> Plain English Explanation</div>
+                    <p>
+                        CTOs and finance directors can open their browser and see a live command center showing all their cloud operations across the world. 
+                        It clearly shows how much money is being saved right now, warns if an AI model is slowing down, and provides smart AI recommendations &mdash; like "Move 20 batch jobs to OCI to save $4,200 this week" &mdash; which you can approve with a single tap.
+                    </p>
+                </div>
+                <div class="explanation-box tech-deep-dive">
+                    <div class="explanation-box-label"><i class="fas fa-code-branch"></i> Technical Deep Dive</div>
+                    <p>
+                        The Jericho AI dashboard leverages WebSocket streaming over HTTP/2 connected to a distributed FastAPI gateway. Telemetry data is queried from TimescaleDB hyper-tables with automated rollups (1-minute, 1-hour, 1-day continuous aggregates). 
+                        Role-Based Access Control (RBAC) enforces granular permissions between FinOps analysts, infrastructure engineers, and executive stakeholders, integrating with enterprise SSO (Okta, Azure AD, Google Workspace) via OAuth2/OIDC.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparative Specification Matrix -->
+    <section class="section-separator" id="comparative-matrix">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-table-columns"></i> Engineering Benchmark
+            </div>
+            <h2 class="showcase-h2" style="text-align: center; margin-bottom: 0.5rem;">Architecture Comparison: Legacy vs Point Tools vs Jericho AI</h2>
+            <p class="showcase-desc" style="text-align: center; max-width: 750px; margin: 0 auto 2.5rem;">
+                Comparing core capabilities across traditional cloud management, fragmented point tools, and Jericho AI's autonomous multi-cloud GenAI Ops platform.
+            </p>
+
+            <div class="phases-table-wrapper">
+                <table class="phases-table">
+                    <thead>
+                        <tr>
+                            <th>Capability Matrix</th>
+                            <th>Traditional Cloud Management</th>
+                            <th>Fragmented Point Tools</th>
+                            <th>Jericho AI Platform</th>
+                            <th>Verification Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Multi-Cloud Scope</td>
+                            <td>Single cloud native (AWS or Azure only)</td>
+                            <td>Limited to 2 clouds via custom scripting</td>
+                            <td>AWS, Azure, GCP, IBM Cloud &amp; OCI Unified</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> 5 Clouds Active</span></td>
+                        </tr>
+                        <tr>
+                            <td>Incident Remediation Speed</td>
+                            <td>Manual on-call triage (30-60 min delay)</td>
+                            <td>Alert notifications only (Slack/PagerDuty)</td>
+                            <td>Autonomous AI Swarm Self-Healing (&lt; 200ms)</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> Sub-200ms Reaction</span></td>
+                        </tr>
+                        <tr>
+                            <td>Cost Reduction Mechanism</td>
+                            <td>Monthly retrospective invoice reviews</td>
+                            <td>Static recommendation emails</td>
+                            <td>Real-time Spot Arbitrage &amp; Dynamic Rightsizing</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> 38.4% Documented</span></td>
+                        </tr>
+                        <tr>
+                            <td>GenAI GPU Optimization</td>
+                            <td>Unmonitored fixed on-demand clusters</td>
+                            <td>Basic CPU metrics (no GPU telemetry)</td>
+                            <td>Deep VRAM, temperature &amp; token queue tuning</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> GPU Aware Engine</span></td>
+                        </tr>
+                        <tr>
+                            <td>Workload Portability</td>
+                            <td>Deep proprietary vendor lock-in</td>
+                            <td>Heavy custom migration scripting needed</td>
+                            <td>Normalized Cross-Cloud Fabric &amp; WireGuard Mesh</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> Zero Vendor Lock-in</span></td>
+                        </tr>
+                        <tr>
+                            <td>Telemetry Ingestion Rate</td>
+                            <td>Periodic 5-minute polling intervals</td>
+                            <td>1,000 events/sec before backpressure</td>
+                            <td>100,000+ events/sec OpenTelemetry Stream</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> 100k+ Evt/Sec</span></td>
+                        </tr>
+                        <tr>
+                            <td>High Availability SLA</td>
+                            <td>99.9% single-region vulnerability</td>
+                            <td>99.95% multi-region same cloud</td>
+                            <td>99.99% Multi-Cloud Failover Protection</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> 99.99% Multi-Cloud</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Complete Tech Stack Grid -->
+    <section class="section-separator" id="tech-stack">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-cubes"></i> Technology Ecosystem
+            </div>
+            <h2 class="showcase-h2" style="text-align: center; margin-bottom: 0.5rem;">Core Technologies &amp; Multi-Cloud Stack</h2>
+            <p class="showcase-desc" style="text-align: center; max-width: 750px; margin: 0 auto 2.5rem;">
+                Built on high-concurrency microservices, real-time time-series telemetry, and enterprise cloud infrastructure for industrial-scale GenAI workloads.
+            </p>
+
+            <div class="tech-grid">
+                <!-- Tech 1 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill"><i class="fas fa-cloud"></i></div>
+                        <div>
+                            <h3>Cross-Cloud Connectors</h3>
+                            <span class="meta-title">AWS · Azure · GCP · IBM · OCI</span>
+                        </div>
+                    </div>
+                    <p>Standardized provider adapters managing compute, storage, IAM, and networking across five major cloud platforms with zero vendor lock-in.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">5 Clouds</span>
+                        <span class="showcase-tag">Normalized SDK</span>
+                        <span class="showcase-tag">Sub-35ms</span>
+                    </div>
+                </div>
+
+                <!-- Tech 2 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill purple"><i class="fas fa-robot"></i></div>
+                        <div>
+                            <h3>Multi-Agent Swarm Core</h3>
+                            <span class="meta-title">Autonomous Coordination</span>
+                        </div>
+                    </div>
+                    <p>Cooperative AI agent cluster executing telemetry monitoring, cost arbitrage, and sub-200ms self-healing without inter-agent conflicts.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">AI Swarm</span>
+                        <span class="showcase-tag">Self-Healing</span>
+                        <span class="showcase-tag">&lt; 200ms Reaction</span>
+                    </div>
+                </div>
+
+                <!-- Tech 3 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill cyan"><i class="fas fa-dharmachakra"></i></div>
+                        <div>
+                            <h3>Kubernetes &amp; Kubelet Mesh</h3>
+                            <span class="meta-title">Cross-Cloud Containers</span>
+                        </div>
+                    </div>
+                    <p>Orchestrates containerized GenAI workloads across EKS, AKS, GKE, and OKE with dynamic pod rightsizing and cross-cluster relocation.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">K8s Orchestration</span>
+                        <span class="showcase-tag">EKS/AKS/GKE</span>
+                        <span class="showcase-tag">Dynamic Pods</span>
+                    </div>
+                </div>
+
+                <!-- Tech 4 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill emerald"><i class="fas fa-chart-line"></i></div>
+                        <div>
+                            <h3>TimescaleDB &amp; Postgres</h3>
+                            <span class="meta-title">Time-Series Telemetry</span>
+                        </div>
+                    </div>
+                    <p>High-throughput time-series database storing rolling infrastructure metrics, historical spend data, and audit ledgers with automated compression.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">TimescaleDB</span>
+                        <span class="showcase-tag">Hyper-Tables</span>
+                        <span class="showcase-tag">PostgreSQL 16</span>
+                    </div>
+                </div>
+
+                <!-- Tech 5 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill gold"><i class="fas fa-wave-square"></i></div>
+                        <div>
+                            <h3>OpenTelemetry &amp; Prometheus</h3>
+                            <span class="meta-title">Telemetry Ingestion Bus</span>
+                        </div>
+                    </div>
+                    <p>Universal distributed tracing and metric collection pipeline ingesting over 100,000 events/second from cross-cloud worker nodes.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">100k+ Evt/Sec</span>
+                        <span class="showcase-tag">OpenTelemetry</span>
+                        <span class="showcase-tag">Prometheus</span>
+                    </div>
+                </div>
+
+                <!-- Tech 6 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill rose"><i class="fas fa-bolt"></i></div>
+                        <div>
+                            <h3>Redis Cluster State</h3>
+                            <span class="meta-title">In-Memory Coordination</span>
+                        </div>
+                    </div>
+                    <p>Low-latency in-memory cache maintaining real-time active cluster state, spot pricing caches, and AI swarm agent synchronization lock queues.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">Redis Cluster</span>
+                        <span class="showcase-tag">Sub-Millisecond</span>
+                        <span class="showcase-tag">Lock Queues</span>
+                    </div>
+                </div>
+
+                <!-- Tech 7 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill purple"><i class="fas fa-microchip"></i></div>
+                        <div>
+                            <h3>GPU Telemetry Kernel</h3>
+                            <span class="meta-title">GenAI Hardware Watcher</span>
+                        </div>
+                    </div>
+                    <p>Direct NVML bindings monitoring NVIDIA H100, A100, and L40S GPU VRAM saturation, thermal limits, and model inference token queue depth.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">NVIDIA NVML</span>
+                        <span class="showcase-tag">H100 / A100</span>
+                        <span class="showcase-tag">VRAM Watcher</span>
+                    </div>
+                </div>
+
+                <!-- Tech 8 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill cyan"><i class="fas fa-shield-halved"></i></div>
+                        <div>
+                            <h3>WireGuard &amp; Zero-Trust</h3>
+                            <span class="meta-title">Secure Inter-Cloud Mesh</span>
+                        </div>
+                    </div>
+                    <p>Encrypted peer-to-peer inter-cloud network fabric with mutual TLS authentication, ensuring sensitive GenAI weights and client data never traverse cleartext.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">WireGuard Mesh</span>
+                        <span class="showcase-tag">mTLS 1.3</span>
+                        <span class="showcase-tag">Zero-Trust</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Systems Ownership & Engineering Contributions -->
+    <section class="section-separator" id="engineering-ownership">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-crown"></i> Engineering Leadership
+            </div>
+            <h2 class="showcase-h2" style="text-align: center; margin-bottom: 0.5rem;">Executive Ownership &amp; Technical Contributions</h2>
+            <p class="showcase-desc" style="text-align: center; max-width: 750px; margin: 0 auto 2.5rem;">
+                As Lead Cloud &amp; AI Infrastructure Architect on <strong>Jericho AI</strong> (<a href="https://jerichoai.io/" target="_blank" style="color: #c084fc; text-decoration: none;">jerichoai.io</a>), <strong>Ahsan Tariq</strong> designed and delivered the complete multi-cloud orchestration and cost optimization platform.
+            </p>
+
+            <div class="ownership-grid">
+                <div class="ownership-card">
+                    <div class="ownership-card-icon"><i class="fas fa-cloud"></i></div>
+                    <h3>Unified Multi-Cloud Architecture</h3>
+                    <p>Engineered the cross-cloud abstraction layer unifying AWS, Azure, GCP, IBM Cloud, and OCI into a single harmonized control plane managing 10,000+ active nodes without vendor lock-in.</p>
+                </div>
+                <div class="ownership-card">
+                    <div class="ownership-card-icon"><i class="fas fa-robot"></i></div>
+                    <h3>Autonomous AI Agent Swarm</h3>
+                    <p>Architected the multi-agent AI swarm coordination engine where specialized agents cooperatively monitor telemetry, resolve conflicts deterministically, and self-heal infrastructure in sub-200ms.</p>
+                </div>
+                <div class="ownership-card">
+                    <div class="ownership-card-icon"><i class="fas fa-coins"></i></div>
+                    <h3>Predictive Cost Optimization Engine</h3>
+                    <p>Built the real-time cloud cost reduction logic combining zombie compute elimination, pod rightsizing, and cross-cloud spot instance arbitrage &mdash; achieving an average 38.4% spend reduction.</p>
+                </div>
+                <div class="ownership-card">
+                    <div class="ownership-card-icon"><i class="fas fa-heart-pulse"></i></div>
+                    <h3>Real-Time Self-Healing &amp; Failover</h3>
+                    <p>Engineered zero-downtime cross-cloud pod relocation handling 2-minute spot eviction warnings and regional cloud outages with automated failover and WireGuard mTLS encryption.</p>
+                </div>
+                <div class="ownership-card">
+                    <div class="ownership-card-icon"><i class="fas fa-chart-line"></i></div>
+                    <h3>GenAI Ops Dashboard &amp; Analytics</h3>
+                    <p>Shipped the executive decision portal at jerichoai.io displaying real-time sub-second infrastructure health, unit economics per AI model query, and 1-click autonomous optimization recommendations.</p>
+                </div>
+                <div class="ownership-card">
+                    <div class="ownership-card-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h3>Zero-Trust Security &amp; Compliance</h3>
+                    <p>Enforced enterprise-grade security across all five cloud providers with dynamic STS credentials, KMS envelope encryption, and comprehensive audit trails for SOC2 and HIPAA compliance.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta-section">
+        <div class="wrapper">
+            <h2 class="cta-h2">Experience Autonomous Multi-Cloud Intelligence</h2>
+            <p class="cta-desc">
+                Discover how Jericho AI unifies cloud providers, cuts infrastructure costs by 38.4%, and delivers autonomous self-healing for next-generation GenAI operations.
+            </p>
+            <div class="cta-btn-row">
+                <a href="https://jerichoai.io/" target="_blank" class="btn-primary">
+                    <i class="fas fa-external-link-alt"></i> Visit Live Platform (jerichoai.io)
+                </a>
+                <a href="../index.html" class="btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Explore All 17 Case Studies
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lightbox Modal -->
+    <div id="lightboxModal" class="lightbox-modal" onclick="closeLightbox(event)">
+        <div class="lightbox-container" onclick="event.stopPropagation()">
+            <button class="lightbox-close" onclick="closeLightbox(event)">&times;</button>
+            <img id="lightboxImg" src="" alt="Enlarged screenshot" />
+            <div id="lightboxCaption" class="lightbox-caption"></div>
+        </div>
+    </div>
+
+    <!-- Interactive JavaScript Logic -->
+    <script>
+        // Interactive Problem vs Solution Filter Engine
+        function setJerichoFilter(mode) {
+            const btnBoth = document.getElementById('btnJerichoBoth');
+            const btnProblem = document.getElementById('btnJerichoProblem');
+            const btnSolution = document.getElementById('btnJerichoSolution');
+
+            btnBoth.className = 'compare-toggle-btn';
+            btnProblem.className = 'compare-toggle-btn';
+            btnSolution.className = 'compare-toggle-btn';
+
+            const rows = document.querySelectorAll('.compare-row');
+
+            if (mode === 'both') {
+                btnBoth.classList.add('active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = window.innerWidth <= 1024 ? 'minmax(0, 1fr)' : 'minmax(0, 1fr) 60px minmax(0, 1fr)';
+                    r.querySelector('.side-problem').style.display = 'block';
+                    r.querySelector('.side-solution').style.display = 'block';
+                    const arrow = r.querySelector('.compare-arrow-box');
+                    if (arrow) arrow.style.display = 'flex';
+                });
+            } else if (mode === 'problem') {
+                btnProblem.classList.add('problem-active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr)';
+                    r.querySelector('.side-problem').style.display = 'block';
+                    r.querySelector('.side-solution').style.display = 'none';
+                    const arrow = r.querySelector('.compare-arrow-box');
+                    if (arrow) arrow.style.display = 'none';
+                });
+            } else if (mode === 'solution') {
+                btnSolution.classList.add('solution-active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr)';
+                    r.querySelector('.side-problem').style.display = 'none';
+                    r.querySelector('.side-solution').style.display = 'block';
+                    const arrow = r.querySelector('.compare-arrow-box');
+                    if (arrow) arrow.style.display = 'none';
+                });
+            }
+        }
+
+        // Fullscreen Lightbox Engine
+        function openLightbox(src, caption) {
+            const modal = document.getElementById('lightboxModal');
+            const img = document.getElementById('lightboxImg');
+            const cap = document.getElementById('lightboxCaption');
+            img.src = src;
+            cap.innerText = caption;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(e) {
+            const modal = document.getElementById('lightboxModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+    </script>
+</body>
+</html>

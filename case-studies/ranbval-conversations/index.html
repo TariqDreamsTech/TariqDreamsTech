@@ -3,1277 +3,1648 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ranbval Conversations Case Study | Centralized Client Communication &amp; Semantic Memory Platform — Ahsan Tariq</title>
-    <meta name="description" content="In-depth architecture case study of Ranbval Conversations: Engineering a unified Single Context Layer per client across LinkedIn, Upwork, Fiverr, and WhatsApp with FastAPI, React, Supabase, Pinecone, and strict .ranbval configuration standards.">
+    <title>Ranbval Conversations | Omnichannel Client Intelligence &amp; Single Context Layer — Ahsan Tariq</title>
+    <meta name="description" content="Architectural case study of Ranbval Conversations: An intelligent client memory &amp; omnichannel communication platform by Ahsan Tariq. Features a Single Context Layer per client across LinkedIn, Upwork, Fiverr, WhatsApp, Facebook, and Email, combining React Vite, Python FastAPI, Supabase PostgreSQL, Pinecone semantic vector retrieval, strict .ranbval configuration standards, and dual Docker isolation.">
     
-    <!-- Google Fonts -->
+    <!-- Google Fonts: Plus Jakarta Sans, Outfit, JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
 
     <style>
         :root {
-            --bg: #030303;
-            --bg-card: #0b0c10;
-            --bg-card-hover: #12141a;
-            --border: rgba(255, 255, 255, 0.08);
-            --border-accent: rgba(255, 186, 73, 0.4);
-            --text: #f0f0f5;
-            --text-muted: #9aa0a6;
-            --text-dim: rgba(255, 255, 255, 0.4);
-            --accent: #ffba49;
-            --accent-2: #ff6b6b;
-            --accent-cyan: #4ecdc4;
-            --accent-purple: #a78bfa;
-            --accent-glow: rgba(255, 186, 73, 0.18);
-            --gradient: linear-gradient(135deg, #ffba49 0%, #ff6b6b 100%);
-            --gradient-accent: linear-gradient(135deg, #ffba49 0%, #4ecdc4 100%);
-            --font-h: 'Outfit', sans-serif;
-            --font-b: 'Space Grotesk', sans-serif;
-            --font-code: 'JetBrains Mono', monospace;
-            --radius: 16px;
+            --bg-main: #06070a;
+            --bg-surface: #0a0e17;
+            --bg-card: #0e1320;
+            --bg-card-hover: #141c2e;
+            --border-subtle: rgba(255, 255, 255, 0.07);
+            --border-highlight: rgba(56, 189, 248, 0.35);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --cyan: #38bdf8;
+            --cyan-glow: rgba(56, 189, 248, 0.18);
+            --emerald: #10b981;
+            --emerald-glow: rgba(16, 185, 129, 0.16);
+            --gold: #eab308;
+            --gold-glow: rgba(234, 179, 8, 0.16);
+            --rose: #f43f5e;
+            --rose-glow: rgba(244, 63, 94, 0.16);
+            --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-display: 'Outfit', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --radius-xl: 24px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
             --radius-sm: 8px;
-            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.6);
-            --shadow-glow: 0 0 50px rgba(255, 186, 73, 0.12);
+            --container-max: 1260px;
         }
 
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; font-size: 16px; }
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
         body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: var(--font-b);
-            line-height: 1.7;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            line-height: 1.65;
             overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 15% 12%, rgba(255, 186, 73, 0.04) 0%, transparent 40%),
-                radial-gradient(circle at 85% 55%, rgba(78, 205, 196, 0.04) 0%, transparent 45%),
-                radial-gradient(circle at 50% 90%, rgba(167, 139, 250, 0.03) 0%, transparent 50%);
+            -webkit-font-smoothing: antialiased;
         }
 
-        #read-progress {
+        /* Ambient Glow & Canvas */
+        .ambient-glow {
             position: fixed;
-            top: 0; left: 0;
-            height: 3px;
-            width: 0%;
-            background: var(--gradient);
-            z-index: 9999;
-            transition: width 0.1s linear;
-            box-shadow: 0 0 12px rgba(255, 186, 73, 0.8);
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            height: 600px;
+            background: radial-gradient(circle 800px at 50% -100px, rgba(56, 189, 248, 0.12), rgba(16, 185, 129, 0.04), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
         }
 
+        /* Top Nav */
         .case-nav {
             position: sticky;
             top: 0;
-            width: 100%;
-            background: rgba(3, 3, 3, 0.88);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border);
             z-index: 1000;
+            background: rgba(6, 7, 10, 0.88);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-subtle);
             padding: 1rem 0;
         }
-
-        .container {
-            max-width: 1240px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
         .nav-inner {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 1.5rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
-
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .nav-back:hover {
+            color: var(--cyan);
+            transform: translateX(-3px);
+        }
         .nav-brand {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 1.05rem;
+            letter-spacing: -0.02em;
+            color: #ffffff;
             display: flex;
             align-items: center;
-            gap: 1rem;
-            text-decoration: none;
+            gap: 0.5rem;
+        }
+        .nav-brand span {
+            color: var(--cyan);
+        }
+        .nav-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            padding: 0.35rem 0.8rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--cyan);
+            font-weight: 600;
+        }
+        .nav-status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 8px var(--cyan);
+            animation: pulseNav 2s infinite;
+        }
+        @keyframes pulseNav {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
         }
 
-        .nav-logo-badge {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: var(--gradient);
+        /* Container & Layout */
+        .wrapper {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        .section-separator {
+            padding: 5.5rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        /* TheHexaTown Signature Typography & Tags */
+        .eyebrow-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            color: var(--cyan);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.4rem 1rem;
+            border-radius: 9999px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Hero */
+        .hero-section {
+            padding: 4.5rem 0 3.5rem;
+        }
+        .hero-h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.4rem, 5vw, 4.2rem);
+            font-weight: 900;
+            line-height: 1.08;
+            letter-spacing: -0.035em;
+            color: #ffffff;
+            margin-bottom: 1.25rem;
+        }
+        .hero-tagline {
+            font-family: var(--font-display);
+            font-size: clamp(1.2rem, 2.3vw, 1.65rem);
+            font-weight: 500;
+            line-height: 1.35;
+            color: var(--text-secondary);
+            margin-bottom: 1.75rem;
+        }
+        .hero-desc {
+            font-size: 1.12rem;
+            line-height: 1.75;
+            color: var(--text-secondary);
+            max-width: 980px;
+            margin-bottom: 2.75rem;
+        }
+        .hero-desc strong {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* Meta Grid */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            margin-bottom: 3.5rem;
+        }
+        .meta-col {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+        .meta-title {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+        }
+        .meta-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        .meta-value.accent {
+            color: var(--cyan);
+        }
+
+        /* Browser Mockup System */
+        .browser-mockup {
+            background: #0d121c;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.04);
+            margin: 2rem 0;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .browser-mockup:hover {
+            border-color: rgba(56, 189, 248, 0.3);
+            box-shadow: 0 30px 70px -15px rgba(56, 189, 248, 0.15), 0 0 0 1px rgba(56, 189, 248, 0.2);
+        }
+        .browser-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1.25rem;
+            background: #141b27;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            gap: 0.75rem;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .browser-dots {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .browser-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+        .browser-url {
+            background: #090d15;
+            padding: 0.35rem 0.85rem;
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            font-size: 0.76rem;
+            color: #94a3b8;
+            flex: 1 1 0%;
+            min-width: 0;
+            max-width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .browser-url i {
+            color: var(--cyan);
+            font-size: 0.7rem;
+            flex-shrink: 0;
+        }
+        .browser-url span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
+            min-width: 0;
+            flex: 1 1 0%;
+        }
+        .browser-badge {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--cyan);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(56, 189, 248, 0.1);
+            padding: 0.25rem 0.65rem;
+            border-radius: 20px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .browser-badge.pulse::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 8px var(--cyan);
+            animation: pulseGlow 2s infinite;
+            flex-shrink: 0;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+        .browser-screen {
+            position: relative;
+            cursor: zoom-in;
+            overflow: hidden;
+            background: #080b11;
+            line-height: 0;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+        .browser-screen img {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+            box-sizing: border-box;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .browser-screen:hover img {
+            transform: scale(1.015);
+        }
+        .browser-screen .zoom-hint {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            background: rgba(10, 14, 22, 0.88);
+            backdrop-filter: blur(8px);
+            color: #cbd5e1;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.4rem 0.85rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .browser-screen:hover .zoom-hint {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Statement Banner (TheHexaTown Big Typography) */
+        .statement-banner {
+            padding: 5.5rem 0;
+            border-top: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border-subtle);
+            background: linear-gradient(180deg, rgba(56, 189, 248, 0.03) 0%, transparent 100%);
+        }
+        .statement-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.75rem, 3.4vw, 2.75rem);
+            font-weight: 800;
+            line-height: 1.25;
+            letter-spacing: -0.025em;
+            color: #ffffff;
+            max-width: 1100px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .statement-h2 span {
+            color: var(--cyan);
+        }
+
+        /* Executive Metrics Grid */
+        .exec-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin: 3.5rem 0;
+        }
+        .exec-metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem 1.5rem;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .exec-metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyan), transparent);
+            opacity: 0.5;
+        }
+        .exec-metric-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-highlight);
+        }
+        .exec-num {
+            font-family: var(--font-display);
+            font-size: 2.1rem;
+            font-weight: 800;
+            line-height: 1.1;
+            color: #ffffff;
+            margin-bottom: 0.4rem;
+        }
+        .exec-num.cyan { color: var(--cyan); }
+        .exec-num.emerald { color: var(--emerald); }
+        .exec-num.gold { color: var(--gold); }
+        .exec-label {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 0.35rem;
+        }
+        .exec-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Showcase Split Section */
+        .showcase-block {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+            gap: 3.5rem;
+            align-items: center;
+            margin: 4.5rem 0;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+        .showcase-block.reverse {
+            grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+        }
+        .showcase-block.reverse .showcase-text-col {
+            order: 2;
+        }
+        .showcase-block.reverse .showcase-media-col {
+            order: 1;
+        }
+        .showcase-text-col,
+        .showcase-media-col {
+            min-width: 0;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .showcase-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--cyan);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+        }
+        .showcase-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 2.5vw, 2.3rem);
+            font-weight: 800;
+            line-height: 1.22;
+            color: #ffffff;
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.02em;
+        }
+        .showcase-desc {
+            color: var(--text-secondary);
+            font-size: 1.02rem;
+            line-height: 1.72;
+            margin-bottom: 1.5rem;
+        }
+        .showcase-feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            margin: 1.5rem 0;
+        }
+        .showcase-feature-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+        .showcase-feature-list li i {
+            color: var(--cyan);
+            margin-top: 0.25rem;
+            font-size: 0.85rem;
+        }
+        .showcase-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1.25rem;
+        }
+        .showcase-tag {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #cbd5e1;
+            padding: 0.35rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.76rem;
+            font-family: var(--font-mono);
+            font-weight: 500;
+        }
+
+        /* ANIMATED INTERACTIVE PROBLEM VS SOLUTION SECTION (EASY FOR ANY NON-TECHNICAL PERSON) */
+        .interactive-comparison-wrapper {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            padding: 3rem;
+            margin: 3.5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .comparison-controls {
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #000;
-            font-family: var(--font-h);
-            font-weight: 800;
-            font-size: 1.2rem;
-        }
-
-        .nav-titles { display: flex; flex-direction: column; }
-        .nav-title-main { font-family: var(--font-h); font-weight: 700; font-size: 1.05rem; color: var(--text); }
-        .nav-title-sub { font-size: 0.75rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
-
-        .nav-actions { display: flex; align-items: center; gap: 1rem; }
-        .btn-back {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.55rem 1.15rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            color: var(--text);
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.25s ease;
-        }
-        .btn-back:hover {
-            background: rgba(255, 186, 73, 0.15);
-            border-color: var(--border-accent);
-            color: var(--accent);
-            transform: translateX(-3px);
-        }
-
-        .btn-portfolio {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.55rem 1.15rem;
-            background: var(--gradient);
-            border: none;
-            border-radius: var(--radius-sm);
-            color: #000;
-            font-size: 0.85rem;
-            font-weight: 700;
-            text-decoration: none;
-            transition: all 0.25s ease;
-        }
-        .btn-portfolio:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(255, 186, 73, 0.4);
-        }
-
-        .hero-case {
-            padding: 5rem 0 3.5rem;
-            position: relative;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .badge-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.35rem 0.95rem;
-            border-radius: 50px;
-            background: rgba(78, 205, 196, 0.1);
-            border: 1px solid rgba(78, 205, 196, 0.3);
-            color: var(--accent-cyan);
-            font-size: 0.8rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            margin-bottom: 1.5rem;
-        }
-
-        .hero-title {
-            font-family: var(--font-h);
-            font-size: 3.35rem;
-            font-weight: 800;
-            line-height: 1.15;
-            letter-spacing: -1.5px;
-            margin-bottom: 1.25rem;
-            background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 40%, var(--accent) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero-subtitle {
-            font-size: 1.25rem;
-            line-height: 1.6;
-            color: var(--text-muted);
-            max-width: 950px;
+            gap: 1rem;
             margin-bottom: 2.5rem;
         }
-
-        .meta-strip {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-            gap: 1.25rem;
-            padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            margin-bottom: 3rem;
-        }
-
-        .meta-item { display: flex; flex-direction: column; gap: 0.25rem; }
-        .meta-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim); font-weight: 600; }
-        .meta-val { font-size: 0.95rem; font-weight: 700; color: var(--text); }
-        .meta-val.accent { color: var(--accent); }
-
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1.25rem;
-        }
-
-        .metric-card {
+        .compare-toggle-btn {
             background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.75rem 1.5rem;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .metric-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 3px;
-            background: var(--gradient);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .metric-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--border-accent);
-            box-shadow: var(--shadow-glow);
-        }
-        .metric-card:hover::before { opacity: 1; }
-
-        .metric-num {
-            font-family: var(--font-h);
-            font-size: 2.4rem;
-            font-weight: 800;
-            color: var(--accent);
-            line-height: 1;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: baseline;
-            gap: 0.2rem;
-        }
-
-        .metric-label { font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 0.35rem; }
-        .metric-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; }
-
-        .case-body-wrapper {
-            display: grid;
-            grid-template-columns: 290px 1fr;
-            gap: 3.5rem;
-            padding: 4rem 0;
-            align-items: start;
-        }
-
-        .case-toc {
-            position: sticky;
-            top: 6rem;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            max-height: calc(100vh - 8rem);
-            overflow-y: auto;
-        }
-
-        .toc-header {
-            font-family: var(--font-h);
+            border: 1px solid var(--border-subtle);
+            color: #cbd5e1;
+            padding: 0.65rem 1.5rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
             font-size: 0.85rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--accent);
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .toc-list { list-style: none; display: flex; flex-direction: column; gap: 0.35rem; }
-        .toc-link {
-            display: block;
-            padding: 0.45rem 0.75rem;
-            font-size: 0.82rem;
-            color: var(--text-muted);
-            text-decoration: none;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-            line-height: 1.35;
-        }
-        .toc-link:hover, .toc-link.active {
-            color: var(--accent);
-            background: rgba(255, 186, 73, 0.08);
-            transform: translateX(4px);
-        }
-
-        .case-content { min-width: 0; }
-        .section-block { margin-bottom: 5rem; scroll-margin-top: 6.5rem; }
-        .section-tag {
-            font-family: var(--font-h);
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--accent);
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-
-        .section-heading {
-            font-family: var(--font-h);
-            font-size: 2.2rem;
-            font-weight: 800;
-            line-height: 1.2;
-            letter-spacing: -0.5px;
-            color: var(--text);
-            margin-bottom: 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        .section-heading i { color: var(--accent); font-size: 1.6rem; }
-
-        .paragraph {
-            color: #d1d5db;
-            font-size: 1.05rem;
-            line-height: 1.8;
-            margin-bottom: 1.5rem;
-        }
-        .paragraph strong { color: #ffffff; font-weight: 600; }
-
-        .callout-box {
-            background: rgba(255, 186, 73, 0.05);
-            border-left: 4px solid var(--accent);
-            border-top: 1px solid rgba(255, 186, 73, 0.15);
-            border-right: 1px solid rgba(255, 186, 73, 0.15);
-            border-bottom: 1px solid rgba(255, 186, 73, 0.15);
-            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-            padding: 1.5rem 1.75rem;
-            margin: 2rem 0;
-        }
-
-        .callout-title {
-            font-family: var(--font-h);
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--accent);
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .callout-body { color: #e5e7eb; font-size: 0.98rem; line-height: 1.7; }
-
-        .feature-two-col {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .feature-box {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.75rem;
+            font-weight: 600;
+            cursor: pointer;
             transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        .feature-box:hover {
-            border-color: var(--border-accent);
+        .compare-toggle-btn.active {
+            background: var(--cyan);
+            color: #050d18;
+            border-color: var(--cyan);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+            transform: scale(1.03);
+        }
+        .compare-toggle-btn.problem-active {
+            background: var(--rose);
+            color: #ffffff;
+            border-color: var(--rose);
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.4);
+            transform: scale(1.03);
+        }
+        .compare-toggle-btn.solution-active {
+            background: var(--emerald);
+            color: #03140d;
+            border-color: var(--emerald);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+            transform: scale(1.03);
+        }
+
+        /* Animated Comparison Cards Grid */
+        .comparison-cards-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .compare-row {
+            display: grid;
+            grid-template-columns: 1fr 60px 1fr;
+            align-items: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem 2rem;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .compare-row:hover {
             transform: translateY(-3px);
-            background: var(--bg-card-hover);
+            border-color: var(--border-highlight);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+        .compare-side {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+        .side-label {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 700;
+        }
+        .side-label.before { color: var(--rose); }
+        .side-label.after { color: var(--emerald); }
+        .side-title {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+        .side-desc {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        .compare-arrow-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: #141b28;
+            border-radius: 50%;
+            border: 1px solid var(--border-subtle);
+            color: var(--cyan);
+            font-size: 1rem;
+            margin: 0 auto;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+        .compare-row:hover .compare-arrow-box {
+            transform: scale(1.15) rotate(90deg);
+            background: var(--cyan);
+            color: #060910;
         }
 
-        .feature-header { display: flex; align-items: center; gap: 0.85rem; margin-bottom: 0.9rem; }
-        .feature-icon-badge {
-            width: 38px; height: 38px;
-            border-radius: 8px;
-            background: rgba(255, 186, 73, 0.12);
-            color: var(--accent);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.1rem;
-            border: 1px solid rgba(255, 186, 73, 0.3);
-        }
-        .feature-title { font-family: var(--font-h); font-size: 1.15rem; font-weight: 700; color: #ffffff; }
-        .feature-desc { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
-
-        .pillars-grid {
+        /* Tech Stack Card Grid */
+        .tech-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 1.5rem;
-            margin: 2rem 0;
+            margin-top: 2.5rem;
         }
-
-        .pillar-card {
+        .tech-card {
             background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 2rem 1.5rem;
-            display: flex; flex-direction: column;
-            transition: all 0.3s ease;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            transition: transform 0.25s ease, border-color 0.25s ease;
         }
-        .pillar-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--border-accent);
-            box-shadow: var(--shadow-glow);
+        .tech-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-highlight);
         }
-        .pillar-icon {
-            width: 48px; height: 48px;
-            border-radius: 12px;
-            background: rgba(255, 186, 73, 0.1);
-            color: var(--accent);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.35rem;
+        .tech-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
             margin-bottom: 1.25rem;
-            border: 1px solid rgba(255, 186, 73, 0.25);
         }
-        .pillar-title { font-family: var(--font-h); font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 0.75rem; }
-        .pillar-text { color: var(--text-muted); font-size: 0.92rem; line-height: 1.6; }
-
-        .tree-box {
-            background: #090b10;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.5rem 2rem;
-            font-family: var(--font-code);
-            font-size: 0.85rem;
-            line-height: 1.7;
-            color: #e2e8f0;
-            margin: 2rem 0;
-            overflow-x: auto;
+        .tech-header i {
+            color: var(--cyan);
+            font-size: 1.25rem;
         }
-        .tree-dir { color: var(--accent); font-weight: 600; }
-        .tree-file { color: #94a3b8; }
-        .tree-note { color: #64748b; font-style: italic; }
-
-        .code-box {
-            background: #080a0f;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            margin: 2rem 0;
-            overflow: hidden;
-        }
-        .code-header {
-            background: #11141c;
-            padding: 0.75rem 1.25rem;
-            display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid var(--border);
-        }
-        .code-title {
-            font-family: var(--font-code);
-            font-size: 0.82rem;
-            color: var(--text-muted);
-            display: flex; align-items: center; gap: 0.5rem;
-        }
-        .code-title span.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-        .code-title span.dot.red { background: #ef4444; }
-        .code-title span.dot.yellow { background: #f59e0b; }
-        .code-title span.dot.green { background: #10b981; }
-
-        .btn-copy {
-            background: transparent;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            color: var(--text-muted);
-            padding: 0.25rem 0.6rem;
-            font-size: 0.75rem;
-            font-family: var(--font-b);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .btn-copy:hover { color: var(--accent); border-color: var(--accent); }
-
-        pre code {
-            display: block;
-            padding: 1.5rem;
-            font-family: var(--font-code);
-            font-size: 0.85rem;
-            line-height: 1.65;
-            color: #d1d5db;
-            overflow-x: auto;
-        }
-        .c-kw { color: #f43f5e; font-weight: 600; }
-        .c-fn { color: #38bdf8; }
-        .c-str { color: #34d399; }
-        .c-num { color: #fbbf24; }
-        .c-cmt { color: #6b7280; font-style: italic; }
-        .c-cls { color: #a78bfa; font-weight: 600; }
-
-        .pillar-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
-        .pillar-bullets li { font-size: 0.88rem; color: #e2e8f0; display: flex; align-items: flex-start; gap: 0.6rem; }
-        .pillar-bullets li i { color: var(--accent); font-size: 0.75rem; margin-top: 0.4rem; }
-
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-            margin: 2rem 0;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            background: var(--bg-card);
-        }
-        .comp-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
-        .comp-table th {
-            background: #11131a;
-            padding: 1.1rem 1.25rem;
-            font-family: var(--font-h);
+        .tech-header h3 {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
             font-weight: 700;
-            font-size: 0.82rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--accent);
-            border-bottom: 1px solid var(--border);
+            color: #ffffff;
         }
-        .comp-table td {
-            padding: 1rem 1.25rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            color: #d1d5db;
-            line-height: 1.5;
-            vertical-align: top;
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
-        .comp-table tr:last-child td { border-bottom: none; }
-        .comp-table tr:hover td { background: rgba(255, 255, 255, 0.02); }
+        .tech-pill {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #cbd5e1;
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-family: var(--font-mono);
+        }
 
-        .case-footer {
-            background: #07080b;
-            border-top: 1px solid var(--border);
-            padding: 4.5rem 0 3rem;
-            margin-top: 5rem;
+        /* Hierarchy Diagram Box */
+        .hierarchy-box {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            margin: 2.5rem 0;
+            font-family: var(--font-mono);
+            color: #cbd5e1;
+            line-height: 1.8;
+            font-size: 0.95rem;
+            position: relative;
+            overflow-x: auto;
+            max-width: 100%;
+            box-sizing: border-box;
+            word-break: break-word;
         }
-        .footer-cta-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-accent);
-            border-radius: var(--radius);
+        .hierarchy-box span.h-highlight {
+            color: var(--cyan);
+            font-weight: 700;
+        }
+        .hierarchy-box span.h-green {
+            color: var(--emerald);
+            font-weight: 600;
+        }
+
+        /* Project Ownership */
+        .ownership-box {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(16, 185, 129, 0.04) 100%);
+            border: 1px solid var(--border-highlight);
+            border-radius: var(--radius-xl);
             padding: 3rem;
-            text-align: center;
-            box-shadow: var(--shadow-glow);
-            margin-bottom: 3.5rem;
+            margin: 3rem 0;
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 3rem;
+            align-items: center;
         }
-        .footer-cta-title { font-family: var(--font-h); font-size: 2.2rem; font-weight: 800; color: #ffffff; margin-bottom: 1rem; }
-        .footer-cta-desc { color: var(--text-muted); font-size: 1.1rem; max-width: 650px; margin: 0 auto 2rem; }
-        .footer-actions { display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; }
-        .footer-credits { display: flex; align-items: center; justify-content: space-between; padding-top: 2rem; border-top: 1px solid var(--border); color: var(--text-dim); font-size: 0.85rem; }
+        .ownership-title {
+            font-family: var(--font-display);
+            font-size: 2.2rem;
+            font-weight: 800;
+            line-height: 1.2;
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+        .ownership-desc {
+            font-size: 1.02rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+        .ownership-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        .o-stat {
+            background: rgba(10, 14, 22, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+        }
+        .o-stat-num {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--cyan);
+            margin-bottom: 0.25rem;
+        }
+        .o-stat-label {
+            font-size: 0.82rem;
+            color: #cbd5e1;
+            line-height: 1.4;
+        }
 
-        @media (max-width: 992px) {
-            .case-body-wrapper { grid-template-columns: 1fr; gap: 2rem; }
-            .case-toc { display: none; }
-            .metrics-grid { grid-template-columns: repeat(2, 1fr); }
-            .pillars-grid { grid-template-columns: 1fr; }
-            .feature-two-col { grid-template-columns: 1fr; }
-            .hero-title { font-size: 2.4rem; }
+        /* CTA Section */
+        .cta-section {
+            padding: 6rem 0;
+            text-align: center;
         }
+        .cta-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2.2rem, 4vw, 3.5rem);
+            font-weight: 900;
+            line-height: 1.15;
+            color: #ffffff;
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.03em;
+        }
+        .cta-desc {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 650px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.6;
+        }
+        .cta-btn-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.25rem;
+        }
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--cyan);
+            color: #050d18;
+            padding: 0.9rem 2rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.35);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(56, 189, 248, 0.5);
+            background: #0284c7;
+        }
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 0.9rem 2rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Lightbox Modal */
+        .lightbox-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(3, 5, 8, 0.95);
+            backdrop-filter: blur(12px);
+            z-index: 999999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            box-sizing: border-box;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .lightbox-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        .lightbox-container {
+            max-width: 95vw;
+            max-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .lightbox-container img {
+            max-width: 92vw;
+            max-height: 82vh;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+        .lightbox-caption {
+            margin-top: 1rem;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            font-family: var(--font-mono);
+            background: rgba(15, 23, 42, 0.85);
+            padding: 0.5rem 1.25rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            max-width: 800px;
+            text-align: center;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: -2.5rem;
+            right: 0;
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+        .lightbox-close:hover {
+            color: var(--cyan);
+            transform: scale(1.15);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .exec-metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .showcase-block, .showcase-block.reverse {
+                grid-template-columns: minmax(0, 1fr) !important;
+                gap: 2.5rem;
+            }
+            .showcase-block.reverse .showcase-text-col { order: 1; }
+            .showcase-block.reverse .showcase-media-col { order: 2; }
+            .compare-row { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+            .compare-arrow-box { transform: rotate(90deg); margin: 0.5rem auto; }
+            .tech-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .ownership-box { grid-template-columns: minmax(0, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .browser-bar {
+                padding: 0.55rem 0.85rem;
+                gap: 0.5rem;
+            }
+            .browser-badge {
+                display: none; /* Hide badge on mobile so URL & dots fit perfectly with zero overflow */
+            }
+            .browser-url {
+                font-size: 0.7rem;
+                padding: 0.25rem 0.55rem;
+            }
+            .browser-dots {
+                gap: 4px;
+            }
+            .browser-dot {
+                width: 8px;
+                height: 8px;
+            }
+            .interactive-comparison-wrapper {
+                padding: 1.5rem;
+            }
+            .hierarchy-box {
+                padding: 1.5rem;
+                font-size: 0.8rem;
+            }
+            .comparison-controls {
+                flex-direction: column;
+                gap: 0.6rem;
+            }
+            .compare-toggle-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
         @media (max-width: 640px) {
-            .metrics-grid { grid-template-columns: 1fr; }
-            .nav-actions .btn-back span { display: none; }
-            .hero-title { font-size: 2rem; }
+            .meta-grid { grid-template-columns: minmax(0, 1fr); }
+            .exec-metrics-grid { grid-template-columns: minmax(0, 1fr); }
+            .tech-grid { grid-template-columns: minmax(0, 1fr); }
+            .ownership-stats { grid-template-columns: minmax(0, 1fr); }
+            .cta-btn-row { flex-direction: column; }
+            .statement-h2 { font-size: 1.45rem; }
+            .hero-h1 { font-size: 2.2rem; }
         }
     </style>
 </head>
 <body>
 
-    <div id="read-progress"></div>
+    <!-- Ambient Glow Background -->
+    <div class="ambient-glow"></div>
 
-    <header class="case-nav">
-        <div class="container">
-            <div class="nav-inner">
-                <a href="../../index.html" class="nav-brand">
-                    <div class="nav-logo-badge">AT</div>
-                    <div class="nav-titles">
-                        <span class="nav-title-main">Ahsan Tariq</span>
-                        <span class="nav-title-sub">Client Memory Case Study</span>
-                    </div>
-                </a>
-                <div class="nav-actions">
-                    <a href="../../index.html" class="btn-back">
-                        <i class="fas fa-arrow-left"></i>
-                        <span>Back to Portfolio</span>
-                    </a>
-                    <a href="../ranbval-social/index.html" class="btn-back">
-                        <i class="fas fa-brain"></i>
-                        <span>Social Super-App</span>
-                    </a>
-                    <a href="../ranbval-core/index.html" class="btn-back">
-                        <i class="fas fa-shield-halved"></i>
-                        <span>Platform Core</span>
-                    </a>
-                    <a href="../../index.html#case-studies" class="btn-portfolio">
-                        <i class="fas fa-layer-group"></i>
-                        <span>All Studies</span>
-                    </a>
-                </div>
+    <!-- Navigation Bar -->
+    <nav class="case-nav">
+        <div class="nav-inner">
+            <a href="../index.html" class="nav-back">
+                <i class="fas fa-arrow-left"></i> Back to Case Studies
+            </a>
+            <div class="nav-brand">
+                <span>Tariq</span>DreamsTech
+            </div>
+            <div class="nav-status">
+                <span class="nav-status-dot"></span> STRICT .RANBVAL · SUPABASE &amp; PINECONE DUAL ENGINE
             </div>
         </div>
-    </header>
+    </nav>
 
-    <section class="hero-case">
-        <div class="container">
-            <div class="badge-pill">
-                <i class="fas fa-comments"></i>
-                Client Memory &amp; Communication Infrastructure
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-comments"></i> Omnichannel Intelligence &amp; Semantic Client Memory
             </div>
-            
-            <h1 class="hero-title">
-                Ranbval Conversations: Centralized Client Communication &amp; Semantic Memory Platform
-            </h1>
-            
-            <p class="hero-subtitle">
-                Engineering a unified Single Context Layer per client across LinkedIn, Upwork, Fiverr, Facebook, WhatsApp, and Email—powered by React (Vite), Python FastAPI, Supabase PostgreSQL, Pinecone vector embeddings, and strict <code>.ranbval</code> configuration standards.
+
+            <h1 class="hero-h1">Ranbval Conversations: The Single Context Layer</h1>
+            <div class="hero-tagline">“Har client ka complete context hamesha available ho — regardless of platform or time.”</div>
+
+            <p class="hero-desc">
+                How a distributed systems architect eliminated communication chaos across 6 disparate channels (<strong>LinkedIn, Upwork, Fiverr, Facebook, WhatsApp, and Email</strong>). Engineering a unified <strong>Single Context Layer</strong> per client uniting <strong>React Vite</strong>, <strong>Python FastAPI</strong>, <strong>Supabase PostgreSQL</strong> for structured relational data, <strong>Pinecone vector embeddings</strong> for sub-100ms semantic search, strict <strong>.ranbval</strong> configuration standards (zero <code>.env</code> tolerance), and isolated dual-repository Docker orchestration.
             </p>
 
-            <div class="meta-strip">
-                <div class="meta-item">
-                    <span class="meta-label">Architect &amp; Lead</span>
-                    <span class="meta-val">Ahsan Tariq (Lead Systems Architect)</span>
+            <!-- Meta Strip -->
+            <div class="meta-grid">
+                <div class="meta-col">
+                    <span class="meta-title">Architect &amp; Lead</span>
+                    <span class="meta-value accent">Ahsan Tariq (Lead Systems Architect)</span>
                 </div>
-                <div class="meta-item">
-                    <span class="meta-label">Domain</span>
-                    <span class="meta-val accent">Omnichannel Client Intelligence</span>
+                <div class="meta-col">
+                    <span class="meta-title">Frontend Stack</span>
+                    <span class="meta-value">React JS (Vite) · TailwindCSS · Nginx</span>
                 </div>
-                <div class="meta-item">
-                    <span class="meta-label">Core Architecture</span>
-                    <span class="meta-val">React · FastAPI · Supabase · Pinecone</span>
+                <div class="meta-col">
+                    <span class="meta-title">Backend &amp; Memory</span>
+                    <span class="meta-value">FastAPI · Supabase (PG) · Pinecone</span>
                 </div>
-                <div class="meta-item">
-                    <span class="meta-label">Config Standard</span>
-                    <span class="meta-val">Strict .ranbval (Zero .env Policy)</span>
+                <div class="meta-col">
+                    <span class="meta-title">DevOps Standard</span>
+                    <span class="meta-value">Strict .ranbval · Dual Docker Repos</span>
                 </div>
             </div>
 
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <div class="metric-num">1<span style="font-size:1.5rem">Context</span></div>
-                    <div class="metric-label">Single Layer per Client</div>
-                    <div class="metric-desc">Unifies chats, notes, files, tasks, and knowledge base across all 6+ channels.</div>
+            <!-- Hero Live Desktop Mockup -->
+            <div class="browser-mockup">
+                <div class="browser-bar">
+                    <div class="browser-dots">
+                        <span class="browser-dot dot-red"></span>
+                        <span class="browser-dot dot-yellow"></span>
+                        <span class="browser-dot dot-green"></span>
+                    </div>
+                    <div class="browser-url">
+                        <i class="fas fa-lock"></i>
+                        <span>https://conversations.ranbval.com/inbox/unified-streams</span>
+                    </div>
+                    <div class="browser-badge pulse">
+                        ● 6 PLATFORMS SYNCED IN REAL-TIME
+                    </div>
                 </div>
-                <div class="metric-card">
-                    <div class="metric-num">&lt;100<span style="font-size:1.5rem">ms</span></div>
-                    <div class="metric-label">Semantic Vector Retrieval</div>
-                    <div class="metric-desc">Pinecone high-dimensional embeddings for intent and meaning-based search.</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-num">2<span style="font-size:1.5rem">Repos</span></div>
-                    <div class="metric-label">Isolated Production Runtimes</div>
-                    <div class="metric-desc">Decoupled React Vite and Python FastAPI repos with dedicated Docker environments.</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-num">100<span style="font-size:1.5rem">%</span></div>
-                    <div class="metric-label">.ranbval Compliance</div>
-                    <div class="metric-desc">Zero .env policy enforced via pre-commit hooks preventing secret leaks.</div>
+                <div class="browser-screen" onclick="openLightbox('images/01-conversations-omnichannel-inbox.jpg', 'Ranbval Conversations: Omnichannel Unified Inbox uniting LinkedIn, Upwork, Fiverr, WhatsApp, Facebook & Email with Single Context Layer')">
+                    <img src="images/01-conversations-omnichannel-inbox.jpg" alt="Ranbval Conversations Omnichannel Unified Inbox" />
+                    <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect full desktop screen</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <div class="container">
-        <div class="case-body-wrapper">
-            
-            <aside class="case-toc">
-                <div class="toc-header">
-                    <i class="fas fa-list-check"></i>
-                    Architecture Index
+    <!-- Statement Banner (TheHexaTown Signature) -->
+    <section class="statement-banner">
+        <div class="wrapper">
+            <h2 class="statement-h2">
+                “No more lost messages or scattered notes across 6 apps: <span>One Single Context Layer per client</span> uniting chats, files, tasks, and <span>sub-100ms Pinecone semantic AI memory</span>.”
+            </h2>
+        </div>
+    </section>
+
+    <!-- Executive Production Metrics Grid -->
+    <section class="section-separator">
+        <div class="wrapper">
+            <div class="exec-metrics-grid">
+                <div class="exec-metric-card">
+                    <div class="exec-num cyan">6 In One</div>
+                    <div class="exec-label">Omnichannel Channels Unification</div>
+                    <div class="exec-sub">LinkedIn · Upwork · Fiverr · WhatsApp · Facebook · Email — Zero scattered histories</div>
                 </div>
-                <ul class="toc-list">
-                    <li><a href="#overview" class="toc-link active">1. Project Overview &amp; Thesis</a></li>
-                    <li><a href="#problem" class="toc-link">2. The Multi-Platform Problem</a></li>
-                    <li><a href="#solution" class="toc-link">3. The Single Context Solution</a></li>
-                    <li><a href="#hierarchy" class="toc-link">4. Structural Data Hierarchy</a></li>
-                    <li><a href="#tech-stack" class="toc-link">5. Production Tech Stack</a></li>
-                    <li><a href="#repos-docker" class="toc-link">6. Repos &amp; Docker Architecture</a></li>
-                    <li><a href="#ranbval-config" class="toc-link">7. Strict .ranbval Config Standard</a></li>
-                    <li><a href="#dual-data" class="toc-link">8. Supabase &amp; Pinecone Data Flow</a></li>
-                    <li><a href="#system-modules" class="toc-link">9. 8 Core System Modules</a></li>
-                    <li><a href="#search-engine" class="toc-link">10. Global &amp; Semantic Search</a></li>
-                    <li><a href="#ai-layer" class="toc-link">11. Autonomous AI Intelligence</a></li>
-                    <li><a href="#execution-plan" class="toc-link">12. Execution Plan &amp; Pre-Commit</a></li>
-                </ul>
-            </aside>
+                <div class="exec-metric-card">
+                    <div class="exec-num emerald">Sub-100ms</div>
+                    <div class="exec-label">Pinecone Semantic Vector Search</div>
+                    <div class="exec-sub">Meaning-based context retrieval across chats, knowledge bases &amp; contracts</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="exec-num gold">Zero .env</div>
+                    <div class="exec-label">Strict .ranbval Security Standard</div>
+                    <div class="exec-sub">.env strictly forbidden · .ranbval schema validation · Leaked secret prevention</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="exec-num cyan">Dual Docker</div>
+                    <div class="exec-label">Independent Multi-Stage Repos</div>
+                    <div class="exec-sub">ranbval-frontend (Vite + Nginx) &amp; ranbval-backend (FastAPI + asyncpg)</div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-            <main class="case-content">
+    <!-- ANIMATED DEDICATED PROBLEM VS SOLUTION SECTION (SUPER EASY FOR NON-TECHNICAL READERS) -->
+    <section class="section-separator" id="problem-solution">
+        <div class="wrapper">
+            <div class="split-header-row" style="text-align:center;">
+                <div class="eyebrow-badge"><i class="fas fa-scale-balanced"></i> Clear Non-Technical Breakdown</div>
+                <h2 class="split-h2">Why Ranbval Conversations Was Built</h2>
+                <p class="split-sub" style="margin:0 auto;">
+                    A simple, crystal-clear comparison of the daily nightmare of scattered client communications versus the effortless clarity of the Single Context Layer.
+                </p>
+            </div>
 
-                <!-- 1. Overview -->
-                <section class="section-block" id="overview">
-                    <span class="section-tag">Section 01 / Platform Overview</span>
-                    <h2 class="section-heading">
-                        <i class="fas fa-brain"></i>
-                        The Strategic Purpose of Ranbval Conversations
-                    </h2>
-                    
-                    <p class="paragraph">
-                        <strong>Ranbval Conversations</strong> is a centralized client communication and context platform where businesses, agencies, and high-velocity engineers manage all client chats, internal notes, project files, milestones, and structured knowledge bases in a single unified system.
-                    </p>
+            <div class="interactive-comparison-wrapper">
+                <!-- Interactive Filter Controls -->
+                <div class="comparison-controls">
+                    <button class="compare-toggle-btn active" id="btnCompareBoth" onclick="filterComparison('both')">
+                        <i class="fas fa-arrow-right-arrow-left"></i> Side-by-Side View
+                    </button>
+                    <button class="compare-toggle-btn" id="btnCompareProblem" onclick="filterComparison('problem')">
+                        <i class="fas fa-triangle-exclamation"></i> The Old Nightmare (Before)
+                    </button>
+                    <button class="compare-toggle-btn" id="btnCompareSolution" onclick="filterComparison('solution')">
+                        <i class="fas fa-circle-check"></i> The Ranbval Solution (After)
+                    </button>
+                </div>
 
-                    <div class="callout-box">
-                        <div class="callout-title">
-                            <i class="fas fa-quote-left"></i>
-                            The Foundational Design Goal
-                        </div>
-                        <div class="callout-body">
-                            <em>“Every client’s complete historical and psychological context must be instantly available — regardless of the original communication channel or the elapsed time.”</em>
-                        </div>
-                    </div>
-
-                    <p class="paragraph">
-                        Instead of treating client messages as ephemeral chat bubbles that vanish after a project closes, Ranbval Conversations transforms client communication into a searchable, semantic intelligence repository that powers ongoing collaboration and automated decision-making.
-                    </p>
-                </section>
-
-                <!-- 2. Problem Statement -->
-                <section class="section-block" id="problem">
-                    <span class="section-tag">Section 02 / The Industry Pain Point</span>
-                    <h2 class="section-heading">
-                        <i class="fas fa-triangle-exclamation"></i>
-                        The Multi-Platform Communication Crisis
-                    </h2>
-                    
-                    <p class="paragraph">
-                        Modern business communication is fundamentally fractured across disconnected external silos:
-                    </p>
-
-                    <div class="feature-two-col">
-                        <div class="feature-box">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge"><i class="fas fa-link-slash"></i></div>
-                                <h4 class="feature-title">Fragmented Channels</h4>
-                            </div>
-                            <p class="feature-desc">
-                                Initial contact happens on LinkedIn; contracts are discussed on Upwork; quick updates shift to WhatsApp; technical specifications arrive via Email; and files get sent on Facebook Messenger.
+                <!-- Animated Comparison Rows -->
+                <div class="comparison-cards-grid" id="compareGrid">
+                    <!-- Row 1: Scattered Messages -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label before"><i class="fas fa-circle-xmark"></i> BEFORE (SCATTERED CHAOS)</div>
+                            <h3 class="side-title">Lost Messages Across 6 Different Apps</h3>
+                            <p class="side-desc">
+                                A client talks on WhatsApp today, emails an invoice tomorrow, and sends contract changes on Upwork or LinkedIn. Important promises get buried, files are lost in phone galleries, and teams forget what was agreed upon.
                             </p>
                         </div>
-
-                        <div class="feature-box">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge"><i class="fas fa-box-archive"></i></div>
-                                <h4 class="feature-title">Context Loss &amp; Team Amnesia</h4>
-                            </div>
-                            <p class="feature-desc">
-                                Chat histories are lost during phone resets or staff turnover. Crucial client preferences, brand color restrictions, and verbal scope changes get buried in chaotic scroll histories.
-                            </p>
-                        </div>
-
-                        <div class="feature-box">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge"><i class="fas fa-folder-open"></i></div>
-                                <h4 class="feature-title">Scattered Files &amp; Notes</h4>
-                            </div>
-                            <p class="feature-desc">
-                                Proposals reside in local downloads folders, meeting notes stay trapped in Apple Notes, and deliverables are lost in Google Drive, making auditability nearly impossible.
-                            </p>
-                        </div>
-
-                        <div class="feature-box">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge"><i class="fas fa-users-slash"></i></div>
-                                <h4 class="feature-title">Slowed Team Coordination</h4>
-                            </div>
-                            <p class="feature-desc">
-                                When a project manager steps in for a colleague, they must ask <em>"What did the client say yesterday?"</em> because there is no single shared intelligence log.
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label after"><i class="fas fa-circle-check"></i> AFTER (SINGLE CONTEXT LAYER)</div>
+                            <h3 class="side-title">One Universal Dossier Per Client</h3>
+                            <p class="side-desc">
+                                Every message from LinkedIn, Upwork, WhatsApp, and Email streams into that client's personal card. You open Usman Malik's profile, and you see his complete history, contracts, and tasks in one single glance.
                             </p>
                         </div>
                     </div>
-                </section>
 
-                <!-- 3. The Solution -->
-                <section class="section-block" id="solution">
-                    <span class="section-tag">Section 03 / Architectural Solution</span>
-                    <h2 class="section-heading">
-                        <i class="fas fa-bullseye"></i>
-                        The Solution: A Single Context Layer per Client
-                    </h2>
-
-                    <p class="paragraph">
-                        Ranbval Conversations solves multi-channel fragmentation by establishing a permanent <strong>Single Context Layer</strong> for every client. Regardless of whether a message arrives via WhatsApp, an Upwork contract, or an email thread, it is ingested into the client's unified dossier.
-                    </p>
-
-                    <div class="pillars-grid">
-                        <div class="pillar-card">
-                            <div class="pillar-icon"><i class="fas fa-layer-group"></i></div>
-                            <h3 class="pillar-title">Unified Ingestion</h3>
-                            <p class="pillar-text">
-                                Channel-agnostic message normalization ensures messages, voicenotes, and attachments are indexed into one chronological timeline.
+                    <!-- Row 2: Search Frustration -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label before"><i class="fas fa-circle-xmark"></i> BEFORE (KEYWORD BLINDNESS)</div>
+                            <h3 class="side-title">Hours Spent Hunting For That One File</h3>
+                            <p class="side-desc">
+                                You remember a client asked for &ldquo;mTLS encryption with a 0k budget&rdquo;, but you cannot remember if it was on Upwork, Fiverr, or Email. Searching exact words fails because they phrased it slightly differently.
                             </p>
                         </div>
-
-                        <div class="pillar-card">
-                            <div class="pillar-icon"><i class="fas fa-database"></i></div>
-                            <h3 class="pillar-title">Structured Memory</h3>
-                            <p class="pillar-text">
-                                Client briefs, contracts, invoices, and brand preferences are codified into structured relational schemas and semantic embeddings.
-                            </p>
-                        </div>
-
-                        <div class="pillar-card">
-                            <div class="pillar-icon"><i class="fas fa-magnifying-glass"></i></div>
-                            <h3 class="pillar-title">Instant Retrieval</h3>
-                            <p class="pillar-text">
-                                Search across 5 years of client interactions in milliseconds using hybrid keyword and vector semantic lookup.
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label after"><i class="fas fa-circle-check"></i> AFTER (PINECONE SEMANTIC AI SEARCH)</div>
+                            <h3 class="side-title">Search By Meaning in Under 100 Milliseconds</h3>
+                            <p class="side-desc">
+                                You simply type in natural English: <em>&ldquo;Which client wanted mTLS and has a budget over 0k?&rdquo;</em> Pinecone understands the meaning and instantly brings up the exact message from 4 months ago!
                             </p>
                         </div>
                     </div>
-                </section>
 
-                <!-- 4. Structural Hierarchy -->
-                <section class="section-block" id="hierarchy">
-                    <span class="section-tag">Section 04 / Data Architecture</span>
-                    <h2 class="section-heading">
-                        <i class="fas fa-sitemap"></i>
-                        Structural Data Hierarchy
-                    </h2>
-
-                    <p class="paragraph">
-                        The entire system model is organized in an intuitive 5-tier entity hierarchy:
-                    </p>
-
-                    <div class="tree-box">
-<span class="tree-dir">User Account</span>
-└── <span class="tree-dir">Projects (Platform-based: LinkedIn, Upwork, Fiverr, WhatsApp, Direct)</span>
-     └── <span class="tree-dir">Clients</span>
-          ├── <span class="tree-file">Chats</span>            <span class="tree-note"># Chronological message history with pinned high-priority directives</span>
-          ├── <span class="tree-file">Notes</span>            <span class="tree-note"># Private internal observations with team-only visibility</span>
-          ├── <span class="tree-file">Knowledge Base</span>   <span class="tree-note"># Structured brand guidelines, market requirements, tech stacks</span>
-          ├── <span class="tree-file">Files</span>            <span class="tree-note"># Proposals, contracts, SOW documents, design assets, invoices</span>
-          └── <span class="tree-file">Tasks</span>            <span class="tree-note"># Milestone assignments, deliverables, and Kanban tracking</span>
-                    </div>
-                </section>
-
-                <!-- 5. Tech Stack -->
-                <section class="section-block" id="tech-stack">
-                    <span class="section-tag">Section 05 / Technology Specifications</span>
-                    <h2 class="section-heading">
-                        <i class="fas fa-cubes"></i>
-                        Production Technology Stack
-                    </h2>
-
-                    <div class="table-responsive">
-                        <table class="comp-table">
-                            <thead>
-                                <tr>
-                                    <th>Subsystem Layer</th>
-                                    <th>Technology Selection</th>
-                                    <th>Engineering Rationale &amp; Responsibility</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td style="font-weight:700; color:#fff;">Frontend Interface</td>
-                                    <td><strong>React JS (Vite) + TailwindCSS</strong></td>
-                                    <td>Lightning-fast client rendering, sub-second HMR development, clean component modularity, and optimized responsive layouts.</td>
-                                </tr>
-                                <tr>
-                                    <td style="font-weight:700; color:#fff;">Backend API &amp; ASGI</td>
-                                    <td><strong>Python FastAPI (Async/Await)</strong></td>
-                                    <td>High-concurrency async I/O, Pydantic type safety, automatic OpenAPI schemas, and seamless integration with AI vector pipelines.</td>
-                                </tr>
-                                <tr>
-                                    <td style="font-weight:700; color:#fff;">Relational Storage</td>
-                                    <td><strong>Supabase (PostgreSQL)</strong></td>
-                                    <td>ACID-compliant storage for users, projects, client entities, chat history, notes, tasks, permissions, and audit logs.</td>
-                                </tr>
-                                <tr>
-                                    <td style="font-weight:700; color:#fff;">Vector Database</td>
-                                    <td><strong>Pinecone Cloud</strong></td>
-                                    <td>High-dimensional dense vector embeddings enabling sub-100ms semantic search, meaning-based queries, and AI context extraction.</td>
-                                </tr>
-                                <tr>
-                                    <td style="font-weight:700; color:#fff;">Authentication</td>
-                                    <td><strong>Stateless JWT Engine</strong></td>
-                                    <td>Cryptographically signed access tokens with RBAC claims (Admin, Manager, Agent, Viewer) and distributed session verification.</td>
-                                </tr>
-                                <tr>
-                                    <td style="font-weight:700; color:#fff;">DevOps &amp; Containerization</td>
-                                    <td><strong>Docker + Nginx</strong></td>
-                                    <td>Isolated multi-stage container builds ensuring exact development-to-production parity with zero environment drift.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <!-- 6. Repositories & Docker Architecture -->
-                <section class="section-block" id="repos-docker">
-                    <span class="section-tag">Section 06 / Repository Architecture</span>
-                    <h2 class="section-heading">
-                        <i class="fas fa-folder-tree"></i>
-                        Repository Decoupling &amp; Multi-Stage Docker Architecture
-                    </h2>
-
-                    <p class="paragraph">
-                        To maintain strict architectural separation of concerns, the platform is partitioned into two independent repositories:
-                    </p>
-
-                    <div class="feature-two-col">
-                        <div class="feature-box">
-                            <h4 style="color: var(--accent); font-family: var(--font-h); font-size: 1.15rem; margin-bottom: 0.75rem;">
-                                1. Frontend Repository: <code>ranbval-frontend/</code>
-                            </h4>
-                            <div class="tree-box" style="margin: 0; padding: 1rem; font-size: 0.8rem;">
-ranbval-frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   ├── services/
-│   └── store/
-├── Dockerfile           <span class="tree-note"># Multi-stage Node build -> Nginx static serving</span>
-├── package.json
-├── .ranbval             <span class="tree-note"># Local runtime configuration (git-ignored)</span>
-├── .ranbval.example     <span class="tree-note"># Committed template</span>
-└── README.md
-                            </div>
-                        </div>
-
-                        <div class="feature-box">
-                            <h4 style="color: var(--accent); font-family: var(--font-h); font-size: 1.15rem; margin-bottom: 0.75rem;">
-                                2. Backend Repository: <code>ranbval-backend/</code>
-                            </h4>
-                            <div class="tree-box" style="margin: 0; padding: 1rem; font-size: 0.8rem;">
-ranbval-backend/
-├── app/
-│   ├── api/             <span class="tree-note"># REST & WebSocket route handlers</span>
-│   ├── core/            <span class="tree-note"># Auth, security & .ranbval config</span>
-│   ├── models/          <span class="tree-note"># Supabase ORM & relational models</span>
-│   ├── services/        <span class="tree-note"># Pinecone search & AI summaries</span>
-│   ├── db/              <span class="tree-note"># Connection pooling</span>
-│   ├── schemas/         <span class="tree-note"># Pydantic request/response models</span>
-│   └── main.py
-├── tests/
-├── Dockerfile           <span class="tree-note"># Slim Python 3.12 image + Uvicorn</span>
-├── requirements.txt
-├── .ranbval
-├── .ranbval.example
-└── README.md
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 7. The Strict .ranbval Standard -->
-                <section class="section-block" id="ranbval-config">
-                    <span class="section-tag">Section 07 / Configuration Governance</span>
-                    <h2 class="section-heading">
-                        <i class="fas fa-shield-halved"></i>
-                        The Strict .ranbval Configuration Standard (Zero .env Policy)
-                    </h2>
-
-                    <p class="paragraph">
-                        Traditional <code>.env</code> files are a primary source of catastrophic security leaks and cross-environment deployment confusion. In the Ranbval engineering organization, legacy <code>.env</code> files are strictly prohibited.
-                    </p>
-
-                    <div class="callout-box" style="border-left-color: #ef4444; background: rgba(239, 68, 68, 0.05);">
-                        <div class="callout-title" style="color: #ef4444;">
-                            <i class="fas fa-ban"></i>
-                            Strict Architectural Invariant
-                        </div>
-                        <div class="callout-body">
-                            <strong>Standard .env files are strictly FORBIDDEN in the Ranbval codebase.</strong>
-                            <br><br>
-                            All secrets, database endpoints, and API credentials must be stored exclusively inside <code>.ranbval</code> files. Pre-commit hooks automatically block and reject any commit containing a <code>.env</code> file.
-                        </div>
-                    </div>
-
-                    <div class="code-box">
-                        <div class="code-header">
-                            <div class="code-title">
-                                <span class="dot red"></span>
-                                <span class="dot yellow"></span>
-                                <span class="dot green"></span>
-                                <span>.ranbval.example — Committed Configuration Template</span>
-                            </div>
-                            <button class="btn-copy" onclick="navigator.clipboard.writeText(this.closest('.code-box').querySelector('code').innerText); this.innerText='Copied!'; setTimeout(()=>this.innerText='Copy', 2000);">Copy</button>
-                        </div>
-                        <pre><code><span class="c-cmt"># Ranbval Standard Configuration Protocol</span>
-<span class="c-cmt"># Rename to '.ranbval' for local isolated execution. NEVER commit '.ranbval'.</span>
-
-<span class="c-cmt"># Database & Persistence</span>
-DATABASE_URL=<span class="c-str">postgresql://postgres:[PASSWORD]@db.supabase.co:5432/postgres</span>
-SUPABASE_URL=<span class="c-str">https://[PROJECT-REF].supabase.co</span>
-SUPABASE_KEY=<span class="c-str">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...</span>
-
-<span class="c-cmt"># Semantic Vector Memory</span>
-PINECONE_API_KEY=<span class="c-str">pcsk_[KEY]</span>
-PINECONE_ENVIRONMENT=<span class="c-str">us-east-1</span>
-PINECONE_INDEX_NAME=<span class="c-str">ranbval-client-embeddings</span>
-
-<span class="c-cmt"># Security & JWT Authentication</span>
-JWT_SECRET=<span class="c-str">[64-CHARACTER-CRYPTOGRAPHIC-SECRET]</span>
-JWT_ALGORITHM=<span class="c-str">HS256</span>
-ACCESS_TOKEN_EXPIRE_MINUTES=<span class="c-num">1440</span>
-</code></pre>
-                    </div>
-                </section>
-
-                <!-- 8. Dual Database Data Flow -->
-                <section class="section-block" id="dual-data">
-                    <span class="section-tag">Section 08 / Persistence Pipeline</span>
-                    <h2 class="section-heading">
-                        <i class="fas fa-arrows-split-up-and-left"></i>
-                        Data Flow: Supabase (Structured) + Pinecone (Semantic)
-                    </h2>
-
-                    <p class="paragraph">
-                        Ranbval Conversations decouples structured transactional operations from high-dimensional vector intelligence:
-                    </p>
-
-                    <div class="feature-two-col">
-                        <div class="feature-box">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge" style="color: #3ecf8e; border-color: rgba(62, 207, 142, 0.4); background: rgba(62, 207, 142, 0.1);">
-                                    <i class="fas fa-database"></i>
-                                </div>
-                                <h4 class="feature-title">Supabase (PostgreSQL) Responsibilities</h4>
-                            </div>
-                            <ul class="pillar-bullets">
-                                <li><i class="fas fa-check"></i> <span>User profiles, authentication credentials, and JWT sessions.</span></li>
-                                <li><i class="fas fa-check"></i> <span>Projects, client identities, and contact channel metadata.</span></li>
-                                <li><i class="fas fa-check"></i> <span>Chronological chat messages, timestamps, and delivery flags.</span></li>
-                                <li><i class="fas fa-check"></i> <span>Private notes, tasks, files metadata, and audit logs.</span></li>
-                            </ul>
-                        </div>
-
-                        <div class="feature-box">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge" style="color: var(--accent-cyan); border-color: rgba(78, 205, 196, 0.4); background: rgba(78, 205, 196, 0.1);">
-                                    <i class="fas fa-vector-square"></i>
-                                </div>
-                                <h4 class="feature-title">Pinecone (Vector Database) Responsibilities</h4>
-                            </div>
-                            <ul class="pillar-bullets">
-                                <li><i class="fas fa-check"></i> <span>Dense vector embeddings of every message and voice transcript.</span></li>
-                                <li><i class="fas fa-check"></i> <span>Knowledge base document embeddings and semantic chunks.</span></li>
-                                <li><i class="fas fa-check"></i> <span>Sub-100ms approximate nearest neighbor (ANN) similarity search.</span></li>
-                                <li><i class="fas fa-check"></i> <span>Contextual retrieval pipelines feeding generative AI summaries.</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 9. 8 Core System Modules -->
-                <section class="section-block" id="system-modules">
-                    <span class="section-tag">Section 09 / Subsystem Breakdown</span>
-                    <h2 class="section-heading">
-                        <i class="fas fa-boxes-stacked"></i>
-                        The 8 Core System Modules
-                    </h2>
-
-                    <div class="feature-two-col">
-                        <div class="feature-box">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge"><i class="fas fa-diagram-project"></i></div>
-                                <h4 class="feature-title">1. Projects Engine</h4>
-                            </div>
-                            <p class="feature-desc">Platform-based grouping categorizing clients by acquisition channel (LinkedIn, Facebook, Upwork, Fiverr, Direct Referrals).</p>
-                        </div>
-
-                        <div class="feature-box">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge"><i class="fas fa-user-tie"></i></div>
-                                <h4 class="feature-title">2. Client Dossiers</h4>
-                            </div>
-                            <p class="feature-desc">Comprehensive client profiles with custom tags (e.g. "Enterprise", "VIP", "Slow Payer"), status pipelines, and source metrics.</p>
-                        </div>
-
-                        <div class="feature-box">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge"><i class="fas fa-comments"></i></div>
-                                <h4 class="feature-title">3. Omnichannel Chats</h4>
-                            </div>
-                            <p class="feature-desc">Persistent message streams with instant full-text search, thread branching, and ability to pin critical directives.</p>
-                        </div>
-
-                        <div class="feature-box">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge"><i class="fas fa-note-sticky"></i></div>
-                                <h4 class="feature-title">4. Private Team Notes</h4>
-                            </div>
-                            <p class="feature-desc">Internal observations, rate negotiations, and strategic notes strictly hidden from clients and visible only to team roles.</p>
-                        </div>
-
-                        <div class="feature-box">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge"><i class="fas fa-book-bookmark"></i></div>
-                                <h4 class="feature-title">5. Knowledge Base</h4>
-                            </div>
-                            <p class="feature-desc">Structured client memory repository: brand guidelines, target audience demographics, market preferences, and required service specs.</p>
-                        </div>
-
-                        <div class="feature-box">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge"><i class="fas fa-file-shield"></i></div>
-                                <h4 class="feature-title">6. File Vault</h4>
-                            </div>
-                            <p class="feature-desc">Centralized repository for executed contracts, proposals, invoices, and design deliverables linked directly to client context.</p>
-                        </div>
-
-                        <div class="feature-box">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge"><i class="fas fa-list-check"></i></div>
-                                <h4 class="feature-title">7. Task &amp; Milestone Engine</h4>
-                            </div>
-                            <p class="feature-desc">Client-specific Kanban board tracking deliverable statuses, deadlines, team assignments, and milestone completion percentages.</p>
-                        </div>
-
-                        <div class="feature-box">
-                            <div class="feature-header">
-                                <div class="feature-icon-badge"><i class="fas fa-timeline"></i></div>
-                                <h4 class="feature-title">8. Audit Timeline</h4>
-                            </div>
-                            <p class="feature-desc">Comprehensive chronological audit trail documenting every milestone reached, proposal accepted, and team update made.</p>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 10. Search Engine -->
-                <section class="section-block" id="search-engine">
-                    <span class="section-tag">Section 10 / Hybrid Search Engine</span>
-                    <h2 class="section-heading">
-                        <i class="fas fa-magnifying-glass-arrow-right"></i>
-                        Dual-Mode Search: Global Keyword + Pinecone Semantic
-                    </h2>
-
-                    <p class="paragraph">
-                        Traditional search fails when users do not remember the exact word spoken. Ranbval Conversations combines two complementary search engines:
-                    </p>
-
-                    <div class="pillars-grid">
-                        <div class="pillar-card">
-                            <div class="pillar-icon"><i class="fas fa-keyboard"></i></div>
-                            <h3 class="pillar-title">1. Global Keyword Search</h3>
-                            <p class="pillar-text">
-                                Full-text Postgres indexed lookup that scans client names, message bodies, note texts, and file titles in sub-10ms latency.
+                    <!-- Row 3: Security & Leaked Keys -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label before"><i class="fas fa-circle-xmark"></i> BEFORE (.ENV VULNERABILITIES)</div>
+                            <h3 class="side-title">Accidental Leaks &amp; Configuration Hell</h3>
+                            <p class="side-desc">
+                                Developers use sloppy <code>.env</code> files that accidentally get committed to GitHub, leaking database passwords and private API keys to internet hackers.
                             </p>
                         </div>
-
-                        <div class="pillar-card">
-                            <div class="pillar-icon"><i class="fas fa-brain"></i></div>
-                            <h3 class="pillar-title">2. Pinecone Semantic Search</h3>
-                            <p class="pillar-text">
-                                Meaning-based vector resolution. Searching <em>"budget constraints"</em> instantly matches discussions where the client said <em>"we cannot spend more than $2k"</em> without keyword overlap.
-                            </p>
-                        </div>
-
-                        <div class="pillar-card">
-                            <div class="pillar-icon"><i class="fas fa-wand-magic-sparkles"></i></div>
-                            <h3 class="pillar-title">3. AI-Assisted Retrieval</h3>
-                            <p class="pillar-text">
-                                High-relevance context snippets are dynamically assembled and injected into LLM prompts for smart reply suggestions and automated briefings.
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label after"><i class="fas fa-circle-check"></i> AFTER (STRICT .RANBVAL STANDARD)</div>
+                            <h3 class="side-title">Zero .env Tolerance &amp; Schema Guards</h3>
+                            <p class="side-desc">
+                                The system outright blocks and crashes if any <code>.env</code> file is detected. All configs must strictly use <code>.ranbval</code> validated against <code>.ranbval.example</code> schemas, guaranteeing zero leaked secrets.
                             </p>
                         </div>
                     </div>
-                </section>
 
-                <!-- 11. AI Layer -->
-                <section class="section-block" id="ai-layer">
-                    <span class="section-tag">Section 11 / Intelligence Subsystem</span>
-                    <h2 class="section-heading">
-                        <i class="fas fa-robot"></i>
-                        Autonomous AI Intelligence &amp; Client Assistant
-                    </h2>
+                    <!-- Row 4: Team Handover -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label before"><i class="fas fa-circle-xmark"></i> BEFORE (TEAM COORDINATION LAG)</div>
+                            <h3 class="side-title">Client Gets Asked The Same Question Twice</h3>
+                            <p class="side-desc">
+                                When a team member takes leave, the substitute has zero idea what the client prefers. They ask the client for their logo again, annoying the client and looking unprofessional.
+                            </p>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label after"><i class="fas fa-circle-check"></i> AFTER (INTERNAL NOTES &amp; KNOWLEDGE BASE)</div>
+                            <h3 class="side-title">Permanent Shared Team Brain</h3>
+                            <p class="side-desc">
+                                Private internal notes (invisible to clients) store everything: brand colors, CEO preferences, and milestone deliverables. Any agent can step in and serve the client like a 5-year veteran.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                    <p class="paragraph">
-                        With all client context centralized, the platform activates intelligent automated capabilities:
+    <!-- Deep-Dive Feature 1: Single Context Layer Architecture -->
+    <section class="section-separator" id="single-context-layer">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-layer-group"></i> ARCHITECTURAL CORE</div>
+                    <h2 class="showcase-h2">Hierarchy: User &rarr; Projects &rarr; Clients &rarr; Context Modules</h2>
+                    <p class="showcase-desc">
+                        To prevent data fragmentation, Ranbval Conversations structures client relationships into a strict 5-tier object model. Every interaction is tied to a specific client dossier with zero orphaned records.
                     </p>
-                    <ul class="pillar-bullets" style="margin-bottom: 2rem; gap: 0.85rem;">
-                        <li><i class="fas fa-check"></i> <span><strong>Instant Thread Summarization:</strong> Summarizes a 200-message chat history into 3 bullet points before jumping on a client Zoom call.</span></li>
-                        <li><i class="fas fa-check"></i> <span><strong>Smart Context-Aware Replies:</strong> Drafts proposed responses calibrated to the client's past tone and previous contractual agreements.</span></li>
-                        <li><i class="fas fa-check"></i> <span><strong>Knowledge Base Q&amp;A:</strong> Query client memory in natural language: <em>"What were this client's preferred primary brand colors and font sizes?"</em> and receive immediate answers.</span></li>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <strong>Projects:</strong> Platform-based grouping categorized by source channels (LinkedIn InMail, Upwork Escrow, Fiverr Orders, WhatsApp, Direct Email).</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Clients:</strong> Dedicated profiles enriched with business tags, lifetime value, relationship status, and primary communication channel.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>5 Core Sub-Modules:</strong> Every client houses their own dedicated <strong>Chats</strong> (omnichannel sync), <strong>Notes</strong> (team-only private memory), <strong>Knowledge Base</strong> (brand rules &amp; preferences), <strong>Files</strong> (KMS encrypted contracts), and <strong>Tasks</strong> (milestones).</li>
                     </ul>
-                </section>
-
-                <!-- 12. Execution Plan & Pre-Commit -->
-                <section class="section-block" id="execution-plan">
-                    <span class="section-tag">Section 12 / Engineering Execution Plan</span>
-                    <h2 class="section-heading">
-                        <i class="fas fa-list-check"></i>
-                        Execution Plan &amp; Code Hygiene Enforcement
-                    </h2>
-
-                    <p class="paragraph">
-                        The repository rollout enforces strict automated code quality and security barriers across both repositories:
-                    </p>
-
-                    <div class="feature-two-col">
-                        <div class="feature-box">
-                            <h4 style="color: var(--accent); font-family: var(--font-h); font-size: 1.15rem; margin-bottom: 0.75rem;">
-                                Backend Pre-Commit Hooks (<code>ranbval-backend</code>)
-                            </h4>
-                            <ul class="pillar-bullets">
-                                <li><i class="fas fa-check"></i> <span><strong>black</strong>: Deterministic 79-character formatting.</span></li>
-                                <li><i class="fas fa-check"></i> <span><strong>isort</strong>: Alphabetical and categorical import ordering.</span></li>
-                                <li><i class="fas fa-check"></i> <span><strong>flake8</strong>: PEP8 style and syntax compliance.</span></li>
-                                <li><i class="fas fa-check"></i> <span><strong>strict .ranbval validation</strong>: Blocks any <code>.env</code> file committed to git.</span></li>
-                            </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">5-Tier Hierarchy</span>
+                        <span class="showcase-tag">Single Context Layer</span>
+                        <span class="showcase-tag">Zero Orphaned Data</span>
+                        <span class="showcase-tag">Audit Timeline</span>
+                    </div>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-folder-tree"></i>
+                                <span>https://conversations.ranbval.com/clients/usman-malik/single-context-layer</span>
+                            </div>
+                            <div class="browser-badge pulse">● 4 CONTEXT MODULES ACTIVE</div>
                         </div>
-
-                        <div class="feature-box">
-                            <h4 style="color: var(--accent); font-family: var(--font-h); font-size: 1.15rem; margin-bottom: 0.75rem;">
-                                Frontend Pre-Commit Hooks (<code>ranbval-frontend</code>)
-                            </h4>
-                            <ul class="pillar-bullets">
-                                <li><i class="fas fa-check"></i> <span><strong>eslint</strong>: React hooks validation and dead code elimination.</span></li>
-                                <li><i class="fas fa-check"></i> <span><strong>prettier</strong>: Consistent component formatting and styling rules.</span></li>
-                                <li><i class="fas fa-check"></i> <span><strong>Docker parity</strong>: Automated multi-stage build test prior to merge.</span></li>
-                            </ul>
+                        <div class="browser-screen" onclick="openLightbox('images/02-conversations-single-context-client-dossier.jpg', 'Single Context Layer: 4 Core Modules (Chats, Private Notes, Knowledge Base, Files & Tasks) unified per client')">
+                            <img src="images/02-conversations-single-context-client-dossier.jpg" alt="Single Context Layer Dossier Interface" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect</div>
                         </div>
                     </div>
-                </section>
+                </div>
+            </div>
 
-            </main>
+            <!-- Hierarchy Code Box -->
+            <div class="hierarchy-box">
+                <span class="h-highlight">User</span> (Ahsan Tariq)<br/>
+                &nbsp;└── <span class="h-highlight">Projects</span> (Platform-Based Grouping: LinkedIn, Upwork, Fiverr, WhatsApp, Email)<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="h-highlight">Clients</span> (Usman Malik · Dubai FinTech Solutions)<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="h-green">Chats</span> (Full Omnichannel History Across 6 Apps)<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="h-green">Notes</span> (Internal Private Team Notes · Zero Client Visibility)<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="h-green">Knowledge Base</span> (Brand Guidelines, Tech Constraints, Payment History)<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="h-green">Files</span> (Contracts, Proposals, Designs, Invoices · KMS Encrypted)<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="h-green">Tasks</span> (Milestones, Assignment Support, Delivery Deadlines)
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Feature 2: Pinecone Semantic Search & Hybrid Storage -->
+    <section class="section-separator" id="pinecone-semantic-search">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-magnifying-glass-chart"></i> AI MEMORY RETRIEVAL</div>
+                    <h2 class="showcase-h2">Sub-100ms Pinecone Semantic Vector Embeddings &amp; Supabase Storage</h2>
+                    <p class="showcase-desc">
+                        Relational SQL queries excel at exact IDs and dates, but fail miserably at conversational search. Ranbval Conversations deploys a hybrid dual-engine: <strong>Supabase PostgreSQL</strong> for structured entities, and <strong>Pinecone</strong> for high-dimensional semantic vector embeddings.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <strong>Supabase (PostgreSQL):</strong> Manages users, projects, clients, encrypted notes, task pipelines, and permission boundaries with rock-solid ACID relational guarantees.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Pinecone Vector Database:</strong> Automatically embeds every inbound message, agreement clause, and knowledge base document into 1,536-dimensional dense vectors.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Semantic Meaning Retrieval:</strong> Search by intent, tone, or concepts — e.g. querying &ldquo;clients concerned about regulatory audits&rdquo; matches messages mentioning HIPAA, GDPR, or SOC2 without needing exact keyword matches.</li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">Supabase PostgreSQL</span>
+                        <span class="showcase-tag">Pinecone Vector DB</span>
+                        <span class="showcase-tag">1,536-Dim Embeddings</span>
+                        <span class="showcase-tag">Sub-100ms Query</span>
+                    </div>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-brain"></i>
+                                <span>https://conversations.ranbval.com/ai/semantic-search?engine=pinecone-vector</span>
+                            </div>
+                            <div class="browser-badge pulse">● PINECONE 12ms RETRIEVAL</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/03-conversations-pinecone-semantic-search.jpg', 'Pinecone Semantic Vector Search: Sub-100ms Context Retrieval across thousands of client messages')">
+                            <img src="images/03-conversations-pinecone-semantic-search.jpg" alt="Pinecone Semantic Search Interface" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Feature 3: Strict .ranbval Security Standard & Dual Docker Strategy -->
+    <section class="section-separator" id="ranbval-config-docker">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-shield-halved"></i> ENTERPRISE DEVOPS &amp; SECURITY</div>
+                    <h2 class="showcase-h2">Strict .ranbval Standard (Zero .env Tolerance) &amp; Dual Docker Repos</h2>
+                    <p class="showcase-desc">
+                        Standard enterprise software suffers from environment variable leakage, secret exposure in git, and messy mono-repos. Ranbval Conversations institutes strict cryptographic isolation and repository separation.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <strong>Strict .ranbval Standard:</strong> <code>.env</code> files are strictly forbidden. The system checks at boot and immediately throws fatal errors if any <code>.env</code> file is found. All configurations must reside in <code>.ranbval</code> validated against <code>.ranbval.example</code> schemas.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Two Independent Repositories:</strong>
+                            <br/>1️⃣ <code>ranbval-frontend</code>: React Vite, TailwindCSS, multi-stage Alpine Nginx Dockerfile, ESLint &amp; Prettier pre-commit hooks.
+                            <br/>2️⃣ <code>ranbval-backend</code>: Python 3.12 FastAPI, Uvicorn ASGI, asyncpg driver, Pinecone client, Black, isort &amp; Flake8 pre-commit hooks.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Execution Step 1 (Roadmap):</strong> Immediate pull and local run with zero secrets in git, fully isolated containers, and automated pre-commit linting.</li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">Strict .ranbval Standard</span>
+                        <span class="showcase-tag">Zero .env Allowed</span>
+                        <span class="showcase-tag">Dual Docker Containers</span>
+                        <span class="showcase-tag">Pre-Commit Git Hooks</span>
+                    </div>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-terminal"></i>
+                                <span>https://conversations.ranbval.com/devops/config-engine-and-docker</span>
+                            </div>
+                            <div class="browser-badge pulse">● STRICT .RANBVAL VERIFIED</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/04-conversations-ranbval-config-security.jpg', 'Strict .ranbval Config Standard & Dual Docker Strategy: Rejection of .env, Schema Verification & Multi-Stage Containers')">
+                            <img src="images/04-conversations-ranbval-config-security.jpg" alt="Strict .ranbval Standard & Dual Docker Console" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            </div>
+    </section>
+
+    <!-- Deep-Dive Feature 4: Client Knowledge Base & Tasks Pipeline -->
+    <section class="section-separator" id="client-kb-tasks">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-list-check"></i> CLIENT KNOWLEDGE BASE &amp; TASK PIPELINE</div>
+                    <h2 class="showcase-h2">Embedded Client Knowledge Base &amp; Milestone Task Pipeline</h2>
+                    <p class="showcase-desc">
+                        Client communication is ineffective when project guidelines and deliverables are disconnected from chat. Ranbval Conversations embeds an intelligent Knowledge Base and real-time Task Pipeline directly into every client&rsquo;s unified context dossier.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <strong>Client-Specific Knowledge Base:</strong> Brand guidelines, tone of voice, API specs, NDA terms, and past decisions indexed into vector memory for sub-100ms semantic lookup.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Real-Time Milestone Task Pipeline:</strong> In-flight deliverables, milestone escrows, task deadlines, and progress stages unified with direct deep-links into the relevant chat messages.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Multi-Channel Context Synchronization:</strong> Revisions requested via WhatsApp, new briefs sent over Upwork, or contract changes received by Email immediately synchronize into the client&rsquo;s knowledge dossier.</li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">Client Knowledge Base</span>
+                        <span class="showcase-tag">Milestone Task Pipeline</span>
+                        <span class="showcase-tag">SLA Tracking</span>
+                        <span class="showcase-tag">Single Context Dossier</span>
+                    </div>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-list-check"></i>
+                                <span>https://conversations.ranbval.com/clients/usman-malik/knowledge-and-tasks</span>
+                            </div>
+                            <div class="browser-badge pulse">● CLIENT KB &amp; TASK PIPELINE</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/05-conversations-client-knowledge-base-tasks.jpg', 'Client Knowledge Base & Task Pipeline: Brand Rules, Financial Terms, Milestone Escrow & Task Progress')">
+                            <img src="images/05-conversations-client-knowledge-base-tasks.jpg" alt="Client Knowledge Base & Tasks Pipeline Console" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Stack Grid (TheHexaTown Format) -->
+    <section class="section-separator" id="tech-stack">
+        <div class="wrapper">
+            <div class="split-header-row" style="text-align:center;">
+                <div class="eyebrow-badge"><i class="fas fa-microchip"></i> System Anatomy</div>
+                <h2 class="split-h2">End-to-End Technology Stack</h2>
+                <p class="split-sub" style="margin:0 auto;">Engineered for sub-100ms vector lookup, omnichannel reliability, and zero-vulnerability configuration security.</p>
+            </div>
+
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <i class="fab fa-react"></i>
+                        <h3>Frontend Architecture</h3>
+                    </div>
+                    <div class="tech-tags">
+                        <span class="tech-pill">React JS</span>
+                        <span class="tech-pill">Vite Bundler</span>
+                        <span class="tech-pill">TailwindCSS</span>
+                        <span class="tech-pill">Lucide Icons</span>
+                        <span class="tech-pill">Axios Interceptors</span>
+                        <span class="tech-pill">Context State API</span>
+                    </div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <i class="fab fa-python"></i>
+                        <h3>Backend Engine</h3>
+                    </div>
+                    <div class="tech-tags">
+                        <span class="tech-pill">Python 3.12</span>
+                        <span class="tech-pill">FastAPI</span>
+                        <span class="tech-pill">Uvicorn ASGI</span>
+                        <span class="tech-pill">Pydantic v2</span>
+                        <span class="tech-pill">JWT Authentication</span>
+                        <span class="tech-pill">asyncpg Driver</span>
+                    </div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <i class="fas fa-database"></i>
+                        <h3>Structured Database</h3>
+                    </div>
+                    <div class="tech-tags">
+                        <span class="tech-pill">Supabase</span>
+                        <span class="tech-pill">PostgreSQL 15</span>
+                        <span class="tech-pill">Row Level Security</span>
+                        <span class="tech-pill">ACID Transactions</span>
+                        <span class="tech-pill">Realtime Replication</span>
+                    </div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <i class="fas fa-brain"></i>
+                        <h3>Vector AI Database</h3>
+                    </div>
+                    <div class="tech-tags">
+                        <span class="tech-pill">Pinecone Vector DB</span>
+                        <span class="tech-pill">1,536-Dim Vectors</span>
+                        <span class="tech-pill">Cosine Similarity</span>
+                        <span class="tech-pill">Sub-100ms Semantic Search</span>
+                        <span class="tech-pill">Context Retrieval</span>
+                    </div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <i class="fas fa-shield-halved"></i>
+                        <h3>Config &amp; Security</h3>
+                    </div>
+                    <div class="tech-tags">
+                        <span class="tech-pill">Strict .ranbval</span>
+                        <span class="tech-pill">.ranbval.example</span>
+                        <span class="tech-pill">Zero .env Tolerance</span>
+                        <span class="tech-pill">KMS Secret Rotation</span>
+                        <span class="tech-pill">Pre-Commit Hooks</span>
+                    </div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <i class="fab fa-docker"></i>
+                        <h3>DevOps &amp; Containers</h3>
+                    </div>
+                    <div class="tech-tags">
+                        <span class="tech-pill">Dual Dockerfiles</span>
+                        <span class="tech-pill">ranbval-frontend Repo</span>
+                        <span class="tech-pill">ranbval-backend Repo</span>
+                        <span class="tech-pill">Alpine Nginx</span>
+                        <span class="tech-pill">Docker Compose</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Project Ownership -->
+    <section class="section-separator" id="ownership-impact">
+        <div class="wrapper">
+            <div class="ownership-box">
+                <div class="ownership-text-col">
+                    <div class="eyebrow-badge"><i class="fas fa-crown"></i> Project Leadership</div>
+                    <h2 class="ownership-title">01 Lead Systems Architect (Solo Build)</h2>
+                    <p class="ownership-desc">
+                        Conceived, designed, and specified by <strong>Ahsan Tariq</strong> as the principal systems architect. From inventing the strict <span style="font-family:var(--font-mono); color:var(--cyan);">.ranbval</span> zero-leak configuration standard to architecting the hybrid Supabase + Pinecone vector retrieval engine and isolated dual Docker repos.
+                    </p>
+                </div>
+                <div class="ownership-stats">
+                    <div class="o-stat">
+                        <div class="o-stat-num">6 Streams</div>
+                        <div class="o-stat-label">Omnichannel Chat Unification in One Inbox</div>
+                    </div>
+                    <div class="o-stat">
+                        <div class="o-stat-num">Sub-100ms</div>
+                        <div class="o-stat-label">Pinecone Semantic Memory Retrieval</div>
+                    </div>
+                    <div class="o-stat">
+                        <div class="o-stat-num">Zero .env</div>
+                        <div class="o-stat-label">Strict .ranbval Secure Configuration Standard</div>
+                    </div>
+                    <div class="o-stat">
+                        <div class="o-stat-num">Dual Repo</div>
+                        <div class="o-stat-label">Fully Isolated Frontend &amp; Backend Docker</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section (TheHexaTown Format) -->
+    <section class="cta-section">
+        <div class="wrapper">
+            <h2 class="cta-h2">Let&#39;s build the future together!</h2>
+            <p class="cta-desc">
+                Need an omnichannel client intelligence platform, semantic vector search integration, or enterprise-grade configuration architecture? Let&#39;s talk.
+            </p>
+            <div class="cta-btn-row">
+                <a href="mailto:contact@tariqdreams.tech" class="btn-primary">
+                    <i class="fas fa-envelope"></i> Discuss Your Project
+                </a>
+                <a href="https://wa.me/923000000000" target="_blank" class="btn-secondary">
+                    <i class="fab fa-whatsapp"></i> WhatsApp Chat
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Full-Screen Lightbox Modal -->
+    <div class="lightbox-modal" id="lightboxModal" onclick="closeLightbox()">
+        <div class="lightbox-container" onclick="event.stopPropagation()">
+            <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+            <img id="lightboxImg" src="" alt="Enlarged screenshot" />
+            <div class="lightbox-caption" id="lightboxCaption"></div>
         </div>
     </div>
 
-    <footer class="case-footer">
-        <div class="container">
-            <div class="footer-cta-card">
-                <h3 class="footer-cta-title">Looking for High-Performance Client Intelligence Architecture?</h3>
-                <p class="footer-cta-desc">
-                    Ranbval Conversations unifies fractured client channels into an AI-ready single context layer.
-                </p>
-                <div class="footer-actions">
-                    <a href="../../index.html#contact" class="btn-portfolio" style="padding: 0.75rem 1.8rem; font-size: 0.95rem;">
-                        <i class="fas fa-envelope"></i> Discuss Architecture &amp; Collaboration
-                    </a>
-                    <a href="../ranbval-social/index.html" class="btn-back" style="padding: 0.75rem 1.8rem; font-size: 0.95rem;">
-                        <i class="fas fa-brain"></i> Explore Ranbval Social Super-App
-                    </a>
-                    <a href="../../index.html" class="btn-back" style="padding: 0.75rem 1.8rem; font-size: 0.95rem;">
-                        <i class="fas fa-house"></i> View Full Portfolio
-                    </a>
-                </div>
-            </div>
-
-            <div class="footer-credits">
-                <span>&copy; 2026 Ahsan Tariq. All Rights Reserved. Ranbval Conversations Platform Architecture.</span>
-                <span>Lead Systems Architect &amp; Software Engineer</span>
-            </div>
-        </div>
-    </footer>
-
+    <!-- Lightbox & Interactive Comparison JavaScript -->
     <script>
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.getElementById('read-progress').style.width = scrolled + '%';
+        function openLightbox(src, caption) {
+            const modal = document.getElementById('lightboxModal');
+            const img = document.getElementById('lightboxImg');
+            const cap = document.getElementById('lightboxCaption');
+            img.src = src;
+            cap.innerText = caption;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
 
-            const sections = document.querySelectorAll('.section-block');
-            const tocLinks = document.querySelectorAll('.toc-link');
-            
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop - 120;
-                if (winScroll >= sectionTop) {
-                    current = section.getAttribute('id');
-                }
-            });
+        function closeLightbox() {
+            const modal = document.getElementById('lightboxModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
 
-            tocLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + current) {
-                    link.classList.add('active');
-                }
-            });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
         });
+
+        // Interactive Problem vs Solution Filter
+        function filterComparison(mode) {
+            const btnBoth = document.getElementById('btnCompareBoth');
+            const btnProblem = document.getElementById('btnCompareProblem');
+            const btnSolution = document.getElementById('btnCompareSolution');
+            const rows = document.querySelectorAll('.compare-row');
+
+            btnBoth.className = 'compare-toggle-btn';
+            btnProblem.className = 'compare-toggle-btn';
+            btnSolution.className = 'compare-toggle-btn';
+
+            if (mode === 'both') {
+                btnBoth.classList.add('active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = '1fr 60px 1fr';
+                    r.querySelector('.side-problem').style.display = 'flex';
+                    r.querySelector('.compare-arrow-box').style.display = 'flex';
+                    r.querySelector('.side-solution').style.display = 'flex';
+                });
+            } else if (mode === 'problem') {
+                btnProblem.classList.add('problem-active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = '1fr';
+                    r.querySelector('.side-problem').style.display = 'flex';
+                    r.querySelector('.compare-arrow-box').style.display = 'none';
+                    r.querySelector('.side-solution').style.display = 'none';
+                });
+            } else if (mode === 'solution') {
+                btnSolution.classList.add('solution-active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = '1fr';
+                    r.querySelector('.side-problem').style.display = 'none';
+                    r.querySelector('.compare-arrow-box').style.display = 'none';
+                    r.querySelector('.side-solution').style.display = 'flex';
+                });
+            }
+        }
     </script>
 </body>
 </html>

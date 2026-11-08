@@ -20,6 +20,69 @@
 <div class="cursor-outline"></div>
 <!-- Nav Overlay (mobile) -->
 <div class="nav-overlay"></div>
+
+<!-- Welcome View Mode Selection Modal -->
+<div class="mode-modal-overlay" id="modeModalOverlay">
+  <div class="mode-modal-card">
+    <div class="mode-modal-badge">
+      <i class="fas fa-sparkles"></i> Customize Your Experience
+    </div>
+    <h2 class="mode-modal-title">Welcome to Ahsan Tariq's Portfolio</h2>
+    <p class="mode-modal-subtitle">
+      How would you like to explore this portfolio? Choose the version that best matches your background.
+    </p>
+
+    <div class="mode-modal-options">
+      <!-- Option 1: Technical Mode -->
+      <div class="mode-option-card" data-select-mode="tech">
+        <div class="mode-option-header">
+          <div class="mode-icon-circle tech-icon">
+            <i class="fas fa-code"></i>
+          </div>
+          <span class="mode-tag tech-tag">For Engineers &amp; CTOs</span>
+        </div>
+        <h3>Technical &amp; Architecture</h3>
+        <p class="mode-option-desc">
+          Full technical breakdowns, system architectures, Python/FastAPI/ROS2 codebases, database schemas, and AI benchmarks.
+        </p>
+        <ul class="mode-option-bullets">
+          <li><i class="fas fa-check"></i> Microservices &amp; Multi-Agent Workflows</li>
+          <li><i class="fas fa-check"></i> Code stacks, libraries &amp; APIs</li>
+          <li><i class="fas fa-check"></i> Research papers &amp; security proofs</li>
+        </ul>
+        <button class="mode-select-btn tech-btn" type="button">
+          Select Technical Mode <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+
+      <!-- Option 2: Plain English Mode -->
+      <div class="mode-option-card" data-select-mode="nt">
+        <div class="mode-option-header">
+          <div class="mode-icon-circle nt-icon">
+            <i class="fas fa-user-friends"></i>
+          </div>
+          <span class="mode-tag nt-tag">For Founders &amp; Non-Coders</span>
+        </div>
+        <h3>Plain English &amp; Business</h3>
+        <p class="mode-option-desc">
+          Simple human explanations of real-world problems solved, manual time eliminated, and automated business results.
+        </p>
+        <ul class="mode-option-bullets">
+          <li><i class="fas fa-check"></i> 100% simple words — no complicated coding terms</li>
+          <li><i class="fas fa-check"></i> Focus on problems solved &amp; time saved</li>
+          <li><i class="fas fa-check"></i> Easy to read for anyone without tech background</li>
+        </ul>
+        <button class="mode-select-btn nt-btn" type="button">
+          Select Plain English Mode <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="mode-modal-footer">
+      <i class="fas fa-info-circle"></i> You can change this anytime using the toggle button in the top navigation bar.
+    </div>
+  </div>
+</div>
 <header class="header">
 <nav class="navbar">
 <a class="logo" href="#">AT.</a>
@@ -37,13 +100,17 @@
 <li><a href="#publications">Publications</a></li>
 <li><a href="#contact">Contact</a></li>
 </ul>
+<div class="view-toggle-pill" id="viewToggle" title="Switch between Technical and Plain English view">
+<button class="vt-btn active" data-mode="tech" id="btnTech"><i class="fas fa-code"></i> Technical</button>
+<button class="vt-btn" data-mode="nt" id="btnNT"><i class="fas fa-user-friends"></i> Plain English</button>
+</div>
 <div aria-label="Toggle menu" class="menu-btn">
 <span></span><span></span><span></span>
 </div>
 </nav>
 </header>
 <!-- Mobile Nav Drawer -->
-<nav class="mobile-nav">
+<nav class="mobile-nav"><div class="mobile-toggle-wrapper" style="padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.08);"><div class="view-toggle-pill" id="viewToggleMobile" style="margin: 0; width: 100%; justify-content: center;"><button class="vt-btn active" data-mode="tech"><i class="fas fa-code"></i> Technical</button><button class="vt-btn" data-mode="nt"><i class="fas fa-user-friends"></i> Plain English</button></div></div>
 <a href="#about">About</a>
 <a href="#clients">Clients</a>
 <a href="#experience">Experience</a>
@@ -74,8 +141,11 @@
 <span class="hero-subtitle">Hello, I'm</span>
 <h1 class="hero-title">Ahsan Tariq</h1>
 <h2 class="hero-role"></h2>
-<p class="hero-description">
-Founder of <strong>Ranbval</strong> &amp; Co-Founder of <strong><a href="https://www.volvexer.com/" target="_blank" class="accent-link">Volvexer</a></strong> · AI Systems Architect. Designing <strong>scalable, maintainable, and readable architectures</strong> that power autonomous multi-agent workflows, intelligent accounting &amp; financial automations, and zero-trust cryptographic infrastructure. Dedicated to disciplined zero-to-production engineering — transforming complex systems into resilient, fault-tolerant software built for real-world impact.
+<p class="hero-description tech-only">
+Founder of <strong>Ranbval</strong> &amp; Co-Founder of <strong><a class="accent-link" href="https://www.volvexer.com/" target="_blank">Volvexer</a></strong> · AI Systems Architect. Designing <strong>scalable, maintainable, and readable architectures</strong> that power autonomous multi-agent workflows, intelligent accounting &amp; financial automations, and zero-trust cryptographic infrastructure. Dedicated to disciplined zero-to-production engineering — transforming complex systems into resilient, fault-tolerant software built for real-world impact.
+</p>
+<p class="hero-description nt-only" style="display:none;">
+I build smart computer systems that make businesses run on their own — no manual work needed. I created <strong>Ranbval</strong> and co-founded <strong><a class="accent-link" href="https://www.volvexer.com/" target="_blank">Volvexer</a></strong>, a global accounting service. My job is to look at a business problem, then build an AI-powered solution that solves it automatically — saving time, money, and human effort.
 </p>
 <div class="hero-actions">
 <a class="btn btn-primary" href="#contact"><i class="fas fa-paper-plane"></i> Get in Touch</a>
@@ -96,51 +166,51 @@ Founder of <strong>Ranbval</strong> &amp; Co-Founder of <strong><a href="https:/
 <div class="achievements-wrapper">
 <a class="achievement-card reveal" href="https://leetcode.com/u/ahsantariq7/" target="_blank" title="View LeetCode Profile">
 <div class="icon-box"><i class="fas fa-code"></i></div>
-<div class="achievement-content">
+<div class="achievement-content tech-only">
 <h3>LeetCode</h3>
 <span class="highlight">81 Problems Solved</span>
 <span class="achievement-sub">Algorithms &amp; DSA</span>
-</div>
+</div><div class="achievement-content nt-only" style="display:none;"><h3>Logic &amp; Puzzles</h3><span class="highlight">81 Difficult Problems Solved</span><span class="achievement-sub">Proven ability to solve complex logical challenges</span></div>
 </a>
 <a class="achievement-card reveal" href="https://www.kaggle.com/engrahsantariq" target="_blank" title="View Kaggle Profile">
 <div class="icon-box"><i class="fab fa-kaggle"></i></div>
-<div class="achievement-content">
+<div class="achievement-content tech-only">
 <h3>Kaggle Competitions</h3>
 <span class="highlight">Expert Rank</span>
 <span class="achievement-sub">Top Solved ML Solutions</span>
-</div>
+</div><div class="achievement-content nt-only" style="display:none;"><h3>AI &amp; Data Prediction</h3><span class="highlight">Global Expert Rank</span><span class="achievement-sub">World-class predictive modeling and analytics</span></div>
 </a>
 <a class="achievement-card reveal" href="#reviewer" title="View Peer Reviewer Credentials">
 <div class="icon-box"><i class="fas fa-certificate"></i></div>
-<div class="achievement-content">
+<div class="achievement-content tech-only">
 <h3>Academic Peer Reviewer</h3>
 <span class="highlight">5+ Journals · 1 Book</span>
 <span class="achievement-sub">WoS Verified Reviews</span>
-</div>
+</div><div class="achievement-content nt-only" style="display:none;"><h3>Scientific Peer Reviewer</h3><span class="highlight">5 International Journals &amp; 1 Book</span><span class="achievement-sub">Trusted by global journals to evaluate scientific papers</span></div>
 </a>
 <a class="achievement-card reveal" href="#publications" title="View Research Publications">
 <div class="icon-box"><i class="fas fa-book-open"></i></div>
-<div class="achievement-content">
+<div class="achievement-content tech-only">
 <h3>Research Publications</h3>
 <span class="highlight">6 Papers &amp; Preprints</span>
 <span class="achievement-sub">JISRC · Zenodo DOI</span>
-</div>
+</div><div class="achievement-content nt-only" style="display:none;"><h3>Published Discoveries</h3><span class="highlight">6 Published Scientific Papers</span><span class="achievement-sub">Original research in AI safety, security &amp; robotics</span></div>
 </a>
 <a class="achievement-card reveal" href="https://pypi.org/user/ahsantariq7/" target="_blank" title="Open-source packages: ranbval-sdk, emotion-analysis, isgc (PyPI &amp; npm)">
 <div class="icon-box"><i class="fab fa-python"></i></div>
-<div class="achievement-content">
+<div class="achievement-content tech-only">
 <h3>PyPI &amp; npm Packages</h3>
 <span class="highlight">11,500+ Downloads</span>
 <span class="achievement-sub">ranbval-sdk · emotion · isgc</span>
-</div>
+</div><div class="achievement-content nt-only" style="display:none;"><h3>Public Software Tools</h3><span class="highlight">11,500+ Global Downloads</span><span class="achievement-sub">Tools built by me used by companies and developers</span></div>
 </a>
 <a class="achievement-card reveal" href="#experience" title="View Production Deployments">
 <div class="icon-box"><i class="fas fa-rocket"></i></div>
-<div class="achievement-content">
+<div class="achievement-content tech-only">
 <h3>Production Systems</h3>
 <span class="highlight">20+ Systems Shipped</span>
 <span class="achievement-sub">B2B Enterprise &amp; B2C Apps</span>
-</div>
+</div><div class="achievement-content nt-only" style="display:none;"><h3>Live Business Systems</h3><span class="highlight">20+ Real Systems Shipped</span><span class="achievement-sub">Actively running businesses in the USA, UK &amp; Europe</span></div>
 </a>
 </div>
 </div>
@@ -149,20 +219,32 @@ Founder of <strong>Ranbval</strong> &amp; Co-Founder of <strong><a href="https:/
 <section class="section" id="about">
 <div class="container">
 <div class="section-header reveal">
-<h2 class="section-title">Professional Summary</h2>
+<h2 class="section-title tech-only">Professional Summary</h2>
+<h2 class="section-title nt-only" style="display:none;">Who I Am &amp; What I Do</h2>
 <div class="line"></div>
 </div>
 <div class="about-content">
-<p class="reveal">
-AI Product Builder, Systems Architect, Founder of <strong>Ranbval</strong>, and Co-Founder of <strong><a href="https://www.volvexer.com/" target="_blank" class="accent-link">Volvexer</a></strong> — pioneering automated global accounting &amp; bookkeeping workflows, zero-trust cryptographic secrets vaults, and intelligent multi-agent platforms. Proven track record of taking complex zero-to-production systems from concept to global delivery, driving high-impact solutions across both <strong>Enterprise B2B client architectures</strong> (multi-tenant ERP portals, real-time NetSuite synchronization, fleet telematics, and automated merchant lifecycle engines) and <strong>consumer-facing B2C applications</strong> (real-time avatar intelligence, automated video-to-shorts creators, and cross-platform mobile apps) for international clients across the US, UK, and Europe.
+<!-- Technical paragraphs -->
+<p class="reveal tech-only">
+AI Product Builder, Systems Architect, Founder of <strong>Ranbval</strong>, and Co-Founder of <strong><a class="accent-link" href="https://www.volvexer.com/" target="_blank">Volvexer</a></strong> — pioneering automated global accounting &amp; bookkeeping workflows, zero-trust cryptographic secrets vaults, and intelligent multi-agent platforms. Proven track record of taking complex zero-to-production systems from concept to global delivery, driving high-impact solutions across both <strong>Enterprise B2B client architectures</strong> (multi-tenant ERP portals, real-time NetSuite synchronization, fleet telematics, and automated merchant lifecycle engines) and <strong>consumer-facing B2C applications</strong> (real-time avatar intelligence, automated video-to-shorts creators, and cross-platform mobile apps) for international clients across the US, UK, and Europe.
 </p>
-<p class="reveal">
+<p class="reveal tech-only">
 Deep engineering foundation rooted in Computer Systems Engineering, bridging <strong>Autonomous Robotics &amp; Embedded Systems (ROS / ROS2 node architectures, sensor fusion, Byzantine-resilient perception)</strong> with modern <strong>Generative AI &amp; LLMOps</strong>. Expert in orchestrating multi-agent state machines via LangGraph and LangChain, optimizing production LLM throughput using explicit Gemini context caching (slashing token latency by 85%), deploying hybrid dense/sparse RAG pipelines (Pinecone, MongoDB Atlas), and training deep computer vision models across PyTorch, OpenCV, and zero-shot CLIP.
 </p>
-<p class="reveal">
+<p class="reveal tech-only">
 Champion of disciplined engineering velocity and agile execution, seamlessly leading cross-functional development cycles through <strong>Jira, Trello, Linear, Asana, Monday.com, ClickUp, and Notion</strong>. Crafts high-throughput data platforms with live NetSuite ERP SuiteQL pipelines, Celery Beat schedulers, and Redis streaming mirrors feeding PostgreSQL 18. Architect of auto-scaling microservices on <strong>GCP Cloud Run</strong>, Docker multi-stage containerization, automated Cloud Build CI/CD, and repository-bound cryptographic token validation SDKs.
 </p>
-<div class="about-highlights reveal">
+<!-- Non-technical paragraphs -->
+<p class="reveal nt-only" style="display:none;">
+I'm <strong>Ahsan Tariq</strong> — I build smart computer programs that run businesses automatically, without people having to do boring, repetitive work. I started my own company called <strong>Ranbval</strong>, and I co-built <strong><a class="accent-link" href="https://www.volvexer.com/" target="_blank">Volvexer</a></strong> — a service that helps businesses in the USA, UK, Australia, and Pakistan manage their money, taxes, and accounts automatically.
+</p>
+<p class="reveal nt-only" style="display:none;">
+Think of what I do like this: imagine a business where employees have to manually check emails, fill spreadsheets, approve documents, and send reports every day. I come in and build a system that does all of that by itself — 24 hours a day, with no mistakes, no breaks, and no salary. I use Artificial Intelligence (AI) to teach computers to understand problems and solve them on their own.
+</p>
+<p class="reveal nt-only" style="display:none;">
+I've worked with over <strong>23 companies</strong> across the US, UK, and Europe — from small startups to large businesses. My clients trust me to understand their biggest problems and come back with a working solution, not just a plan. Everything I build is real, live, and already running in the real world.
+</p>
+<div class="about-highlights reveal tech-only">
 <div class="about-highlight-card">
 <i class="fas fa-briefcase"></i>
 <div>
@@ -192,6 +274,36 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 </div>
 </div>
 </div>
+<div class="about-highlights reveal nt-only" style="display:none;">
+<div class="about-highlight-card">
+<i class="fas fa-lightbulb"></i>
+<div>
+<h4>I Solve Real Problems</h4>
+<p>I look at a business, find what wastes time or money, and build a system to fix it automatically</p>
+</div>
+</div>
+<div class="about-highlight-card">
+<i class="fas fa-robot"></i>
+<div>
+<h4>I Build AI Systems</h4>
+<p>My programs use Artificial Intelligence to make decisions on their own — like a smart employee who never sleeps</p>
+</div>
+</div>
+<div class="about-highlight-card">
+<i class="fas fa-globe-americas"></i>
+<div>
+<h4>International Clients</h4>
+<p>I've worked with businesses in the USA, UK, Europe, and Pakistan — all from my laptop, remotely</p>
+</div>
+</div>
+<div class="about-highlight-card">
+<i class="fas fa-check-circle"></i>
+<div>
+<h4>Real, Working Results</h4>
+<p>Everything I build is live and working today — not just ideas on paper. 23+ real systems shipped</p>
+</div>
+</div>
+</div>
 </div>
 </div>
 </section>
@@ -202,9 +314,9 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 <span class="clients-pill-label"><i class="fas fa-globe-americas"></i> Global Enterprise &amp; Startups</span>
 <h2 class="section-title">International Clients &amp; Companies</h2>
 <div class="line"></div>
-<p class="section-subtitle">
+<p class="section-subtitle tech-only">
                         Built production-grade AI backends, vector search engines, and enterprise automations for international organizations across the United States and Latin America.
-                    </p>
+                    </p><p class="section-subtitle nt-only" style="display:none;">Trusted by founders and business owners around the world to build smart software that solves their hardest day-to-day problems.</p>
 </div>
 <!-- Continuous Infinite Sliding Companies Ribbon -->
 <div class="company-ribbon-wrapper reveal">
@@ -325,7 +437,7 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 </div>
 <!-- Interactive Brand Badges Line (Hoverable Grid Row) -->
 <div class="company-badges-line reveal">
-<a class="company-brand-pill" href="https://www.volvexer.com/" target="_blank" style="text-decoration: none; border-color: rgba(255, 186, 73, 0.4); background: rgba(255, 186, 73, 0.08);">
+<a class="company-brand-pill" href="https://www.volvexer.com/" style="text-decoration: none; border-color: rgba(255, 186, 73, 0.4); background: rgba(255, 186, 73, 0.08);" target="_blank">
 <i class="fas fa-calculator c-icon" style="color: var(--accent);"></i>
 <span class="c-name" style="color: var(--accent);">Volvexer</span>
 <span class="c-flag">🌐 Co-Founder</span>
@@ -392,9 +504,11 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 <section class="section" id="experience">
 <div class="container">
 <div class="section-header reveal">
-<h2 class="section-title">Experience</h2>
+<h2 class="section-title tech-only">Experience</h2>
+<h2 class="section-title nt-only" style="display:none;">What I've Built &amp; Who I've Helped</h2>
 <div class="line"></div>
-<p class="section-subtitle">Proven track record across <strong>23 engineering roles and client systems</strong>, specializing in multi-agent AI pipelines, enterprise workflow automations, and resilient backend platforms.</p>
+<p class="section-subtitle tech-only">Proven track record across <strong>23 engineering roles and client systems</strong>, specializing in multi-agent AI pipelines, enterprise workflow automations, and resilient backend platforms.</p>
+<p class="section-subtitle nt-only" style="display:none;">Here are <strong>23 real projects</strong> I built for real businesses — explained in simple, everyday English. See what each project actually <em>did</em> for people, without any complicated technical words.</p>
 </div>
 <!-- 9-Item Experience Grid -->
 <div class="experience-grid" id="experience-grid"><div class="exp-card-cell reveal" data-index="0"><div class="exp-card">
@@ -404,16 +518,22 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 <span class="exp-badge" style="background: rgba(255, 186, 73, 0.15); color: var(--accent); border-color: rgba(255, 186, 73, 0.35);"><i class="fas fa-crown"></i> Co-Founder · Live Platform</span>
 </div>
 <h3 class="exp-title">Volvexer — Co-Founder &amp; Head of Systems Automation</h3>
-<div class="exp-company"><i class="fas fa-globe"></i> <a href="https://www.volvexer.com/" target="_blank" style="color: var(--accent); text-decoration: underline;">Volvexer</a> · Global Financial &amp; Bookkeeping Services (USA, UK, AUS, PK)</div>
+<div class="exp-company"><i class="fas fa-globe"></i> <a href="https://www.volvexer.com/" style="color: var(--accent); text-decoration: underline;" target="_blank">Volvexer</a> · Global Financial &amp; Bookkeeping Services (USA, UK, AUS, PK)</div>
 </div>
 <div class="exp-card-body">
-<span class="exp-role-desc">Accounting Workflow Automation · Multi-Ledger Sync · QuickBooks · Xero · NetSuite · Zoho Books · Python · OCR</span>
-<ul class="exp-bullets">
-<li><strong>Co-Founded global accounting, bookkeeping, and tax advisory ecosystem</strong> (<a href="https://www.volvexer.com/" target="_blank" style="color: var(--accent);">volvexer.com</a>), delivering automated tax compliance, bookkeeping, and CFO advisory across USA (IRS), UK (HMRC), Australia (ATO), and Pakistan (FBR).</li>
+<span class="exp-role-desc tech-only">Accounting Workflow Automation · Multi-Ledger Sync · QuickBooks · Xero · NetSuite · Zoho Books · Python · OCR</span><span class="exp-role-desc nt-only" style="display:none;">Automated Bookkeeping · Instant Bank Sync · Tax Reminders · 75% Faster Closing</span>
+<ul class="exp-bullets tech-only">
+<li><strong>Co-Founded global accounting, bookkeeping, and tax advisory ecosystem</strong> (<a href="https://www.volvexer.com/" style="color: var(--accent);" target="_blank">volvexer.com</a>), delivering automated tax compliance, bookkeeping, and CFO advisory across USA (IRS), UK (HMRC), Australia (ATO), and Pakistan (FBR).</li>
 <li><strong>Architected end-to-end accounting workflow automations</strong> — eliminating manual ledger data entry by integrating real-time bank feed reconciliation engines, automated journal entries, and payroll sync pipelines.</li>
 <li><strong>Multi-Platform Cloud Accounting Integration:</strong> Engineered high-throughput bi-directional data synchronization connectors across QuickBooks Online, Xero, NetSuite ERP, Wave, MYOB, and Zoho Books.</li>
 <li><strong>Automated Document &amp; Invoice Processing:</strong> Built intelligent OCR document pipelines to parse vendor bills, receipts, and VAT/sales tax invoices, reducing month-end book closing time by 75%.</li>
 <li><strong>Secure Client Vault &amp; Compliance Infrastructure:</strong> Deployed automated multi-tenant client intake portals with encrypted document vaults, audit trail compliance, and automated tax filing deadline reminders.</li>
+</ul>
+<ul class="exp-bullets nt-only" style="display:none;">
+<li>I co-built Volvexer — a service that helps businesses in the USA, UK, Australia, and Pakistan automatically manage their money, taxes, and accounts. Instead of hiring accountants to do everything manually, businesses use our system and it handles everything for them.</li>
+<li>I built tools that connect a company's bank account to their accounting software — so every transaction is recorded automatically, with zero human input. What used to take days at the end of every month now happens in real time.</li>
+<li>I built a system that reads invoices and receipts by looking at them (like a human reads a document), then automatically records the right numbers in the right places — cutting month-end paperwork by 75%.</li>
+<li>I created a secure digital vault where clients upload their financial documents safely, and the system automatically reminds them of important tax deadlines — so they never miss a filing again.</li>
 </ul>
 </div>
 <div class="exp-card-hint"><i class="fas fa-chevron-down"></i><span class="hint-label"> Hover to Expand</span></div></div></div>
@@ -427,17 +547,32 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 <div class="exp-company"><i class="fas fa-building"></i> Ambica International · United States, Remote</div>
 </div>
 <div class="exp-card-body">
-<span class="exp-role-desc">GCP Cloud Run · FastAPI · NetSuite ERP · Claude LLM · DocuSign · Postgres · Redis</span>
-<ul class="exp-bullets">
+<span class="exp-role-desc tech-only">GCP Cloud Run · FastAPI · NetSuite ERP · Claude LLM · DocuSign · Postgres · Redis</span><span class="exp-role-desc nt-only" style="display:none;">All-in-One Company Portal · Automated Approvals · Live Financial Dashboard</span>
+<ul class="exp-bullets tech-only">
 <li><strong>Architected multi-tenant portal on GCP Cloud Run</strong> — FastAPI (Python 3.12), Postgres 18 (Cloud SQL), nginx reverse-proxy — serving 37 modules across HR, Finance, Ops, and Compliance with async SQLAlchemy pooling and per-request upstream DNS resolution.</li>
 <li><strong>Engineered live NetSuite ERP pipeline (source of truth)</strong> via Celery Beat + Redis — syncing employees, inventory, vendors, customers, POs, and sales orders across 10+ domains via SuiteQL into a read-optimized Postgres mirror.</li>
 <li><strong>Integrated multi-system data layer</strong> with FleetGPS (real-time vehicle tracking, route optimization, driver telematics), PeopleHRIS (attendance, leave, payroll, employee lifecycle), and Trello (task boards, project workflows) for unified operational visibility across ERP, fleet, HR and PM systems.</li>
 <li><strong>Built EOI Connector (AI Ops-Intelligence)</strong> — monitoring whitelisted WhatsApp groups and Gmail inboxes (including CC/BCC recipients) via secured webhooks; Claude LLM classifies each message into tasks, follow-ups, verifications, and 12+ risk-tiered alerts cross-referenced against NetSuite, FleetGPS, and PeopleHRIS data before surfacing to management in real time.</li>
 <li><strong>3-Layer OTP Security:</strong> email-verified 6-digit codes, 10-minute expiry, 3-attempt lockout, and server-side verification enforced on every sensitive approval.</li>
+<li><strong>Instant Micro-Approvals Pipeline:</strong> 1-click multi-tiered mobile/email approvals for small daily requisitions (fuel allowances, cold-chain supplies, technician overtime) — slashing small-item turnaround from 3–5 days to &lt;60s with dynamic escalation rules.</li>
+<li><strong>Dovetail Edge Bridge (Physical Server Gateway):</strong> Zero-inbound TLS reverse tunnel enabling remote browser streaming of terabytes of lab certificates and historical records directly from warehouse on-premise physical servers without public firewall exposure.</li>
+<li><strong>Azure Cloud &amp; Microsoft SharePoint Sync:</strong> Direct pipeline archiving signed contracts and ledgers to Microsoft 365 SharePoint libraries with automated metadata tagging and Azure Blob Storage co-authoring.</li>
+<li><strong>Virtual Meetings &amp; Calendar Sync:</strong> Microsoft Graph API integration enabling 1-click Teams meeting creation from operational threads, automated agenda distribution, and post-meeting AI action-item assignment.</li>
 <li><strong>Integrated DocuSign REST API:</strong> multi-recipient e-signatures, real-time webhook status sync, embedded signing, resend controls, and dynamic signed PDF generation.</li>
 <li><strong>Enterprise Auth &amp; Microsoft Graph:</strong> Google OAuth 2.0 + Microsoft Entra ID auth (domain whitelisting, JWT HttpOnly cookies, remote revocation); MS Graph API (Mail.Read/Send) for mailbox, transactional email, and Outlook Calendar synchronization.</li>
 <li><strong>CI/CD via Cloud Build + Docker:</strong> multi-stage builds, ARG secret injection, pre-commit gates (Ruff, Pylint, Bandit, Mypy, Safety, Pytest) — reducing deployment time from hours to minutes.</li>
 <li><strong>Finance &amp; Board Intelligence backend:</strong> P&amp;L, Budget vs Actual, AR Ageing, 13-week Cashflow, BIR Tax Calendar, VAT-split Open Orders, IQVIA analytics, and executive State-of-Business KPIs from live NetSuite-synced data.</li>
+</ul>
+<ul class="exp-bullets nt-only" style="display:none;">
+<li>A large US company was running their business using 10+ different apps that didn't talk to each other — HR was separate, finance was separate, vehicles were tracked separately. I built one central system that connects all of them into a single screen where managers can see everything at once.</li>
+<li>Every time a business transaction happened (a sale, a purchase, an employee change), someone had to manually copy data from one system to another. I automated all of that — the systems now talk to each other automatically, 24/7.</li>
+<li>I added a feature where the company's AI assistant reads WhatsApp messages and emails, figures out what action is needed (like 'approve this purchase'), and assigns it to the right person automatically — no more things getting lost in messages.</li>
+<li>I built a system where contracts and approvals are signed digitally. Instead of printing, signing, and scanning documents back and forth, everything happens in seconds with one click.</li>
+<li>I added strong security so that only the right people can approve sensitive actions — using a 6-digit one-time code sent to their email, which expires in 10 minutes. This prevents unauthorized decisions.</li>
+<li>Previously, even tiny requests like bike fuel money or packaging supplies took days of walking paper slips around. I built instant 1-click approvals on phone and email, so requests that took days now get approved in under a minute.</li>
+<li>The company had old physical computer servers sitting in warehouse basements with important files that nobody could access remotely. I built a secure bridge so employees can safely open and view files from these physical warehouse servers from anywhere, protected by a 1-time secure code.</li>
+<li>I connected the system directly to Microsoft Azure and SharePoint so company files are organized automatically, and set up online video meetings that can be scheduled with 1 click directly inside the platform.</li>
+<li>I built financial reports (profit/loss, cash flow, budgets) that update live from the company's real data — so the CEO can see the company's real financial health at any moment, not just at month-end.</li>
 </ul>
 </div>
 <div class="exp-card-hint"><i class="fas fa-chevron-down"></i><span class="hint-label"> Hover to Expand</span></div></div></div>
@@ -451,13 +586,18 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 <div class="exp-company"><i class="fas fa-building"></i> Savvy Programmers · United States, Remote</div>
 </div>
 <div class="exp-card-body">
-<span class="exp-role-desc">JotForm Workflow Automation Engineering</span>
-<ul class="exp-bullets">
+<span class="exp-role-desc tech-only">JotForm Workflow Automation Engineering</span><span class="exp-role-desc nt-only" style="display:none;">Hiring Automation · Candidate Screening · Equipment Verification</span>
+<ul class="exp-bullets tech-only">
 <li>Designed and implemented a <strong>multi-step candidate screening system</strong> that unifies application submission, resume upload, and voice-based interview questions into a single seamless form — overcoming JotForm's native platform limitations.</li>
 <li>Engineered a <strong>custom BAT-based automation</strong> that silently collects device and system information, then generates a dynamic auto-populated form link — capturing system-generated data alongside user-provided inputs without friction.</li>
 <li>Built a <strong>dual-form architecture</strong> to bypass JotForm's first-page-only data population constraint, maintaining full data continuity across multi-step flows.</li>
 <li>Implemented <strong>auto data mapping via unique email identifiers</strong> to reliably link candidate application data with device intelligence records.</li>
 <li>Delivered a system focused on <strong>scalability, real-time validation, and data consistency</strong> — demonstrating deep expertise in workflow automation and system design under platform constraints.</li>
+</ul>
+<ul class="exp-bullets nt-only" style="display:none;">
+<li>When a company posts a job, they get hundreds of applications. Going through each one manually takes days. I built a system that automatically collects applications, asks candidates voice questions, and gathers all information — so the HR team only needs to review a shortlist.</li>
+<li>I built a tool that secretly checks the computer specifications of people applying for tech jobs — so the company can verify that candidates have the right equipment to work from home before even interviewing them.</li>
+<li>The system links every candidate's device information to their application automatically using their email — so the HR team gets a complete picture of each applicant in one place, without asking candidates to submit anything extra.</li>
 </ul>
 </div>
 <div class="exp-card-hint"><i class="fas fa-chevron-down"></i><span class="hint-label"> Hover to Expand</span></div></div></div>
@@ -471,14 +611,20 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 <div class="exp-company"><i class="fas fa-building"></i> Contract · N8n + Gemini API</div>
 </div>
 <div class="exp-card-body">
-<span class="exp-role-desc">Client Intelligence Automation · N8N · Gemini 2.5 Pro · Postgres</span>
-<ul class="exp-bullets">
+<span class="exp-role-desc tech-only">Client Intelligence Automation · N8N · Gemini 2.5 Pro · Postgres</span><span class="exp-role-desc nt-only" style="display:none;">Instant Client Memory · 24/7 AI Sales Assistant · Cost Protection</span>
+<ul class="exp-bullets tech-only">
 <li>Designed and shipped a <strong>fully automated client intelligence backend</strong> on N8n that gives sales reps an always-on, context-aware AI assistant for every prospect — without rebuilding context on every message.</li>
 <li>Implemented <strong>explicit LLM context caching</strong> via Google Gemini API's <code>/v1beta/cachedContents</code> endpoint — large static payloads (call transcripts, LinkedIn data, persona reports, CSR reports, action items, framework specs) are uploaded once; all subsequent queries reference the cache name directly, eliminating redundant token processing.</li>
 <li>Built a <strong>4-case cache routing engine</strong>: new session (create cache), expired cache (recreate), valid &amp; unchanged (reuse), valid but changed (SHA-256 hash comparison → invalidate &amp; recreate) — ensuring the LLM always has fresh data without unnecessary re-uploads.</li>
 <li>Engineered a <strong>single-query data hydration layer</strong> in Postgres pulling all client intelligence in one round-trip before any LLM call.</li>
 <li>Enforced a <strong>DB-level usage cap</strong> (75 messages per user-client pair) checked before any compute runs, keeping costs predictable at scale.</li>
 <li>Stateless workflow architecture enables horizontal scaling — heavy token processing offloaded to Google's infrastructure with no proportional compute overhead.</li>
+</ul>
+<ul class="exp-bullets nt-only" style="display:none;">
+<li>Sales people spend a lot of time reading through old notes, emails, and reports before every client call. I built an AI assistant that already knows everything about each client — and gives the salesperson instant answers during the call.</li>
+<li>Instead of the AI reading the same client information from scratch every time (which is slow and expensive), I taught it to remember the information from before. This made responses 10x faster and much cheaper to run.</li>
+<li>I built a smart system that checks if the AI's memory is fresh or stale. If information changed, it updates automatically — so sales reps always get accurate, up-to-date answers without doing anything themselves.</li>
+<li>I added a usage limit so each sales conversation has a cap on how many AI questions it can use — keeping the costs predictable no matter how much the team grows.</li>
 </ul>
 </div>
 <div class="exp-card-hint"><i class="fas fa-chevron-down"></i><span class="hint-label"> Hover to Expand</span></div></div></div>
@@ -492,13 +638,18 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 <div class="exp-company"><i class="fas fa-building"></i> TariqDreamsTech · Pakistan</div>
 </div>
 <div class="exp-card-body">
-<span class="exp-role-desc">FastAPI · Celery · FFmpeg · Whisper · Python</span>
-<ul class="exp-bullets">
+<span class="exp-role-desc tech-only">FastAPI · Celery · FFmpeg · Whisper · Python</span><span class="exp-role-desc nt-only" style="display:none;">Automatic Video Short Maker · Voice Subtitles · 90% Less Editing Time</span>
+<ul class="exp-bullets tech-only">
 <li>Designed and developed an <strong>end-to-end AI-powered video processing pipeline</strong> that transforms long-form content into multiple short-form vertical videos (Shorts/Reels) with minimal manual effort.</li>
 <li>Built a <strong>scalable asynchronous backend</strong> using FastAPI and Celery, handling multiple concurrent video processing jobs without blocking system performance.</li>
 <li>Implemented a <strong>transcription-driven workflow</strong> that generates accurate, time-synchronized English subtitles — enabling context-aware clip segmentation rather than naive time-based splitting.</li>
 <li>Engineered a fully automated pipeline: segment long videos → convert to 9:16 vertical format → embed subtitles → generate platform-optimized titles and descriptions.</li>
 <li>Reduced manual editing effort by up to <strong>90%</strong> through modular architecture separating ingestion, processing, and output stages — designed for extensibility toward automated publishing and AI-based highlight detection.</li>
+</ul>
+<ul class="exp-bullets nt-only" style="display:none;">
+<li>Content creators spend hours manually cutting long videos into short clips for YouTube Shorts, Instagram Reels, and TikTok. I built a system that does this automatically — take a 1-hour video, press go, and get 10 polished short clips ready to upload.</li>
+<li>The system listens to what's being said in the video and uses that to intelligently decide where to cut — not randomly, but at natural topic breaks. It also automatically adds subtitles.</li>
+<li>Every clip is automatically formatted for vertical screens (phone format), titled, and described — ready to publish. What used to take 4–6 hours of editing now takes minutes.</li>
 </ul>
 </div>
 <div class="exp-card-hint"><i class="fas fa-chevron-down"></i><span class="hint-label"> Hover to Expand</span></div></div></div>
@@ -512,14 +663,20 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 <div class="exp-company"><i class="fas fa-building"></i> Savvy Programmers · United States, Remote</div>
 </div>
 <div class="exp-card-body">
-<span class="exp-role-desc">Multi-Agent LLM Pipeline · Gemini 2.5 Pro · Supabase · Scrapin.io</span>
-<ul class="exp-bullets">
+<span class="exp-role-desc tech-only">Multi-Agent LLM Pipeline · Gemini 2.5 Pro · Supabase · Scrapin.io</span><span class="exp-role-desc nt-only" style="display:none;">Instant Client Personality Reports · Meeting Notes &amp; Next Steps</span>
+<ul class="exp-bullets tech-only">
 <li>Automated client persona, CSR, and action item analysis — transforming raw LinkedIn inputs into actionable AI-driven reports with <strong>90% reduction in manual analysis time</strong>.</li>
 <li>Integrated <strong>Scrapin.io API</strong> for LinkedIn profile and post scraping with resilient retry logic (up to 5 attempts, exponential backoff 15–60s) to handle rate limits gracefully.</li>
 <li>Orchestrated a <strong>multi-agent LLM pipeline (Gemini 2.5 Pro)</strong> evaluating 50+ psychological attributes across 5 behavioral layers (L1–L5), generating persona, CSR, and action item reports from transcripts and profiles.</li>
 <li>Implemented robust error handling (IF nodes for quota/attempt checks), JSON extraction, data flattening, and HTML/Markdown report builders for automated email delivery.</li>
 <li>Stored outputs in <strong>Supabase</strong> (clienttranscripts, actionitemhistory tables) with versioning (V1+), status tracking ("In Progress" → "Done"), and zero-downtime processing via webhooks.</li>
 <li>Applied FinOps discipline: cost-optimized API call patterns and failure-resilient architecture enabling scalable client onboarding.</li>
+</ul>
+<ul class="exp-bullets nt-only" style="display:none;">
+<li>Before a sales call, it's important to understand who you're talking to — their personality, communication style, and what they care about. Doing this research manually takes hours. I built a system that does it automatically in minutes.</li>
+<li>The system looks at a person's LinkedIn profile and posts, then uses AI to build a detailed profile of their personality — how they like to be spoken to, what motivates them, and what concerns they might have. All automatically.</li>
+<li>After every sales call, the system reads the transcript and automatically creates a list of action items — what was promised, what needs follow-up, and by when. No more forgetting what was discussed.</li>
+<li>All reports are stored and tracked over time — so a salesperson can see the full history of every client interaction without digging through old emails.</li>
 </ul>
 </div>
 <div class="exp-card-hint"><i class="fas fa-chevron-down"></i><span class="hint-label"> Hover to Expand</span></div></div></div>
@@ -533,12 +690,17 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 <div class="exp-company"><i class="fas fa-building"></i> Remote</div>
 </div>
 <div class="exp-card-body">
-<span class="exp-role-desc">AI Workflow Design · SEO Automation · WordPress · YouTube API · GHL</span>
-<ul class="exp-bullets">
+<span class="exp-role-desc tech-only">AI Workflow Design · SEO Automation · WordPress · YouTube API · GHL</span><span class="exp-role-desc nt-only" style="display:none;">Automatic Content &amp; Video Creator · One Click to 30+ Posts</span>
+<ul class="exp-bullets tech-only">
 <li>Designed and deployed a <strong>fully autonomous AI content production and distribution system</strong> that transforms a single keyword into 30+ SEO-optimized articles, multimedia assets, and multi-platform social posts — with minimal human intervention.</li>
 <li>Integrated modular AI agents: Topic Discovery, Atomic Page Planning, Draft Generation, QA Validation, Media Script Creation, Image Prompt Engineering, YouTube Publishing, WordPress REST API Publishing, Schema (JSON-LD) Injection, and Social Distribution via GHL.</li>
 <li>Implemented <strong>structured job orchestration</strong> with failure recovery logic ("Fix Needed" loop), concurrency control, database-driven tracking, and automated status progression from ideation through distribution.</li>
 <li>Delivered <strong>answer-first SEO architecture</strong> with programmatic internal linking, automated schema generation (Article, FAQ, VideoObject), media-script-to-video workflows, and Sitemap ping + indexing automation for Google &amp; Bing.</li>
+</ul>
+<ul class="exp-bullets nt-only" style="display:none;">
+<li>A business needed to publish 30+ articles, social media posts, and YouTube videos every week — far too much for a small team to handle manually. I built a system that does all of this automatically from a single keyword.</li>
+<li>You type in one topic (e.g. 'best accounting software'), and the system generates a full article, creates images, writes a YouTube video script, posts to WordPress, and shares on social media — all without any human involvement.</li>
+<li>The system also makes sure everything shows up well on Google (SEO), links articles together intelligently, and even pings Google to index new content immediately after publishing.</li>
 </ul>
 </div>
 <div class="exp-card-hint"><i class="fas fa-chevron-down"></i><span class="hint-label"> Hover to Expand</span></div></div></div>
@@ -552,12 +714,17 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 <div class="exp-company"><i class="fas fa-building"></i> Transact Ultd · Remote</div>
 </div>
 <div class="exp-card-body">
-<span class="exp-role-desc">End-to-End Merchant Lifecycle · Iris CRM · Iso Amp · SMTP · Paybright</span>
-<ul class="exp-bullets">
+<span class="exp-role-desc tech-only">End-to-End Merchant Lifecycle · Iris CRM · Iso Amp · SMTP · Paybright</span><span class="exp-role-desc nt-only" style="display:none;">Automated Customer Signups · Digital Document Chasing · Compliance</span>
+<ul class="exp-bullets tech-only">
 <li>Architected a <strong>fully automated merchant lifecycle system</strong> with Iris CRM as the system of record and n8n as the central automation engine — covering lead intake, activation, training, compliance, and ongoing engagement.</li>
 <li>Built monitoring workflows that detect CRM lead creation/updates (status: "Statements Needed"), trigger statement request emails via SMTP, manage document uploads, and integrate with <strong>Iso Amp</strong> for processing statement analysis — writing results back to the CRM automatically.</li>
 <li>Engineered dynamic routing of merchant applications to processor systems (Paybright, Card Connect, Maverick, Defyne) with real-time approval/decline CRM status updates.</li>
 <li>Delivered <strong>recurring compliance automations</strong>: PCI reminders, follow-ups, training scheduling, equipment shipping logistics, and customer touchpoints — all orchestrated by n8n while Iris CRM remains the single source of truth.</li>
+</ul>
+<ul class="exp-bullets nt-only" style="display:none;">
+<li>When a new merchant (shop owner) signed up with this payment processing company, the onboarding process was completely manual — emails back and forth, chasing documents, manually updating records. I automated the entire process.</li>
+<li>Now when a merchant applies, the system automatically sends them the right documents to sign, follows up if they don't respond, checks their application, and routes it to the right payment processor — all without anyone at the company having to do anything.</li>
+<li>The system also automatically sends PCI compliance reminders, training schedules, and equipment shipping updates — keeping merchants informed and the company compliant, hands-free.</li>
 </ul>
 </div>
 <div class="exp-card-hint"><i class="fas fa-chevron-down"></i><span class="hint-label"> Hover to Expand</span></div></div></div>
@@ -571,13 +738,18 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 <div class="exp-company"><i class="fas fa-building"></i> Remote</div>
 </div>
 <div class="exp-card-body">
-<span class="exp-role-desc">NetSuite · Combitas · DocuSign · Manus AI · N8N</span>
-<ul class="exp-bullets">
+<span class="exp-role-desc tech-only">NetSuite · Combitas · DocuSign · Manus AI · N8N</span><span class="exp-role-desc nt-only" style="display:none;">Paper to Digital Transformation · 1-Click Approvals · Founder Dashboard</span>
+<ul class="exp-bullets tech-only">
 <li>Led the <strong>digital transformation of business operations</strong> by replacing fragmented manual processes with a fully automated, AI-driven system using Manus AI and n8n.</li>
 <li>Automated <strong>NetSuite data extraction and synchronization</strong> into centralized real-time workflows; converted Excel-based and paper-driven processes (including Combitas tools) into structured automated pipelines.</li>
 <li>Integrated <strong>DocuSign for digital signatures and verification</strong>, reducing approval turnaround from hours/days to minutes across multi-step approval chains.</li>
 <li>Built <strong>centralized vendor and product tracking</strong> with automated validations, routing, and notifications — eliminating procurement bottlenecks.</li>
 <li>Delivered a <strong>real-time operational dashboard</strong> for the founder with complete KPI visibility and audit-ready, scalable reporting.</li>
+</ul>
+<ul class="exp-bullets nt-only" style="display:none;">
+<li>A company was running their entire business on Excel spreadsheets and paper forms. Every department worked separately and information had to be manually copied between systems. I replaced all of that with one automated digital system.</li>
+<li>Documents that used to require physical signatures now get signed digitally in seconds. Approval processes that used to take days now take minutes — all tracked and recorded automatically.</li>
+<li>I built a live dashboard for the company founder showing real-time performance numbers — sales, expenses, inventory, team performance — all in one place, updating automatically throughout the day.</li>
 </ul>
 </div>
 <div class="exp-card-hint"><i class="fas fa-chevron-down"></i><span class="hint-label"> Hover to Expand</span></div></div></div>
@@ -591,9 +763,13 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 <div class="exp-company"><i class="fas fa-building"></i> Savvy Programmers · Lahore, Pakistan</div>
 </div>
 <div class="exp-card-body">
-<span class="exp-role-desc">Python · N8N · Gemini API · FastAPI · Intelligent Workflow Design</span>
-<ul class="exp-bullets">
+<span class="exp-role-desc tech-only">Python · N8N · Gemini API · FastAPI · Intelligent Workflow Design</span><span class="exp-role-desc nt-only" style="display:none;">Custom Business Automations &amp; Smart AI Workflows</span>
+<ul class="exp-bullets tech-only">
 <li>Full-time Python and AI automation engineering role spanning multiple concurrent client projects across N8N, Gemini API, FastAPI, and intelligent workflow design — delivering production-ready systems for US-based clients from an on-site Pakistan location.</li>
+</ul>
+<ul class="exp-bullets nt-only" style="display:none;">
+<li>This was my full-time role where I worked on multiple client projects at the same time — building AI-powered tools and automations for different businesses across the USA.</li>
+<li>Every project involved understanding a business problem, then building a smart system to solve it — whether it was automating emails, analyzing data, or connecting different apps together.</li>
 </ul>
 </div>
 <div class="exp-card-hint"><i class="fas fa-chevron-down"></i><span class="hint-label"> Hover to Expand</span></div></div></div>
@@ -607,13 +783,18 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 <div class="exp-company"><i class="fas fa-building"></i> Lahore, Punjab, Pakistan</div>
 </div>
 <div class="exp-card-body">
-<span class="exp-role-desc">FastAPI · MediaPipe · OpenCV · Firebase · Google Cloud Run · JWT</span>
-<ul class="exp-bullets">
+<span class="exp-role-desc tech-only">FastAPI · MediaPipe · OpenCV · Firebase · Google Cloud Run · JWT</span><span class="exp-role-desc nt-only" style="display:none;">Smart Voice Assistant · Photo Face Analysis · Multi-Language Translation</span>
+<ul class="exp-bullets tech-only">
 <li>Engineered a <strong>high-performance production backend</strong> for photo-based AI analysis, context-aware multilingual services, and real-time AI interactions — deployed on Google Cloud Run via FastAPI and containerized for infinite scale.</li>
 <li>Built a <strong>Deep Facial Feature Analysis module</strong> using MediaPipe and OpenCV for granular extraction of 468+ facial landmarks, automating classification of eye/hair color, skin tone, ethnicity, and body type with high precision.</li>
 <li>Developed a <strong>specialized bidirectional translation engine</strong> (English/Russian) preserving conversational flow and cultural nuance, integrated with persistent user preference profiles.</li>
 <li>Implemented <strong>high-speed Text-to-Speech (TTS)</strong> with 1–2 second response times, intelligent caching (&lt;100ms for repeated requests), and localized voice mapping for 10+ languages.</li>
 <li>Architected <strong>enterprise-grade infrastructure</strong> with Firebase Firestore/Storage, JWT authentication, bcrypt password hashing, and strict Pydantic validation for production reliability.</li>
+</ul>
+<ul class="exp-bullets nt-only" style="display:none;">
+<li>I built the brain behind an AI companion app — a system that can look at your photo and understand your appearance (eye color, skin tone, etc.), then give you personalized advice in your own language.</li>
+<li>The app talks back in a natural voice, translates between languages while keeping the right tone and meaning, and remembers your preferences across sessions — like a real personal assistant.</li>
+<li>The whole system runs on Google Cloud and handles thousands of users at once — fast, secure, and always available.</li>
 </ul>
 </div>
 <div class="exp-card-hint"><i class="fas fa-chevron-down"></i><span class="hint-label"> Hover to Expand</span></div></div></div>
@@ -627,13 +808,18 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 <div class="exp-company"><i class="fas fa-building"></i> Remote</div>
 </div>
 <div class="exp-card-body">
-<span class="exp-role-desc">N8N · Gemini · Housecall Pro API · OpenPhone · Twilio · Google Cloud</span>
-<ul class="exp-bullets">
+<span class="exp-role-desc tech-only">N8N · Gemini · Housecall Pro API · OpenPhone · Twilio · Google Cloud</span><span class="exp-role-desc nt-only" style="display:none;">Zero-Touch Service Business · Auto-Booking · Automated Invoices &amp; Reviews</span>
+<ul class="exp-bullets tech-only">
 <li>Architected a <strong>zero-touch admin ecosystem</strong> managing the complete lifecycle of a service-based business — from AI-driven voice lead intake through automated scheduling, dispatch, and invoicing.</li>
 <li>Built an <strong>Intelligent AI Intake Engine</strong> capturing leads from 6+ channels (OpenPhone, Google, Angi, Thumbtack) with LLM-driven normalization of raw call transcripts into structured data (Job Type, Urgency, Customer Info).</li>
 <li>Engineered a <strong>proprietary AI Estimate workflow</strong> that processes site visit photos and notes, runs LLM-driven market checks and cost baselines, and auto-calculates labor and material costs — eliminating manual pricing.</li>
 <li>Built deep <strong>Housecall Pro API integrations</strong> for automated lead creation, "Wait-and-Confirm" SMS follow-up loops, tech assignment via capability and calendar checks, and real-time job status sync triggering completion events and invoicing.</li>
 <li>Implemented <strong>automated revenue loops</strong>: 50% deposit unlock, post-job Google/HCP review automation, weekly performance summaries, and ROI reporting identifying total man-hours saved.</li>
+</ul>
+<ul class="exp-bullets nt-only" style="display:none;">
+<li>A service business (like a plumbing or cleaning company) was drowning in phone calls, scheduling, and paperwork. I built a system that handles everything from the first customer inquiry to sending the final invoice — with zero human involvement.</li>
+<li>When a customer calls or messages, the AI picks up, understands what they need, checks availability, and books the job automatically. It even sends the customer a quote based on their location and job type.</li>
+<li>After the job is done, the system automatically sends the invoice, follows up for a Google review, and tracks how much revenue each customer generated — giving the business owner a full picture without lifting a finger.</li>
 </ul>
 </div>
 <div class="exp-card-hint"><i class="fas fa-chevron-down"></i><span class="hint-label"> Hover to Expand</span></div></div></div>
@@ -647,13 +833,18 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 <div class="exp-company"><i class="fas fa-building"></i> Remote</div>
 </div>
 <div class="exp-card-body">
-<span class="exp-role-desc">Filmable Athletes System · Monday.com · Zapier · Slack · Google Sheets</span>
-<ul class="exp-bullets">
+<span class="exp-role-desc tech-only">Filmable Athletes System · Monday.com · Zapier · Slack · Google Sheets</span><span class="exp-role-desc nt-only" style="display:none;">Automated Patient Permissions · Zero Manual Copying · Team Alerts</span>
+<ul class="exp-bullets tech-only">
 <li>Designed a <strong>two-board Monday.com architecture</strong> (CRM as source of truth + "Filmable Athletes" marketing board) enabling therapists to approve patients for filming with a single Yes/No decision — with zero disruption to clinical workflows.</li>
 <li>Implemented <strong>deterministic direct field mapping</strong> (Name, Sport, Injury, Status, Therapist, Eval Date) replacing unreliable mirror columns; items trigger creation only when Patient Status = Active and Evaluation Date is populated.</li>
 <li>Built a <strong>Slack Notification Engine via Zapier</strong> using a Google Sheets therapist directory for identity resolution — mapping Monday.com users to Slack DMs for accurate, branded workspace alerts with 24-hour follow-up loops that auto-stop on decision.</li>
 <li>Engineered <strong>full lifecycle section logic</strong>: items auto-route between Pending Review, Current Filmable, Former Filmable, and Not Filmable based on CRM status changes — maintaining real-time accuracy with zero manual intervention.</li>
 <li>Delivered a <strong>compliance-safe architecture</strong>: Marketing receives view-only access to approved clinical data with no backflow, fully deterministic execution logs, and one-way CRM → Marketing data governance.</li>
+</ul>
+<ul class="exp-bullets nt-only" style="display:none;">
+<li>A healthcare company needed to share certain patient information with their marketing team, but only after a therapist approved it — and manually doing this was slow and error-prone. I automated the whole approval and sharing process.</li>
+<li>Now therapists just click 'Yes' on a patient's record, and the system automatically moves the right information to the marketing team's board — with no extra steps, no copying, and no risk of private info leaking.</li>
+<li>The system also automatically notifies the right people on Slack when action is needed, routes cases through different stages (pending, approved, filming done), and keeps everything perfectly in sync between teams.</li>
 </ul>
 </div>
 <div class="exp-card-hint"><i class="fas fa-chevron-down"></i><span class="hint-label"> Hover to Expand</span></div></div></div>
@@ -667,12 +858,17 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 <div class="exp-company"><i class="fas fa-building"></i> Freelance</div>
 </div>
 <div class="exp-card-body">
-<span class="exp-role-desc">Voiceflow · N8N · REST APIs · Booking Automation</span>
-<ul class="exp-bullets">
+<span class="exp-role-desc tech-only">Voiceflow · N8N · REST APIs · Booking Automation</span><span class="exp-role-desc nt-only" style="display:none;">24/7 Automatic Booking Assistant · Real-Time Availability · Zero Mistakes</span>
+<ul class="exp-bullets tech-only">
 <li>Built a <strong>production-ready booking assistant</strong> integrating Voiceflow with live booking APIs via n8n — delivering 100% deterministic responses and precise booking link mapping.</li>
 <li>Engineered <strong>deterministic Voiceflow conversation flows</strong> with strict venue/date resolution logic, real-time date parsing (web search → relative day calculation → YYYY-MM-DD formatting), and venue normalization.</li>
 <li>Developed <strong>n8n API orchestration workflows</strong> for data filtering, availability parsing, and dynamic slot aggregation with presentation structured as Category → Product → Time slots with individual [Book now] buttons.</li>
 <li>Implemented robust edge-case handling: no availability, API errors, and ambiguous queries — with a clean, scalable architecture ready for production expansion across multiple venues and products.</li>
+</ul>
+<ul class="exp-bullets nt-only" style="display:none;">
+<li>A venue booking business needed customers to easily check availability and book a slot — but their booking system was complicated and customers kept calling for help. I built a smart chatbot that handles all booking conversations automatically.</li>
+<li>The chatbot understands natural language (customers can type 'next Saturday evening' and it figures out the exact date and available slots), shows real options, and gives a direct booking link — no human needed.</li>
+<li>The system handles edge cases gracefully — if no slots are available, it says so politely. If the customer is vague, it asks a clarifying question. It never gets confused or gives wrong information.</li>
 </ul>
 </div>
 <div class="exp-card-hint"><i class="fas fa-chevron-down"></i><span class="hint-label"> Hover to Expand</span></div></div></div>
@@ -686,13 +882,18 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 <div class="exp-company"><i class="fas fa-building"></i> LLHAM Project · Remote, USA</div>
 </div>
 <div class="exp-card-body">
-<span class="exp-role-desc">LangGraph · Django · OpenAI GPT-4 · WebSockets · RAG · PostgreSQL</span>
-<ul class="exp-bullets">
+<span class="exp-role-desc tech-only">LangGraph · Django · OpenAI GPT-4 · WebSockets · RAG · PostgreSQL</span><span class="exp-role-desc nt-only" style="display:none;">Automatic Business Proposal Writer · Team of Specialized AI Assistants</span>
+<ul class="exp-bullets tech-only">
 <li>Architected a dual-repository system: <strong>llham-agents</strong> submodule for isolated AI logic with LangGraph orchestration, and <strong>backend-management</strong> Django monolith.</li>
 <li>Designed multi-agent workflow with specialized agents (Master Agent, Business Analyst, Technical Architect, etc.) powered by OpenAI GPT-4.</li>
 <li>Built Master Agent as intelligent router using LLM-based intent analysis and prompt engineering.</li>
 <li>Implemented streaming responses via WebSockets for real-time agent output.</li>
 <li>Engineered document processing with embedding-based retrieval (RAG) and PostgreSQL knowledge base.</li>
+</ul>
+<ul class="exp-bullets nt-only" style="display:none;">
+<li>Writing business proposals takes days — you have to research the client, understand their needs, structure the document, and make it look professional. I built an AI system where you describe a client's project and it automatically writes a full professional proposal.</li>
+<li>Multiple specialized AI agents work together — one researches the business, one figures out the technical approach, one writes the content — all coordinating like a team of human experts, but in minutes.</li>
+<li>The proposals are generated in real time, so you can watch the content appear as the AI thinks — just like a live chat with an expert who's writing your proposal while you wait.</li>
 </ul>
 </div>
 <div class="exp-card-hint"><i class="fas fa-chevron-down"></i><span class="hint-label"> Hover to Expand</span></div></div></div>
@@ -706,12 +907,17 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 <div class="exp-company"><i class="fas fa-building"></i> hddisenos · Remote, Venezuela</div>
 </div>
 <div class="exp-card-body">
-<span class="exp-role-desc">N8N · REST/SOAP APIs · HubSpot · Zoho CRM · PostgreSQL</span>
-<ul class="exp-bullets">
+<span class="exp-role-desc tech-only">N8N · REST/SOAP APIs · HubSpot · Zoho CRM · PostgreSQL</span><span class="exp-role-desc nt-only" style="display:none;">Repetitive Task Eliminator · 60% Less Workload · Connected Apps</span>
+<ul class="exp-bullets tech-only">
 <li>Architected and implemented advanced automation workflows using N8N, reducing manual workload by 60%.</li>
 <li>Integrated external systems including REST/SOAP APIs, CRMs (HubSpot, Zoho), and SQL/NoSQL databases.</li>
 <li>Configured conditional branches, loops, and error handling for high reliability.</li>
 <li>Developed custom N8N nodes and leveraged webhooks for event-driven automation.</li>
+</ul>
+<ul class="exp-bullets nt-only" style="display:none;">
+<li>This company was spending a lot of time on repetitive tasks — sending emails, updating records, moving data between systems. I built automated workflows that cut their manual work by 60%.</li>
+<li>I connected their different business tools (CRM, database, email system) so they all work together automatically — when something changes in one place, everything else updates on its own.</li>
+<li>I added smart logic so the system handles unexpected situations on its own — if something fails, it retries. If data is missing, it skips and flags it. The system runs reliably without someone babysitting it.</li>
 </ul>
 </div>
 <div class="exp-card-hint"><i class="fas fa-chevron-down"></i><span class="hint-label"> Hover to Expand</span></div></div></div>
@@ -725,12 +931,17 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 <div class="exp-company"><i class="fas fa-building"></i> InstaMailAI · Remote, USA</div>
 </div>
 <div class="exp-card-body">
-<span class="exp-role-desc">MongoDB Atlas Vector Search · LangChain · FastAPI · RAG</span>
-<ul class="exp-bullets">
+<span class="exp-role-desc tech-only">MongoDB Atlas Vector Search · LangChain · FastAPI · RAG</span><span class="exp-role-desc nt-only" style="display:none;">Smart Email Assistant · Understands Meaning · Instant Reply Suggestions</span>
+<ul class="exp-bullets tech-only">
 <li>Designed and deployed high-performance vector search pipelines using MongoDB Atlas Vector Search and Langchain.</li>
 <li>Implemented RAG architecture for real-time email response generation.</li>
 <li>Engineered robust backend systems using FastAPI for parsing and filtering emails.</li>
 <li>Optimized MongoDB queries and indexing strategies for low-latency vector similarity search.</li>
+</ul>
+<ul class="exp-bullets nt-only" style="display:none;">
+<li>When you get hundreds of emails a day, finding the right response or knowing what to reply is exhausting. I built an AI that reads incoming emails, searches through past conversations, and suggests the perfect reply — in seconds.</li>
+<li>The AI understands the meaning of emails (not just keywords) — so if someone asks 'how's the project going?' it understands this is a status update request and pulls the relevant information automatically.</li>
+<li>The system is built for speed — it can search through thousands of past emails and generate a response suggestion in under a second.</li>
 </ul>
 </div>
 <div class="exp-card-hint"><i class="fas fa-chevron-down"></i><span class="hint-label"> Hover to Expand</span></div></div></div>
@@ -744,11 +955,16 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 <div class="exp-company"><i class="fas fa-building"></i> Seanz Law Firm · Remote, USA</div>
 </div>
 <div class="exp-card-body">
-<span class="exp-role-desc">OpenAI GPT-4 · Twilio · WhatsApp API · Google Looker Studio</span>
-<ul class="exp-bullets">
+<span class="exp-role-desc tech-only">OpenAI GPT-4 · Twilio · WhatsApp API · Google Looker Studio</span><span class="exp-role-desc nt-only" style="display:none;">Automated Immigration Interviewer · Bilingual WhatsApp · Case Dashboard</span>
+<ul class="exp-bullets tech-only">
 <li>Built a multilingual (English/Spanish) AI-powered interview assistant for immigration law.</li>
 <li>Integrated OpenAI GPT-4 and Twilio API for WhatsApp/SMS communication.</li>
 <li>Enabled real-time dashboard reporting using Google Looker Studio.</li>
+</ul>
+<ul class="exp-bullets nt-only" style="display:none;">
+<li>A US immigration law firm needed to interview clients in both English and Spanish to gather information for visa applications. Doing these interviews manually took hours. I built an AI that conducts these interviews automatically via WhatsApp.</li>
+<li>The AI asks the right questions, understands the answers, and fills in the legal form automatically — in both English and Spanish. The lawyer just reviews the final filled form, saving hours of interview time.</li>
+<li>All interview results are automatically shown in a live report dashboard so lawyers can track the status of all their cases at a glance.</li>
 </ul>
 </div>
 <div class="exp-card-hint"><i class="fas fa-chevron-down"></i><span class="hint-label"> Hover to Expand</span></div></div></div>
@@ -762,12 +978,17 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 <div class="exp-company"><i class="fas fa-building"></i> NVIT Project · Remote, USA</div>
 </div>
 <div class="exp-card-body">
-<span class="exp-role-desc">Django · JWT · OpenAI GPT · Jira-style Ticketing · jerichoai.io</span>
-<ul class="exp-bullets">
+<span class="exp-role-desc tech-only">Django · JWT · OpenAI GPT · Jira-style Ticketing · jerichoai.io</span><span class="exp-role-desc nt-only" style="display:none;">Customer Support &amp; Ticketing System · Automated Time Estimates</span>
+<ul class="exp-bullets tech-only">
 <li>Developed a multi-role backend system (Customers, Engineers, Admins) with JWT-based Authentication.</li>
 <li>Created dynamic ticketing system with Jira-style duplication.</li>
 <li>Integrated OpenAI GPT API for time estimation and recommendations.</li>
 <li>Live: <a href="https://jerichoai.io" target="_blank">jerichoai.io</a></li>
+</ul>
+<ul class="exp-bullets nt-only" style="display:none;">
+<li>I built the backend of a software platform where different types of users (customers, engineers, admins) each see a different version of the app based on their role — with the right level of access and information for each.</li>
+<li>The platform has a ticketing system where customers submit problems, engineers are assigned to fix them, and AI automatically estimates how long each fix will take — keeping everyone informed without manual coordination.</li>
+<li>This platform is live at jerichoai.io — real users are using it today.</li>
 </ul>
 </div>
 <div class="exp-card-hint"><i class="fas fa-chevron-down"></i><span class="hint-label"> Hover to Expand</span></div></div></div>
@@ -781,11 +1002,16 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 <div class="exp-company"><i class="fas fa-building"></i> 2456.ai · Remote, USA</div>
 </div>
 <div class="exp-card-body">
-<span class="exp-role-desc">Django · FastAPI · PostgreSQL · Pinecone · Stripe</span>
-<ul class="exp-bullets">
+<span class="exp-role-desc tech-only">Django · FastAPI · PostgreSQL · Pinecone · Stripe</span><span class="exp-role-desc nt-only" style="display:none;">No-Code Workflow Builder with Built-In AI Intelligence</span>
+<ul class="exp-bullets tech-only">
 <li>Designed backend using Django (Monolith) and FastAPI (Microservices).</li>
 <li>Architected dual-database system using PostgreSQL and Pinecone Vector DB.</li>
 <li>Engineered AI-enhanced query flow and integrated Stripe API.</li>
+</ul>
+<ul class="exp-bullets nt-only" style="display:none;">
+<li>I built the behind-the-scenes engine for an AI platform that helps businesses create and manage automated workflows — like a smarter version of tools like Zapier, but with AI built in.</li>
+<li>The system uses AI to understand what a user is trying to automate, suggests the best approach, and helps set it up — making automation accessible to people who aren't technical.</li>
+<li>I also integrated payments so businesses can subscribe and pay for the service directly within the platform.</li>
 </ul>
 </div>
 <div class="exp-card-hint"><i class="fas fa-chevron-down"></i><span class="hint-label"> Hover to Expand</span></div></div></div>
@@ -799,11 +1025,15 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 <div class="exp-company"><i class="fas fa-building"></i> Fiverr · Self-employed</div>
 </div>
 <div class="exp-card-body">
-<span class="exp-role-desc">Python · Backend Engineering · Client Delivery</span>
-<ul class="exp-bullets">
+<span class="exp-role-desc tech-only">Python · Backend Engineering · Client Delivery</span><span class="exp-role-desc nt-only" style="display:none;">Custom Automation Projects · 100% 5-Star Client Satisfaction</span>
+<ul class="exp-bullets tech-only">
 <li>Communicated with clients to facilitate order placements and requirement gathering.</li>
 <li>Provided post-delivery support and revisions for production systems.</li>
 <li>Maintained a 5-star rating across all delivered projects.</li>
+</ul>
+<ul class="exp-bullets nt-only" style="display:none;">
+<li>I worked as a freelance developer on Fiverr, where businesses and individuals hired me to build custom Python tools, automations, and web features for their specific needs.</li>
+<li>I earned a 5-star rating across all projects by understanding exactly what clients needed, delivering on time, and providing support after delivery — building trust and repeat business.</li>
 </ul>
 </div>
 <div class="exp-card-hint"><i class="fas fa-chevron-down"></i><span class="hint-label"> Hover to Expand</span></div></div></div>
@@ -817,11 +1047,15 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 <div class="exp-company"><i class="fas fa-building"></i> QPharma Project · Remote, USA</div>
 </div>
 <div class="exp-card-body">
-<span class="exp-role-desc">AWS Glue · S3 · Lambda · Pandas · Excalidraw</span>
-<ul class="exp-bullets">
+<span class="exp-role-desc tech-only">AWS Glue · S3 · Lambda · Pandas · Excalidraw</span><span class="exp-role-desc nt-only" style="display:none;">Centralized Business Data · Automated Reports &amp; Trend Insights</span>
+<ul class="exp-bullets tech-only">
 <li>Built scalable ETL pipelines using AWS Glue, S3, and Lambda Functions.</li>
 <li>Applied pandas for large-scale data cleaning and feature engineering.</li>
 <li>Utilized Excalidraw to architect and visualize complex data pipelines.</li>
+</ul>
+<ul class="exp-bullets nt-only" style="display:none;">
+<li>A pharmaceutical company had data scattered across many different places — files, databases, spreadsheets — and couldn't easily analyze it all together. I built pipelines that automatically collect, clean, and organize all that data into one place.</li>
+<li>Once the data was in one place and cleaned up, the company could run powerful reports and find insights they never had before — like which products sell best in which regions, or which processes are costing the most.</li>
 </ul>
 </div>
 <div class="exp-card-hint"><i class="fas fa-chevron-down"></i><span class="hint-label"> Hover to Expand</span></div></div></div>
@@ -835,10 +1069,14 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 <div class="exp-company"><i class="fas fa-building"></i> Hostera · Bahawalpur</div>
 </div>
 <div class="exp-card-body">
-<span class="exp-role-desc">Django · Docker · Machine Learning · Python</span>
-<ul class="exp-bullets">
+<span class="exp-role-desc tech-only">Django · Docker · Machine Learning · Python</span><span class="exp-role-desc nt-only" style="display:none;">Web Systems &amp; Predictive Intelligence</span>
+<ul class="exp-bullets tech-only">
 <li>Developed Machine Learning models as ML Engineer.</li>
 <li>Developed a web application using Django and Docker.</li>
+</ul>
+<ul class="exp-bullets nt-only" style="display:none;">
+<li>I built web tools and machine learning models (AI programs that learn from data and make predictions) for a local company — my first professional engineering role.</li>
+<li>This experience taught me how to build real systems that actual users depend on — from understanding requirements all the way to deploying and maintaining a live product.</li>
 </ul>
 </div>
 <div class="exp-card-hint"><i class="fas fa-chevron-down"></i><span class="hint-label"> Hover to Expand</span></div></div></div>
@@ -868,14 +1106,82 @@ Champion of disciplined engineering velocity and agile execution, seamlessly lea
 <section class="case-studies-section section" id="case-studies">
 <div class="container">
 <div class="section-header reveal">
-<span class="section-tag"><i class="fas fa-microchip"></i> Distributed Systems &amp; Architecture</span>
-<h2 class="section-title">Case Studies</h2>
+<span class="section-tag tech-only"><i class="fas fa-microchip"></i> Distributed Systems &amp; Architecture</span>
+<span class="section-tag nt-only" style="display:none;"><i class="fas fa-lightbulb"></i> My Biggest Projects — In Depth</span>
+<h2 class="section-title tech-only">Case Studies</h2>
+<h2 class="section-title nt-only" style="display:none;">Deep Dives: My Biggest Ideas</h2>
 <div class="line"></div>
-<p class="section-subtitle">
+<p class="section-subtitle tech-only">
 Deep architectural deep-dives into production platforms, cryptographic backbones, zero-trust microservice runtimes, and engineering frameworks engineered for hyperscale reliability.
+</p>
+<p class="section-subtitle nt-only" style="display:none;">
+These are my largest, most ambitious projects — explained in full detail so anyone can understand the problem I was solving and how I solved it.
 </p>
 </div>
 <div class="case-studies-grid">
+<!-- Featured Flagship 0: Ambica International (Dovetail) -->
+<div class="case-study-feature-card reveal" style="border-left: 4px solid #10b981;">
+<div class="case-card-header">
+<div class="case-badge-pill" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: #10b981;">
+<i class="fas fa-hospital-user"></i>
+<span>Healthcare Enterprise · Logistics &amp; ERP Backbone · Dovetail</span>
+</div>
+<span class="case-read-time"><i class="far fa-clock"></i> 14 Min Deep Dive</span>
+</div>
+<div class="case-card-content">
+<h3 class="case-title">
+<a href="case-studies/ambica-dovetail/index.html">Ambica International (Dovetail): Autonomous Operations Portal &amp; Real-Time Logistics Backbone</a>
+</h3>
+<p class="case-desc tech-only">
+Transforming a nationwide healthcare distribution enterprise from manual paper clipboards into an autonomous, 100% digital operations ecosystem on GCP Cloud Run. Features live NetSuite SuiteQL mirroring via Celery Beat &amp; Redis, sub-second multi-modal fleet &amp; air telematics, 1-click micro-approvals (&lt;60s), Azure &amp; SharePoint direct document sync, secure hybrid on-premise physical server gateway, and role-based agentic RAG.
+</p>
+<p class="case-desc nt-only" style="display:none;">
+A major healthcare company was running on slow paper clipboards where even tiny approvals (fuel, supplies) took days, and files were trapped on physical office servers. I designed and built an all-in-one digital system from scratch. Now all requests get approved in seconds, delivery bikes, trucks, and cargo flights are tracked live, meetings happen online, and staff can securely open files from physical warehouse servers remotely with a 1-time code.
+</p>
+<!-- Key architectural metrics -->
+<div class="case-stats-row">
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #10b981;">37</span>
+<span class="case-stat-lbl">Enterprise Modules</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #10b981;">100%</span>
+<span class="case-stat-lbl">Paperless Transition</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #10b981;">&lt;60s</span>
+<span class="case-stat-lbl">Micro-Approvals Velocity</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #10b981;">0 Leaks</span>
+<span class="case-stat-lbl">3-Layer OTP Vault</span>
+</div>
+</div>
+<!-- Tech stack tags -->
+<div class="case-tags">
+<span class="case-tag"><i class="fab fa-python"></i> Python 3.12 (FastAPI)</span>
+<span class="case-tag"><i class="fab fa-react"></i> React (TypeScript)</span>
+<span class="case-tag"><i class="fas fa-database"></i> NetSuite SuiteQL</span>
+<span class="case-tag"><i class="fas fa-truck-fast"></i> FleetGPS Telematics</span>
+<span class="case-tag"><i class="fas fa-plane"></i> Flight Tracking</span>
+<span class="case-tag"><i class="fas fa-file-signature"></i> DocuSign REST</span>
+<span class="case-tag"><i class="fab fa-microsoft"></i> Azure &amp; SharePoint</span>
+<span class="case-tag"><i class="fas fa-server"></i> Physical Server Bridge</span>
+<span class="case-tag"><i class="fas fa-bolt"></i> Instant Micro-Approvals</span>
+<span class="case-tag"><i class="fas fa-brain"></i> Role-Based RAG</span>
+<span class="case-tag"><i class="fas fa-cloud"></i> GCP Cloud Run</span>
+</div>
+<div class="case-actions">
+<a class="btn btn-primary" href="case-studies/ambica-dovetail/index.html">
+<i class="fas fa-book-open"></i> Read Dovetail Case Study
+</a>
+<a class="btn btn-secondary" href="case-studies/ambica-dovetail/index.html#telematics">
+<i class="fas fa-truck-fast"></i> View Logistics &amp; Flight Tracking
+</a>
+</div>
+</div>
+</div>
+
 <!-- Featured Flagship 1: Ranbval Social Super-Platform -->
 <div class="case-study-feature-card reveal" style="border-left: 4px solid var(--accent);">
 <div class="case-card-header">
@@ -889,9 +1195,9 @@ Deep architectural deep-dives into production platforms, cryptographic backbones
 <h3 class="case-title">
 <a href="case-studies/ranbval-social/index.html">Ranbval: The Next-Gen AI Social Super-Platform</a>
 </h3>
-<p class="case-desc">
+<p class="case-desc tech-only">
 An all-in-one ecosystem uniting Google-caliber scale, Microsoft-level productivity, and next-gen AI agency—where human relationships, multi-persona AI proxies, autonomous social gaming, decentralized milestone freelancing, life memories, and zero-trust cryptographic vaults live under a single unified platform.
-</p>
+</p><p class="case-desc nt-only" style="display:none;">A single all-in-one app that replaces 10 separate apps for modern communication. It brings together your friends, smart AI helpers who handle tasks for you, secure file storage, and shared group activities into one clean, private place.</p>
 <!-- Key architectural metrics -->
 <div class="case-stats-row">
 <div class="case-stat-item">
@@ -931,7 +1237,6 @@ An all-in-one ecosystem uniting Google-caliber scale, Microsoft-level productivi
 </div>
 </div>
 </div>
-
 <!-- Featured Flagship 2: Ranbval Conversations -->
 <div class="case-study-feature-card reveal" style="border-left: 4px solid #38bdf8;">
 <div class="case-card-header">
@@ -945,9 +1250,9 @@ An all-in-one ecosystem uniting Google-caliber scale, Microsoft-level productivi
 <h3 class="case-title">
 <a href="case-studies/ranbval-conversations/index.html">Ranbval Conversations: Centralized Client Communication &amp; Semantic Memory</a>
 </h3>
-<p class="case-desc">
+<p class="case-desc tech-only">
 Unifying fractured client conversations across LinkedIn, Upwork, Fiverr, Facebook, WhatsApp, and Email into a single, permanent context layer. Built with React (Vite), Python FastAPI, Supabase PostgreSQL, Pinecone vector embeddings for sub-100ms semantic retrieval, and strict <code>.ranbval</code> configuration standards with zero <code>.env</code> tolerance.
-</p>
+</p><p class="case-desc nt-only" style="display:none;">A smart single inbox where every message from WhatsApp, email, LinkedIn, and client portals lives together. The AI remembers every customer's past requests and questions so your team never loses track of a client or asks them to repeat themselves.</p>
 <!-- Key architectural metrics -->
 <div class="case-stats-row">
 <div class="case-stat-item">
@@ -987,7 +1292,6 @@ Unifying fractured client conversations across LinkedIn, Upwork, Fiverr, Faceboo
 </div>
 </div>
 </div>
-
 <!-- Featured Flagship 3: Ranbval-Core Architecture -->
 <div class="case-study-feature-card reveal" style="border-left: 4px solid var(--accent-cyan);">
 <div class="case-card-header">
@@ -1001,9 +1305,9 @@ Unifying fractured client conversations across LinkedIn, Upwork, Fiverr, Faceboo
 <h3 class="case-title">
 <a href="case-studies/ranbval-core/index.html">Ranbval-Core: Enterprise Microservices Security Backbone &amp; Framework</a>
 </h3>
-<p class="case-desc">
+<p class="case-desc tech-only">
 How we solved microservice sprawl, fragmented security logic, and contract regressions across the Ranbval ecosystem. Engineered as a centralized Python runtime (<code>ranbval-core</code>) featuring pure ASGI payload auto-decryption (AES-GCM-256 / ChaCha20), distributed JWT revocation via Redis, anti-replay guards, OpenTelemetry tracing, and 100% CI coverage enforcement across 14+ automated pre-commit tools.
-</p>
+</p><p class="case-desc nt-only" style="display:none;">The invisible backbone that keeps all company software safe and working in harmony. It acts like a master security guard, ensuring that private information never leaks and that all our business apps stay in sync without breaking.</p>
 <!-- Key architectural metrics -->
 <div class="case-stats-row">
 <div class="case-stat-item">
@@ -1043,6 +1347,782 @@ How we solved microservice sprawl, fragmented security logic, and contract regre
 </div>
 </div>
 </div>
+
+<!-- Featured Flagship: TRANSACT ULTD (Voice AI & FinTech Orchestration) -->
+<div class="case-study-feature-card reveal" style="border-left: 4px solid var(--accent-cyan);">
+<div class="case-card-header">
+<div class="case-badge-pill" style="background: rgba(56, 189, 248, 0.1); border-color: rgba(56, 189, 248, 0.3); color: #38bdf8;">
+<i class="fas fa-headset"></i>
+<span>Autonomous Voice AI · Twilio Elastic SIP &amp; IRIS CRM</span>
+</div>
+<span class="case-read-time"><i class="far fa-clock"></i> 8 Min Deep Dive</span>
+</div>
+<div class="case-card-content">
+<h3 class="case-title">
+<a href="case-studies/transact-ultd/index.html">TRANSACT ULTD: Sub-Second Voice AI &amp; Merchant Acquisition Engine</a>
+</h3>
+<p class="case-desc tech-only">
+Eliminated 4-hour sales lag and manual spreadsheet calculations with an autonomous event-driven voice pipeline — integrating Retell AI Conversational Voice (&lt;850ms latency), Twilio Elastic SIP dynamic 5-specialist live call forwarding, automated IRIS CRM lead provisioning (Status 104, User 35), and ISO AMP credit card processing statement fee analysis proposals.
+</p><p class="case-desc nt-only" style="display:none;">An AI voice agent that calls incoming merchant business leads in under 60 seconds, speaks naturally like a human specialist, and smoothly transfers the live phone call to 5 human experts if the customer asks specific questions. It automatically creates the customer profile in the CRM, sends statement upload emails, and calculates how much money the merchant saves on credit card fees.</p>
+<!-- Key architectural metrics -->
+<div class="case-stats-row">
+<div class="case-stat-item">
+<span class="case-stat-val">&lt;850ms</span>
+<span class="case-stat-lbl">Voice Latency</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">5 Reps</span>
+<span class="case-stat-lbl">Twilio SIP Smart Forwarding</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">100% Auto</span>
+<span class="case-stat-lbl">IRIS CRM Lead Creation</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">$16.6K/yr</span>
+<span class="case-stat-lbl">ISO AMP Savings Proposal</span>
+</div>
+</div>
+<!-- Tech stack tags -->
+<div class="case-tags">
+<span class="case-tag"><i class="fas fa-headset"></i> Retell Voice AI</span>
+<span class="case-tag"><i class="fas fa-phone-volume"></i> Twilio Elastic SIP</span>
+<span class="case-tag"><i class="fas fa-database"></i> IRIS CRM REST API</span>
+<span class="case-tag"><i class="fas fa-file-invoice-dollar"></i> ISO AMP Fee Analysis</span>
+<span class="case-tag"><i class="fas fa-network-wired"></i> Event-Driven Webhooks</span>
+<span class="case-tag"><i class="fas fa-shield-halved"></i> Two-Step Verification</span>
+</div>
+<div class="case-actions">
+<a class="btn btn-primary" href="case-studies/transact-ultd/index.html">
+<i class="fas fa-book-open"></i> Read Voice AI Case Study
+</a>
+<a class="btn btn-secondary" href="case-studies/transact-ultd/index.html#twilio-sip">
+<i class="fas fa-phone-alt"></i> View SIP Telephony Pipeline
+</a>
+</div>
+</div>
+</div>
+
+<!-- Featured Flagship: Terry Properties (AI-Driven Accounting Automation) -->
+<div class="case-study-feature-card reveal" style="border-left: 4px solid #10b981;">
+<div class="case-card-header">
+<div class="case-badge-pill" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: #10b981;">
+<i class="fas fa-file-invoice-dollar"></i>
+<span>Autonomous FinTech · Buildium &amp; QuickBooks Dual-Ledger Sync</span>
+</div>
+<span class="case-read-time"><i class="far fa-clock"></i> 9 Min Deep Dive</span>
+</div>
+<div class="case-card-content">
+<h3 class="case-title">
+<a href="case-studies/terry-accounting/index.html">Terry Properties: AI-Driven Accounting Automation &amp; Dual-Ledger Sync</a>
+</h3>
+<p class="case-desc tech-only">
+Engineered an autonomous multi-stage financial pipeline eliminating manual invoice entry across 150 residential properties. Ingests attachments from Gmail &amp; WhatsApp, executes Google Document AI / AWS Textract OCR field extraction (99.4% precision), conducts SHA-256 deduplication, and atomically posts dual-sided entries into Buildium Property Bills (<code>/v1/bills</code>) and QuickBooks Online general ledger (Account 6200 vs 2000) with zero CPA reconciliation variance.
+</p><p class="case-desc nt-only" style="display:none;">Property managers were spending 25+ hours every week manually typing invoices from messy emails and WhatsApp photos into both Buildium and QuickBooks, often paying contractors twice by mistake. I built an automated AI accountant that instantly reads any photo or PDF invoice, double-checks that it hasn't been paid before, and automatically records the bill accurately across both accounting systems without human error.</p>
+<!-- Key architectural metrics -->
+<div class="case-stats-row">
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #10b981;">88.5%</span>
+<span class="case-stat-lbl">Manual Entry Cut</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">99.4%</span>
+<span class="case-stat-lbl">OCR Field Accuracy</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">100%</span>
+<span class="case-stat-lbl">Pilot Invoices Synced</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">$0 Var</span>
+<span class="case-stat-lbl">CPA Reconciliation</span>
+</div>
+</div>
+<!-- Tech stack tags -->
+<div class="case-tags">
+<span class="case-tag"><i class="fas fa-building"></i> Buildium REST API</span>
+<span class="case-tag"><i class="fas fa-file-invoice"></i> QuickBooks Online v3</span>
+<span class="case-tag"><i class="fas fa-brain"></i> Document AI OCR (99.4%)</span>
+<span class="case-tag"><i class="fab fa-whatsapp"></i> WhatsApp &amp; Gmail Ingestion</span>
+<span class="case-tag"><i class="fas fa-shield-alt"></i> Deduplication Gate</span>
+<span class="case-tag"><i class="fas fa-scale-balanced"></i> Zero-Variance Dual-Sync</span>
+</div>
+<div class="case-actions">
+<a class="btn btn-primary" href="case-studies/terry-accounting/index.html">
+<i class="fas fa-book-open"></i> Read Accounting Case Study
+</a>
+<a class="btn btn-secondary" href="case-studies/terry-accounting/index.html#dual-sync">
+<i class="fas fa-sync-alt"></i> View Dual-Ledger Sync
+</a>
+</div>
+</div>
+</div>
+
+<!-- Featured Flagship: Qira AI (Digital Twin Multi-Modal Backend) -->
+<div class="case-study-feature-card reveal" style="border-left: 4px solid #00f0ff;">
+<div class="case-card-header">
+<div class="case-badge-pill" style="background: rgba(0, 240, 255, 0.1); border-color: rgba(0, 240, 255, 0.3); color: #00f0ff;">
+<i class="fas fa-dna"></i>
+<span>Multi-Modal AI · Digital Twin Avatar Intelligence</span>
+</div>
+<span class="case-read-time"><i class="far fa-clock"></i> 10 Min Deep Dive</span>
+</div>
+<div class="case-card-content">
+<h3 class="case-title">
+<a href="case-studies/qira-ai/index.html">Qira AI: Real-Time Avatar Intelligence &amp; Multi-Modal Social Backbone</a>
+</h3>
+<p class="case-desc tech-only">
+High-performance backend ecosystem engineered for high-fidelity photo analysis, context-aware multilingual services, and real-time AI interactions. Developed with FastAPI ASGI and containerized on Google Cloud Run, it leverages MediaPipe 468+ facial landmark extraction, OpenCV biometric trait classification, OpenAI Neural TTS with &lt;100ms intelligent caching, bidirectional EN &harr; RU neural translation, and Firebase Firestore &amp; Storage synchronization.
+</p><p class="case-desc nt-only" style="display:none;">An entertainment and digital twin app where anyone can create a speaking 3D digital clone of themselves from just one selfie and voice sample. Users can video call, chat, and play games with their friends' digital twins, which talk naturally in their authentic voice, speak multiple languages with live translation, and can even hang out with friends automatically when the real person is busy or asleep.</p>
+<!-- Key architectural metrics -->
+<div class="case-stats-row">
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #00f0ff;">468+</span>
+<span class="case-stat-lbl">3D Mesh Landmarks</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">&lt;100ms</span>
+<span class="case-stat-lbl">TTS Cache Latency</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">EN &harr; RU</span>
+<span class="case-stat-lbl">Bidirectional NMT</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">99.98%</span>
+<span class="case-stat-lbl">Cloud Run Uptime</span>
+</div>
+</div>
+<!-- Tech stack tags -->
+<div class="case-tags">
+<span class="case-tag"><i class="fas fa-eye"></i> MediaPipe 468+ Mesh</span>
+<span class="case-tag"><i class="fas fa-bolt"></i> FastAPI ASGI</span>
+<span class="case-tag"><i class="fas fa-cloud"></i> Google Cloud Run</span>
+<span class="case-tag"><i class="fas fa-microphone-lines"></i> OpenAI Neural TTS</span>
+<span class="case-tag"><i class="fas fa-fire"></i> Firebase Firestore</span>
+<span class="case-tag"><i class="fas fa-language"></i> Bidirectional NMT</span>
+</div>
+<div class="case-actions">
+<a class="btn btn-primary" href="case-studies/qira-ai/index.html">
+<i class="fas fa-book-open"></i> Read Digital Twin Case Study
+</a>
+<a class="btn btn-secondary" href="case-studies/qira-ai/index.html#facial-landmarks">
+<i class="fas fa-camera"></i> View 468+ Mesh Studio
+</a>
+</div>
+</div>
+</div>
+
+<!-- Featured Flagship: Petroski Physio (Clinical-to-Marketing Automation Engine) -->
+<div class="case-study-feature-card reveal" style="border-left: 4px solid #10b981;">
+<div class="case-card-header">
+<div class="case-badge-pill" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: #10b981;">
+<i class="fas fa-notes-medical"></i>
+<span>Healthcare Automation · Clinical CRM &amp; Marketing Bridge</span>
+</div>
+<span class="case-read-time"><i class="far fa-clock"></i> 8 Min Deep Dive</span>
+</div>
+<div class="case-card-content">
+<h3 class="case-title">
+<a href="case-studies/petroski-physio/index.html">Petroski Physio: Two-Board Deterministic Automation Engine</a>
+</h3>
+<p class="case-desc tech-only">
+Engineered a streamlined "Filmable Athletes" architecture bridging Clinical CRM and Marketing teams at Petroski Physio. Replaced fragile mirror columns with direct field mapping, established strict one-way governance with zero clinical backflow, and built an automated Slack notification engine using Google Sheets identity resolution to route 1-click approval direct messages to treating therapists with 24-hour reminder loops and dynamic discharge re-routing.
+</p><p class="case-desc nt-only" style="display:none;">A sports physical therapy clinic needed a way for their marketing team to know which injured athletes were cleared to be filmed for social media, without interrupting busy therapists during patient care. I built an automated system where therapists receive a friendly Slack message 24 hours after a patient's evaluation asking "Can we film this athlete?" with a simple Yes/No button. Clicking it instantly updates marketing's board, stops all reminders, and automatically archives patients once they finish rehab.</p>
+<!-- Key architectural metrics -->
+<div class="case-stats-row">
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #10b981;">0%</span>
+<span class="case-stat-lbl">Clinical Disruption</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">100%</span>
+<span class="case-stat-lbl">Zapier Run Success</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">1-Click</span>
+<span class="case-stat-lbl">Therapist Approval</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">0 Flow</span>
+<span class="case-stat-lbl">Zero CRM Backflow</span>
+</div>
+</div>
+<!-- Tech stack tags -->
+<div class="case-tags">
+<span class="case-tag"><i class="fas fa-chart-line"></i> Monday.com CRM</span>
+<span class="case-tag"><i class="fas fa-bolt"></i> Zapier Event Logic</span>
+<span class="case-tag"><i class="fab fa-slack"></i> Slack Interactive Bot</span>
+<span class="case-tag"><i class="fas fa-table"></i> Google Sheets Identity</span>
+<span class="case-tag"><i class="fas fa-shield-halved"></i> Zero Clinical Backflow</span>
+<span class="case-tag"><i class="fas fa-rotate"></i> Dynamic Discharge Sync</span>
+</div>
+<div class="case-actions">
+<a class="btn btn-primary" href="case-studies/petroski-physio/index.html">
+<i class="fas fa-book-open"></i> Read Clinical Case Study
+</a>
+<a class="btn btn-secondary" href="case-studies/petroski-physio/index.html#two-board-governance">
+<i class="fas fa-sitemap"></i> View Two-Board Architecture
+</a>
+</div>
+</div>
+</div>
+
+<!-- Featured Flagship: Ballyhass Adventure Group (Booking AI & API Engine) -->
+<div class="case-study-feature-card reveal" style="border-left: 4px solid #00f0ff;">
+<div class="case-card-header">
+<div class="case-badge-pill" style="background: rgba(0, 240, 255, 0.1); border-color: rgba(0, 240, 255, 0.3); color: #00f0ff;">
+<i class="fas fa-calendar-check"></i>
+<span>Conversational AI · Booking API Orchestration</span>
+</div>
+<span class="case-read-time"><i class="far fa-clock"></i> 8 Min Deep Dive</span>
+</div>
+<div class="case-card-content">
+<h3 class="case-title">
+<a href="case-studies/ballyhass-booking/index.html">Ballyhass Adventure: Autonomous Booking Assistant &amp; Real-Time API Engine</a>
+</h3>
+<p class="case-desc tech-only">
+Engineered a production-ready conversational booking assistant integrating Voiceflow Agentic AI with live booking APIs via event-driven orchestration middleware. Delivers real-time relative date resolution, venue normalization, live capacity filtering, and structured category-to-slot button arrays mapping directly to secure online checkouts with 100% deterministic precision and zero hallucinated availability.
+</p><p class="case-desc nt-only" style="display:none;">Visitors to an outdoor adventure park often get frustrated trying to find open time slots for wakeboarding, ziplines, or aquaparks across multiple lake venues. I built a smart booking chatbot that understands everyday language like "Are there spots next Friday at Mallow?", checks live ticket availability in less than half a second, and gives customers instant buttons to book their preferred time slot in one click without guessing.</p>
+<!-- Key architectural metrics -->
+<div class="case-stats-row">
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #00f0ff;">100%</span>
+<span class="case-stat-lbl">Deterministic Output</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">&lt;480ms</span>
+<span class="case-stat-lbl">Live API Latency</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">0</span>
+<span class="case-stat-lbl">AI Hallucinations</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">1-Click</span>
+<span class="case-stat-lbl">Direct Checkout</span>
+</div>
+</div>
+<!-- Tech stack tags -->
+<div class="case-tags">
+<span class="case-tag"><i class="fas fa-brain"></i> Voiceflow Agentic AI</span>
+<span class="case-tag"><i class="fas fa-bolt"></i> API Orchestration Engine</span>
+<span class="case-tag"><i class="fas fa-calendar-days"></i> Relative Date Resolver</span>
+<span class="case-tag"><i class="fas fa-compass"></i> Venue Normalization</span>
+<span class="case-tag"><i class="fas fa-code"></i> Live Capacity Math</span>
+<span class="case-tag"><i class="fas fa-arrow-up-right-from-square"></i> 1-Click Checkout Links</span>
+</div>
+<div class="case-actions">
+<a class="btn btn-primary" href="case-studies/ballyhass-booking/index.html">
+<i class="fas fa-book-open"></i> Read Booking AI Case Study
+</a>
+<a class="btn btn-secondary" href="case-studies/ballyhass-booking/index.html#master-architecture">
+<i class="fas fa-sitemap"></i> View Master Architecture
+</a>
+</div>
+</div>
+</div>
+
+<!-- Featured Flagship: ProspectIntelligence (AI Sales Intelligence & Explicit Caching) -->
+<div class="case-study-feature-card reveal" style="border-left: 4px solid #a855f7;">
+<div class="case-card-header">
+<div class="case-badge-pill" style="background: rgba(168, 85, 247, 0.1); border-color: rgba(168, 85, 247, 0.3); color: #c084fc;">
+<i class="fas fa-microchip"></i>
+<span>Enterprise AI Sales · Gemini 2.5 Pro Explicit Caching</span>
+</div>
+<span class="case-read-time"><i class="far fa-clock"></i> 9 Min Deep Dive</span>
+</div>
+<div class="case-card-content">
+<h3 class="case-title">
+<a href="case-studies/prospect-intelligence/index.html">ProspectIntelligence: Autonomous Sales AI with Explicit Context Caching</a>
+</h3>
+<p class="case-desc tech-only">
+Designed and shipped an automated client intelligence backend giving sales reps an always-on, context-aware AI assistant without rebuilding massive 100k+ token context payloads on every query. Leverages Google Gemini 2.5 Pro explicit context caching (/v1beta/cachedContents), a deterministic 4-case cache routing engine, single-query PostgreSQL hydration, and pre-compute 75-message budget caps integrated with a React sales copilot frontend via webhooks.
+</p><p class="case-desc nt-only" style="display:none;">Sales reps often waste 10 minutes digging through old call recordings, LinkedIn posts, and client financial reports before answering a buyer's question. I built a smart sales assistant that already has the prospect's entire history in memory. Instead of re-reading 100,000 words on every question (which would cost a fortune and take 10 seconds), it uses Google's advanced server caching to answer in under a second while cutting AI bills by over 90%.</p>
+<!-- Key architectural metrics -->
+<div class="case-stats-row">
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #c084fc;">90%+</span>
+<span class="case-stat-lbl">Token Cost Cut</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">&lt;840ms</span>
+<span class="case-stat-lbl">Cache Hit Latency</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">104k+</span>
+<span class="case-stat-lbl">Context Tokens</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">75-Msg</span>
+<span class="case-stat-lbl">Budget Cap</span>
+</div>
+</div>
+<!-- Tech stack tags -->
+<div class="case-tags">
+<span class="case-tag"><i class="fas fa-brain"></i> Gemini 2.5 Pro Caching</span>
+<span class="case-tag"><i class="fas fa-route"></i> 4-Case Decision Router</span>
+<span class="case-tag"><i class="fas fa-database"></i> PostgreSQL Hydration</span>
+<span class="case-tag"><i class="fas fa-fingerprint"></i> SHA-256 Invalidation</span>
+<span class="case-tag"><i class="fab fa-react"></i> React Webhook Stream</span>
+<span class="case-tag"><i class="fas fa-shield-halved"></i> 75-Msg Pre-Compute Cap</span>
+</div>
+<div class="case-actions">
+<a class="btn btn-primary" href="case-studies/prospect-intelligence/index.html">
+<i class="fas fa-book-open"></i> Read Sales AI Case Study
+</a>
+<a class="btn btn-secondary" href="case-studies/prospect-intelligence/index.html#master-architecture">
+<i class="fas fa-sitemap"></i> View Master Architecture
+</a>
+</div>
+</div>
+</div>
+
+<!-- Case Study: hddisenos Enterprise Cloud Orchestration & 57-Pipeline Fleet -->
+<div class="case-study-feature-card reveal" style="border-left: 4px solid #10b981;">
+<div class="case-card-header">
+<div class="case-badge-pill" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: #34d399;">
+<i class="fas fa-server"></i>
+<span>Enterprise Cloud Automation · 57-Pipeline Fleet</span>
+</div>
+<span class="case-read-time"><i class="far fa-clock"></i> 8 Min Deep Dive</span>
+</div>
+<div class="case-card-content">
+<h3 class="case-title">
+<a href="case-studies/hddisenos-automation/index.html">hddisenos: Self-Hosted Cloud Automation Platform &amp; 57-Pipeline Fleet</a>
+</h3>
+<p class="case-desc tech-only">
+Architected, deployed, and scaled a self-hosted cloud automation engine for hddisenos (henry.lat) on a dedicated Linux VPS via Coolify PaaS with persistent PostgreSQL storage. Orchestrates 57 active production pipelines including Google Gemini multimodal AI vision pipelines, automated Facebook automotive syndication for dealerships, bi-directional HubSpot &amp; Zoho CRM syncing, and Telegram compliance bots, eliminating 60% of manual operational workload with sub-14s turnaround.
+</p><p class="case-desc nt-only" style="display:none;">Commercial automation websites charge for every single click and data transfer, costing thousands of dollars every month as a business scales. For hddisenos, I built our own private automation engine on a dedicated cloud server. It powers 57 different business operations—turning pet photos into watercolor artwork using Google AI, posting car inventory directly to Facebook for dealerships, and syncing sales records across HubSpot and Zoho—cutting manual office work by 60% with zero recurring software fees.</p>
+<!-- Key architectural metrics -->
+<div class="case-stats-row">
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #34d399;">60%</span>
+<span class="case-stat-lbl">Workload Cut</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">57</span>
+<span class="case-stat-lbl">Active Pipelines</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">13.33s</span>
+<span class="case-stat-lbl">Average Latency</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #00f0ff;">$0.00</span>
+<span class="case-stat-lbl">Per-Run Cloud Tax</span>
+</div>
+</div>
+<!-- Tech stack tags -->
+<div class="case-tags">
+<span class="case-tag"><i class="fas fa-server"></i> Dedicated VPS (95.217.22.200)</span>
+<span class="case-tag"><i class="fas fa-ship"></i> Coolify v4 PaaS</span>
+<span class="case-tag"><i class="fas fa-database"></i> PostgreSQL 16</span>
+<span class="case-tag"><i class="fas fa-brain"></i> Gemini Multimodal AI</span>
+<span class="case-tag"><i class="fab fa-facebook"></i> Facebook Graph API</span>
+<span class="case-tag"><i class="fas fa-arrows-split-up-and-left"></i> HubSpot &amp; Zoho Dual Sync</span>
+<span class="case-tag"><i class="fab fa-telegram"></i> Telegram Bot Alerts</span>
+</div>
+<div class="case-actions">
+<a class="btn btn-primary" href="case-studies/hddisenos-automation/index.html">
+<i class="fas fa-book-open"></i> Read Cloud Automation Case Study
+</a>
+<a class="btn btn-secondary" href="case-studies/hddisenos-automation/index.html#master-architecture">
+<i class="fas fa-sitemap"></i> View Master Architecture
+</a>
+</div>
+</div>
+</div>
+
+<!-- Case Study: Autonomous Voice AI Agent, Smart Scheduling & Meeting Intelligence Platform -->
+<div class="case-study-feature-card reveal" style="border-left: 4px solid #00f0ff;">
+<div class="case-card-header">
+<div class="case-badge-pill" style="background: rgba(0, 240, 255, 0.1); border-color: rgba(0, 240, 255, 0.3); color: #00f0ff;">
+<i class="fas fa-microphone-lines"></i>
+<span>Voice AI · Cal.com Scheduling · Recall.ai Bot</span>
+</div>
+<span class="case-read-time"><i class="far fa-clock"></i> 8 Min Deep Dive</span>
+</div>
+<div class="case-card-content">
+<h3 class="case-title">
+<a href="case-studies/django-voice-agent/index.html">Autonomous Voice AI Agent, Smart Scheduling &amp; Meeting Intelligence Platform</a>
+</h3>
+<p class="case-desc tech-only">
+Engineered an end-to-end voice agent ecosystem combining Django 5.x, Retell AI, Cal.com, and Recall.ai. Enables conversational voice agents to handle inbound/outbound calls, qualify prospects through natural dialogue, check calendar availability in real time, auto-generate Google Meet, Zoom, or Teams sessions, and dispatch autonomous meeting bots that transcribe discussions and deliver structured post-meeting deal dossiers with two-way Django Admin sync.
+</p><p class="case-desc nt-only" style="display:none;">Sales teams lose hours every day dialing cold numbers, emailing calendar links back and forth, and taking manual meeting notes. I built an autonomous AI voice system that calls prospects, talks naturally like a human specialist, checks live team availability, and books video calls on Google Meet, Zoom, or Teams. When the meeting happens, an AI assistant automatically joins, records the conversation, and sends a bulletproof summary with next steps directly to the sales team's Slack.</p>
+<!-- Key architectural metrics -->
+<div class="case-stats-row">
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #00f0ff;">&lt;800ms</span>
+<span class="case-stat-lbl">Voice Latency</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">78%</span>
+<span class="case-stat-lbl">Booking Speedup</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">100%</span>
+<span class="case-stat-lbl">Admin Parity</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #34d399;">100%</span>
+<span class="case-stat-lbl">Meeting Capture</span>
+</div>
+</div>
+<!-- Tech stack tags -->
+<div class="case-tags">
+<span class="case-tag"><i class="fab fa-python"></i> Django 5.x</span>
+<span class="case-tag"><i class="fas fa-microphone-lines"></i> Retell AI Telephony</span>
+<span class="case-tag"><i class="fas fa-calendar-check"></i> Cal.com v2 API</span>
+<span class="case-tag"><i class="fas fa-robot"></i> Recall.ai Meeting Bot</span>
+<span class="case-tag"><i class="fas fa-video"></i> Meet, Zoom &amp; Teams</span>
+<span class="case-tag"><i class="fas fa-arrows-rotate"></i> Two-Way Django Sync</span>
+<span class="case-tag"><i class="fas fa-database"></i> PostgreSQL &amp; Celery</span>
+</div>
+<div class="case-actions">
+<a class="btn btn-primary" href="case-studies/django-voice-agent/index.html">
+<i class="fas fa-book-open"></i> Read Voice AI Case Study
+</a>
+<a class="btn btn-secondary" href="case-studies/django-voice-agent/index.html#master-architecture">
+<i class="fas fa-sitemap"></i> View Master Architecture
+</a>
+</div>
+</div>
+</div>
+
+<!-- Case Study: CoreImmersive Hollywood Production Platform -->
+<div class="case-study-feature-card reveal" style="border-left: 4px solid #fbbf24;">
+<div class="case-card-header">
+<div class="case-badge-pill" style="background: rgba(251, 191, 36, 0.1); border-color: rgba(251, 191, 36, 0.3); color: #fbbf24;">
+<i class="fas fa-clapperboard"></i>
+<span>Hollywood Production Intelligence · Google Cloud</span>
+</div>
+<span class="case-read-time"><i class="far fa-clock"></i> 8 Min Deep Dive</span>
+</div>
+<div class="case-card-content">
+<h3 class="case-title">
+<a href="case-studies/coreimmersive-film/index.html">CoreImmersive: Hollywood Production Management &amp; Call Sheet Ingestion Platform</a>
+</h3>
+<p class="case-desc tech-only">
+Engineered an end-to-end production management platform for CoreImmersive on Django 5.x and Google Cloud. Automatically parses dense multi-page PDF Call Sheets and production emails into structured database models, monitors SAG-AFTRA / IATSE labor compliance (6-hour meal penalty clock &amp; 12-hour rest turnaround), tracks hyperlocal weather radar, and delivers live shooting progression dashboards for Hollywood directors and producers.
+</p><p class="case-desc nt-only" style="display:none;">Filming a Hollywood movie or drama series is high-stakes chaos: dozens of actors, camera crews, makeup artists, and catering trucks operate off complicated 20-page PDF "Call Sheets" emailed at 2 AM. I built an intelligent system for CoreImmersive that reads these PDFs in seconds, organizes all actor schedules and shooting locations, watches weather satellites to warn directors before rain hits outdoor sets, and tracks union meal rules to eliminate expensive penalty fines.</p>
+<!-- Key architectural metrics -->
+<div class="case-stats-row">
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #fbbf24;">99.2%</span>
+<span class="case-stat-lbl">PDF Accuracy</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">4.2s</span>
+<span class="case-stat-lbl">Parse Speed</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #34d399;">$0.00</span>
+<span class="case-stat-lbl">Union Fines</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">&gt;$18k</span>
+<span class="case-stat-lbl">Daily Savings</span>
+</div>
+</div>
+<!-- Tech stack tags -->
+<div class="case-tags">
+<span class="case-tag"><i class="fab fa-python"></i> Django 5.x</span>
+<span class="case-tag"><i class="fas fa-file-pdf"></i> Google Document AI</span>
+<span class="case-tag"><i class="fas fa-cloud"></i> Google Cloud Run</span>
+<span class="case-tag"><i class="fas fa-database"></i> Cloud SQL PostgreSQL</span>
+<span class="case-tag"><i class="fas fa-clock"></i> SAG-AFTRA Meal Clock</span>
+<span class="case-tag"><i class="fas fa-cloud-sun-rain"></i> Doppler Weather Radar</span>
+<span class="case-tag"><i class="fas fa-desktop"></i> Live Shoot Dashboard</span>
+</div>
+<div class="case-actions">
+<a class="btn btn-primary" href="case-studies/coreimmersive-film/index.html">
+<i class="fas fa-book-open"></i> Read Film Production Case Study
+</a>
+<a class="btn btn-secondary" href="case-studies/coreimmersive-film/index.html#master-architecture">
+<i class="fas fa-sitemap"></i> View Master Architecture
+</a>
+</div>
+</div>
+</div>
+
+<div class="case-study-feature-card reveal" style="border-left: 4px solid #6366f1;">
+<div class="case-card-header">
+<div class="case-badge-pill" style="background: rgba(99, 102, 241, 0.1); border-color: rgba(99, 102, 241, 0.3); color: #818cf8;">
+<i class="fas fa-brain"></i>
+<span>Autonomous AI Tool Discovery · Hybrid Architecture</span>
+</div>
+<span class="case-read-time"><i class="far fa-clock"></i> 8 Min Deep Dive</span>
+</div>
+<div class="case-card-content">
+<h3 class="case-title">
+<a href="case-studies/2456-ai-platform/index.html">2456.ai: Autonomous AI Tool Discovery &amp; Workflow Generation Platform</a>
+</h3>
+<p class="case-desc tech-only">
+Architected a high-concurrency hybrid backend system for 2456.ai combining Django 5.x monolith for control plane admin with FastAPI microservices for non-blocking AI inference. Deployed a dual-database topology pairing PostgreSQL 16 for ACID transactional workflows with Pinecone Serverless Vector DB for sub-25ms semantic search across 5,000+ indexed tools. Integrated LangChain RAG for deterministic DAG workflow synthesis, Stripe subscription billing with idempotent webhooks, and Ruff pre-commit DevOps guardrails.
+</p><p class="case-desc nt-only" style="display:none;">Engineers and non-technical founders waste days trying to figure out which software tools to connect together and how to write the code between them. I engineered an AI platform called 2456.ai that lets anyone type what they want in plain English. The system searches through 5,000+ tools in 25 milliseconds, picks the exact right pieces, and automatically builds an error-free, ready-to-run automation workflow without writing a single line of manual code.</p>
+<!-- Key architectural metrics -->
+<div class="case-stats-row">
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #818cf8;">&lt; 25ms</span>
+<span class="case-stat-lbl">Vector Search</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">&lt; 50ms</span>
+<span class="case-stat-lbl">FastAPI API</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #34d399;">5,000+</span>
+<span class="case-stat-lbl">Indexed Tools</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">100%</span>
+<span class="case-stat-lbl">DAG Validity</span>
+</div>
+</div>
+<!-- Tech stack tags -->
+<div class="case-tags">
+<span class="case-tag"><i class="fab fa-python"></i> Django 5.x</span>
+<span class="case-tag"><i class="fas fa-bolt"></i> FastAPI ASGI</span>
+<span class="case-tag"><i class="fas fa-network-wired"></i> Pinecone Vector DB</span>
+<span class="case-tag"><i class="fas fa-database"></i> PostgreSQL 16</span>
+<span class="case-tag"><i class="fas fa-brain"></i> LangChain RAG</span>
+<span class="case-tag"><i class="fab fa-stripe"></i> Stripe Billing</span>
+<span class="case-tag"><i class="fas fa-broom"></i> Ruff Linter</span>
+</div>
+<div class="case-actions">
+<a class="btn btn-primary" href="case-studies/2456-ai-platform/index.html">
+<i class="fas fa-book-open"></i> Read AI Platform Case Study
+</a>
+<a class="btn btn-secondary" href="case-studies/2456-ai-platform/index.html#master-architecture">
+<i class="fas fa-sitemap"></i> View Master Architecture
+</a>
+</div>
+</div>
+</div>
+
+<div class="case-study-feature-card reveal" style="border-left: 4px solid #0ea5e9;">
+<div class="case-card-header">
+<div class="case-badge-pill" style="background: rgba(14, 165, 233, 0.1); border-color: rgba(14, 165, 233, 0.3); color: #38bdf8;">
+<i class="fas fa-flask"></i>
+<span>Enterprise Pharma Data Lake · AWS Cloud</span>
+</div>
+<span class="case-read-time"><i class="far fa-clock"></i> 8 Min Deep Dive</span>
+</div>
+<div class="case-card-content">
+<h3 class="case-title">
+<a href="case-studies/qpharma-data-platform/index.html">QPharma: Cloud-Native Pharma Data Lake &amp; Automated AWS ETL Pipelines</a>
+</h3>
+<p class="case-desc tech-only">
+Architected scalable cloud-native data engineering and analytics infrastructure for QPharma (Morristown, NJ) to support large-scale pharmaceutical research and clinical operations. Built automated, event-driven ETL pipelines using AWS Glue (PySpark) with S3 multi-tier data lake storage and AWS Lambda for micro-validation. Engineered vectorized data cleaning and feature engineering pipelines in Pandas/NumPy (handling missing dosages, clinical deduplication, and MedDRA normalization), configured least-privilege IAM/KMS security for HIPAA/21 CFR Part 11 compliance, and deployed a collaborative multi-tenant JupyterHub sandbox.
+</p><p class="case-desc nt-only" style="display:none;">Pharmaceutical research and clinical drug trials produce mountains of messy, scattered data from hospitals all over the country &mdash; messy Excel spreadsheets, clinical test results, and patient symptom reports. At QPharma, I built a smart, automated data highway in the Amazon Cloud. The moment medical records arrive, automated robots inspect them, clean up errors and missing dosages, organize the information into secure vaults, and give research doctors an easy shared workspace where they can study how well new medicines work 65% faster.</p>
+<!-- Key architectural metrics -->
+<div class="case-stats-row">
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #38bdf8;">10M+</span>
+<span class="case-stat-lbl">Daily Records</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #34d399;">99.98%</span>
+<span class="case-stat-lbl">Pipeline SLA</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">65% Faster</span>
+<span class="case-stat-lbl">Time-to-Insight</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #fbbf24;">100%</span>
+<span class="case-stat-lbl">HIPAA &amp; GxP</span>
+</div>
+</div>
+<!-- Tech stack tags -->
+<div class="case-tags">
+<span class="case-tag"><i class="fas fa-network-wired"></i> AWS Glue PySpark</span>
+<span class="case-tag"><i class="fas fa-database"></i> Amazon S3 Lake</span>
+<span class="case-tag"><i class="fas fa-bolt"></i> AWS Lambda Triggers</span>
+<span class="case-tag"><i class="fab fa-python"></i> Pandas &amp; NumPy</span>
+<span class="case-tag"><i class="fas fa-flask"></i> JupyterHub EDA</span>
+<span class="case-tag"><i class="fas fa-shield-alt"></i> AWS IAM &amp; KMS</span>
+<span class="case-tag"><i class="fas fa-search"></i> Amazon Athena</span>
+</div>
+<div class="case-actions">
+<a class="btn btn-primary" href="case-studies/qpharma-data-platform/index.html">
+<i class="fas fa-book-open"></i> Read Pharma Data Case Study
+</a>
+<a class="btn btn-secondary" href="case-studies/qpharma-data-platform/index.html#master-architecture">
+<i class="fas fa-sitemap"></i> View Master Architecture
+</a>
+</div>
+</div>
+</div>
+
+<div class="case-study-feature-card reveal" style="border-left: 4px solid #f59e0b;">
+<div class="case-card-header">
+<div class="case-badge-pill" style="background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3); color: #fbbf24;">
+<i class="fas fa-scale-balanced"></i>
+<span>LegalTech AI · Multilingual Intake</span>
+</div>
+<span class="case-read-time"><i class="far fa-clock"></i> 8 Min Deep Dive</span>
+</div>
+<div class="case-card-content">
+<h3 class="case-title">
+<a href="case-studies/seanz-law-firm/index.html">Seanz Law Firm: AI-Powered Multilingual Interview Automation &amp; Tri-Database Architecture</a>
+</h3>
+<p class="case-desc tech-only">
+Engineered an autonomous multilingual (English/Spanish) client intake assistant for Seanz Law Firm to streamline US immigration intake. Built with OpenAI GPT-4 utilizing custom immigration legal guardrails and intent classification, connected directly to prospective clients via Twilio WhatsApp and SMS APIs. Designed a modular microservices backend synchronizing interview transcripts and structured client profiles in real time across MongoDB Atlas, PostgreSQL 16, and Google Sheets, powered by Looker Studio KPI dashboards and Ruff DevOps code quality standards.
+</p><p class="case-desc nt-only" style="display:none;">When immigrants need legal help, they often face intimidating English-only legal paperwork and long phone waiting lines. For Seanz Law Firm, I built an empathetic, bilingual AI assistant that chats directly with clients on WhatsApp and text message in their native language (English or Spanish). The AI asks simple, respectful questions about their case, gathers important dates and paperwork, and instantly creates organized summaries for attorneys while alerting paralegals &mdash; helping 94% of clients finish their intake in minutes.</p>
+<!-- Key architectural metrics -->
+<div class="case-stats-row">
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #fbbf24;">&lt; 850ms</span>
+<span class="case-stat-lbl">AI Response</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #34d399;">94.2%</span>
+<span class="case-stat-lbl">Completion Rate</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">100% Bilingual</span>
+<span class="case-stat-lbl">English &amp; Spanish</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #38bdf8;">3-Way Sync</span>
+<span class="case-stat-lbl">Postgres/Mongo/Sheets</span>
+</div>
+</div>
+<!-- Tech stack tags -->
+<div class="case-tags">
+<span class="case-tag"><i class="fas fa-brain"></i> OpenAI GPT-4</span>
+<span class="case-tag"><i class="fab fa-whatsapp"></i> Twilio WhatsApp</span>
+<span class="case-tag"><i class="fas fa-comment-sms"></i> Twilio SMS</span>
+<span class="case-tag"><i class="fas fa-bolt"></i> FastAPI ASGI</span>
+<span class="case-tag"><i class="fas fa-database"></i> PostgreSQL 16</span>
+<span class="case-tag"><i class="fas fa-leaf"></i> MongoDB Atlas</span>
+<span class="case-tag"><i class="fas fa-chart-line"></i> Looker Studio</span>
+</div>
+<div class="case-actions">
+<a class="btn btn-primary" href="case-studies/seanz-law-firm/index.html">
+<i class="fas fa-book-open"></i> Read LegalTech Case Study
+</a>
+<a class="btn btn-secondary" href="case-studies/seanz-law-firm/index.html#master-architecture">
+<i class="fas fa-sitemap"></i> View Master Architecture
+</a>
+</div>
+</div>
+</div>
+
+<div class="case-study-feature-card reveal" style="border-left: 4px solid #8b5cf6;">
+<div class="case-card-header">
+<div class="case-badge-pill" style="background: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.3); color: #c084fc;">
+<i class="fas fa-network-wired"></i>
+<span>GenAI Ops · Multi-Cloud Orchestration</span>
+</div>
+<span class="case-read-time"><i class="far fa-clock"></i> 8 Min Deep Dive</span>
+</div>
+<div class="case-card-content">
+<h3 class="case-title">
+<a href="case-studies/jericho-ai-multicloud/index.html">Jericho AI: Autonomous GenAI Ops &amp; Multi-Cloud Orchestration Platform</a>
+</h3>
+<p class="case-desc tech-only">
+Architected an enterprise GenAI Ops and multi-cloud orchestration platform for Jericho AI (St. Petersburg, FL &middot; jerichoai.io) unifying AWS, Azure, GCP, IBM Cloud, and Oracle Cloud (OCI). Features an autonomous multi-agent AI swarm that continuously monitors 10,000+ nodes, rightsizes over-provisioned pods, and arbitrages spot GPU capacity in real time &mdash; delivering an average 38.4% cloud cost reduction, sub-200ms autonomous self-healing, and zero vendor lock-in.
+</p><p class="case-desc nt-only" style="display:none;">Companies running modern AI applications waste millions of dollars juggling separate cloud dashboards across Amazon, Microsoft, and Google with servers sitting empty overnight. For Jericho AI, I built a smart command center that connects all 5 major cloud providers under one screen. A team of autonomous AI agents watches over the entire system 24/7, fixes server crashes in less than a second without human delay, and automatically cuts cloud bills by an average of 38.4% by finding the cheapest server rates in real time.</p>
+<!-- Key architectural metrics -->
+<div class="case-stats-row">
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #34d399;">38.4%</span>
+<span class="case-stat-lbl">Cost Cut</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #c084fc;">5 Clouds</span>
+<span class="case-stat-lbl">Unified Fabric</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val">&lt; 200ms</span>
+<span class="case-stat-lbl">Self-Healing</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #fbbf24;">99.99%</span>
+<span class="case-stat-lbl">Multi-Cloud SLA</span>
+</div>
+</div>
+<!-- Tech stack tags -->
+<div class="case-tags">
+<span class="case-tag"><i class="fas fa-cloud"></i> 5 Cloud Connectors</span>
+<span class="case-tag"><i class="fas fa-robot"></i> AI Swarm Core</span>
+<span class="case-tag"><i class="fas fa-coins"></i> Spot Arbitrage</span>
+<span class="case-tag"><i class="fas fa-dharmachakra"></i> Kubernetes Mesh</span>
+<span class="case-tag"><i class="fas fa-chart-line"></i> TimescaleDB</span>
+<span class="case-tag"><i class="fas fa-wave-square"></i> OpenTelemetry</span>
+<span class="case-tag"><i class="fas fa-shield-halved"></i> WireGuard Mesh</span>
+</div>
+<div class="case-actions">
+<a class="btn btn-primary" href="case-studies/jericho-ai-multicloud/index.html">
+<i class="fas fa-book-open"></i> Read GenAI Ops Case Study
+</a>
+<a class="btn btn-secondary" href="case-studies/jericho-ai-multicloud/index.html#master-architecture">
+<i class="fas fa-sitemap"></i> View Master Architecture
+</a>
+</div>
+</div>
+</div>
+
+<div class="case-study-feature-card reveal" style="border-left: 4px solid #06b6d4;">
+<div class="case-card-header">
+<div class="case-badge-pill" style="background: rgba(6, 182, 212, 0.1); border-color: rgba(6, 182, 212, 0.3); color: #22d3ee;">
+<i class="fas fa-database"></i>
+<span>Vector Database · RAG Architecture</span>
+</div>
+<span class="case-read-time"><i class="far fa-clock"></i> 8 Min Deep Dive</span>
+</div>
+<div class="case-card-content">
+<h3 class="case-title">
+<a href="case-studies/instamail-ai/index.html">InstaMailAI: Scalable Vector Search &amp; RAG Architecture for Email Intelligence</a>
+</h3>
+<p class="case-desc tech-only">
+Engineered enterprise vector search and intelligent RAG pipelines for InstaMailAI. Designed high-throughput semantic ingestion combining MongoDB Atlas Vector Search ($vectorSearch with HNSW graphs and scalar quantization), OpenAI 1536-dimensional embeddings, LangChain RAG workflows, and FastAPI microservices &mdash; delivering sub-18.2ms semantic retrieval across 8.4M+ vectors, 94.8% contextual draft acceptance, and 68.2% token noise reduction.
+</p><p class="case-desc nt-only" style="display:none;">Customer service and sales teams lose hours every day digging through thousands of chaotic email threads. For InstaMailAI, I built a smart AI brain that reads, cleans, and indexes incoming emails into a high-speed mathematical concept database. When a user or agent has a question, the system finds the exact conversation facts in under 18 milliseconds and automatically drafts accurate, polite replies that match the user's personal writing style with a 94.8% acceptance rate.</p>
+<!-- Key architectural metrics -->
+<div class="case-stats-row">
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #22d3ee;">&lt; 18.2ms</span>
+<span class="case-stat-lbl">p95 Latency</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #34d399;">97.4%</span>
+<span class="case-stat-lbl">Recall@10</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #fbbf24;">94.8%</span>
+<span class="case-stat-lbl">Draft Acceptance</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #c084fc;">68.2%</span>
+<span class="case-stat-lbl">Token Noise Cut</span>
+</div>
+</div>
+<!-- Tech stack tags -->
+<div class="case-tags">
+<span class="case-tag"><i class="fas fa-database"></i> MongoDB Atlas Vector</span>
+<span class="case-tag"><i class="fas fa-link"></i> LangChain RAG</span>
+<span class="case-tag"><i class="fas fa-brain"></i> OpenAI Embeddings</span>
+<span class="case-tag"><i class="fas fa-bolt"></i> FastAPI ASGI</span>
+<span class="case-tag"><i class="fas fa-filter"></i> Cross-Encoder</span>
+<span class="case-tag"><i class="fas fa-network-wired"></i> HNSW Indexing</span>
+<span class="case-tag"><i class="fas fa-server"></i> Redis Cache</span>
+</div>
+<div class="case-actions">
+<a class="btn btn-primary" href="case-studies/instamail-ai/index.html">
+<i class="fas fa-book-open"></i> Read Vector Search Case Study
+</a>
+<a class="btn btn-secondary" href="case-studies/instamail-ai/index.html#master-architecture">
+<i class="fas fa-sitemap"></i> View Master Architecture
+</a>
+</div>
+</div>
+</div>
+
+
+
 </div>
 </div>
 </section>
@@ -1050,12 +2130,17 @@ How we solved microservice sprawl, fragmented security logic, and contract regre
 <section class="products-section section" id="products">
 <div class="container">
 <div class="section-header reveal">
-<span class="section-tag"><i class="fas fa-layer-group"></i> Proprietary SaaS &amp; Ecosystem</span>
-<h2 class="section-title">My Products</h2>
+<span class="section-tag tech-only"><i class="fas fa-layer-group"></i> Proprietary SaaS &amp; Ecosystem</span>
+<span class="section-tag nt-only" style="display:none;"><i class="fas fa-star"></i> Products I Built &amp; Own</span>
+<h2 class="section-title tech-only">My Products</h2>
+<h2 class="section-title nt-only" style="display:none;">My Own Products</h2>
 <div class="line"></div>
-<p class="section-subtitle">
+<p class="section-subtitle tech-only">
                         Architect and Founder of the <strong>Ranbval</strong> ecosystem — a multi-feature SaaS suite operating on a single secure root (<a class="accent-link" href="https://ranbval.com" target="_blank">ranbval.com</a>) engineered with a vault-first architecture, verified cryptographic access, and zero-compromise security.
                     </p>
+<p class="section-subtitle nt-only" style="display:none;">
+I didn't just work for other people — I also built my own products from scratch. <strong>Ranbval</strong> is my own platform that I designed, built, and launched. It's a suite of tools that people can use to run their businesses, manage clients, and protect their data — all in one place.
+</p>
 </div>
 <!-- Ranbval Single Root Ecosystem Hero Card -->
 <div class="ranbval-root-banner reveal">
@@ -1105,9 +2190,9 @@ How we solved microservice sprawl, fragmented security logic, and contract regre
 </div>
 <h3 class="prod-title">Ranbval Secret</h3>
 <span class="prod-tagline">Secure Secret Platform Migration &amp; Encrypted API Key Infrastructure</span>
-<p class="prod-desc">
+<p class="prod-desc tech-only">
                             Production-grade API secret &amp; credential management platform that eradicates plain-text <code>.env</code> file leaks. Employs repository-bound cryptographically signed tokens, real-time request authentication SDKs, and a centralized issuance and live telemetry dashboard with zero application downtime.
-                        </p>
+                        </p><p class="prod-desc nt-only" style="display:none;">A digital security safe that stops hackers from finding private passwords and secret keys — protecting company data with zero hassle.</p>
 <div class="prod-features-list">
 <span><i class="fas fa-lock"></i> Encrypted Repository-Bound Access Tokens</span>
 <span><i class="fas fa-tachometer-alt"></i> Live Real-Time Request Telemetry Dashboard</span>
@@ -1145,9 +2230,9 @@ How we solved microservice sprawl, fragmented security logic, and contract regre
 </div>
 <h3 class="prod-title">Ranbval Health</h3>
 <span class="prod-tagline">AI Clinical Companion &amp; End-to-End Encrypted Health Record Vault</span>
-<p class="prod-desc">
+<p class="prod-desc tech-only">
                             Patient-centric digital health vault providing zero-knowledge encrypted clinical histories, proactive symptom analysis, intelligent medication schedules, and AI-assisted medical record synthesis for doctors and emergency profiles.
-                        </p>
+                        </p><p class="prod-desc nt-only" style="display:none;">A private digital medical vault where patients own their health records and can securely share them with doctors in one click.</p>
 <div class="prod-features-list">
 <span><i class="fas fa-vault"></i> Zero-Knowledge Encrypted Clinical Records</span>
 <span><i class="fas fa-user-md"></i> AI-Assisted Consultation Summary Generation</span>
@@ -1177,9 +2262,9 @@ How we solved microservice sprawl, fragmented security logic, and contract regre
 </div>
 <h3 class="prod-title">Ranbval Social</h3>
 <span class="prod-tagline">AI Social Intelligence &amp; Privacy-First Companion Platform</span>
-<p class="prod-desc">
+<p class="prod-desc tech-only">
                             Next-generation social ecosystem combining relationship intelligence, multi-persona AI companions, encrypted media vaults, agent-coordinated gaming, and autonomous blackmail / harassment detection with zero-leak sharing.
-                        </p>
+                        </p><p class="prod-desc nt-only" style="display:none;">A smart social app where you can chat with friends, organize events, store life memories, and get help from AI assistants.</p>
 <div class="prod-features-list">
 <span><i class="fas fa-robot"></i> Multi-Persona Contextual AI Companions</span>
 <span><i class="fas fa-shield-virus"></i> Autonomous Harassment &amp; Blackmail Detection</span>
@@ -1209,9 +2294,9 @@ How we solved microservice sprawl, fragmented security logic, and contract regre
 </div>
 <h3 class="prod-title">Ranbval Discovery</h3>
 <span class="prod-tagline">Autonomous AI Research &amp; Deep Scientific Knowledge Discovery</span>
-<p class="prod-desc">
+<p class="prod-desc tech-only">
                             Agentic research intelligence engine designed to autonomously read and synthesize academic papers, map citation graphs, pinpoint empirical contradictions, and discover interdisciplinary knowledge gaps for researchers.
-                        </p>
+                        </p><p class="prod-desc nt-only" style="display:none;">An AI research assistant that scans thousands of complex scientific articles in seconds and explains the key answers in plain words.</p>
 <div class="prod-features-list">
 <span><i class="fas fa-project-diagram"></i> Autonomous Citation Network Graph Mapping</span>
 <span><i class="fas fa-file-invoice"></i> Cross-Paper Empirical Findings Synthesis</span>
@@ -1241,9 +2326,9 @@ How we solved microservice sprawl, fragmented security logic, and contract regre
 </div>
 <h3 class="prod-title">Ranbval Conversations</h3>
 <span class="prod-tagline">Privacy-Preserving Multi-Modal AI Dialogue &amp; Meeting Intelligence</span>
-<p class="prod-desc">
+<p class="prod-desc tech-only">
                             Zero-retention conversational platform featuring persistent long-term contextual memory threads, encrypted audio transcription, real-time action-item delegation, and isolated private LLM execution pipelines.
-                        </p>
+                        </p><p class="prod-desc nt-only" style="display:none;">A unified inbox that brings all customer messages from WhatsApp, email, and social apps into one place so you never lose track.</p>
 <div class="prod-features-list">
 <span><i class="fas fa-brain"></i> Context-Aware Multi-Session Memory Threads</span>
 <span><i class="fas fa-microphone-alt"></i> Encrypted Audio &amp; Live Speech Transcription</span>
@@ -1276,9 +2361,9 @@ How we solved microservice sprawl, fragmented security logic, and contract regre
 </div>
 <h3 class="prod-title">Ranbval Resume</h3>
 <span class="prod-tagline">Dynamic AI Interactive Resume &amp; Portfolio Intelligence Engine</span>
-<p class="prod-desc">
+<p class="prod-desc tech-only">
                             An interactive, verifiable candidate intelligence platform where recruiters and technical hiring teams converse directly with an AI candidate twin, query specific codebase implementations, and review cryptographically authenticated achievements.
-                        </p>
+                        </p><p class="prod-desc nt-only" style="display:none;">An interactive job profile where employers can see real proof of what you've built instead of just reading a flat paper resume.</p>
 <div class="prod-features-list">
 <span><i class="fas fa-bolt"></i> Interactive AI-Powered Portfolio Conversations</span>
 <span><i class="fas fa-stamp"></i> Cryptographically Verified Credentials &amp; Reviews</span>
@@ -1307,14 +2392,17 @@ How we solved microservice sprawl, fragmented security logic, and contract regre
 <section class="section fields-section" id="fields">
 <div class="container">
 <div class="section-header reveal">
-<h2 class="section-title">Domains of Expertise</h2>
+<h2 class="section-title tech-only">Domains of Expertise</h2>
+<h2 class="section-title nt-only" style="display:none;">Areas I Work In</h2>
 <div class="line"></div>
-<p class="section-subtitle">
+<p class="section-subtitle tech-only">
 Proven cross-functional engineering specializations bridging <strong>autonomous robotics</strong>, <strong>AI automation systems</strong>, <strong>deep learning perception</strong>, <strong>high-throughput data platforms</strong>, and <strong>zero-trust cryptographic architectures</strong>.
+</p>
+<p class="section-subtitle nt-only" style="display:none;">
+I work in several different areas of technology. Each area solves a different type of problem for businesses and people.
 </p>
 </div>
 <div class="fields-grid">
-
 <!-- 1. Robotics & Embedded Edge AI -->
 <div class="field-card reveal">
 <div class="field-card-header">
@@ -1325,9 +2413,9 @@ Proven cross-functional engineering specializations bridging <strong>autonomous 
 </div>
 <h3 class="field-title">Robotics &amp; Embedded Edge AI</h3>
 <div class="field-role">Autonomous Perception &amp; Edge Systems Engineer</div>
-<p class="field-desc">
+<p class="field-desc tech-only">
 Architecting distributed edge perception networks, sensor fusion pipelines, and low-latency on-device intelligence for autonomous robotics and dynamic edge environments. Rooted in Computer Systems Engineering, experience spans ROS / ROS2 node pipelines, Byzantine-resilient multi-agent perception under severe natural domain shifts (adverse weather, fog, low-light), hardware-level IoT telematics telemetry (FleetGPS integration), microcontrollers, and real-time embedded model inference on power-constrained edge hardware.
-</p>
+</p><p class="field-desc nt-only" style="display:none;">I build smart systems for robots and machines that need to 'see' and react to the real world — like a robot that avoids obstacles, or a vehicle tracking system that knows exactly where every truck is in real time.</p>
 <div class="field-competencies">
 <span>ROS / ROS2 Architecture</span>
 <span>Autonomous Perception</span>
@@ -1338,7 +2426,6 @@ Architecting distributed edge perception networks, sensor fusion pipelines, and 
 <span>Microcontrollers &amp; Hardware</span>
 </div>
 </div>
-
 <!-- 2. AI Automation & Intelligent Workflow Systems -->
 <div class="field-card reveal">
 <div class="field-card-header">
@@ -1349,9 +2436,9 @@ Architecting distributed edge perception networks, sensor fusion pipelines, and 
 </div>
 <h3 class="field-title">AI Automation &amp; Workflow Systems</h3>
 <div class="field-role">Autonomous Workflow &amp; AI Automation Architect</div>
-<p class="field-desc">
+<p class="field-desc tech-only">
 Architecting autonomous zero-human-touch business ecosystems, multi-agent event orchestrations, and mission-critical enterprise RPA pipelines. Experienced in orchestrating high-reliability n8n workflows, Zapier automations, Voiceflow dialog agents, and custom webhook connectors integrating Housecall Pro, Iris CRM, DocuSign, Twilio/OpenPhone, and WhatsApp. Transforms complex multi-system operational loops—from lead qualification and AI quoting to automated dispatch and invoice settlement—into seamless, self-driving engines.
-</p>
+</p><p class="field-desc nt-only" style="display:none;">I build systems that run entire businesses automatically — from answering leads, to booking jobs, to sending invoices — all without a human needing to press a button. Think of it as hiring a robot employee who works 24/7 and never makes mistakes.</p>
 <div class="field-competencies">
 <span>N8N Workflow Architecture</span>
 <span>Autonomous Multi-Agent Loops</span>
@@ -1362,7 +2449,6 @@ Architecting autonomous zero-human-touch business ecosystems, multi-agent event 
 <span>BAT Automation &amp; Device Intel</span>
 </div>
 </div>
-
 <!-- 3. Computer Vision & Video Intelligence -->
 <div class="field-card reveal">
 <div class="field-card-header">
@@ -1373,9 +2459,9 @@ Architecting autonomous zero-human-touch business ecosystems, multi-agent event 
 </div>
 <h3 class="field-title">Computer Vision &amp; Video Intelligence</h3>
 <div class="field-role">Computer Vision &amp; Video Systems Engineer</div>
-<p class="field-desc">
+<p class="field-desc tech-only">
 Designing and deploying production spatial vision systems, real-time video intelligence pipelines, and automated media segmentation. Extensive hands-on implementations with zero-shot vision-language foundation models (CLIP), feature pyramid attention architectures, unsupervised industrial defect detection across MVTec AD, MediaPipe 468-point facial mesh tracking, OpenCV video stream processing, and published PyPI computer vision libraries (emotion-analysis).
-</p>
+</p><p class="field-desc nt-only" style="display:none;">I teach computers to understand what they see — whether it's analyzing a face in a photo, detecting objects in a video, or automatically cutting long videos into short social media clips.</p>
 <div class="field-competencies">
 <span>Zero-Shot Vision-Language (CLIP)</span>
 <span>MediaPipe 468-Pt Mesh</span>
@@ -1386,7 +2472,6 @@ Designing and deploying production spatial vision systems, real-time video intel
 <span>FFmpeg Video Automation</span>
 </div>
 </div>
-
 <!-- 4. Data Engineering & Streaming ETL -->
 <div class="field-card reveal">
 <div class="field-card-header">
@@ -1397,9 +2482,9 @@ Designing and deploying production spatial vision systems, real-time video intel
 </div>
 <h3 class="field-title">Data Engineering &amp; Streaming ETL</h3>
 <div class="field-role">Enterprise Data Platform &amp; Pipeline Engineer</div>
-<p class="field-desc">
+<p class="field-desc tech-only">
 Engineering mission-critical enterprise data platforms, asynchronous ingestion pipelines, and resilient single-source-of-truth data mirrors. Engineered real-time NetSuite ERP data pipelines via SuiteQL extraction, Celery Beat schedulers, and Redis streaming mirrors across 10+ operational domains into read-optimized PostgreSQL 18. Proficient in distributed AWS Glue, S3 data lakes, async connection pooling, schema migrations, and multi-tenant data layer architectures.
-</p>
+</p><p class="field-desc nt-only" style="display:none;">I build pipelines that collect data from many different places (like accounting software, HR systems, etc.), clean it up, and deliver it in real time to one central place — so businesses always have accurate, up-to-date information.</p>
 <div class="field-competencies">
 <span>Real-Time NetSuite ERP Sync</span>
 <span>SuiteQL Data Extraction</span>
@@ -1410,7 +2495,6 @@ Engineering mission-critical enterprise data platforms, asynchronous ingestion p
 <span>Distributed Event Streams</span>
 </div>
 </div>
-
 <!-- 5. Deep Learning & Neural Architectures -->
 <div class="field-card reveal">
 <div class="field-card-header">
@@ -1421,9 +2505,9 @@ Engineering mission-critical enterprise data platforms, asynchronous ingestion p
 </div>
 <h3 class="field-title">Deep Learning &amp; Neural Architectures</h3>
 <div class="field-role">Deep Learning Research &amp; Systems Engineer</div>
-<p class="field-desc">
+<p class="field-desc tech-only">
 Developing, fine-tuning, and evaluating deep neural networks across PyTorch and TensorFlow for high-dimensional representation learning and pattern recognition. Specialized in vision transformers, deep convolutional neural networks, reconstruction autoencoders, attention mechanisms, and transfer learning workflows. Core contributions validated through peer-reviewed academic research published in JISRC and IEEE-indexed computer science venues.
-</p>
+</p><p class="field-desc nt-only" style="display:none;">I build AI 'brains' — programs that learn from thousands of examples and get smarter over time. For example, an AI that learns from past customer behavior to predict what they'll do next.</p>
 <div class="field-competencies">
 <span>PyTorch &amp; TensorFlow</span>
 <span>Vision Transformers (ViT)</span>
@@ -1434,7 +2518,6 @@ Developing, fine-tuning, and evaluating deep neural networks across PyTorch and 
 <span>Peer-Reviewed AI Research</span>
 </div>
 </div>
-
 <!-- 6. Reinforcement Learning & Multi-Agent Systems -->
 <div class="field-card reveal">
 <div class="field-card-header">
@@ -1445,9 +2528,9 @@ Developing, fine-tuning, and evaluating deep neural networks across PyTorch and 
 </div>
 <h3 class="field-title">Reinforcement Learning &amp; Multi-Agent Systems</h3>
 <div class="field-role">Reinforcement Learning &amp; Agentic Systems Engineer</div>
-<p class="field-desc">
+<p class="field-desc tech-only">
 Formulating sequential decision-making policies, dynamic state-reward optimization loops, and distributed multi-agent coordination frameworks operating under stochastic uncertainty. Experienced in proxy-agent networks, game-theoretic negotiation protocols, trust-gated aggregation mechanisms, adversarial resilience against poisoning attacks, and self-directed agentic state machines built on modern graph runtimes.
-</p>
+</p><p class="field-desc nt-only" style="display:none;">I build AI systems that learn by trying things out — like teaching a computer program to play a game and get better by winning and losing. This is used in complex decision-making, like optimizing business routes or automated trading.</p>
 <div class="field-competencies">
 <span>Policy Optimization</span>
 <span>Multi-Agent Coordination</span>
@@ -1458,7 +2541,6 @@ Formulating sequential decision-making policies, dynamic state-reward optimizati
 <span>LangGraph Cyclic Agents</span>
 </div>
 </div>
-
 <!-- 7. Machine Learning & Predictive Analytics -->
 <div class="field-card reveal">
 <div class="field-card-header">
@@ -1469,9 +2551,9 @@ Formulating sequential decision-making policies, dynamic state-reward optimizati
 </div>
 <h3 class="field-title">Machine Learning &amp; Predictive Analytics</h3>
 <div class="field-role">Senior Machine Learning &amp; Statistical Engineer</div>
-<p class="field-desc">
+<p class="field-desc tech-only">
 Developing high-accuracy predictive models, statistical classification pipelines, and feature selection engines with strict mathematical rigor. Ranked Kaggle Expert with 81+ solved competitive problems; engineered novel ANOVA F-test statistical feature selection and variance-smoothed Gaussian Naive Bayes pipelines achieving 98.67% accuracy on benchmark intrusion distributions (UNSW-NB15) with minimal false alarms.
-</p>
+</p><p class="field-desc nt-only" style="display:none;">I build systems that look at past data to predict the future — like predicting which customers are likely to leave, or which products will sell best next month. These predictions help businesses make smarter decisions.</p>
 <div class="field-competencies">
 <span>Supervised &amp; Unsupervised ML</span>
 <span>ANOVA F-test Feature Selection</span>
@@ -1482,7 +2564,6 @@ Developing high-accuracy predictive models, statistical classification pipelines
 <span>Hyperparameter Tuning</span>
 </div>
 </div>
-
 <!-- 8. Generative AI, LLMOps & Autonomous Agents -->
 <div class="field-card reveal">
 <div class="field-card-header">
@@ -1493,9 +2574,9 @@ Developing high-accuracy predictive models, statistical classification pipelines
 </div>
 <h3 class="field-title">Generative AI, LLMOps &amp; Agentic Systems</h3>
 <div class="field-role">GenAI Solutions &amp; Context Architect</div>
-<p class="field-desc">
+<p class="field-desc tech-only">
 Engineering production enterprise Generative AI ecosystems, multi-agent orchestrations, and high-performance context architectures. Architected Claude 3.5 Sonnet ops-intelligence webhook pipelines, Gemini 2.5 Pro explicit context caching (/v1beta/cachedContents) to slash token latency by 85%, hybrid dense/sparse RAG vector pipelines (Pinecone, Atlas), and zero-human-touch autonomous service business automations.
-</p>
+</p><p class="field-desc nt-only" style="display:none;">I build systems powered by AI tools like ChatGPT — but custom-built for specific business needs. These can write content, answer questions, analyze documents, and make decisions automatically — without human involvement.</p>
 <div class="field-competencies">
 <span>LangGraph &amp; LangChain Agents</span>
 <span>Claude 3.5 Sonnet Ops Intelligence</span>
@@ -1506,7 +2587,6 @@ Engineering production enterprise Generative AI ecosystems, multi-agent orchestr
 <span>Cost-Optimized LLMOps</span>
 </div>
 </div>
-
 <!-- 9. Natural Language Processing & Speech AI -->
 <div class="field-card reveal">
 <div class="field-card-header">
@@ -1517,9 +2597,9 @@ Engineering production enterprise Generative AI ecosystems, multi-agent orchestr
 </div>
 <h3 class="field-title">NLP &amp; Conversational Speech Systems</h3>
 <div class="field-role">NLP &amp; Conversational Systems Engineer</div>
-<p class="field-desc">
+<p class="field-desc tech-only">
 Building production speech-to-text intelligence, multilingual translation backends, and low-latency voice interaction systems. Deployed OpenAI Whisper transcription engines with context-aware segmentation, FFmpeg automated subtitle synthesis, bidirectional EN/RU neural translation pipelines, and high-speed text-to-speech (TTS) engines with intelligent memory caching deployed on Google Cloud Run.
-</p>
+</p><p class="field-desc nt-only" style="display:none;">I build systems that understand human language — written or spoken. This includes chatbots that hold real conversations, voice assistants, and tools that read and summarize documents automatically.</p>
 <div class="field-competencies">
 <span>OpenAI Whisper ASR</span>
 <span>Speech-to-Text Segmentation</span>
@@ -1530,7 +2610,6 @@ Building production speech-to-text intelligence, multilingual translation backen
 <span>Voiceflow &amp; Twilio Speech</span>
 </div>
 </div>
-
 <!-- 10. Cloud Architecture & Distributed Microservices -->
 <div class="field-card reveal">
 <div class="field-card-header">
@@ -1541,9 +2620,9 @@ Building production speech-to-text intelligence, multilingual translation backen
 </div>
 <h3 class="field-title">Cloud Architecture &amp; Distributed Microservices</h3>
 <div class="field-role">Cloud Systems &amp; Microservices Architect</div>
-<p class="field-desc">
+<p class="field-desc tech-only">
 Designing scalable, highly resilient containerized cloud infrastructures and automated CI/CD deployment pipelines on GCP, AWS, and Azure. Architected multi-tenant enterprise portals on GCP Cloud Run using FastAPI (Python 3.12), Docker multi-stage containerization, Nginx reverse-proxies, Cloud Build continuous delivery, per-request upstream DNS resolution, and auto-scaling asynchronous architectures.
-</p>
+</p><p class="field-desc nt-only" style="display:none;">I build systems that live 'in the cloud' (the internet) and can handle millions of users without slowing down or crashing. I make sure these systems deploy automatically with zero downtime.</p>
 <div class="field-competencies">
 <span>GCP Cloud Run Serverless</span>
 <span>Docker Multi-Stage Builds</span>
@@ -1554,7 +2633,6 @@ Designing scalable, highly resilient containerized cloud infrastructures and aut
 <span>Microservices Scaling</span>
 </div>
 </div>
-
 <!-- 11. Cryptographic Systems & Cybersecurity -->
 <div class="field-card reveal">
 <div class="field-card-header">
@@ -1565,9 +2643,9 @@ Designing scalable, highly resilient containerized cloud infrastructures and aut
 </div>
 <h3 class="field-title">Cryptographic Systems &amp; Cybersecurity</h3>
 <div class="field-role">Cryptographic Security &amp; Infrastructure Architect</div>
-<p class="field-desc">
+<p class="field-desc tech-only">
 Pioneering zero-trust secrets orchestration, repository-bound cryptographic token architectures, and automated runtime verification protocols. Founder and architect of the Ranbval cryptographic vault platform; engineered dual open-source runtime validation SDKs (PyPI &amp; npm), 3-layer OTP authentication schemes, MS Entra ID SSO integrations, and high-precision Network Intrusion Detection Systems (NIDS).
-</p>
+</p><p class="field-desc nt-only" style="display:none;">I build systems that keep data safe and ensure only the right people can access it. This includes digital vaults, secure approval processes, and verification systems that prevent unauthorized access.</p>
 <div class="field-competencies">
 <span>Zero-Trust Secret Vaults</span>
 <span>Repo-Bound Signed Tokens</span>
@@ -1578,7 +2656,6 @@ Pioneering zero-trust secrets orchestration, repository-bound cryptographic toke
 <span>End-to-End Cryptography</span>
 </div>
 </div>
-
 <!-- 12. Full-Stack AI Product Engineering -->
 <div class="field-card reveal">
 <div class="field-card-header">
@@ -1589,9 +2666,9 @@ Pioneering zero-trust secrets orchestration, repository-bound cryptographic toke
 </div>
 <h3 class="field-title">Full-Stack AI Product Engineering</h3>
 <div class="field-role">Full-Stack AI Systems &amp; Product Engineer</div>
-<p class="field-desc">
+<p class="field-desc tech-only">
 Delivering high-reliability end-to-end software products uniting robust backend microservices with responsive user interfaces and developer SDKs. Built multi-tenant enterprise operations portals serving 37 functional modules using FastAPI (Python 3.12) and Cloud SQL PostgreSQL, designed cross-platform React and React Native client applications, and published production-grade runtime verification packages on PyPI and npm registries.
-</p>
+</p><p class="field-desc nt-only" style="display:none;">I build complete products from scratch — the part users see (the website/app) and the part that runs behind the scenes (the logic, database, and AI). I take an idea from zero to a live, working product.</p>
 <div class="field-competencies">
 <span>FastAPI (Python 3.12) Microservices</span>
 <span>Multi-Tenant SaaS Portals</span>
@@ -1602,7 +2679,6 @@ Delivering high-reliability end-to-end software products uniting robust backend 
 <span>Asynchronous WebSockets</span>
 </div>
 </div>
-
 </div>
 </div>
 </section>
@@ -1610,14 +2686,17 @@ Delivering high-reliability end-to-end software products uniting robust backend 
 <section class="section" id="skills">
 <div class="container">
 <div class="section-header reveal">
-<h2 class="section-title">Technical Skills</h2>
+<h2 class="section-title tech-only">Technical Skills</h2>
+<h2 class="section-title nt-only" style="display:none;">What I'm Good At</h2>
 <div class="line"></div>
-<p class="section-subtitle">
+<p class="section-subtitle tech-only">
 Production-tested tech stack, frameworks, and engineering tooling across AI systems, data architectures, and infrastructure.
 </p>
+<p class="section-subtitle nt-only" style="display:none;">
+Here's a simple breakdown of the different areas I work in — explained in plain, everyday words.
+</p>
 </div>
-<div class="skills-wrapper">
-
+<div class="skills-wrapper tech-only">
 <!-- 1. Languages -->
 <div class="skill-category reveal">
 <h3>Programming Languages</h3>
@@ -1625,7 +2704,6 @@ Production-tested tech stack, frameworks, and engineering tooling across AI syst
 <span>Python</span><span>SQL</span><span>JavaScript</span><span>TypeScript</span><span>C / C++</span><span>Bash / Shell</span><span>BAT Scripting</span><span>HTML5 / CSS3</span><span>YAML</span><span>LaTeX</span>
 </div>
 </div>
-
 <!-- 2. Generative AI & LLMOps -->
 <div class="skill-category reveal">
 <h3>Generative AI &amp; LLMOps</h3>
@@ -1633,7 +2711,6 @@ Production-tested tech stack, frameworks, and engineering tooling across AI syst
 <span>LangGraph</span><span>LangChain</span><span>Claude 3.5 Sonnet</span><span>Gemini 2.5 Pro</span><span>Explicit Context Caching</span><span>Agentic RAG</span><span>Pinecone</span><span>MongoDB Atlas Vector</span><span>Prompt Engineering</span><span>Fine-Tuning</span>
 </div>
 </div>
-
 <!-- 3. AI Automation & Workflow Orchestration -->
 <div class="skill-category reveal">
 <h3>AI Automation &amp; Integrations</h3>
@@ -1641,7 +2718,6 @@ Production-tested tech stack, frameworks, and engineering tooling across AI syst
 <span>N8N (Self-Hosted &amp; Cloud)</span><span>Zapier</span><span>Voiceflow</span><span>Manus AI</span><span>Monday.com</span><span>Housecall Pro API</span><span>Iris CRM</span><span>DocuSign API</span><span>NetSuite ERP</span><span>Twilio &amp; OpenPhone</span><span>Webhooks Architecture</span>
 </div>
 </div>
-
 <!-- 4. Computer Vision, NLP & Speech -->
 <div class="skill-category reveal">
 <h3>Computer Vision &amp; Speech AI</h3>
@@ -1649,7 +2725,6 @@ Production-tested tech stack, frameworks, and engineering tooling across AI syst
 <span>OpenCV</span><span>MediaPipe (468-pt Mesh)</span><span>Zero-Shot CLIP</span><span>OpenAI Whisper</span><span>Vision Transformers (ViT)</span><span>FFmpeg AI Automation</span><span>Cached TTS</span><span>PyPI emotion-analysis</span>
 </div>
 </div>
-
 <!-- 5. Deep Learning & Machine Learning -->
 <div class="skill-category reveal">
 <h3>Deep Learning &amp; Machine Learning</h3>
@@ -1657,7 +2732,6 @@ Production-tested tech stack, frameworks, and engineering tooling across AI syst
 <span>PyTorch</span><span>TensorFlow</span><span>Scikit-Learn</span><span>XGBoost</span><span>LightGBM</span><span>ANOVA F-test</span><span>Variance-Smoothed Naive Bayes</span><span>Autoencoders</span><span>Kaggle Expert (81+)</span><span>Pandas / NumPy</span>
 </div>
 </div>
-
 <!-- 6. Robotics, Edge AI & IoT -->
 <div class="skill-category reveal">
 <h3>Robotics &amp; Embedded Edge AI</h3>
@@ -1665,7 +2739,6 @@ Production-tested tech stack, frameworks, and engineering tooling across AI syst
 <span>ROS / ROS2</span><span>Autonomous Perception</span><span>Sensor Fusion</span><span>Edge AI Inference</span><span>FleetGPS Telematics</span><span>Microcontrollers / ESP32</span><span>Embedded Systems</span><span>Byzantine Fault Tolerance</span><span>Hardware Interfacing</span>
 </div>
 </div>
-
 <!-- 7. Backend & Web Frameworks -->
 <div class="skill-category reveal">
 <h3>Backend &amp; Microservices</h3>
@@ -1673,7 +2746,6 @@ Production-tested tech stack, frameworks, and engineering tooling across AI syst
 <span>FastAPI (Python 3.12)</span><span>Django</span><span>Django REST Framework</span><span>AsyncIO</span><span>Async SQLAlchemy</span><span>Celery &amp; Celery Beat</span><span>Node.js</span><span>React</span><span>React Native</span><span>Alembic</span>
 </div>
 </div>
-
 <!-- 8. Data Engineering & Databases -->
 <div class="skill-category reveal">
 <h3>Data Engineering &amp; Databases</h3>
@@ -1681,7 +2753,6 @@ Production-tested tech stack, frameworks, and engineering tooling across AI syst
 <span>SuiteQL Extraction</span><span>Celery Beat ETL</span><span>Redis Streaming Mirror</span><span>PostgreSQL 18</span><span>Cloud SQL</span><span>AWS Glue &amp; Lambda</span><span>Supabase</span><span>ETL / ELT Pipelines</span><span>Data Lakes (S3)</span>
 </div>
 </div>
-
 <!-- 9. Cloud, DevOps & Infrastructure -->
 <div class="skill-category reveal">
 <h3>Cloud &amp; DevOps</h3>
@@ -1689,7 +2760,6 @@ Production-tested tech stack, frameworks, and engineering tooling across AI syst
 <span>Google Cloud Run</span><span>AWS (S3, EC2, Lambda)</span><span>Azure</span><span>Docker &amp; Multi-Stage</span><span>Google Cloud Build (CI/CD)</span><span>Nginx Reverse Proxy</span><span>Git / GitHub Actions</span><span>Linux Administration</span>
 </div>
 </div>
-
 <!-- 10. Cybersecurity & Cryptographic Systems -->
 <div class="skill-category reveal">
 <h3>Cybersecurity &amp; Cryptography</h3>
@@ -1697,7 +2767,6 @@ Production-tested tech stack, frameworks, and engineering tooling across AI syst
 <span>Zero-Trust Architecture</span><span>Cryptographic Vaults</span><span>Repo-Bound Signed Tokens</span><span>Dual SDKs (PyPI &amp; npm)</span><span>Network Intrusion (NIDS)</span><span>3-Layer OTP Auth</span><span>MS Entra ID SSO</span><span>SHA-256 Invalidation</span>
 </div>
 </div>
-
 <!-- 11. Project Management & Agile Tools -->
 <div class="skill-category reveal">
 <h3>Project Management &amp; Agile</h3>
@@ -1705,7 +2774,88 @@ Production-tested tech stack, frameworks, and engineering tooling across AI syst
 <span>Jira</span><span>Trello</span><span>Linear</span><span>Asana</span><span>Monday.com</span><span>ClickUp</span><span>Notion</span><span>Agile / Scrum</span><span>Sprint Planning</span><span>Slack &amp; Discord</span>
 </div>
 </div>
-
+<!-- Non-Technical Skills View -->
+<div class="skills-wrapper nt-only" style="display:none;">
+<div class="skill-category reveal">
+<h3>🤖 Artificial Intelligence</h3>
+<div class="skill-tags">
+<span>I build AI systems that think, decide, and act on their own</span>
+<span>Chatbots that hold real conversations</span>
+<span>AI that reads documents and extracts info</span>
+<span>Systems that analyze personality from text</span>
+<span>AI assistants for sales, customer service, and operations</span>
+</div>
+</div>
+<div class="skill-category reveal">
+<h3>⚙️ Business Automation</h3>
+<div class="skill-tags">
+<span>Connecting apps so they talk to each other automatically</span>
+<span>Eliminating repetitive manual work</span>
+<span>Automatic email, document, and approval workflows</span>
+<span>Building systems that run businesses with zero human input</span>
+<span>Tools like Zapier and N8N — but custom-built for your needs</span>
+</div>
+</div>
+<div class="skill-category reveal">
+<h3>💻 Web &amp; App Development</h3>
+<div class="skill-tags">
+<span>Building websites and web applications</span>
+<span>Creating the behind-the-scenes logic that powers apps</span>
+<span>Secure login and user management systems</span>
+<span>Payment integration (Stripe)</span>
+<span>Live dashboards and reporting tools</span>
+</div>
+</div>
+<div class="skill-category reveal">
+<h3>🔗 Connecting Business Tools</h3>
+<div class="skill-tags">
+<span>Making different software systems work together</span>
+<span>Connecting accounting software (QuickBooks, Xero, NetSuite)</span>
+<span>Integrating CRMs, HR systems, and project management tools</span>
+<span>Digital contracts and e-signature systems (DocuSign)</span>
+<span>WhatsApp, SMS, and email automation</span>
+</div>
+</div>
+<div class="skill-category reveal">
+<h3>🧠 Smart Data &amp; Analytics</h3>
+<div class="skill-tags">
+<span>Collecting and organizing data from many sources</span>
+<span>Building live dashboards so you always know what's happening</span>
+<span>AI that finds patterns in your data to help you make decisions</span>
+<span>Automatically generating financial reports</span>
+<span>Search systems that understand meaning, not just keywords</span>
+</div>
+</div>
+<div class="skill-category reveal">
+<h3>☁️ Cloud &amp; Reliability</h3>
+<div class="skill-tags">
+<span>Hosting systems on the internet (Google Cloud, AWS, Azure)</span>
+<span>Making sure systems never go down</span>
+<span>Securing sensitive business data</span>
+<span>Building systems that grow as your business grows</span>
+<span>Automatic deployment — updates happen without downtime</span>
+</div>
+</div>
+<div class="skill-category reveal">
+<h3>📹 Content &amp; Media AI</h3>
+<div class="skill-tags">
+<span>Automatically turning long videos into short clips</span>
+<span>AI that writes blog posts, articles, and social media content</span>
+<span>Auto-publishing to YouTube, WordPress, and social platforms</span>
+<span>Face and appearance analysis from photos</span>
+<span>Text-to-speech and voice AI in multiple languages</span>
+</div>
+</div>
+<div class="skill-category reveal">
+<h3>🔒 Security &amp; Trust</h3>
+<div class="skill-tags">
+<span>Making sure only the right people can access your data</span>
+<span>Encrypted digital vaults for sensitive documents</span>
+<span>Multi-step verification before approvals</span>
+<span>Audit trails so you always know who did what and when</span>
+</div>
+</div>
+</div>
 </div>
 </div>
 </section>
@@ -1713,7 +2863,7 @@ Production-tested tech stack, frameworks, and engineering tooling across AI syst
 <section class="freelancing-section section" id="freelancing">
 <div class="container">
 <div class="section-header reveal">
-<h2 class="section-title">Freelancing Jobs</h2>
+<h2 class="section-title tech-only">Freelancing Jobs</h2><h2 class="section-title nt-only" style="display:none;">Contract Work &amp; Client Jobs</h2><p class="section-subtitle nt-only" style="display:none;">Selected contract projects delivered for international clients with 100% 5-star ratings.</p>
 <div class="line"></div>
 </div>
 <div class="freelancing-grid">
@@ -1724,7 +2874,7 @@ Production-tested tech stack, frameworks, and engineering tooling across AI syst
 <div class="freelance-card-body">
 <span class="freelance-badge">Completed</span>
 <h3>Vectorized Database Software Engineer</h3>
-<p>AI Email Intelligence project involving MongoDB Atlas Vector Search, LangChain, FastAPI, and RAG architecture for high-performance email response generation.</p>
+<p class="tech-only">AI Email Intelligence project involving MongoDB Atlas Vector Search, LangChain, FastAPI, and RAG architecture for high-performance email response generation.</p><p class="nt-only" style="display:none;">Built an AI assistant that reads through customer emails, understands what they need, and prepares instant reply drafts for the team.</p>
 </div>
 </div>
 <div class="freelance-card reveal">
@@ -1734,7 +2884,7 @@ Production-tested tech stack, frameworks, and engineering tooling across AI syst
 <div class="freelance-card-body">
 <span class="freelance-badge">Completed</span>
 <h3>N8N Expert — Install &amp; Use Crawl4AI</h3>
-<p>Setting up and configuring N8N with Crawl4AI for advanced web crawling and AI-driven data extraction automation workflows.</p>
+<p class="tech-only">Setting up and configuring N8N with Crawl4AI for advanced web crawling and AI-driven data extraction automation workflows.</p><p class="nt-only" style="display:none;">Built an automatic web research robot that visits websites, pulls the important data, and organizes it neatly into spreadsheets.</p>
 </div>
 </div>
 </div>
@@ -1744,7 +2894,7 @@ Production-tested tech stack, frameworks, and engineering tooling across AI syst
 <section class="section" id="research">
 <div class="container">
 <div class="section-header reveal">
-<h2 class="section-title">Research Projects</h2>
+<h2 class="section-title tech-only">Research Projects</h2><h2 class="section-title nt-only" style="display:none;">Innovation &amp; Research Studies</h2><p class="section-subtitle nt-only" style="display:none;">Cutting-edge scientific experiments where I solve unsolved problems in AI security, autonomous vehicles, and medical systems.</p>
 <div class="line"></div>
 </div>
 <div class="research-grid">
@@ -1754,8 +2904,8 @@ Production-tested tech stack, frameworks, and engineering tooling across AI syst
 <div class="research-card-icon"><i class="fas fa-shield-virus"></i></div>
 <span class="research-status status-published"><i class="fas fa-check-circle"></i> In Production — JISRC</span>
 </div>
-<h3>ANOVA F-Test Feature Selection for Machine Learning-Based Network Intrusion Detection on the UNSW-NB15 Dataset</h3>
-<p class="research-desc">Accepted for publication in the <strong>Journal of Independent Studies and Research Computing (JISRC - SZABIST)</strong> (Production Stage — ID: #429). Developed an accurate, computationally lightweight two-stage network intrusion detector (NIDS) utilizing ANOVA F-statistic ranking to select the top 15 features across binary and multi-class attacks. Attained <strong>98.67% binary accuracy</strong> with variance-smoothed Gaussian Naive Bayes and <strong>78.13% multi-class accuracy</strong> with Gradient Boosting, accompanied by federated learning privacy-preserving extensions.</p>
+<h3 class="tech-only">ANOVA F-Test Feature Selection for Machine Learning-Based Network Intrusion Detection on the UNSW-NB15 Dataset</h3><h3 class="nt-only" style="display:none;">Stopping Cyber Hackers Before They Cause Damage</h3>
+<p class="research-desc tech-only">Accepted for publication in the <strong>Journal of Independent Studies and Research Computing (JISRC - SZABIST)</strong> (Production Stage — ID: #429). Developed an accurate, computationally lightweight two-stage network intrusion detector (NIDS) utilizing ANOVA F-statistic ranking to select the top 15 features across binary and multi-class attacks. Attained <strong>98.67% binary accuracy</strong> with variance-smoothed Gaussian Naive Bayes and <strong>78.13% multi-class accuracy</strong> with Gradient Boosting, accompanied by federated learning privacy-preserving extensions.</p><p class="nt-only" style="display:none;">Designed an intelligent cybersecurity system that spots unusual activity in computer networks and blocks hackers in real time.</p>
 <div class="research-figures-section">
 <span class="figures-label"><i class="fas fa-chart-pie"></i> Empirical Findings &amp; NIDS Pipeline (Click to Zoom):</span>
 <div class="research-figures-grid">
@@ -1793,8 +2943,8 @@ Production-tested tech stack, frameworks, and engineering tooling across AI syst
 <div class="research-card-icon"><i class="fas fa-shield-alt"></i></div>
 <span class="research-status"><i class="fas fa-clock"></i> Submitted — JISRC (ID: #460)</span>
 </div>
-<h3>Trust as a Gate, Not a Weight: Robust Federated Aggregation for Safety-Critical Perception under Natural Heterogeneity</h3>
-<p class="research-desc">Submitted to the <strong>Journal of Independent Studies and Research Computing (JISRC - SZABIST)</strong> (Under Active Peer Review — ID: #460). Addresses vulnerability in distributed safety-critical multi-agent perception (autonomous vehicles / edge robotics) under natural domain shifts (adverse weather, night) and Byzantine poisoning attacks using a novel hard trust-gating aggregation mechanism.</p>
+<h3 class="tech-only">Trust as a Gate, Not a Weight: Robust Federated Aggregation for Safety-Critical Perception under Natural Heterogeneity</h3><h3 class="nt-only" style="display:none;">Safety for Connected Self-Driving Cars</h3>
+<p class="research-desc tech-only">Submitted to the <strong>Journal of Independent Studies and Research Computing (JISRC - SZABIST)</strong> (Under Active Peer Review — ID: #460). Addresses vulnerability in distributed safety-critical multi-agent perception (autonomous vehicles / edge robotics) under natural domain shifts (adverse weather, night) and Byzantine poisoning attacks using a novel hard trust-gating aggregation mechanism.</p><p class="nt-only" style="display:none;">Created a safety shield so self-driving cars don't get misled by fake signals or corrupted data sent by other cars on the road.</p>
 <div class="research-figures-section">
 <span class="figures-label"><i class="fas fa-chart-line"></i> Experimental Results &amp; Perception Scenarios (Click to Zoom):</span>
 <div class="research-figures-grid">
@@ -1831,8 +2981,8 @@ Production-tested tech stack, frameworks, and engineering tooling across AI syst
 <div class="research-card-icon"><i class="fas fa-microscope"></i></div>
 <span class="research-status">Benchmark Study</span>
 </div>
-<h3>Three Paradigms, One Benchmark: A Negative-Result Study of Zero-Shot CLIP, Supervised FPN–Attention and Autoencoder-Based Defect Localisation on MVTec AD</h3>
-<p class="research-desc">Comprehensive empirical benchmark evaluating foundation zero-shot vision-language models (CLIP), supervised feature pyramid attention architectures, and unsupervised reconstruction autoencoders across all 15 industrial defect categories of MVTec AD.</p>
+<h3 class="tech-only">Three Paradigms, One Benchmark: A Negative-Result Study of Zero-Shot CLIP, Supervised FPN–Attention and Autoencoder-Based Defect Localisation on MVTec AD</h3><h3 class="nt-only" style="display:none;">Helping Driverless Cars See in Rain &amp; Heavy Fog</h3>
+<p class="research-desc tech-only">Comprehensive empirical benchmark evaluating foundation zero-shot vision-language models (CLIP), supervised feature pyramid attention architectures, and unsupervised reconstruction autoencoders across all 15 industrial defect categories of MVTec AD.</p><p class="nt-only" style="display:none;">Tested and benchmarked how computer vision systems perform when driving in severe storms, fog, and low light to keep passengers safe.</p>
 <div class="research-figures-section">
 <span class="figures-label"><i class="fas fa-images"></i> Key Figures &amp; Empirical Findings (Click to Zoom):</span>
 <div class="research-figures-grid">
@@ -1869,8 +3019,8 @@ Production-tested tech stack, frameworks, and engineering tooling across AI syst
 <div class="research-card-icon"><i class="fas fa-brain"></i></div>
 <span class="research-status status-published"><i class="fas fa-check-circle"></i> Published PyPI Package &amp; Paper</span>
 </div>
-<h3>Fuzzy Rough Nearest Neighbours Approaches for Emotion Detection in Tweets</h3>
-<p class="research-desc">Formulating granular computing and fuzzy rough set nearest neighbor (FRNN) classification frameworks to resolve boundary uncertainty and semantic ambiguity in short social media text. Shipped as the official open-source PyPI package <strong>emotion-analysis (v0.1.6)</strong> with <strong>2,360+ downloads</strong>, integrating BERT &amp; RoBERTa contextual transformer embeddings with Pearson Correlation Coefficient (PCC) benchmarking on SemEval affective datasets.</p>
+<h3 class="tech-only">Fuzzy Rough Nearest Neighbours Approaches for Emotion Detection in Tweets</h3><h3 class="nt-only" style="display:none;">Detecting Human Emotion from Social Media Messages</h3>
+<p class="research-desc tech-only">Formulating granular computing and fuzzy rough set nearest neighbor (FRNN) classification frameworks to resolve boundary uncertainty and semantic ambiguity in short social media text. Shipped as the official open-source PyPI package <strong>emotion-analysis (v0.1.6)</strong> with <strong>2,360+ downloads</strong>, integrating BERT &amp; RoBERTa contextual transformer embeddings with Pearson Correlation Coefficient (PCC) benchmarking on SemEval affective datasets.</p><p class="nt-only" style="display:none;">Built an AI model that accurately detects whether people on social media are expressing happiness, anxiety, or frustration.</p>
 <div class="research-figures-section">
 <span class="figures-label"><i class="fas fa-cloud"></i> Corpus Statistics &amp; Emotion Lexicon Visualizations (Click to Zoom):</span>
 <div class="research-figures-grid">
@@ -1914,8 +3064,8 @@ Production-tested tech stack, frameworks, and engineering tooling across AI syst
 <div class="research-card-icon"><i class="fas fa-calculator"></i></div>
 <span class="research-status status-published"><i class="fas fa-check-circle"></i> Published Package &amp; Paper</span>
 </div>
-<h3>ISGC — A Python Package For Summarizing University Student Examination Performance</h3>
-<p class="research-desc">Published research paper &amp; open-source Python framework (<strong>isgc</strong>) on PyPI and Zenodo (DOI: 10.5281/zenodo.12688032) with <strong>1,725+ downloads</strong>. Designed an accurate numerical computing pipeline to calculate Semester GPA (SGPA) and Cumulative GPA (CGPA) according to official academic grading scales. Implements custom precision rounding functions, tabular transcript synthesis with <code>tabulate</code>, semester-wise SGPA progression trendline visualization, and remark distribution analytics across multi-tier grading criteria.</p>
+<h3 class="tech-only">ISGC — A Python Package For Summarizing University Student Examination Performance</h3><h3 class="nt-only" style="display:none;">Automated University Student Exam Analysis</h3>
+<p class="research-desc tech-only">Published research paper &amp; open-source Python framework (<strong>isgc</strong>) on PyPI and Zenodo (DOI: 10.5281/zenodo.12688032) with <strong>1,725+ downloads</strong>. Designed an accurate numerical computing pipeline to calculate Semester GPA (SGPA) and Cumulative GPA (CGPA) according to official academic grading scales. Implements custom precision rounding functions, tabular transcript synthesis with <code>tabulate</code>, semester-wise SGPA progression trendline visualization, and remark distribution analytics across multi-tier grading criteria.</p><p class="nt-only" style="display:none;">Created an open software tool that automatically grades, analyzes, and visualizes exam results so professors can see where students need help.</p>
 <div class="research-figures-section">
 <span class="figures-label"><i class="fas fa-chart-line"></i> Academic Analytics &amp; Empirical Transcript Validation (Click to Zoom):</span>
 <div class="research-figures-grid">
@@ -1963,7 +3113,7 @@ Production-tested tech stack, frameworks, and engineering tooling across AI syst
 <section class="reviewer-section section" id="reviewer">
 <div class="container">
 <div class="section-header reveal">
-<h2 class="section-title">Reviewer Credentials</h2>
+<h2 class="section-title tech-only">Reviewer Credentials</h2><h2 class="section-title nt-only" style="display:none;">Scientific Peer Reviewer</h2><p class="section-subtitle nt-only" style="display:none;">Top academic journals trust me to review research papers written by scientists worldwide before they are approved and published.</p>
 <div class="line"></div>
 </div>
 <div class="reviewer-grid">
@@ -2125,7 +3275,7 @@ Production-tested tech stack, frameworks, and engineering tooling across AI syst
 <section class="section" id="publications">
 <div class="container">
 <div class="section-header reveal">
-<h2 class="section-title">Publications &amp; Research Papers</h2>
+<h2 class="section-title tech-only">Publications &amp; Research Papers</h2><h2 class="section-title nt-only" style="display:none;">Published Research Papers</h2><p class="section-subtitle nt-only" style="display:none;">Original scientific studies and findings I authored and published in international academic journals and conferences.</p>
 <div class="line"></div>
 </div>
 <div class="publications-list">
@@ -2307,10 +3457,9 @@ Production-tested tech stack, frameworks, and engineering tooling across AI syst
 <div class="grid-2-col">
 <div class="col">
 <div class="section-header reveal">
-<h2 class="section-title">Education</h2>
+<h2 class="section-title tech-only">Education</h2><h2 class="section-title nt-only" style="display:none;">Degrees &amp; Academic Background</h2><p class="section-subtitle nt-only" style="display:none;">Bachelor of Science in Computer Systems Engineering — 4-year accredited degree covering hardware, software, and systems architecture.</p>
 <div class="line"></div>
 </div>
-
 <!-- M.S. Degree (In Progress) -->
 <div class="edu-item reveal" style="margin-bottom: 1rem;">
 <div class="edu-item-header">
@@ -2320,17 +3469,14 @@ Production-tested tech stack, frameworks, and engineering tooling across AI syst
 </div>
 <span class="year" style="color: #a78bfa; background: rgba(167, 139, 250, 0.12); border-color: rgba(167, 139, 250, 0.25);"><i class="fas fa-spinner fa-spin"></i> 2026 – Present (In Progress)</span>
 </div>
-
 <div class="edu-meta-badges">
 <span class="edu-badge-item" style="color: #a78bfa; border-color: rgba(167, 139, 250, 0.3); background: rgba(167, 139, 250, 0.08);"><i class="fas fa-graduation-cap"></i> Post-Graduate Studies</span>
 <span class="edu-badge-item"><i class="fas fa-calendar-check"></i> Session: 2026 – 2028</span>
 <span class="edu-badge-item"><i class="fas fa-microchip"></i> Advanced Systems Focus</span>
 </div>
-
 <p class="edu-desc">
 Advanced postgraduate engineering research focusing on Distributed Systems, Advanced Machine Learning, Encrypted Zero-Trust Infrastructures, and Autonomous Multi-Agent Robotics.
 </p>
-
 <div class="edu-tags">
 <span>Distributed Systems</span>
 <span>Zero-Trust Security</span>
@@ -2339,7 +3485,6 @@ Advanced postgraduate engineering research focusing on Distributed Systems, Adva
 <span>Computer Architecture</span>
 </div>
 </div>
-
 <!-- B.S. Degree (Graduated) -->
 <div class="edu-item reveal">
 <div class="edu-item-header">
@@ -2349,18 +3494,15 @@ Advanced postgraduate engineering research focusing on Distributed Systems, Adva
 </div>
 <span class="year">2020 – 2024</span>
 </div>
-
 <div class="edu-meta-badges">
 <span class="edu-badge-item highlight"><i class="fas fa-award"></i> CGPA: 3.40 / 4.00 (79.16%)</span>
 <span class="edu-badge-item"><i class="fas fa-clock"></i> 141 Credit Hours</span>
 <span class="edu-badge-item"><i class="fas fa-book"></i> 42 Courses</span>
 <span class="edu-badge-item"><i class="fas fa-check-circle"></i> Merit Standing</span>
 </div>
-
 <p class="edu-desc">
 Comprehensive 4-year engineering curriculum. Awarded Ignite National Technology Fund Grant for Capstone FYDP on ML-driven Network Intrusion Detection Systems (NIDS).
 </p>
-
 <div class="edu-tags">
 <span>Machine Learning</span>
 <span>Network Security</span>
@@ -2368,7 +3510,6 @@ Comprehensive 4-year engineering curriculum. Awarded Ignite National Technology 
 <span>Embedded Systems</span>
 <span>Data Structures</span>
 </div>
-
 <!-- Interactive Modal Trigger -->
 <button class="btn-toggle-coursework" id="open-coursework-modal" type="button">
 <span class="btn-toggle-left">
@@ -2381,10 +3522,9 @@ Comprehensive 4-year engineering curriculum. Awarded Ignite National Technology 
 </div>
 <div class="col">
 <div class="section-header reveal">
-<h2 class="section-title">Awards &amp; Grants</h2>
+<h2 class="section-title tech-only">Awards &amp; Grants</h2><h2 class="section-title nt-only" style="display:none;">Honors &amp; Government Grants</h2><p class="section-subtitle nt-only" style="display:none;">Recognized with competitive national research grants and engineering honors.</p>
 <div class="line"></div>
 </div>
-
 <!-- NLnet Foundation Grant (In Review) -->
 <div class="award-card reveal">
 <div class="award-card-header">
@@ -2395,7 +3535,6 @@ Comprehensive 4-year engineering curriculum. Awarded Ignite National Technology 
 <p class="award-subtitle"><i class="fas fa-globe-europe"></i> NLnet Foundation (Netherlands) · NGI Code Supply</p>
 <p class="award-desc">Proposal acknowledged &amp; actively undergoing two-round technical review: <em>"Ranbval Secret Manager: Open-Source Self-Hostable Control Plane, Offline Policy Verification, and Multi-Cloud Zero-Trust"</em> (Ref: 2026-11-2d2).</p>
 </div>
-
 <!-- Ignite National Grant -->
 <div class="award-card reveal">
 <div class="award-card-header">
@@ -2406,7 +3545,6 @@ Comprehensive 4-year engineering curriculum. Awarded Ignite National Technology 
 <p class="award-subtitle"><i class="fas fa-landmark"></i> Ministry of IT &amp; Telecom, Govt. of Pakistan</p>
 <p class="award-desc">Competitively selected and funded for the FYDP research: <em>"Optimizing Intrusion Detection Systems Through Significant Feature Selection by ML Techniques."</em></p>
 </div>
-
 <!-- PMYP Award -->
 <div class="award-card reveal">
 <div class="award-card-header">
@@ -2419,14 +3557,12 @@ Comprehensive 4-year engineering curriculum. Awarded Ignite National Technology 
 </div>
 </div>
 </div>
-
 <!-- Full-Width Certifications Block -->
 <div class="certs-block">
 <div class="section-header reveal" style="text-align: left; margin-bottom: 2rem;">
-<h2 class="section-title">Certifications &amp; Credentials</h2>
+<h2 class="section-title tech-only">Certifications &amp; Credentials</h2><h2 class="section-title nt-only" style="display:none;">Official Professional Certifications</h2><p class="section-subtitle nt-only" style="display:none;">Verified industry credentials and technical qualifications.</p>
 <div class="line" style="margin: 0.5rem 0 1rem;"></div>
 </div>
-
 <div class="certs-grid">
 <!-- ML & AI Card -->
 <div class="cert-category-card reveal">
@@ -2461,7 +3597,6 @@ Comprehensive 4-year engineering curriculum. Awarded Ignite National Technology 
 </a>
 </div>
 </div>
-
 <!-- Data Analytics & BI Card -->
 <div class="cert-category-card reveal">
 <div class="cert-category-header">
@@ -2488,7 +3623,6 @@ Comprehensive 4-year engineering curriculum. Awarded Ignite National Technology 
 </a>
 </div>
 </div>
-
 <!-- SQL & Visualization Card -->
 <div class="cert-category-card reveal">
 <div class="cert-category-header">
@@ -2535,9 +3669,9 @@ Comprehensive 4-year engineering curriculum. Awarded Ignite National Technology 
 <!-- Footer -->
 <footer class="footer" id="contact">
 <div class="container">
-<h2>Let's Build the Next Extraordinary Thing Together</h2>
+<h2 class="tech-only">Let's Build the Next Extraordinary Thing Together</h2><h2 class="nt-only" style="display:none;">Let's Solve Your Business Problems Together</h2>
 <div class="contact-card">
-<p>Open for opportunities in AI Product Engineering, Encrypted Infrastructure, and Intelligent Automation.</p>
+<p class="tech-only">Open for opportunities in AI Product Engineering, Encrypted Infrastructure, and Intelligent Automation.</p><p class="nt-only" style="display:none;">Have a repetitive problem costing you time or money? Reach out and let's automate it.</p>
 <a class="btn btn-primary" href="mailto:ahsantariq0724@gmail.com"><i class="fas fa-envelope"></i> Say Hello</a>
 </div>
 <div class="footer-bottom">
@@ -2556,7 +3690,6 @@ Comprehensive 4-year engineering curriculum. Awarded Ignite National Technology 
 <div class="lightbox-caption" id="lightbox-caption"></div>
 </div>
 </div>
-
 <!-- Coursework & Academic Transcript Modal Toggle -->
 <div class="coursework-modal-overlay" id="coursework-modal">
 <div class="coursework-modal-dialog">
@@ -2567,7 +3700,6 @@ Comprehensive 4-year engineering curriculum. Awarded Ignite National Technology 
 </div>
 <button aria-label="Close modal" class="coursework-modal-close" id="close-coursework-modal">×</button>
 </div>
-
 <div class="coursework-modal-body">
 <!-- Section 1: 5 Core Engineering Tracks -->
 <div>
@@ -2582,7 +3714,6 @@ Comprehensive 4-year engineering curriculum. Awarded Ignite National Technology 
 <span>Senior Design Project <strong>(FYDP · Grade A · 4.0)</strong></span>
 </div>
 </div>
-
 <div class="coursework-cluster-group">
 <div class="coursework-cluster-title"><i class="fas fa-laptop-code"></i> Systems, Computing &amp; Software</div>
 <div class="coursework-pills">
@@ -2596,7 +3727,6 @@ Comprehensive 4-year engineering curriculum. Awarded Ignite National Technology 
 <span>Computer Programming</span>
 </div>
 </div>
-
 <div class="coursework-cluster-group">
 <div class="coursework-cluster-title"><i class="fas fa-robot"></i> Embedded, Hardware &amp; Robotics</div>
 <div class="coursework-pills">
@@ -2608,7 +3738,6 @@ Comprehensive 4-year engineering curriculum. Awarded Ignite National Technology 
 <span>Circuit Analysis</span>
 </div>
 </div>
-
 <div class="coursework-cluster-group">
 <div class="coursework-cluster-title"><i class="fas fa-shield-alt"></i> Networks, Security &amp; Signals</div>
 <div class="coursework-pills">
@@ -2618,7 +3747,6 @@ Comprehensive 4-year engineering curriculum. Awarded Ignite National Technology 
 <span>Signals &amp; Systems</span>
 </div>
 </div>
-
 <div class="coursework-cluster-group" style="grid-column: 1 / -1;">
 <div class="coursework-cluster-title"><i class="fas fa-square-root-alt"></i> Applied Mathematics &amp; Engineering Sciences</div>
 <div class="coursework-pills">
@@ -2633,7 +3761,6 @@ Comprehensive 4-year engineering curriculum. Awarded Ignite National Technology 
 </div>
 </div>
 </div>
-
 <!-- Section 2: Complete 8-Semester Transcript Breakdown -->
 <div>
 <div class="modal-section-title"><i class="fas fa-list-ol"></i> Complete Semester-by-Semester Transcript (42 Courses · 141 Credits)</div>
@@ -2653,7 +3780,6 @@ Comprehensive 4-year engineering curriculum. Awarded Ignite National Technology 
 <div class="semester-course-item"><span>Islamic Studies</span><span class="grade">A (4.0)</span></div>
 </div>
 </div>
-
 <!-- Sem 2 -->
 <div class="semester-card">
 <div class="semester-header">
@@ -2668,7 +3794,6 @@ Comprehensive 4-year engineering curriculum. Awarded Ignite National Technology 
 <div class="semester-course-item"><span>Pakistan Studies</span><span class="grade">A (4.0)</span></div>
 </div>
 </div>
-
 <!-- Sem 3 -->
 <div class="semester-card">
 <div class="semester-header">
@@ -2685,7 +3810,6 @@ Comprehensive 4-year engineering curriculum. Awarded Ignite National Technology 
 <div class="semester-course-item"><span>Arabic for Understanding Quran</span><span class="grade">B+ (3.70)</span></div>
 </div>
 </div>
-
 <!-- Sem 4 -->
 <div class="semester-card">
 <div class="semester-header">
@@ -2700,7 +3824,6 @@ Comprehensive 4-year engineering curriculum. Awarded Ignite National Technology 
 <div class="semester-course-item"><span>Signals &amp; Systems</span><span class="grade">C+ (2.78)</span></div>
 </div>
 </div>
-
 <!-- Sem 5 -->
 <div class="semester-card">
 <div class="semester-header">
@@ -2715,7 +3838,6 @@ Comprehensive 4-year engineering curriculum. Awarded Ignite National Technology 
 <div class="semester-course-item"><span>Database Management Systems</span><span class="grade">D (1.98)</span></div>
 </div>
 </div>
-
 <!-- Sem 6 -->
 <div class="semester-card">
 <div class="semester-header">
@@ -2730,7 +3852,6 @@ Comprehensive 4-year engineering curriculum. Awarded Ignite National Technology 
 <div class="semester-course-item"><span>Operating Systems</span><span class="grade">C+ (2.97)</span></div>
 </div>
 </div>
-
 <!-- Sem 7 -->
 <div class="semester-card">
 <div class="semester-header">
@@ -2744,7 +3865,6 @@ Comprehensive 4-year engineering curriculum. Awarded Ignite National Technology 
 <div class="semester-course-item"><span>Robotics</span><span class="grade">C (2.15)</span></div>
 </div>
 </div>
-
 <!-- Sem 8 -->
 <div class="semester-card">
 <div class="semester-header">
@@ -2762,7 +3882,6 @@ Comprehensive 4-year engineering curriculum. Awarded Ignite National Technology 
 </div>
 </div>
 </div>
-
 <!-- Modal Footer -->
 <div class="coursework-modal-footer">
 <button class="transcript-btn" onclick="document.getElementById('transcript-lightbox-trigger').click()">
@@ -2772,9 +3891,8 @@ Comprehensive 4-year engineering curriculum. Awarded Ignite National Technology 
 </div>
 </div>
 </div>
-
 <!-- Hidden lightbox trigger for transcript photo -->
-<img id="transcript-lightbox-trigger" alt="Official B.Sc. Computer Systems Engineering Academic Transcript - Ahsan Tariq" class="lightbox-trigger" data-caption="The Islamia University of Bahawalpur, Pakistan — Official B.Sc. Computer Systems Engineering Transcript (Roll No: F20BCSEN1M01026 | CGPA: 3.40 / 4.00 | 141 Credit Hours | Session: 2020-2024)" src="transcript.jpg" style="position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px;"/>
+<img alt="Official B.Sc. Computer Systems Engineering Academic Transcript - Ahsan Tariq" class="lightbox-trigger" data-caption="The Islamia University of Bahawalpur, Pakistan — Official B.Sc. Computer Systems Engineering Transcript (Roll No: F20BCSEN1M01026 | CGPA: 3.40 / 4.00 | 141 Credit Hours | Session: 2020-2024)" id="transcript-lightbox-trigger" src="transcript.jpg" style="position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px;"/>
 <script src="script.js"></script>
-</body>
+<div class="nt-mode-banner"><i class="fas fa-sparkles" style="margin-right: 6px;"></i>Plain English Mode · Simple Words · Real Problems Solved</div></body>
 </html>

@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petroski Physio Case Study — Clinical-to-Marketing Deterministic Automation Engine | Ahsan Tariq</title>
+    <meta name="description" content="Engineering Petroski Physio's Filmable Athletes System: A two-board deterministic workflow bridging Clinical CRM and Marketing teams using Monday.com, Zapier, Slack, and Google Sheets identity mapping with zero clinical backflow.">
+    <meta name="keywords" content="Petroski Physio, Monday.com CRM, Zapier Automation, Slack Bots, Clinical Workflow, HIPAA Governance, Identity Resolution, Deterministic Mapping">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-base: #060911;
+            --bg-surface: #0b1120;
+            --bg-card: rgba(16, 24, 44, 0.7);
+            --bg-card-hover: rgba(22, 34, 62, 0.9);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(16, 185, 129, 0.35);
+            --emerald: #10b981;
+            --emerald-glow: rgba(16, 185, 129, 0.25);
+            --cyan: #00f0ff;
+            --cyan-glow: rgba(0, 240, 255, 0.2);
+            --violet: #a855f7;
+            --violet-glow: rgba(168, 85, 247, 0.2);
+            --rose: #f43f5e;
+            --amber: #f59e0b;
+            --blue: #3b82f6;
+            --text-main: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-dim: #64748b;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Plus Jakarta Sans', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --gradient-accent: linear-gradient(135deg, #10b981 0%, #00f0ff 50%, #a855f7 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* Ambient glowing background */
+        .ambient-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .glow-1 {
+            position: absolute;
+            top: -120px;
+            right: 15%;
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(6, 9, 17, 0) 70%);
+            border-radius: 50%;
+        }
+        .glow-2 {
+            position: absolute;
+            top: 45%;
+            left: -120px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.12) 0%, rgba(6, 9, 17, 0) 70%);
+            border-radius: 50%;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Sticky Navigation Bar */
+        .case-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(6, 9, 17, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            padding: 0.85rem 0;
+        }
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        .nav-back:hover {
+            color: var(--emerald);
+        }
+        .nav-brand {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.15rem;
+            letter-spacing: -0.02em;
+        }
+        .nav-brand span {
+            color: var(--emerald);
+        }
+        .nav-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 20px;
+            padding: 0.3rem 0.8rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--emerald);
+        }
+        .nav-status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--emerald);
+            box-shadow: 0 0 8px var(--emerald);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        /* Hero Section */
+        .hero-section {
+            padding: 4.5rem 0 3.5rem;
+            text-align: left;
+        }
+        .eyebrow-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 30px;
+            padding: 0.4rem 1.1rem;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #34d399;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .hero-h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.4rem, 5vw, 4.2rem);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.25rem;
+            background: linear-gradient(135deg, #ffffff 40%, #10b981 75%, #00f0ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-tagline {
+            font-size: clamp(1.1rem, 2vw, 1.45rem);
+            font-weight: 500;
+            color: var(--emerald);
+            margin-bottom: 1.5rem;
+            font-family: var(--font-display);
+        }
+        .hero-desc {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 950px;
+            margin-bottom: 2.5rem;
+            line-height: 1.8;
+        }
+
+        /* Meta Grid */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1rem;
+            margin-bottom: 3.5rem;
+        }
+        .meta-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+        .meta-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+        .meta-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.4rem;
+        }
+        .meta-val {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .meta-sub {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.2rem;
+            font-family: var(--font-mono);
+        }
+
+        /* Hero Media / Master Architecture Preview */
+        .hero-media-wrapper {
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            background: var(--bg-surface);
+            padding: 0.6rem;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 40px rgba(16, 185, 129, 0.15);
+            margin-bottom: 4rem;
+            overflow: hidden;
+        }
+        .hero-img-container {
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+        .hero-img-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+        .hero-img-container:hover img {
+            transform: scale(1.015);
+        }
+        .img-overlay-badge {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            background: rgba(6, 9, 17, 0.85);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 0.4rem 0.9rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--emerald);
+            backdrop-filter: blur(8px);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* Executive Metrics Strip */
+        .exec-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 4.5rem;
+        }
+        .exec-metric-card {
+            background: linear-gradient(180deg, rgba(20, 30, 52, 0.8) 0%, rgba(11, 17, 32, 0.8) 100%);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.75rem 1.25rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .exec-metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gradient-accent);
+        }
+        .metric-num {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            color: var(--emerald);
+        }
+        .metric-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            margin-bottom: 0.35rem;
+        }
+        .metric-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* Section Headings */
+        .section-separator {
+            padding: 4.5rem 0;
+            border-top: 1px solid var(--border);
+        }
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 3.5rem;
+        }
+        .section-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--emerald);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.75rem;
+        }
+        .section-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 3.5vw, 2.75rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+        }
+        .section-p {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Interactive Problem vs Solution Comparison Section */
+        .compare-controller {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+        }
+        .compare-toggle-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 0.6rem 1.4rem;
+            border-radius: 30px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .compare-toggle-btn:hover {
+            color: var(--text-main);
+            border-color: var(--emerald);
+        }
+        .compare-toggle-btn.active {
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--emerald);
+            border-color: var(--emerald);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+        }
+
+        .compare-matrix {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .compare-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .compare-card {
+            border-radius: 14px;
+            padding: 1.75rem;
+            position: relative;
+            backdrop-filter: blur(8px);
+        }
+        .compare-card.problem {
+            background: rgba(244, 63, 94, 0.04);
+            border: 1px solid rgba(244, 63, 94, 0.2);
+        }
+        .compare-card.solution {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+        .compare-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 4px;
+            padding: 0.2rem 0.6rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+        .compare-card.problem .compare-tag {
+            background: rgba(244, 63, 94, 0.15);
+            color: var(--rose);
+        }
+        .compare-card.solution .compare-tag {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--emerald);
+        }
+        .compare-card-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--text-main);
+        }
+        .compare-card-text {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.65;
+            margin-bottom: 1.25rem;
+        }
+        .compare-impact-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            border-radius: 6px;
+            padding: 0.35rem 0.75rem;
+        }
+        .compare-card.problem .compare-impact-pill {
+            background: rgba(244, 63, 94, 0.1);
+            color: #fda4af;
+            border: 1px solid rgba(244, 63, 94, 0.2);
+        }
+        .compare-card.solution .compare-impact-pill {
+            background: rgba(16, 185, 129, 0.12);
+            color: #6ee7b7;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+
+        /* Showcase Deep-Dive Blocks */
+        .showcase-block {
+            display: grid;
+            grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+            gap: 3.5rem;
+            align-items: center;
+            margin-bottom: 6rem;
+        }
+        .showcase-block.reverse {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+        }
+        .showcase-block.reverse .showcase-text-col {
+            order: 2;
+        }
+        .showcase-block.reverse .showcase-media-col {
+            order: 1;
+        }
+        .showcase-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--emerald);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .showcase-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 2.5vw, 2.3rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 1.25rem;
+            color: var(--text-main);
+        }
+        .showcase-p {
+            font-size: 1.02rem;
+            color: var(--text-secondary);
+            line-height: 1.75;
+            margin-bottom: 1.5rem;
+        }
+        .feature-bullets {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            margin-bottom: 1.75rem;
+        }
+        .feature-bullet {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
+        .feature-bullet i {
+            color: var(--emerald);
+            margin-top: 0.25rem;
+            font-size: 0.85rem;
+        }
+        .feature-bullet strong {
+            color: var(--text-main);
+        }
+
+        .showcase-media-box {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 0.5rem;
+            box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.7), 0 0 30px rgba(16, 185, 129, 0.08);
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        .showcase-media-box img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+        .showcase-media-box:hover img {
+            transform: scale(1.02);
+        }
+
+        /* Comparative Architecture Table */
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            margin: 2.5rem 0;
+        }
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.92rem;
+            text-align: left;
+        }
+        .spec-table th {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1rem 1.25rem;
+            color: var(--text-dim);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
+        }
+        .spec-table td {
+            padding: 1.1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+        .spec-table tr:last-child td {
+            border-bottom: none;
+        }
+        .spec-table td:first-child {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        .spec-table td.highlight {
+            color: var(--emerald);
+            font-weight: 600;
+            font-family: var(--font-mono);
+        }
+
+        /* Tech Stack Grid */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1.25rem;
+            margin-top: 2rem;
+        }
+        .tech-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.25s ease;
+        }
+        .tech-card:hover {
+            border-color: var(--emerald);
+            transform: translateY(-2px);
+        }
+        .tech-icon {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+        }
+        .tech-name {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text-main);
+            margin-bottom: 0.35rem;
+        }
+        .tech-role {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--emerald);
+            margin-bottom: 0.75rem;
+        }
+        .tech-desc {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Ownership & Impact Card */
+        .ownership-card {
+            background: linear-gradient(135deg, rgba(16, 28, 48, 0.9) 0%, rgba(10, 18, 32, 0.9) 100%);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 3.5rem 2.5rem;
+            margin: 4rem 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8);
+        }
+        .ownership-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(6, 9, 17, 0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .ownership-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+            gap: 3rem;
+            align-items: center;
+        }
+        .o-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--emerald);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+        }
+        .o-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 3vw, 2.4rem);
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.25rem;
+        }
+        .o-p {
+            font-size: 1.02rem;
+            color: var(--text-secondary);
+            line-height: 1.75;
+            margin-bottom: 1.5rem;
+        }
+        .o-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.25rem;
+        }
+        .o-stat {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+        }
+        .o-stat-num {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--emerald);
+            margin-bottom: 0.25rem;
+        }
+        .o-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+        }
+
+        /* Call To Action */
+        .cta-section {
+            padding: 5rem 0;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+        .cta-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 3.5vw, 2.8rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+        .cta-desc {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 650px;
+            margin: 0 auto 2.5rem;
+        }
+        .cta-btn-row {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--gradient-accent);
+            color: #060911;
+            font-weight: 700;
+            font-size: 0.95rem;
+            padding: 0.85rem 2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.25);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.4);
+        }
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 0.85rem 1.8rem;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: all 0.25s ease;
+        }
+        .btn-secondary:hover {
+            border-color: var(--emerald);
+            color: var(--emerald);
+            transform: translateY(-2px);
+        }
+
+        /* Lightbox Modal */
+        .lightbox-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(6, 9, 17, 0.95);
+            backdrop-filter: blur(14px);
+            z-index: 999999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .lightbox-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        .lightbox-container {
+            max-width: 95vw;
+            max-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .lightbox-container img {
+            max-width: 92vw;
+            max-height: 82vh;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+        .lightbox-caption {
+            margin-top: 1rem;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            font-family: var(--font-mono);
+            background: rgba(15, 23, 42, 0.85);
+            padding: 0.5rem 1.25rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            max-width: 800px;
+            text-align: center;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: -2.5rem;
+            right: 0;
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+        .lightbox-close:hover {
+            color: var(--emerald);
+            transform: scale(1.15);
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .exec-metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .showcase-block, .showcase-block.reverse {
+                grid-template-columns: minmax(0, 1fr) !important;
+                gap: 2.5rem;
+            }
+            .showcase-block.reverse .showcase-text-col { order: 1; }
+            .showcase-block.reverse .showcase-media-col { order: 2; }
+            .compare-row { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+            .ownership-grid { grid-template-columns: minmax(0, 1fr); }
+            .tech-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
+        @media (max-width: 640px) {
+            .meta-grid { grid-template-columns: minmax(0, 1fr); }
+            .exec-metrics-grid { grid-template-columns: minmax(0, 1fr); }
+            .tech-grid { grid-template-columns: minmax(0, 1fr); }
+            .o-stats-grid { grid-template-columns: minmax(0, 1fr); }
+            .hero-section { padding: 3rem 0 2rem; }
+            .section-separator { padding: 3rem 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Glowing Background -->
+    <div class="ambient-glow">
+        <div class="glow-1"></div>
+        <div class="glow-2"></div>
+    </div>
+
+    <!-- Navigation Header -->
+    <nav class="case-nav">
+        <div class="wrapper">
+            <div class="nav-inner">
+                <a href="../index.html" class="nav-back">
+                    <i class="fas fa-arrow-left"></i> Back to Case Studies
+                </a>
+                <div class="nav-brand">
+                    <span>PETROSKI</span> PHYSIO
+                </div>
+                <div class="nav-status">
+                    <span class="nav-status-dot"></span> LIVE IN PRODUCTION · ZERO BACKFLOW
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-notes-medical"></i> Clinical CRM &amp; Marketing Deterministic Orchestration
+            </div>
+
+            <h1 class="hero-h1">Petroski Physio: Two-Board Deterministic Automation Engine</h1>
+            <div class="hero-tagline">“Streamlining Athlete Media Approvals via 1-Click Slack Decisions with Zero Clinical Disruption”</div>
+
+            <p class="hero-desc">
+                Developed an enterprise-grade <strong>Two-Board "Filmable Athletes" Architecture</strong> bridging Clinical (CRM) and Marketing teams at <strong>Petroski Physio</strong>. The system allows physical therapists to approve recovering athletes for video filming via a frictionless <strong>1-click Slack interactive notification</strong>, triggering deterministic multi-group routing in <strong>Monday.com</strong> with <strong>zero clinical backflow</strong>, automated identity resolution, and instant reminder loop breaks.
+            </p>
+
+            <!-- Meta Strip -->
+            <div class="meta-grid">
+                <div class="meta-card">
+                    <div class="meta-label">Client / Organization</div>
+                    <div class="meta-val">Petroski Physio</div>
+                    <div class="meta-sub">Sports Physical Therapy Clinic</div>
+                </div>
+                <div class="meta-card">
+                    <div class="meta-label">Engineering Role</div>
+                    <div class="meta-val">Lead Automation Architect</div>
+                    <div class="meta-sub">Monday.com · Event Logic · Slack API</div>
+                </div>
+                <div class="meta-card">
+                    <div class="meta-label">Core Governance</div>
+                    <div class="meta-val">Strict One-Way Flow</div>
+                    <div class="meta-sub">Zero Backflow into Clinical CRM</div>
+                </div>
+                <div class="meta-card">
+                    <div class="meta-label">Stack &amp; Services</div>
+                    <div class="meta-val">Monday · Slack · Sheets</div>
+                    <div class="meta-sub">Deterministic Zapier Pipelines</div>
+                </div>
+            </div>
+
+            <!-- Master Architecture Graphic Preview -->
+            <div class="hero-media-wrapper">
+                <div class="hero-img-container" onclick="openLightbox('images/00-petroski-master-architecture.jpg', 'Petroski Physio Clinical-to-Marketing Deterministic Automation Engine: Board 1 CRM, Identity Engine, and Board 2 Filmable Athletes with Slack')">
+                    <img src="images/00-petroski-master-architecture.jpg" alt="Petroski Physio Master Architecture Diagram" />
+                    <div class="img-overlay-badge">
+                        <i class="fas fa-expand"></i> Click to Inspect Master Architecture
+                    </div>
+                </div>
+            </div>
+
+            <!-- Executive Performance Metrics -->
+            <div class="exec-metrics-grid">
+                <div class="exec-metric-card">
+                    <div class="metric-num">0%</div>
+                    <div class="metric-title">Clinical Disruption</div>
+                    <div class="metric-desc">Therapists perform exactly one single-click action in Slack; zero added columns to clinical patient records.</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="metric-num">100%</div>
+                    <div class="metric-title">Deterministic Mapping</div>
+                    <div class="metric-desc">Replaced fragile cross-workspace mirror columns with direct field mapping at item creation.</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="metric-num">1-Click</div>
+                    <div class="metric-title">Therapist Approval</div>
+                    <div class="metric-desc">Interactive Slack Direct Message routing with Google Sheets identity resolution and automated 24h loop termination.</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="metric-num">0 Backflow</div>
+                    <div class="metric-title">Compliance &amp; Integrity</div>
+                    <div class="metric-desc">Marketing operates on view-only downstream data; clinical health records remain 100% auditable and isolated.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Problem vs Solution Section -->
+    <section class="section-separator" id="problem-solution">
+        <div class="wrapper">
+            <div class="section-header">
+                <div class="section-eyebrow"><i class="fas fa-balance-scale"></i> WORKFLOW EVOLUTION</div>
+                <h2 class="section-h2">The Manual Clinical Friction vs. The Deterministic Engine</h2>
+                <p class="section-p">
+                    How Petroski Physio eliminated messy cross-department communication, HIPAA privacy risks, and outdated marketing rosters.
+                </p>
+            </div>
+
+            <!-- Filter Controls -->
+            <div class="compare-controller">
+                <button class="compare-toggle-btn active" id="btnBoth" onclick="setPetroskiFilter('both')">
+                    <i class="fas fa-columns"></i> Side-by-Side View
+                </button>
+                <button class="compare-toggle-btn" id="btnProblem" onclick="setPetroskiFilter('problem')">
+                    <i class="fas fa-circle-xmark"></i> The Old Manual Way (Before)
+                </button>
+                <button class="compare-toggle-btn" id="btnSolution" onclick="setPetroskiFilter('solution')">
+                    <i class="fas fa-circle-check"></i> The Deterministic Engine (After)
+                </button>
+            </div>
+
+            <!-- Comparison Cards Matrix -->
+            <div class="compare-matrix">
+                <!-- Row 1: Clinical Disruption -->
+                <div class="compare-row" id="rowPetroski1">
+                    <div class="compare-card problem">
+                        <div class="compare-tag"><i class="fas fa-times"></i> The Old Limitation</div>
+                        <h3 class="compare-card-title">Marketing Chasing Therapists in Clinic Hallways</h3>
+                        <p class="compare-card-text">
+                            Marketing team members constantly interrupted therapists between patient consultations asking which athletes were cleared for filming. Therapists were forced to open separate spreadsheets or log into marketing boards, adding cognitive overhead to busy patient treatment days.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fas fa-triangle-exclamation"></i> Fragmented focus · Patient consultation interruptions
+                        </div>
+                    </div>
+                    <div class="compare-card solution">
+                        <div class="compare-tag"><i class="fas fa-check"></i> The Petroski Solution</div>
+                        <h3 class="compare-card-title">1-Click Slack Direct Message via Automation Bot</h3>
+                        <p class="compare-card-text">
+                            24 hours after an athlete's evaluation, an automated bot sends a direct Slack notification to the assigned therapist with patient details and an interactive Yes/No approval button. The therapist makes a 1-second decision without leaving their daily communication hub.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fas fa-bolt"></i> 1-click decision · Zero clinical disruption
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Mirror Column Fragility -->
+                <div class="compare-row" id="rowPetroski2">
+                    <div class="compare-card problem">
+                        <div class="compare-tag"><i class="fas fa-times"></i> The Old Limitation</div>
+                        <h3 class="compare-card-title">Brittle Cross-Workspace Mirror Columns Failing in Zapier</h3>
+                        <p class="compare-card-text">
+                            Initial attempts linked boards using Monday.com mirror columns. However, mirror columns frequently failed to trigger webhooks, lagged during multi-item lookups, and blocked downstream Zapier automations, leading to missing patient records.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fas fa-bug"></i> Unreliable sync · Webhooks failing silently
+                        </div>
+                    </div>
+                    <div class="compare-card solution">
+                        <div class="compare-tag"><i class="fas fa-check"></i> The Petroski Solution</div>
+                        <h3 class="compare-card-title">Deterministic Direct Field Mapping at Item Creation</h3>
+                        <p class="compare-card-text">
+                            Replaced mirror columns entirely with direct field extraction (Name, Sport, Injury, Patient Status, Evaluation Date, Assigned Therapist) written directly into the Marketing board upon creation, ensuring 100% deterministic webhook delivery and execution.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fas fa-database"></i> 100% reliable execution logs · Zero mirror column lag
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 3: Identity Resolution -->
+                <div class="compare-row" id="rowPetroski3">
+                    <div class="compare-card problem">
+                        <div class="compare-tag"><i class="fas fa-times"></i> The Old Limitation</div>
+                        <h3 class="compare-card-title">Monday User IDs Mismatching Slack Workspace Identities</h3>
+                        <p class="compare-card-text">
+                            Monday.com internal numeric user IDs (e.g. User #8194) do not match Slack member IDs or external email handles. Without identity resolution, notifications had to be blasted into public broadcast channels where they were ignored.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fas fa-envelope-open-text"></i> Channel noise · Missed approval requests
+                        </div>
+                    </div>
+                    <div class="compare-card solution">
+                        <div class="compare-tag"><i class="fas fa-check"></i> The Petroski Solution</div>
+                        <h3 class="compare-card-title">Dynamic Therapist Directory &amp; Targeted Direct Messages</h3>
+                        <p class="compare-card-text">
+                            Integrated an auditable Therapist Directory in Google Sheets. The Zapier engine dynamically queries the spreadsheet to map the therapist's Monday ID to their verified Slack email, ensuring 100% accurate, private Direct Message delivery.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fas fa-id-card"></i> 100% accurate private DM routing · Zero broadcast spam
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 4: Discharged Athletes Pruning -->
+                <div class="compare-row" id="rowPetroski4">
+                    <div class="compare-card problem">
+                        <div class="compare-tag"><i class="fas fa-times"></i> The Old Limitation</div>
+                        <h3 class="compare-card-title">Filming Discharged Patients Due to Stale Marketing Lists</h3>
+                        <p class="compare-card-text">
+                            When an athlete finished rehabilitation and was discharged, Marketing had no idea unless told manually. Videographers frequently scheduled filming sessions with patients who were no longer active clinic patients, causing embarrassment and scheduling waste.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fas fa-calendar-xmark"></i> Filming discharged patients · Outdated rosters
+                        </div>
+                    </div>
+                    <div class="compare-card solution">
+                        <div class="compare-tag"><i class="fas fa-check"></i> The Petroski Solution</div>
+                        <h3 class="compare-card-title">Dynamic Lifecycle Re-Routing to "Former Filmable Athletes"</h3>
+                        <p class="compare-card-text">
+                            Whenever a patient's status changes to "Discharged" in the CRM, a Zapier webhook instantly intercepts the update and shifts the item from "Current Filmable Athletes" to "Former Filmable Athletes", preserving real-time operational roster hygiene.
+                        </p>
+                        <div class="compare-impact-pill">
+                            <i class="fas fa-rotate"></i> Real-time discharge sync · 100% brand safety
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Feature 1: Two-Board Architecture & Governance -->
+    <section class="section-separator" id="two-board-governance">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-shield-halved"></i> CLINICAL GOVERNANCE &amp; ARCHITECTURE</div>
+                    <h2 class="showcase-h2">Two-Board Architectural Isolation &amp; Zero Clinical Backflow</h2>
+                    <p class="showcase-p">
+                        In medical and physical therapy environments, clinical records must remain pristine, confidential, and compliant with health information privacy standards. Modifying the clinic's core intake form or permitting marketing write-access was completely out of the question.
+                    </p>
+                    <ul class="feature-bullets">
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Board 1 (Clinical CRM):</strong> The existing <em>New Patient Form</em> board remains the uncontaminated source of truth. Zero marketing columns or approval checkboxes were added to the therapists' medical intake flow.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Board 2 (Marketing Review):</strong> A dedicated <em>Filmable Athletes</em> board living in the Marketing workspace that receives only sanitized, necessary patient metadata.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Strict One-Way Governance:</strong> Clinical data flows exclusively downstream into Marketing. Marketing possesses view-only permissions with absolute zero backflow into the clinical EHR/CRM.</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="showcase-media-box" onclick="openLightbox('images/01-petroski-architecture-spec.jpg', 'Petroski Physio High-Level Design Principles & Board Governance Specification')">
+                        <img src="images/01-petroski-architecture-spec.jpg" alt="Petroski Physio Architectural Spec" />
+                        <div class="img-overlay-badge">
+                            <i class="fas fa-search-plus"></i> View Original Architecture Spec
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Feature 2: Monday.com Board Structure & Direct Mapping -->
+    <section class="section-separator" id="deterministic-mapping">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-table-list"></i> DATA INTEGRITY &amp; LIFECYCLE GROUPS</div>
+                    <h2 class="showcase-h2">Four-Stage Athlete Lifecycle &amp; Deterministic Field Mapping</h2>
+                    <p class="showcase-p">
+                        To maintain crystal-clear visibility for the content creation team, the Marketing board is partitioned into four distinct operational sections:
+                    </p>
+                    <ul class="feature-bullets">
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>1. Pending Review:</strong> Automatically receives newly evaluated active patients awaiting the therapist's approval.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>2. Current Filmable Athletes:</strong> Holds active clinic patients who have been explicitly approved by their treating physical therapist.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>3. Former Filmable Athletes:</strong> Automatically archives approved athletes once their clinical status changes to "Discharged."</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>4. Not Filmable:</strong> Holds athletes who declined media consent or were excluded due to clinical injury considerations.</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="showcase-media-box" onclick="openLightbox('images/02-monday-filmable-athletes-board.jpg', 'Monday.com Filmable Athletes Board View: 4 Dynamic Groups with Direct Field Mappings')">
+                        <img src="images/02-monday-filmable-athletes-board.jpg" alt="Filmable Athletes Monday Board" />
+                        <div class="img-overlay-badge">
+                            <i class="fas fa-search-plus"></i> View Monday.com Board
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Feature 3: Automation Rule & Creation History -->
+    <section class="section-separator" id="creation-automation">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-bolt"></i> EVENT-DRIVEN PROVISIONING</div>
+                    <h2 class="showcase-h2">Deterministic Item Creation with 100% Run Success</h2>
+                    <p class="showcase-p">
+                        Item creation occurs solely when an athlete meets strict criteria: <code>Patient Status = Active</code> (or <em>Lead - Enter Patient</em>) and <code>Evaluation Date</code> is populated.
+                    </p>
+                    <ul class="feature-bullets">
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Auditable Run History:</strong> Built-in run logging confirms 100% success across all executions without unhandled edge cases or payload drops.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Zero Mirror Overhead:</strong> Replaces heavy multi-board mirror column queries with atomic, instantaneous item generation.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Zero Duplicate Protection:</strong> Item creation conditions prevent re-triggering upon routine non-status column edits in the CRM.</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="showcase-media-box" onclick="openLightbox('images/03-monday-automation-creation-rule.jpg', 'Monday.com Native Creation Automation with 100% Success Run History Logs')">
+                        <img src="images/03-monday-automation-creation-rule.jpg" alt="Monday.com Automation Run History" />
+                        <div class="img-overlay-badge">
+                            <i class="fas fa-search-plus"></i> View Automation Run History
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Feature 4: Intelligent Slack Notification & Identity Resolution -->
+    <section class="section-separator" id="slack-notifications">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fab fa-slack"></i> SLACK ENGINE &amp; IDENTITY RESOLUTION</div>
+                    <h2 class="showcase-h2">Intelligent 24h Delayed Direct Messages &amp; Identity Sync</h2>
+                    <p class="showcase-p">
+                        Asking therapists about filming right at evaluation time is ineffective because therapists need time to establish patient rapport and evaluate rehabilitation compliance.
+                    </p>
+                    <ul class="feature-bullets">
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>24-Hour Evaluation Delay:</strong> Uses Zapier Formatter (Date/Time) and <em>Delay Until</em> to schedule the notification exactly 24 hours post-initial evaluation.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Google Sheets Identity Lookup:</strong> Queries the central clinic directory to map Monday.com user IDs to verified Slack workspace emails, ensuring private Direct Message delivery.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Workspace Automation Persona:</strong> Notifications are delivered via a branded clinic bot with interactive decision buttons rather than individual personal accounts.</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="showcase-media-box" onclick="openLightbox('images/04-zapier-delayed-slack-notification.jpg', 'Zapier Delayed Notification Pipeline: Trigger -> Filter -> Formatter -> Delay Until 24h -> Lookup -> Slack DM')">
+                        <img src="images/04-zapier-delayed-slack-notification.jpg" alt="Zapier Delayed Slack Notification Workflow" />
+                        <div class="img-overlay-badge">
+                            <i class="fas fa-search-plus"></i> View Delayed Slack Pipeline
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Feature 5: Automated 24h Reminder Loop -->
+    <section class="section-separator" id="reminder-loop">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-repeat"></i> AUTOMATED RECURRING LOGIC</div>
+                    <h2 class="showcase-h2">Daily Reminder Looping &amp; Instant Decision Termination</h2>
+                    <p class="showcase-p">
+                        To prevent approvals from stalling in busy clinic schedules, a resilient daily scheduled loop re-checks pending athletes without flooding the clinic with redundant noise.
+                    </p>
+                    <ul class="feature-bullets">
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Automated 24h Schedule Trigger:</strong> Every 24 hours, the scheduler triggers, searches for all items with status "Pending Review," and constructs a line-item loop.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Condition Re-Verification:</strong> Filters confirm each item remains pending before querying Google Sheets for the assigned therapist's Slack handle.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Instant Loop Break:</strong> The exact moment a therapist clicks "Yes" or "No" in Slack, the status updates in Monday.com, immediately excluding the patient from future reminder loops.</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="showcase-media-box" onclick="openLightbox('images/05-zapier-24h-reminder-loop.jpg', 'Zapier 24h Reminder Looping Pipeline: Schedule -> Find Items -> Create Loop -> Filter -> Get Values -> Lookup Sheets -> Slack DM')">
+                        <img src="images/05-zapier-24h-reminder-loop.jpg" alt="Zapier 24h Reminder Loop Workflow" />
+                        <div class="img-overlay-badge">
+                            <i class="fas fa-search-plus"></i> View Looping Reminder Pipeline
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Feature 6: Dynamic Discharged Status Sync -->
+    <section class="section-separator" id="lifecycle-sync">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-arrows-rotate"></i> REAL-TIME LIFECYCLE MANAGEMENT</div>
+                    <h2 class="showcase-h2">Automated Discharged Status Sync &amp; Roster Re-Routing</h2>
+                    <p class="showcase-p">
+                        One of the critical operational vulnerabilities in sports medicine marketing is filming patients who are no longer actively treated at the clinic. Petroski Physio completely automated this lifecycle transition.
+                    </p>
+                    <ul class="feature-bullets">
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>CRM Column Value Interception:</strong> When a therapist marks a patient as "Discharged" in the Clinical CRM, a real-time webhook immediately catches the event.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Deterministic Filtering:</strong> Inspects the old and new column values to ensure only true discharges proceed to the routing step.</div>
+                        </li>
+                        <li class="feature-bullet">
+                            <i class="fas fa-check-circle"></i>
+                            <div><strong>Automatic Group Relocation:</strong> The Zapier pipeline automatically moves the patient's record from "Current Filmable Athletes" to "Former Filmable Athletes", preserving real-time marketing roster accuracy and brand safety.</div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="showcase-media-box" onclick="openLightbox('images/06-zapier-lifecycle-status-sync.jpg', 'Zapier Lifecycle Status Sync Pipeline: Column Value Changed -> Get Column Values -> Filter by Zapier -> Move Item to Former Athlete Group')">
+                        <img src="images/06-zapier-lifecycle-status-sync.jpg" alt="Zapier Lifecycle Status Sync Pipeline" />
+                        <div class="img-overlay-badge">
+                            <i class="fas fa-search-plus"></i> View Discharged Sync Pipeline
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technical Comparison Table Section -->
+    <section class="section-separator" id="technical-comparison">
+        <div class="wrapper">
+            <div class="section-header">
+                <div class="section-eyebrow"><i class="fas fa-table-columns"></i> TECHNICAL SPECIFICATIONS</div>
+                <h2 class="section-h2">Traditional Manual Coordination vs. Petroski Deterministic Engine</h2>
+                <p class="section-p">
+                    A comprehensive comparison highlighting how automated event logic and governance protect both clinical time and patient confidentiality.
+                </p>
+            </div>
+
+            <div class="table-wrap">
+                <table class="spec-table">
+                    <thead>
+                        <tr>
+                            <th>Capability Dimension</th>
+                            <th>Traditional Manual Coordination</th>
+                            <th>Petroski Deterministic Engine</th>
+                            <th>Operational Impact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Clinical Board Integrity</td>
+                            <td>Cluttered with marketing tags &amp; checkboxes</td>
+                            <td class="highlight">Pristine Source of Truth (Zero Columns Added)</td>
+                            <td>Preserves medical EHR integrity and clinical compliance</td>
+                        </tr>
+                        <tr>
+                            <td>Data Flow Governance</td>
+                            <td>Bi-directional chaos with risk of record corruption</td>
+                            <td class="highlight">Strict One-Way Downstream Flow</td>
+                            <td>Zero backflow into clinical patient records</td>
+                        </tr>
+                        <tr>
+                            <td>Therapist Action Required</td>
+                            <td>Opening multiple boards and spreadsheets</td>
+                            <td class="highlight">1-Click Slack Direct Message Decision</td>
+                            <td>Reduces therapist decision latency to &lt;2 seconds</td>
+                        </tr>
+                        <tr>
+                            <td>Identity Mapping</td>
+                            <td>Manual lookup or broadcast channel alerts</td>
+                            <td class="highlight">Google Sheets Automated ID Resolution</td>
+                            <td>100% accurate DM delivery to assigned therapist</td>
+                        </tr>
+                        <tr>
+                            <td>Cross-Board Sync Tech</td>
+                            <td>Mirror columns causing webhook latency</td>
+                            <td class="highlight">Direct Field Mapping at Item Creation</td>
+                            <td>100% deterministic Zapier webhook execution</td>
+                        </tr>
+                        <tr>
+                            <td>Roster Hygiene (Discharge)</td>
+                            <td>Manual audit or filming former patients</td>
+                            <td class="highlight">Automated Discharged Status Re-Routing</td>
+                            <td>Marketing roster is 100% live and brand-safe</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Stack Section -->
+    <section class="section-separator" id="tech-stack">
+        <div class="wrapper">
+            <div class="section-header">
+                <div class="section-eyebrow"><i class="fas fa-layer-group"></i> PRODUCTION TECH STACK</div>
+                <h2 class="section-h2">Engineered with Modern Workflow Technologies</h2>
+                <p class="section-p">
+                    Selected for auditability, enterprise governance, and zero disruption to daily clinic operations.
+                </p>
+            </div>
+
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <div class="tech-icon" style="color: var(--rose);"><i class="fas fa-chart-line"></i></div>
+                    <div class="tech-name">Monday.com CRM</div>
+                    <div class="tech-role">Two-Board Architecture</div>
+                    <div class="tech-desc">Separates clinical EHR intake (Board 1) from marketing media workflows (Board 2) across independent workspaces.</div>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon" style="color: var(--amber);"><i class="fas fa-bolt"></i></div>
+                    <div class="tech-name">Zapier Event Pipelines</div>
+                    <div class="tech-role">Deterministic Logic</div>
+                    <div class="tech-desc">Multi-step zaps handling column-change webhooks, looping through line items, and dynamic group shifting.</div>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon" style="color: var(--emerald);"><i class="fab fa-slack"></i></div>
+                    <div class="tech-name">Slack API &amp; Interactive Bot</div>
+                    <div class="tech-role">1-Click Therapist DMs</div>
+                    <div class="tech-desc">Interactive direct message notifications with Yes/No approval buttons sent from the workspace automation identity.</div>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon" style="color: var(--cyan);"><i class="fas fa-table"></i></div>
+                    <div class="tech-name">Google Sheets Directory</div>
+                    <div class="tech-role">Identity Resolution</div>
+                    <div class="tech-desc">Auditable lookup table mapping Monday.com internal numeric user IDs to verified Slack workspace email addresses.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Executive Ownership & Impact Card -->
+    <section class="section-separator" id="ownership-impact">
+        <div class="wrapper">
+            <div class="ownership-card">
+                <div class="ownership-grid">
+                    <div class="o-text">
+                        <div class="o-eyebrow"><i class="fas fa-award"></i> ENGINEERING LEADERSHIP &amp; IMPACT</div>
+                        <h2 class="o-h2">Engineered for Frictionless Cross-Functional Harmony</h2>
+                        <p class="o-p">
+                            As the Lead Automation Architect, I designed and deployed the entire Petroski Physio clinical-to-marketing bridge. By establishing strict one-way data governance and replacing brittle mirror columns with deterministic field mapping, we achieved seamless collaboration between physical therapy and marketing teams.
+                        </p>
+                        <p class="o-p">
+                            Therapists make decisions in a single click within Slack, while Marketing receives clean, approved athlete records that update in real time with zero clinical backflow.
+                        </p>
+                    </div>
+                    <div class="o-stats-grid">
+                        <div class="o-stat">
+                            <div class="o-stat-num">0%</div>
+                            <div class="o-stat-label">Clinical Intake Disruption</div>
+                        </div>
+                        <div class="o-stat">
+                            <div class="o-stat-num">100%</div>
+                            <div class="o-stat-label">Zapier Run Success Rate</div>
+                        </div>
+                        <div class="o-stat">
+                            <div class="o-stat-num">1-Click</div>
+                            <div class="o-stat-label">Therapist Decision in Slack</div>
+                        </div>
+                        <div class="o-stat">
+                            <div class="o-stat-num">0 Backflow</div>
+                            <div class="o-stat-label">Health Record Isolation</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta-section">
+        <div class="wrapper">
+            <h2 class="cta-h2">Need Enterprise Workflow Automation &amp; CRM Governance?</h2>
+            <p class="cta-desc">
+                Discover how deterministic event logic, Slack bot integrations, and multi-board governance can eliminate departmental silos and scale your business operations.
+            </p>
+            <div class="cta-btn-row">
+                <a href="../index.html" class="btn-primary">
+                    <i class="fas fa-arrow-left"></i> Explore All Case Studies
+                </a>
+                <a href="https://linkedin.com/in/ahsantariq0724" target="_blank" class="btn-secondary">
+                    <i class="fab fa-linkedin"></i> Connect on LinkedIn
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Lightbox Modal -->
+    <div id="lightboxModal" class="lightbox-modal" onclick="closeLightbox(event)">
+        <div class="lightbox-container" onclick="event.stopPropagation()">
+            <button class="lightbox-close" onclick="closeLightbox(event)">&times;</button>
+            <img id="lightboxImg" src="" alt="Enlarged screenshot" />
+            <div id="lightboxCaption" class="lightbox-caption"></div>
+        </div>
+    </div>
+
+    <!-- Interactive JavaScript Logic -->
+    <script>
+        // Interactive Problem vs Solution Filter Engine
+        function setPetroskiFilter(mode) {
+            const btnBoth = document.getElementById('btnBoth');
+            const btnProblem = document.getElementById('btnProblem');
+            const btnSolution = document.getElementById('btnSolution');
+
+            btnBoth.className = 'compare-toggle-btn';
+            btnProblem.className = 'compare-toggle-btn';
+            btnSolution.className = 'compare-toggle-btn';
+
+            const rows = document.querySelectorAll('.compare-row');
+
+            if (mode === 'both') {
+                btnBoth.classList.add('active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr) minmax(0, 1fr)';
+                    r.querySelector('.compare-card.problem').style.display = 'block';
+                    r.querySelector('.compare-card.solution').style.display = 'block';
+                });
+            } else if (mode === 'problem') {
+                btnProblem.classList.add('active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr)';
+                    r.querySelector('.compare-card.problem').style.display = 'block';
+                    r.querySelector('.compare-card.solution').style.display = 'none';
+                });
+            } else if (mode === 'solution') {
+                btnSolution.classList.add('active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr)';
+                    r.querySelector('.compare-card.problem').style.display = 'none';
+                    r.querySelector('.compare-card.solution').style.display = 'block';
+                });
+            }
+        }
+
+        // Interactive Lightbox Engine
+        function openLightbox(src, caption) {
+            const modal = document.getElementById('lightboxModal');
+            const img = document.getElementById('lightboxImg');
+            const cap = document.getElementById('lightboxCaption');
+            img.src = src;
+            cap.innerText = caption;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(e) {
+            const modal = document.getElementById('lightboxModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terry Properties Case Study — Autonomous AI Accounting & Dual-Ledger Sync | Ahsan Tariq</title>
+    <meta name="description" content="How Terry Property Management eliminated manual invoice entry, duplicate payments, and reconciliation delays across 150 properties using an autonomous AI accounting engine with Gmail/WhatsApp ingestion, AI Document OCR, Buildium API, and QuickBooks Online dual synchronization.">
+
+    <!-- Google Fonts: Plus Jakarta Sans & Outfit & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-main: #06070a;
+            --bg-surface: #0a0e17;
+            --bg-card: #0e1320;
+            --bg-card-hover: #141c2e;
+            --border-subtle: rgba(255, 255, 255, 0.07);
+            --border-highlight: rgba(56, 189, 248, 0.35);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --cyan: #38bdf8;
+            --cyan-glow: rgba(56, 189, 248, 0.18);
+            --emerald: #10b981;
+            --emerald-glow: rgba(16, 185, 129, 0.16);
+            --gold: #eab308;
+            --gold-glow: rgba(234, 179, 8, 0.16);
+            --rose: #f43f5e;
+            --rose-glow: rgba(244, 63, 94, 0.16);
+            --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-display: 'Outfit', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --radius-xl: 24px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --container-max: 1260px;
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            line-height: 1.65;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Ambient Glow & Canvas */
+        .ambient-glow {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            height: 600px;
+            background: radial-gradient(circle 800px at 50% -100px, rgba(56, 189, 248, 0.12), rgba(16, 185, 129, 0.04), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Top Nav */
+        .case-nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(6, 7, 10, 0.88);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 1rem 0;
+        }
+        .nav-inner {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .nav-back:hover {
+            color: var(--cyan);
+            transform: translateX(-3px);
+        }
+        .nav-brand {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 1.05rem;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .nav-brand span {
+            color: var(--cyan);
+        }
+        .nav-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            padding: 0.35rem 0.8rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--cyan);
+            font-weight: 600;
+        }
+        .nav-status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 8px var(--cyan);
+            animation: pulseNav 2s infinite;
+        }
+        @keyframes pulseNav {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        /* Container & Layout */
+        .wrapper {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        .section-separator {
+            padding: 5.5rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        /* TheHexaTown Signature Typography & Tags */
+        .eyebrow-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            color: var(--cyan);
+            padding: 0.4rem 0.95rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+        .hero-section {
+            padding: 4.5rem 0 3.5rem;
+            text-align: center;
+        }
+        .hero-h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.3rem, 5vw, 4rem);
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            margin-bottom: 1.25rem;
+            background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-tagline {
+            font-family: var(--font-display);
+            font-size: clamp(1.15rem, 2.2vw, 1.45rem);
+            font-weight: 600;
+            color: var(--cyan);
+            margin-bottom: 1.75rem;
+            letter-spacing: -0.01em;
+        }
+        .hero-desc {
+            font-size: 1.12rem;
+            color: var(--text-secondary);
+            max-width: 840px;
+            margin: 0 auto 3rem;
+            line-height: 1.75;
+        }
+        .hero-desc strong {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* Meta Grid */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem 2rem;
+            margin: 2.5rem 0 3.5rem;
+            text-align: left;
+        }
+        .meta-col {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+        .meta-title {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+        }
+        .meta-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        .meta-value.accent {
+            color: var(--cyan);
+        }
+
+        /* Browser Mockup System (Contained, Zero Overflow) */
+        .browser-mockup {
+            background: #0d121c;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.04);
+            margin: 2rem 0;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .browser-mockup:hover {
+            border-color: rgba(56, 189, 248, 0.3);
+            box-shadow: 0 30px 70px -15px rgba(56, 189, 248, 0.15), 0 0 0 1px rgba(56, 189, 248, 0.2);
+        }
+        .browser-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1.25rem;
+            background: #141b27;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            gap: 0.75rem;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .browser-dots {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .browser-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+        .browser-url {
+            background: #090d15;
+            padding: 0.35rem 0.85rem;
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            font-size: 0.76rem;
+            color: #94a3b8;
+            flex: 1 1 0%;
+            min-width: 0;
+            max-width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .browser-url i {
+            color: var(--cyan);
+            font-size: 0.7rem;
+            flex-shrink: 0;
+        }
+        .browser-url span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
+            min-width: 0;
+            flex: 1 1 0%;
+        }
+        .browser-badge {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--cyan);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(56, 189, 248, 0.1);
+            padding: 0.25rem 0.65rem;
+            border-radius: 20px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .browser-badge.pulse::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 8px var(--cyan);
+            animation: pulseGlow 2s infinite;
+            flex-shrink: 0;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+        .browser-screen {
+            position: relative;
+            cursor: zoom-in;
+            overflow: hidden;
+            background: #080b11;
+            line-height: 0;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+        .browser-screen img {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+            box-sizing: border-box;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .browser-screen:hover img {
+            transform: scale(1.015);
+        }
+        .browser-screen .zoom-hint {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            background: rgba(10, 14, 22, 0.88);
+            backdrop-filter: blur(8px);
+            color: #cbd5e1;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.4rem 0.85rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .browser-screen:hover .zoom-hint {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Statement Banner (TheHexaTown Big Typography) */
+        .statement-banner {
+            padding: 5.5rem 0;
+            border-top: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border-subtle);
+            background: linear-gradient(180deg, rgba(56, 189, 248, 0.03) 0%, transparent 100%);
+        }
+        .statement-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.75rem, 3.4vw, 2.75rem);
+            font-weight: 800;
+            line-height: 1.25;
+            letter-spacing: -0.025em;
+            color: #ffffff;
+            max-width: 1100px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .statement-h2 span {
+            color: var(--cyan);
+        }
+
+        /* Executive Metrics Grid */
+        .exec-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1.5rem;
+            margin: 3.5rem 0;
+            width: 100%;
+            max-width: 100%;
+        }
+        .exec-metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem 1.5rem;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .exec-metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyan), transparent);
+            opacity: 0.5;
+        }
+        .exec-metric-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-highlight);
+        }
+        .exec-num {
+            font-family: var(--font-display);
+            font-size: 2.1rem;
+            font-weight: 800;
+            line-height: 1.1;
+            color: #ffffff;
+            margin-bottom: 0.4rem;
+        }
+        .exec-num.cyan { color: var(--cyan); }
+        .exec-num.emerald { color: var(--emerald); }
+        .exec-num.gold { color: var(--gold); }
+        .exec-num.rose { color: var(--rose); }
+        .exec-label {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 0.35rem;
+        }
+        .exec-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Showcase Split Section */
+        .showcase-block {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+            gap: 3.5rem;
+            align-items: center;
+            margin: 4.5rem 0;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+        .showcase-block.reverse {
+            grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+        }
+        .showcase-block.reverse .showcase-text-col {
+            order: 2;
+        }
+        .showcase-block.reverse .showcase-media-col {
+            order: 1;
+        }
+        .showcase-text-col,
+        .showcase-media-col {
+            min-width: 0;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .showcase-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--cyan);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+        }
+        .showcase-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 2.5vw, 2.3rem);
+            font-weight: 800;
+            line-height: 1.22;
+            color: #ffffff;
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.02em;
+        }
+        .showcase-desc {
+            color: var(--text-secondary);
+            font-size: 1.02rem;
+            line-height: 1.72;
+            margin-bottom: 1.5rem;
+        }
+        .showcase-feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            margin: 1.5rem 0;
+        }
+        .showcase-feature-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+        .showcase-feature-list li i {
+            color: var(--cyan);
+            margin-top: 0.25rem;
+            font-size: 0.85rem;
+        }
+        .showcase-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1.25rem;
+        }
+        .showcase-tag {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #cbd5e1;
+            padding: 0.35rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.76rem;
+            font-family: var(--font-mono);
+            font-weight: 500;
+        }
+
+        /* ANIMATED INTERACTIVE PROBLEM VS SOLUTION SECTION (EASY FOR ANY NON-TECHNICAL PERSON) */
+        .interactive-comparison-wrapper {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            padding: 3rem;
+            margin: 3.5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .comparison-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+        .compare-toggle-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            color: #cbd5e1;
+            padding: 0.65rem 1.5rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .compare-toggle-btn.active {
+            background: var(--cyan);
+            color: #050d18;
+            border-color: var(--cyan);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+            transform: scale(1.03);
+        }
+        .compare-toggle-btn.problem-active {
+            background: var(--rose);
+            color: #ffffff;
+            border-color: var(--rose);
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.4);
+            transform: scale(1.03);
+        }
+        .compare-toggle-btn.solution-active {
+            background: var(--emerald);
+            color: #05140e;
+            border-color: var(--emerald);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+            transform: scale(1.03);
+        }
+        .comparison-cards-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .compare-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 60px minmax(0, 1fr);
+            gap: 1.5rem;
+            align-items: center;
+            width: 100%;
+            max-width: 100%;
+            transition: all 0.35s ease;
+        }
+        .compare-side {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            border: 1px solid var(--border-subtle);
+            min-width: 0;
+            max-width: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        .compare-side.side-problem {
+            border-left: 4px solid var(--rose);
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.05) 0%, rgba(14, 19, 32, 0.95) 100%);
+        }
+        .compare-side.side-solution {
+            border-left: 4px solid var(--emerald);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(14, 19, 32, 0.95) 100%);
+        }
+        .compare-arrow-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #141c2c;
+            border: 1px solid var(--border-subtle);
+            color: var(--cyan);
+            font-size: 1.1rem;
+            margin: 0 auto;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+        }
+        .side-label {
+            font-family: var(--font-mono);
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        .side-problem .side-label { color: var(--rose); }
+        .side-solution .side-label { color: var(--emerald); }
+        .side-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.75rem;
+        }
+        .side-desc {
+            color: var(--text-secondary);
+            font-size: 0.93rem;
+            line-height: 1.65;
+        }
+
+        /* 3-Week Implementation Timeline Table */
+        .timeline-table-wrapper {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            margin: 2rem 0;
+        }
+        .timeline-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            font-family: var(--font-mono);
+        }
+        .timeline-table th {
+            background: #121721;
+            padding: 0.85rem 1rem;
+            text-align: left;
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .timeline-table td {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: #cbd5e1;
+        }
+        .timeline-table tr:hover td {
+            background: rgba(56, 189, 248, 0.03);
+        }
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.2rem 0.55rem;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+        .status-pill.complete {
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--emerald);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+        .status-pill.active {
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--cyan);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+        }
+        .status-pill.planned {
+            background: rgba(234, 179, 8, 0.12);
+            color: var(--gold);
+            border: 1px solid rgba(234, 179, 8, 0.25);
+        }
+
+        /* Tech Grid */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+            width: 100%;
+            max-width: 100%;
+        }
+        .tech-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+        .tech-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-highlight);
+        }
+        .tech-header {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            margin-bottom: 1rem;
+        }
+        .tech-pill {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--cyan);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+        .tech-pill.emerald { background: rgba(16, 185, 129, 0.1); color: var(--emerald); border-color: rgba(16, 185, 129, 0.2); }
+        .tech-pill.gold { background: rgba(234, 179, 8, 0.1); color: var(--gold); border-color: rgba(234, 179, 8, 0.2); }
+        .tech-pill.purple { background: rgba(168, 85, 247, 0.1); color: #c084fc; border-color: rgba(168, 85, 247, 0.2); }
+        .tech-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+        .tech-card p {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        /* Systems Ownership Block */
+        .ownership-box {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.04) 0%, rgba(14, 19, 32, 0.95) 100%);
+            border: 1px solid var(--border-highlight);
+            border-radius: var(--radius-xl);
+            padding: 3rem;
+            margin: 4rem 0;
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 3rem;
+            align-items: center;
+        }
+        .ownership-title {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+        .ownership-desc {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+        .ownership-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+        }
+        .o-stat {
+            background: #090d15;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+        }
+        .o-stat-num {
+            font-family: var(--font-display);
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--cyan);
+            margin-bottom: 0.25rem;
+        }
+        .o-stat-label {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.35;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 6.5rem 0;
+            text-align: center;
+            background: radial-gradient(circle 600px at 50% 50%, rgba(56, 189, 248, 0.08), transparent 70%);
+        }
+        .cta-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 3.8vw, 3rem);
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.03em;
+        }
+        .cta-desc {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 650px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.6;
+        }
+        .cta-btn-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.25rem;
+        }
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--cyan);
+            color: #050d18;
+            padding: 0.9rem 2rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.35);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(56, 189, 248, 0.5);
+            background: #0284c7;
+        }
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 0.9rem 2rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Lightbox Modal */
+        .lightbox-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(3, 5, 8, 0.95);
+            backdrop-filter: blur(12px);
+            z-index: 999999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            box-sizing: border-box;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .lightbox-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        .lightbox-container {
+            max-width: 95vw;
+            max-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .lightbox-container img {
+            max-width: 92vw;
+            max-height: 82vh;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+        .lightbox-caption {
+            margin-top: 1rem;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            font-family: var(--font-mono);
+            background: rgba(15, 23, 42, 0.85);
+            padding: 0.5rem 1.25rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            max-width: 800px;
+            text-align: center;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: -2.5rem;
+            right: 0;
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+        .lightbox-close:hover {
+            color: var(--cyan);
+            transform: scale(1.15);
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .exec-metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .showcase-block, .showcase-block.reverse {
+                grid-template-columns: minmax(0, 1fr) !important;
+                gap: 2.5rem;
+            }
+            .showcase-block.reverse .showcase-text-col { order: 1; }
+            .showcase-block.reverse .showcase-media-col { order: 2; }
+            .compare-row { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+            .compare-arrow-box { transform: rotate(90deg); margin: 0.5rem auto; }
+            .tech-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .ownership-box { grid-template-columns: minmax(0, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .browser-bar {
+                padding: 0.55rem 0.85rem;
+                gap: 0.5rem;
+            }
+            .browser-badge {
+                display: none;
+            }
+            .browser-url {
+                font-size: 0.7rem;
+                padding: 0.25rem 0.55rem;
+            }
+            .browser-dots {
+                gap: 4px;
+            }
+            .browser-dot {
+                width: 8px;
+                height: 8px;
+            }
+            .interactive-comparison-wrapper {
+                padding: 1.5rem;
+            }
+            .comparison-controls {
+                flex-direction: column;
+                gap: 0.6rem;
+            }
+            .compare-toggle-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .meta-grid { grid-template-columns: minmax(0, 1fr); }
+            .exec-metrics-grid { grid-template-columns: minmax(0, 1fr); }
+            .tech-grid { grid-template-columns: minmax(0, 1fr); }
+            .ownership-stats { grid-template-columns: minmax(0, 1fr); }
+            .cta-btn-row { flex-direction: column; }
+            .statement-h2 { font-size: 1.45rem; }
+            .hero-h1 { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Glow Background -->
+    <div class="ambient-glow"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="case-nav">
+        <div class="nav-inner">
+            <a href="../index.html" class="nav-back">
+                <i class="fas fa-arrow-left"></i> Back to Case Studies
+            </a>
+            <div class="nav-brand">
+                <span>Tariq</span>DreamsTech
+            </div>
+            <div class="nav-status">
+                <span class="nav-status-dot"></span> LIVE PRODUCTION · BUILDIUM + QBO DUAL SYNC
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-file-invoice-dollar"></i> AI-Driven Real Estate FinTech &amp; Accounting Automation
+            </div>
+
+            <h1 class="hero-h1">Terry Properties</h1>
+            <div class="hero-tagline">“Autonomous Accounting: Where AI Document OCR Meets Real-Time Buildium &amp; QuickBooks Synchronization”</div>
+
+            <p class="hero-desc">
+                How a national property management firm eliminated manual invoice typing, receipt loss, and duplicate contractor payments across <strong>150 properties</strong> — building an autonomous accounting pipeline integrating <strong>Gmail API</strong>, <strong>WhatsApp Business</strong> ingestion, <strong>Google Document AI / AWS Textract OCR</strong>, and simultaneous dual-sync REST APIs into <strong>Buildium</strong> and <strong>QuickBooks Online</strong>.
+            </p>
+
+            <!-- Meta Strip -->
+            <div class="meta-grid">
+                <div class="meta-col">
+                    <span class="meta-title">Client</span>
+                    <span class="meta-value">Terry Properties (US Real Estate Portfolio)</span>
+                </div>
+                <div class="meta-col">
+                    <span class="meta-title">Architecture Ownership</span>
+                    <span class="meta-value accent">Lead Systems Architect (Solo Build — Ahsan Tariq)</span>
+                </div>
+                <div class="meta-col">
+                    <span class="meta-title">Implementation Cadence</span>
+                    <span class="meta-value">3-Week Pilot (20 Properties) Scaling to 150</span>
+                </div>
+                <div class="meta-col">
+                    <span class="meta-title">Core Ecosystem</span>
+                    <span class="meta-value">Buildium · QuickBooks · Document AI · Gmail · WhatsApp</span>
+                </div>
+            </div>
+
+            <!-- Hero Live Device Mockup (Image 1) -->
+            <div class="browser-mockup">
+                <div class="browser-bar">
+                    <div class="browser-dots">
+                        <span class="browser-dot dot-red"></span>
+                        <span class="browser-dot dot-yellow"></span>
+                        <span class="browser-dot dot-green"></span>
+                    </div>
+                    <div class="browser-url">
+                        <i class="fas fa-lock"></i>
+                        <span>https://terry.accounting.cloud/orchestrator/dual-ledger-sync</span>
+                    </div>
+                    <div class="browser-badge pulse">
+                        ● 4-STAGE PIPELINE ACTIVE · 100% CAPTURED
+                    </div>
+                </div>
+                <div class="browser-screen" onclick="openLightbox('images/01-terry-accounting-orchestrator.jpg', 'Terry Properties: End-to-End Autonomous Accounting Architecture (Gmail & WhatsApp Capture -> AI Document OCR -> Validation & Deduplication -> Dual Sync into Buildium & QuickBooks Online)')">
+                    <img src="images/01-terry-accounting-orchestrator.jpg" alt="Terry Properties Autonomous Accounting Orchestrator" />
+                    <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect architecture dashboard</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statement Banner (TheHexaTown Signature Big Typography) -->
+    <section class="statement-banner">
+        <div class="wrapper">
+            <h2 class="statement-h2">
+                “From <span>25 hours a week of manual typing</span> to sub-minute dual-ledger automation: <span>88.5% reduction in data entry</span>, 100% automated capture across <span>Email &amp; WhatsApp</span>, and <span>zero duplicate payments</span> across 150 properties.”
+            </h2>
+        </div>
+    </section>
+
+    <!-- Executive Production Metrics Grid -->
+    <section class="section-separator">
+        <div class="wrapper">
+            <div class="exec-metrics-grid">
+                <div class="exec-metric-card">
+                    <div class="exec-num emerald">88.5%</div>
+                    <div class="exec-label">Manual Data Entry Reduction</div>
+                    <div class="exec-sub">Cut staff processing overhead from 25 hrs/week down to 2.8 hrs/week exception review</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="exec-num cyan">100% Auto</div>
+                    <div class="exec-label">Omnichannel Document Ingestion</div>
+                    <div class="exec-sub">142 of 142 contractor invoices &amp; receipts captured via Gmail API &amp; WhatsApp Business</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="exec-num gold">&lt; 60s</div>
+                    <div class="exec-label">Dual-Ledger Synchronization</div>
+                    <div class="exec-sub">Simultaneous REST push to Buildium Property Operating Bills &amp; QuickBooks General Ledger</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="exec-num rose">$8,920</div>
+                    <div class="exec-label">Double Payments Prevented</div>
+                    <div class="exec-sub">11 duplicate vendor submissions caught by hash validation before executing cash payouts</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dedicated Animated Problem vs Solution Section (Accessible For Any Non-Technical Reader) -->
+    <section class="section-separator" id="problem-solution">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-scale-balanced"></i> Executive Comparison
+            </div>
+            <h2 class="showcase-h2" style="text-align: center; margin-bottom: 0.5rem;">How Terry Properties Solved Accounting Chaos</h2>
+            <p class="showcase-desc" style="text-align: center; max-width: 750px; margin: 0 auto 2.5rem;">
+                See how fragmented real estate receipts, double-entry bookkeeping, and duplicate vendor payments were replaced with an autonomous AI pipeline.
+            </p>
+
+            <div class="interactive-comparison-wrapper">
+                <!-- Interactive Controls -->
+                <div class="comparison-controls">
+                    <button id="btnTerryBoth" class="compare-toggle-btn active" onclick="setTerryFilter('both')">
+                        <i class="fas fa-arrow-right-arrow-left"></i> Side-by-Side View
+                    </button>
+                    <button id="btnTerryProblem" class="compare-toggle-btn" onclick="setTerryFilter('problem')">
+                        <i class="fas fa-circle-xmark"></i> The Old Manual Way (Before)
+                    </button>
+                    <button id="btnTerrySolution" class="compare-toggle-btn" onclick="setTerryFilter('solution')">
+                        <i class="fas fa-circle-check"></i> The Autonomous AI Engine (After)
+                    </button>
+                </div>
+
+                <!-- Comparison Cards Grid -->
+                <div class="comparison-cards-grid">
+                    <!-- Row 1: Invoice Ingestion Chaos -->
+                    <div class="compare-row" id="rowTerry1">
+                        <div class="compare-side side-problem">
+                            <div class="side-label"><i class="fas fa-triangle-exclamation"></i> The Old Manual Way (Before)</div>
+                            <h3 class="side-title">Scattered Receipts in Email &amp; WhatsApp Chats</h3>
+                            <p class="side-desc">
+                                Contractors and property managers sent bills via personal emails, SMS, and WhatsApp photos. Receipts were misplaced, forgotten in spam folders, or downloaded manually to desktops without structured storage.
+                            </p>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label"><i class="fas fa-bolt"></i> The Autonomous AI Engine (After)</div>
+                            <h3 class="side-title">100% Automated Omnichannel Cloud Ingestion</h3>
+                            <p class="side-desc">
+                                Automated webhooks poll the accounting email inbox and parse WhatsApp Business attachments instantly. Every PDF, JPG, and HEIC is archived in an immutable AWS S3 vault with SHA-256 cryptographic verification.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Double Data Entry Dilemma -->
+                    <div class="compare-row" id="rowTerry2">
+                        <div class="compare-side side-problem">
+                            <div class="side-label"><i class="fas fa-triangle-exclamation"></i> The Old Manual Way (Before)</div>
+                            <h3 class="side-title">Typing Every Invoice Twice into Two Systems</h3>
+                            <p class="side-desc">
+                                Bookkeepers manually typed the exact same invoice into Buildium for property-level accounting, and then typed it all over again into QuickBooks Online for tax reporting. The double entry consumed 25 hours a week.
+                            </p>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label"><i class="fas fa-bolt"></i> The Autonomous AI Engine (After)</div>
+                            <h3 class="side-title">Simultaneous Dual-Ledger API Synchronization</h3>
+                            <p class="side-desc">
+                                A single verified invoice automatically generates a Property Operating Bill in Buildium (linking Property ID and Unit #) and a balanced Journal Entry in QuickBooks Online (Account 6200 vs 2000) within 60 seconds.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Row 3: Duplicate Payment Losses -->
+                    <div class="compare-row" id="rowTerry3">
+                        <div class="compare-side side-problem">
+                            <div class="side-label"><i class="fas fa-triangle-exclamation"></i> The Old Manual Way (Before)</div>
+                            <h3 class="side-title">$8,920 in Accidental Duplicate Payments</h3>
+                            <p class="side-desc">
+                                When contractors submitted an invoice by email and followed up via WhatsApp, busy bookkeepers frequently paid the same bill twice across different bank accounts, causing cash leaks and reconciliation chaos.
+                            </p>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label"><i class="fas fa-bolt"></i> The Autonomous AI Engine (After)</div>
+                            <h3 class="side-title">Automated Cross-System Deduplication Shield</h3>
+                            <p class="side-desc">
+                                The engine performs an instant lookup against both Buildium and QuickBooks databases using vendor tax IDs, invoice numbers, and dollar amounts. 11 duplicate submissions were intercepted and blocked during the pilot.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Row 4: Property & Unit Allocation Errors -->
+                    <div class="compare-row" id="rowTerry4">
+                        <div class="compare-side side-problem">
+                            <div class="side-label"><i class="fas fa-triangle-exclamation"></i> The Old Manual Way (Before)</div>
+                            <h3 class="side-title">Mischarging Owners Due to Vague Invoices</h3>
+                            <p class="side-desc">
+                                Maintenance bills frequently omitted unit numbers or used casual addresses. Staff guessed property IDs, leading to inaccurate owner statements, tenant billing disputes, and awkward accounting reversals.
+                            </p>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label"><i class="fas fa-bolt"></i> The Autonomous AI Engine (After)</div>
+                            <h3 class="side-title">AI OCR Tenant &amp; Work Order Correlation</h3>
+                            <p class="side-desc">
+                                Google Document AI / AWS Textract cross-references tenant names ("Marcus Vance"), technician notes, and work order numbers (#WO-3891), mapping the invoice to "Oakridge Estates Unit 14B" with 99.4% confidence.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Row 5: 3-Week Delivery vs 9-Month Rollouts -->
+                    <div class="compare-row" id="rowTerry5">
+                        <div class="compare-side side-problem">
+                            <div class="side-label"><i class="fas fa-triangle-exclamation"></i> The Old Manual Way (Before)</div>
+                            <h3 class="side-title">Year-Long Consultancies &amp; Disrupted Teams</h3>
+                            <p class="side-desc">
+                                Traditional enterprise ERP implementations drag on for 6 to 12 months with massive upfront retainers, bloated change management, and high failure rates for property management teams.
+                            </p>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label"><i class="fas fa-bolt"></i> The Autonomous AI Engine (After)</div>
+                            <h3 class="side-title">Lean 3-Week Pilot to 150-Property National Scale</h3>
+                            <p class="side-desc">
+                                Built, tested, and validated on 20 pilot properties within 21 days by Ahsan Tariq. Proved an 88.5% time savings and CPA sign-off before expanding seamlessly across the full 150-property national portfolio.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Feature 1: AI Document Processing & Multi-Format OCR -->
+    <section class="section-separator" id="ai-ocr">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-brain"></i> INTELLIGENT DOCUMENT EXTRACTION</div>
+                    <h2 class="showcase-h2">Google Document AI &amp; AWS Textract OCR Pipeline</h2>
+                    <p class="showcase-desc">
+                        Contractors don&rsquo;t use standardized accounting templates. They send smartphone camera photos of crumpled paper receipts, multi-page PDF maintenance estimates, and digital invoices. Our multi-model OCR engine handles unstructured real estate documents effortlessly.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <strong>Key Entity Extraction:</strong> Extracts Vendor Legal Name, Invoice #, Invoice Date, Net Payment Terms, Line Items, Sales Tax, and Total Amount Due with <strong>99.4% average accuracy</strong>.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Contextual Property Mapping:</strong> Leverages natural language processing to match unstructured addresses (e.g. <em>"Replaced AC compressor at Oakridge 14B"</em>) against Buildium&rsquo;s Property database (<code>PROP-OAK-14B</code>).</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Confidence Gating &amp; Exception Handling:</strong> Any invoice field extracted with under 95% confidence score is automatically routed to a dedicated human-in-the-loop review queue for VA or CPA verification.</li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">Document AI OCR</span>
+                        <span class="showcase-tag">AWS Textract</span>
+                        <span class="showcase-tag">Property ID Mapping</span>
+                        <span class="showcase-tag">Confidence Gating</span>
+                    </div>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-file-invoice"></i>
+                                <span>https://terry.accounting.cloud/ocr/inspect/INV-2026-8819</span>
+                            </div>
+                            <div class="browser-badge pulse">● ACCURACY 99.4% · EXTRACTED</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/02-terry-ai-ocr-document-extraction.jpg', 'AI Document Processing: Simulated paper contractor invoice (Apex HVAC $1,840) alongside structured JSON extraction (Vendor, Property ID, Expense Category, and 99.4% confidence scores)')">
+                            <img src="images/02-terry-ai-ocr-document-extraction.jpg" alt="AI Document Processing Interface" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect OCR extraction</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Feature 2: Buildium Property Operating Ledger API Sync -->
+    <div id="dual-sync"></div>
+    <section class="section-separator" id="buildium-sync">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-building"></i> PROPERTY MANAGEMENT AUTOMATION</div>
+                    <h2 class="showcase-h2">Buildium Property Operating Ledger API Integration</h2>
+                    <p class="showcase-desc">
+                        Buildium is the operational heartbeat of property management. It tracks tenant leases, unit maintenance histories, and property owner distributions. Rather than manual data entry, the engine pushes verified bills directly through the Buildium REST API.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <strong>Automated Bill Creation (Endpoint <code>/v1/bills</code>):</strong> Creates the bill record with pre-matched Vendor IDs (<code>VND-48201</code>), General Ledger account (<code>5100: Maintenance - HVAC</code>), and exact unit allocation (<code>Unit 14B</code>).</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Automated Receipt Attachment:</strong> Fetches the original invoice PDF from the S3 cloud vault and attaches it directly to the Buildium bill record for one-click audit inspection by property owners.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Approval &amp; ACH Auto-Scheduling:</strong> Bills under pre-approved thresholds are scheduled for electronic funds transfer (EFT) to the contractor on the invoice due date, avoiding late fees.</li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">Buildium REST API</span>
+                        <span class="showcase-tag">Property Operating Accts</span>
+                        <span class="showcase-tag">Unit-Level Allocation</span>
+                        <span class="showcase-tag">PDF Cloud Attachment</span>
+                    </div>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-building-user"></i>
+                                <span>https://terry.buildium.com/api/v1/bills/BL-94021</span>
+                            </div>
+                            <div class="browser-badge pulse">● BUILDIUM SYNCED · APPROVED</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/03-terry-buildium-property-sync.jpg', 'Buildium Property Operating Ledger: Bill #BL-94021 for Oakridge Estates Unit 14B ($1,840.00), approved status, attached S3 invoice artifact & automated audit trail')">
+                            <img src="images/03-terry-buildium-property-sync.jpg" alt="Buildium Property Management API Console" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect Buildium ledger</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Feature 3: QuickBooks Online Corporate General Ledger Sync -->
+    <section class="section-separator" id="quickbooks-sync">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-calculator"></i> CORPORATE GENERAL LEDGER</div>
+                    <h2 class="showcase-h2">QuickBooks Online Corporate Double-Entry Sync</h2>
+                    <p class="showcase-desc">
+                        Property managers operate in Buildium, but the CPA and financial officers operate in QuickBooks Online. The engine bridges this divide by generating a balanced double-entry accounting transaction in QuickBooks simultaneously.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <strong>Automated Double-Entry Posting:</strong> Debits Account <code>6200: Repairs &amp; Maintenance - HVAC</code> ($1,840.00) and Credits Account <code>2000: Accounts Payable Trade</code> ($1,840.00).</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Class Tracking per Property:</strong> Applies QuickBooks Class Tracking (<code>Class: Oakridge Estates</code>) to ensure corporate P&amp;L statements mirror individual property performance with zero manual tag re-entry.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Seamless Bank Feed Reconciliation:</strong> Cross-references bank feeds from Chase Commercial Operating accounts (<code>****-4902</code>), ensuring zero reconciliation variance at month-end.</li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">QuickBooks Online API</span>
+                        <span class="showcase-tag">Double-Entry Bookkeeping</span>
+                        <span class="showcase-tag">Class Tracking</span>
+                        <span class="showcase-tag">Bank Feed Match</span>
+                    </div>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-book-journal-whills"></i>
+                                <span>https://qbo.intuit.com/app/bill?txnId=19482</span>
+                            </div>
+                            <div class="browser-badge pulse">● QBO RECONCILED · ZERO VARIANCE</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/04-terry-quickbooks-ledger-sync.jpg', 'QuickBooks Online Ledger: Bill #INV-2026-8819 for Apex HVAC ($1,840.00), double-entry debit/credit breakdown, class tracking for Oakridge Estates & automated bank feed matching')">
+                            <img src="images/04-terry-quickbooks-ledger-sync.jpg" alt="QuickBooks Online Corporate Ledger Interface" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect QuickBooks ledger</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deep-Dive Feature 4: 3-Week Pilot Delivery & 150-Property National Roadmap -->
+    <section class="section-separator" id="audit-dashboard">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow"><i class="fas fa-chart-line"></i> METRICS &amp; NATIONAL SCALE ROADMAP</div>
+                    <h2 class="showcase-h2">Executive Audit Dashboard &amp; 150-Property Scaling</h2>
+                    <p class="showcase-desc">
+                        The 3-week pilot demonstrated that autonomous accounting works in live real estate operations. By proving an 88.5% reduction in manual data entry across 20 properties, Terry Properties established a proven foundation to scale across all 150 properties nationwide.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <strong>142 Test Invoices Processed:</strong> 100% of incoming invoices from email and WhatsApp captured and processed without data corruption or lost receipts.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>$8,920.00 in Duplicate Payments Stopped:</strong> Successfully caught and neutralized 11 duplicate invoice submissions from vendors prior to check or ACH issuance.</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>CPA &amp; Bookkeeper Sign-Off:</strong> Audit logs confirmed zero variance between Buildium operating records and QuickBooks tax ledgers.</li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">Executive Audit</span>
+                        <span class="showcase-tag">Deduplication Gate</span>
+                        <span class="showcase-tag">150-Property Roadmap</span>
+                        <span class="showcase-tag">CPA Approved</span>
+                    </div>
+                </div>
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-gauge-high"></i>
+                                <span>https://terry.accounting.cloud/dashboard/executive-metrics</span>
+                            </div>
+                            <div class="browser-badge pulse">● PILOT SUCCESS · 88.5% SAVINGS</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/05-terry-audit-reconciliation-dashboard.jpg', 'Executive Audit Dashboard: 88.5% manual entry reduction, 100% capture rate, $8,920 duplicate losses prevented, 3-week milestone review & 150-property national scale roadmap')">
+                            <img src="images/05-terry-audit-reconciliation-dashboard.jpg" alt="Executive Audit Dashboard Interface" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect executive metrics</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3-Week Implementation Timeline & Roles Matrix -->
+    <section class="section-separator" id="timeline-matrix">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-calendar-check"></i> Structured Delivery Timeline
+            </div>
+            <h2 class="showcase-h2">3-Week Implementation Plan vs Full 150-Property Rollout</h2>
+            <p class="showcase-desc">
+                How Ahsan Tariq structured the rapid pilot delivery sprint and established the long-term national architecture.
+            </p>
+
+            <div class="timeline-table-wrapper">
+                <table class="timeline-table">
+                    <thead>
+                        <tr>
+                            <th>Phase / Week</th>
+                            <th>Focus Area</th>
+                            <th>Key Milestones &amp; Deliverables</th>
+                            <th>Team Roles</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Week 1</strong></td>
+                            <td>Setup &amp; Data Capture</td>
+                            <td>Connect Gmail API &amp; WhatsApp scrapers; setup AWS S3 document vault; configure Google Document AI OCR; test 10 contractor invoices.</td>
+                            <td>Automation Lead (Ahsan Tariq)</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> Complete</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Week 2</strong></td>
+                            <td>Extraction &amp; Validation</td>
+                            <td>Implement field extraction (Vendor, Amount, Property ID, Account); build deduplication rules; configure human-in-the-loop exception queue.</td>
+                            <td>Automation Lead &amp; VA Reviewer</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> Complete</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Week 3</strong></td>
+                            <td>Pilot API Integration</td>
+                            <td>Integrate Buildium &amp; QuickBooks Online APIs; push pilot transactions for 20 properties; test bank reconciliation; executive reporting.</td>
+                            <td>Automation Lead &amp; CPA / Bookkeeper</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> Complete</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Phase 2</strong></td>
+                            <td>Regional Expansion</td>
+                            <td>Scale from 20 to 75 properties across Mid-Atlantic portfolio; integrate maintenance work order mapping; expand vendor catalog.</td>
+                            <td>Project Owner &amp; Automation Lead</td>
+                            <td><span class="status-pill active"><i class="fas fa-spinner fa-spin"></i> Active Rollout</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Phase 3</strong></td>
+                            <td>National 150 Scale</td>
+                            <td>Full nationwide rollout across all 150 properties; automated bank statement reconciliation; real-time owner P&amp;L visibility.</td>
+                            <td>Enterprise Leadership</td>
+                            <td><span class="status-pill planned"><i class="fas fa-clock"></i> Planned Q3 2026</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technical Stack Grid (TheHexaTown Format) -->
+    <section class="section-separator" id="tech-stack">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-microchip"></i> Technology Stack
+            </div>
+            <h2 class="showcase-h2">Enterprise FinTech &amp; Real Estate Stack</h2>
+            <p class="showcase-desc">
+                The battle-tested APIs, document intelligence engines, and cloud services powering Terry Properties.
+            </p>
+
+            <div class="tech-grid">
+                <!-- Card 1 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill"><i class="fas fa-building"></i></div>
+                        <div>
+                            <h3>Buildium REST API</h3>
+                            <span class="meta-title">Property Management</span>
+                        </div>
+                    </div>
+                    <p>Integrates property-level operating accounts, unit allocations, tenant records, and automated vendor bill creation via official REST endpoints.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">/v1/bills</span>
+                        <span class="showcase-tag">Unit Allocation</span>
+                        <span class="showcase-tag">Vendor Mapping</span>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill emerald"><i class="fas fa-calculator"></i></div>
+                        <div>
+                            <h3>QuickBooks Online API</h3>
+                            <span class="meta-title">Corporate Accounting</span>
+                        </div>
+                    </div>
+                    <p>Automates corporate double-entry general ledger posting (Account 6200 vs 2000), class tracking per property, and OAuth 2.0 PKCE authentication.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">REST API v3</span>
+                        <span class="showcase-tag">Class Tracking</span>
+                        <span class="showcase-tag">Double-Entry</span>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill gold"><i class="fas fa-brain"></i></div>
+                        <div>
+                            <h3>Google Document AI</h3>
+                            <span class="meta-title">AI Document OCR</span>
+                        </div>
+                    </div>
+                    <p>Specialized machine learning models extracting structured invoice entities, tax rates, vendor addresses, and line-item amounts with 99.4% accuracy.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">Invoice Parser</span>
+                        <span class="showcase-tag">Textract OCR</span>
+                        <span class="showcase-tag">Confidence Scores</span>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill"><i class="fas fa-envelope-open-text"></i></div>
+                        <div>
+                            <h3>Gmail API &amp; WhatsApp</h3>
+                            <span class="meta-title">Omnichannel Ingestion</span>
+                        </div>
+                    </div>
+                    <p>Automated webhook scrapers polling accounting mailboxes and WhatsApp Business chats to download incoming receipts, PDFs, and image attachments.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">Gmail Webhook</span>
+                        <span class="showcase-tag">WhatsApp Business</span>
+                        <span class="showcase-tag">Attachment Parser</span>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill emerald"><i class="fas fa-shield-halved"></i></div>
+                        <div>
+                            <h3>Deduplication Engine</h3>
+                            <span class="meta-title">FinTech Security</span>
+                        </div>
+                    </div>
+                    <p>Cross-system hash verification comparing invoice numbers and amounts against historical records to stop double payments and duplicate bills.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">SHA-256 Hash</span>
+                        <span class="showcase-tag">Deduplication</span>
+                        <span class="showcase-tag">Loss Prevention</span>
+                    </div>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill purple"><i class="fas fa-cloud-arrow-up"></i></div>
+                        <div>
+                            <h3>AWS S3 Cloud Vault</h3>
+                            <span class="meta-title">Immutable Storage</span>
+                        </div>
+                    </div>
+                    <p>Encrypted cloud storage for all original receipts, parsed JSON payloads, and audit trails, generating tamper-proof links for owner statements.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">AWS S3</span>
+                        <span class="showcase-tag">Audit Vault</span>
+                        <span class="showcase-tag">KMS Encrypted</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Systems Ownership & Engineering Leadership -->
+    <section class="section-separator" id="ownership-impact">
+        <div class="wrapper">
+            <div class="ownership-box">
+                <div class="ownership-text-col">
+                    <div class="eyebrow-badge">
+                        <i class="fas fa-crown"></i> Engineering Leadership
+                    </div>
+                    <h2 class="ownership-title">Sole Architecture Ownership &amp; Production Execution</h2>
+                    <p class="ownership-desc">
+                        As the sole Lead Systems Architect on this implementation, <strong>Ahsan Tariq</strong> designed the end-to-end accounting pipeline, implemented the Document AI OCR extraction schemas, built the automated deduplication gate, and authored the Buildium and QuickBooks API synchronization integrations. Delivered in 21 days with zero data corruption.
+                    </p>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">Solo Systems Architect</span>
+                        <span class="showcase-tag">Ahsan Tariq</span>
+                        <span class="showcase-tag">3-Week Delivery</span>
+                        <span class="showcase-tag">Zero Downtime</span>
+                    </div>
+                </div>
+                <div class="ownership-stats">
+                    <div class="o-stat">
+                        <div class="o-stat-num">88.5%</div>
+                        <div class="o-stat-label">Manual Accounting Time Eliminated</div>
+                    </div>
+                    <div class="o-stat">
+                        <div class="o-stat-num">100%</div>
+                        <div class="o-stat-label">Automated Ingestion Success Rate</div>
+                    </div>
+                    <div class="o-stat">
+                        <div class="o-stat-num">$8,920</div>
+                        <div class="o-stat-label">Duplicate Cash Losses Prevented</div>
+                    </div>
+                    <div class="o-stat">
+                        <div class="o-stat-num">150</div>
+                        <div class="o-stat-label">National Real Estate Portfolio Units</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta-section">
+        <div class="wrapper">
+            <h2 class="cta-h2">Need AI Document Processing &amp; Accounting Automation?</h2>
+            <p class="cta-desc">
+                Discover how autonomous OCR pipelines and multi-ledger API synchronization can eliminate manual bookkeeping overhead, stop duplicate payments, and scale your operations.
+            </p>
+            <div class="cta-btn-row">
+                <a href="../index.html" class="btn-primary">
+                    <i class="fas fa-arrow-left"></i> Explore All Case Studies
+                </a>
+                <a href="https://linkedin.com/in/ahsantariq0724" target="_blank" class="btn-secondary">
+                    <i class="fab fa-linkedin"></i> Connect on LinkedIn
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Lightbox Modal -->
+    <div id="lightboxModal" class="lightbox-modal" onclick="closeLightbox(event)">
+        <div class="lightbox-container" onclick="event.stopPropagation()">
+            <button class="lightbox-close" onclick="closeLightbox(event)">&times;</button>
+            <img id="lightboxImg" src="" alt="Enlarged screenshot" />
+            <div id="lightboxCaption" class="lightbox-caption"></div>
+        </div>
+    </div>
+
+    <!-- Interactive JavaScript Logic -->
+    <script>
+        // Interactive Problem vs Solution Filter Engine
+        function setTerryFilter(mode) {
+            const btnBoth = document.getElementById('btnTerryBoth');
+            const btnProblem = document.getElementById('btnTerryProblem');
+            const btnSolution = document.getElementById('btnTerrySolution');
+
+            btnBoth.className = 'compare-toggle-btn';
+            btnProblem.className = 'compare-toggle-btn';
+            btnSolution.className = 'compare-toggle-btn';
+
+            const rows = document.querySelectorAll('.compare-row');
+
+            if (mode === 'both') {
+                btnBoth.classList.add('active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = window.innerWidth <= 1024 ? 'minmax(0, 1fr)' : 'minmax(0, 1fr) 60px minmax(0, 1fr)';
+                    r.querySelector('.side-problem').style.display = 'block';
+                    r.querySelector('.side-solution').style.display = 'block';
+                    const arrow = r.querySelector('.compare-arrow-box');
+                    if (arrow) arrow.style.display = 'flex';
+                });
+            } else if (mode === 'problem') {
+                btnProblem.classList.add('problem-active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr)';
+                    r.querySelector('.side-problem').style.display = 'block';
+                    r.querySelector('.side-solution').style.display = 'none';
+                    const arrow = r.querySelector('.compare-arrow-box');
+                    if (arrow) arrow.style.display = 'none';
+                });
+            } else if (mode === 'solution') {
+                btnSolution.classList.add('solution-active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr)';
+                    r.querySelector('.side-problem').style.display = 'none';
+                    r.querySelector('.side-solution').style.display = 'block';
+                    const arrow = r.querySelector('.compare-arrow-box');
+                    if (arrow) arrow.style.display = 'none';
+                });
+            }
+        }
+
+        // Fullscreen Lightbox Engine
+        function openLightbox(src, caption) {
+            const modal = document.getElementById('lightboxModal');
+            const img = document.getElementById('lightboxImg');
+            const cap = document.getElementById('lightboxCaption');
+            img.src = src;
+            cap.innerText = caption;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(e) {
+            const modal = document.getElementById('lightboxModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+    </script>
+</body>
+</html>

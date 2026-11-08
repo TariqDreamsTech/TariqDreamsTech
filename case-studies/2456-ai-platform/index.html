@@ -1,0 +1,2081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2456.ai Case Study — Autonomous AI Tool Discovery &amp; Workflow Generation Platform | Ahsan Tariq</title>
+    <meta name="description" content="How 2456.ai transformed manual tool selection and workflow assembly into an autonomous AI-driven platform with semantic search over 5000+ tools, hybrid Django+FastAPI architecture, dual PostgreSQL+Pinecone databases, and LangChain RAG-powered DAG workflow generation.">
+
+    <!-- Google Fonts: Plus Jakarta Sans & Outfit & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-main: #06070a;
+            --bg-surface: #0a0e17;
+            --bg-card: #0e1320;
+            --bg-card-hover: #141c2e;
+            --border-subtle: rgba(255, 255, 255, 0.07);
+            --border-highlight: rgba(99, 102, 241, 0.35);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --indigo: #6366f1;
+            --indigo-glow: rgba(99, 102, 241, 0.18);
+            --emerald: #10b981;
+            --emerald-glow: rgba(16, 185, 129, 0.16);
+            --gold: #eab308;
+            --gold-glow: rgba(234, 179, 8, 0.16);
+            --rose: #f43f5e;
+            --rose-glow: rgba(244, 63, 94, 0.16);
+            --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-display: 'Outfit', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --radius-xl: 24px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --container-max: 1260px;
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            line-height: 1.65;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Ambient Glow & Canvas */
+        .ambient-glow {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            height: 600px;
+            background: radial-gradient(circle 800px at 50% -100px, rgba(99, 102, 241, 0.12), rgba(16, 185, 129, 0.04), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Top Nav */
+        .case-nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(6, 7, 10, 0.88);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 1rem 0;
+        }
+        .nav-inner {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .nav-back:hover {
+            color: var(--indigo);
+            transform: translateX(-3px);
+        }
+        .nav-brand {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 1.05rem;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .nav-brand span {
+            color: var(--indigo);
+        }
+        .nav-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            padding: 0.35rem 0.8rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--indigo);
+            font-weight: 600;
+        }
+        .nav-status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--indigo);
+            box-shadow: 0 0 8px var(--indigo);
+            animation: pulseNav 2s infinite;
+        }
+        @keyframes pulseNav {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        /* Container & Layout */
+        .wrapper {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        .section-separator {
+            padding: 5.5rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        /* TheHexaTown Signature Typography & Tags */
+        .eyebrow-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            color: var(--indigo);
+            padding: 0.4rem 0.95rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+        .hero-section {
+            padding: 4.5rem 0 3.5rem;
+            text-align: center;
+        }
+        .hero-h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.3rem, 5vw, 4rem);
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            margin-bottom: 1.25rem;
+            background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-tagline {
+            font-family: var(--font-display);
+            font-size: clamp(1.15rem, 2.2vw, 1.45rem);
+            font-weight: 600;
+            color: var(--indigo);
+            margin-bottom: 1.75rem;
+            letter-spacing: -0.01em;
+        }
+        .hero-desc {
+            font-size: 1.12rem;
+            color: var(--text-secondary);
+            max-width: 820px;
+            margin: 0 auto 3rem;
+            line-height: 1.75;
+        }
+        .hero-desc strong {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* Hero Badges Row */
+        .hero-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+        .hero-badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.4rem 0.9rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.76rem;
+            font-weight: 600;
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            color: var(--indigo);
+        }
+        .hero-badge-pill.emerald {
+            background: rgba(16, 185, 129, 0.08);
+            border-color: rgba(16, 185, 129, 0.2);
+            color: var(--emerald);
+        }
+        .hero-badge-pill.gold {
+            background: rgba(234, 179, 8, 0.08);
+            border-color: rgba(234, 179, 8, 0.2);
+            color: var(--gold);
+        }
+
+        /* Meta Grid */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem 2rem;
+            margin: 2.5rem 0 3.5rem;
+            text-align: left;
+        }
+        .meta-col {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+        .meta-title {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+        }
+        .meta-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        .meta-value.accent {
+            color: var(--indigo);
+        }
+
+        /* Browser Mockup System */
+        .browser-mockup {
+            background: #0d121c;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.04);
+            margin: 2rem 0;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .browser-mockup:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 30px 70px -15px rgba(99, 102, 241, 0.15), 0 0 0 1px rgba(99, 102, 241, 0.2);
+        }
+        .browser-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1.25rem;
+            background: #141b27;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            gap: 0.75rem;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .browser-dots {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .browser-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+        .browser-url {
+            background: #090d15;
+            padding: 0.35rem 0.85rem;
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            font-size: 0.76rem;
+            color: #94a3b8;
+            flex: 1 1 0%;
+            min-width: 0;
+            max-width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .browser-url i {
+            color: var(--indigo);
+            font-size: 0.7rem;
+            flex-shrink: 0;
+        }
+        .browser-url span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
+            min-width: 0;
+            flex: 1 1 0%;
+        }
+        .browser-badge {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--indigo);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(99, 102, 241, 0.1);
+            padding: 0.25rem 0.65rem;
+            border-radius: 20px;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .browser-badge.pulse::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--indigo);
+            box-shadow: 0 0 8px var(--indigo);
+            animation: pulseGlow 2s infinite;
+            flex-shrink: 0;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+        .browser-screen {
+            position: relative;
+            cursor: zoom-in;
+            overflow: hidden;
+            background: #080b11;
+            line-height: 0;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+        .browser-screen img {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+            box-sizing: border-box;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .browser-screen:hover img {
+            transform: scale(1.015);
+        }
+        .browser-screen .zoom-hint {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            background: rgba(10, 14, 22, 0.88);
+            backdrop-filter: blur(8px);
+            color: #cbd5e1;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.4rem 0.85rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .browser-screen:hover .zoom-hint {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Statement Banner */
+        .statement-banner {
+            padding: 5.5rem 0;
+            border-top: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border-subtle);
+            background: linear-gradient(180deg, rgba(99, 102, 241, 0.03) 0%, transparent 100%);
+        }
+        .statement-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.75rem, 3.4vw, 2.75rem);
+            font-weight: 800;
+            line-height: 1.25;
+            letter-spacing: -0.025em;
+            color: #ffffff;
+            max-width: 1100px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .statement-h2 span {
+            color: var(--indigo);
+        }
+
+        /* Executive Metrics Grid */
+        .exec-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1.5rem;
+            margin: 3.5rem 0;
+            width: 100%;
+            max-width: 100%;
+        }
+        .exec-metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem 1.5rem;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .exec-metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--indigo), transparent);
+            opacity: 0.5;
+        }
+        .exec-metric-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-highlight);
+        }
+        .exec-num {
+            font-family: var(--font-display);
+            font-size: 2.1rem;
+            font-weight: 800;
+            line-height: 1.1;
+            color: #ffffff;
+            margin-bottom: 0.4rem;
+        }
+        .exec-num.indigo { color: var(--indigo); }
+        .exec-num.emerald { color: var(--emerald); }
+        .exec-num.gold { color: var(--gold); }
+        .exec-label {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            margin-bottom: 0.35rem;
+        }
+        .exec-sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Showcase Split Section */
+        .showcase-block {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+            gap: 3.5rem;
+            align-items: center;
+            margin: 4.5rem 0;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+        .showcase-block.reverse {
+            grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+        }
+        .showcase-block.reverse .showcase-text-col {
+            order: 2;
+        }
+        .showcase-block.reverse .showcase-media-col {
+            order: 1;
+        }
+        .showcase-text-col,
+        .showcase-media-col {
+            min-width: 0;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .showcase-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--indigo);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+        }
+        .showcase-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 2.5vw, 2.3rem);
+            font-weight: 800;
+            line-height: 1.22;
+            color: #ffffff;
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.02em;
+        }
+        .showcase-desc {
+            color: var(--text-secondary);
+            font-size: 1.02rem;
+            line-height: 1.72;
+            margin-bottom: 1.5rem;
+        }
+        .showcase-feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            margin: 1.5rem 0;
+        }
+        .showcase-feature-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+        .showcase-feature-list li i {
+            color: var(--indigo);
+            margin-top: 0.25rem;
+            font-size: 0.85rem;
+        }
+        .showcase-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1.25rem;
+        }
+        .showcase-tag {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #cbd5e1;
+            padding: 0.35rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.76rem;
+            font-family: var(--font-mono);
+            font-weight: 500;
+        }
+
+        /* Dual Explanation Grid */
+        .dual-explanation-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .explanation-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            position: relative;
+        }
+        .explanation-box.plain-english {
+            border-top: 3px solid var(--emerald);
+        }
+        .explanation-box.tech-deep-dive {
+            border-top: 3px solid var(--indigo);
+        }
+        .explanation-box-label {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .explanation-box.plain-english .explanation-box-label { color: var(--emerald); }
+        .explanation-box.tech-deep-dive .explanation-box-label { color: var(--indigo); }
+        .explanation-box p {
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+            line-height: 1.7;
+        }
+
+        /* Interactive Problem vs Solution */
+        .interactive-comparison-wrapper {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            padding: 3rem;
+            margin: 3.5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .comparison-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+        .compare-toggle-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            color: #cbd5e1;
+            padding: 0.65rem 1.5rem;
+            border-radius: 9999px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .compare-toggle-btn.active {
+            background: var(--indigo);
+            color: #ffffff;
+            border-color: var(--indigo);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+            transform: scale(1.03);
+        }
+        .compare-toggle-btn.problem-active {
+            background: var(--rose);
+            color: #ffffff;
+            border-color: var(--rose);
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.4);
+            transform: scale(1.03);
+        }
+        .compare-toggle-btn.solution-active {
+            background: var(--emerald);
+            color: #05140e;
+            border-color: var(--emerald);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+            transform: scale(1.03);
+        }
+        .comparison-cards-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .compare-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 60px minmax(0, 1fr);
+            gap: 1.5rem;
+            align-items: center;
+            width: 100%;
+            max-width: 100%;
+            transition: all 0.35s ease;
+        }
+        .compare-side {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            border: 1px solid var(--border-subtle);
+            min-width: 0;
+            max-width: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+        .compare-side.side-problem {
+            border-left: 4px solid var(--rose);
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.05) 0%, rgba(14, 19, 32, 0.95) 100%);
+        }
+        .compare-side.side-solution {
+            border-left: 4px solid var(--emerald);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(14, 19, 32, 0.95) 100%);
+        }
+        .compare-arrow-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #141c2c;
+            border: 1px solid var(--border-subtle);
+            color: var(--indigo);
+            font-size: 1.1rem;
+            margin: 0 auto;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+        }
+        .side-label {
+            font-family: var(--font-mono);
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        .side-problem .side-label { color: var(--rose); }
+        .side-solution .side-label { color: var(--emerald); }
+        .side-title {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.75rem;
+        }
+        .side-desc {
+            color: var(--text-secondary);
+            font-size: 0.93rem;
+            line-height: 1.65;
+        }
+
+        /* Code Snippet */
+        .code-window {
+            background: #0c1018;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.65rem 1rem;
+            background: #111827;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .code-filename {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            color: var(--indigo);
+            font-weight: 600;
+        }
+        .code-lang {
+            font-family: var(--font-mono);
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .code-body {
+            padding: 1.25rem 1.5rem;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            line-height: 1.7;
+            color: #e2e8f0;
+        }
+        .code-body .kw { color: #c084fc; }
+        .code-body .fn { color: #60a5fa; }
+        .code-body .str { color: #34d399; }
+        .code-body .cm { color: #6b7280; font-style: italic; }
+        .code-body .num { color: #fbbf24; }
+        .code-body .op { color: #f472b6; }
+
+        /* Comparison Table */
+        .phases-table-wrapper {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            max-height: 520px;
+            overflow-y: auto;
+            margin: 2rem 0;
+        }
+        .phases-table-wrapper::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .phases-table-wrapper::-webkit-scrollbar-thumb {
+            background: #2a3447;
+            border-radius: 3px;
+        }
+        .phases-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            font-family: var(--font-mono);
+        }
+        .phases-table th {
+            background: #121721;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .phases-table td {
+            padding: 0.65rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: #cbd5e1;
+        }
+        .phases-table tr:hover td {
+            background: rgba(99, 102, 241, 0.03);
+        }
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.2rem 0.55rem;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+        .status-pill.complete {
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--emerald);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+        .status-pill.partial {
+            background: rgba(234, 179, 8, 0.12);
+            color: var(--gold);
+            border: 1px solid rgba(234, 179, 8, 0.25);
+        }
+        .status-pill.blocked {
+            background: rgba(244, 63, 94, 0.12);
+            color: var(--rose);
+            border: 1px solid rgba(244, 63, 94, 0.25);
+        }
+
+        /* Tech Grid */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+            width: 100%;
+            max-width: 100%;
+        }
+        .tech-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+        .tech-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-highlight);
+        }
+        .tech-header {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            margin-bottom: 1rem;
+        }
+        .tech-pill {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--indigo);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+        .tech-pill.emerald { background: rgba(16, 185, 129, 0.1); color: var(--emerald); border-color: rgba(16, 185, 129, 0.2); }
+        .tech-pill.gold { background: rgba(234, 179, 8, 0.1); color: var(--gold); border-color: rgba(234, 179, 8, 0.2); }
+        .tech-pill.rose { background: rgba(244, 63, 94, 0.1); color: var(--rose); border-color: rgba(244, 63, 94, 0.2); }
+        .tech-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+        .tech-card p {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        /* Ownership Section */
+        .ownership-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1.5rem;
+            margin: 2.5rem 0;
+        }
+        .ownership-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+        .ownership-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-highlight);
+        }
+        .ownership-card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--indigo);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            margin-bottom: 1rem;
+        }
+        .ownership-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+        .ownership-card p {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            line-height: 1.6;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 6.5rem 0;
+            text-align: center;
+            background: radial-gradient(circle 600px at 50% 50%, rgba(99, 102, 241, 0.08), transparent 70%);
+        }
+        .cta-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 3.8vw, 3rem);
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 1.25rem;
+            letter-spacing: -0.03em;
+        }
+        .cta-desc {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 650px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.6;
+        }
+        .cta-btn-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.25rem;
+        }
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: var(--indigo);
+            color: #ffffff;
+            padding: 0.9rem 2rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.35);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.5);
+            background: #4f46e5;
+        }
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 0.9rem 2rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Lightbox Modal */
+        .lightbox-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(3, 5, 8, 0.95);
+            backdrop-filter: blur(12px);
+            z-index: 999999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            box-sizing: border-box;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .lightbox-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        .lightbox-container {
+            max-width: 95vw;
+            max-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .lightbox-container img {
+            max-width: 92vw;
+            max-height: 82vh;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+        .lightbox-caption {
+            margin-top: 1rem;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            font-family: var(--font-mono);
+            background: rgba(15, 23, 42, 0.85);
+            padding: 0.5rem 1.25rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            max-width: 800px;
+            text-align: center;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: -2.5rem;
+            right: 0;
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+        .lightbox-close:hover {
+            color: var(--indigo);
+            transform: scale(1.15);
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .exec-metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .showcase-block, .showcase-block.reverse {
+                grid-template-columns: minmax(0, 1fr) !important;
+                gap: 2.5rem;
+            }
+            .showcase-block.reverse .showcase-text-col { order: 1; }
+            .showcase-block.reverse .showcase-media-col { order: 2; }
+            .compare-row { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+            .compare-arrow-box { transform: rotate(90deg); margin: 0.5rem auto; }
+            .tech-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .dual-explanation-grid { grid-template-columns: minmax(0, 1fr); }
+            .ownership-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
+        @media (max-width: 768px) {
+            .browser-bar {
+                padding: 0.55rem 0.85rem;
+                gap: 0.5rem;
+            }
+            .browser-badge { display: none; }
+            .browser-url { font-size: 0.7rem; padding: 0.25rem 0.55rem; }
+            .browser-dots { gap: 4px; }
+            .browser-dot { width: 8px; height: 8px; }
+            .interactive-comparison-wrapper { padding: 1.5rem; }
+            .comparison-controls { flex-direction: column; gap: 0.6rem; }
+            .compare-toggle-btn { width: 100%; justify-content: center; }
+        }
+
+        @media (max-width: 640px) {
+            .meta-grid { grid-template-columns: minmax(0, 1fr); }
+            .exec-metrics-grid { grid-template-columns: minmax(0, 1fr); }
+            .tech-grid { grid-template-columns: minmax(0, 1fr); }
+            .ownership-grid { grid-template-columns: minmax(0, 1fr); }
+            .cta-btn-row { flex-direction: column; }
+            .statement-h2 { font-size: 1.45rem; }
+            .hero-h1 { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Glow Background -->
+    <div class="ambient-glow"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="case-nav">
+        <div class="nav-inner">
+            <a href="../index.html" class="nav-back">
+                <i class="fas fa-arrow-left"></i> Back to Case Studies
+            </a>
+            <div class="nav-brand">
+                <span>Tariq</span>DreamsTech
+            </div>
+            <div class="nav-status">
+                <span class="nav-status-dot"></span> LIVE AI PLATFORM &middot; AUTONOMOUS TOOL DISCOVERY
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-brain"></i> Autonomous AI Tool Discovery &amp; Workflow Generation
+            </div>
+
+            <h1 class="hero-h1">2456.ai</h1>
+            <div class="hero-tagline">&ldquo;Where Semantic Search Meets Autonomous Workflow Generation &mdash; 5,000+ Tools, Zero Manual Assembly&rdquo;</div>
+
+            <div class="hero-badges">
+                <span class="hero-badge-pill"><i class="fas fa-search"></i> Autonomous Tool Discovery</span>
+                <span class="hero-badge-pill emerald"><i class="fas fa-layer-group"></i> Hybrid Django + FastAPI</span>
+                <span class="hero-badge-pill gold"><i class="fas fa-database"></i> Dual-DB PostgreSQL + Pinecone</span>
+                <span class="hero-badge-pill"><i class="fas fa-credit-card"></i> Stripe SaaS Billing</span>
+            </div>
+
+            <p class="hero-desc">
+                How <strong>2456.ai</strong> replaced hours of manual tool research and workflow assembly with an <strong>AI-first SaaS platform</strong> that understands what you need, finds the right tools from a <strong>5,000+ indexed catalog</strong> using <strong>Pinecone vector semantic search</strong>, and automatically generates production-ready <strong>DAG workflows</strong> &mdash; all powered by a <strong>hybrid Django + FastAPI backend</strong> with <strong>LangChain RAG pipelines</strong>.
+            </p>
+
+            <!-- Meta Strip -->
+            <div class="meta-grid">
+                <div class="meta-col">
+                    <span class="meta-title">Platform</span>
+                    <span class="meta-value">2456.ai (AI-First SaaS)</span>
+                </div>
+                <div class="meta-col">
+                    <span class="meta-title">Architecture Ownership</span>
+                    <span class="meta-value accent">Lead Backend &amp; AI Systems Engineer (Ahsan Tariq)</span>
+                </div>
+                <div class="meta-col">
+                    <span class="meta-title">Live Platform</span>
+                    <span class="meta-value"><a href="https://www.2456.ai/" target="_blank" style="color: var(--indigo); text-decoration: none;">www.2456.ai</a></span>
+                </div>
+                <div class="meta-col">
+                    <span class="meta-title">Core Stack</span>
+                    <span class="meta-value">Django &middot; FastAPI &middot; Pinecone &middot; PostgreSQL &middot; LangChain</span>
+                </div>
+            </div>
+
+            <!-- Hero Live Production Interface Mockup -->
+            <div class="browser-mockup" id="live-platform-ui">
+                <div class="browser-bar">
+                    <div class="browser-dots">
+                        <span class="browser-dot dot-red"></span>
+                        <span class="browser-dot dot-yellow"></span>
+                        <span class="browser-dot dot-green"></span>
+                    </div>
+                    <div class="browser-url">
+                        <i class="fas fa-lock"></i>
+                        <span>https://www.2456.ai/</span>
+                    </div>
+                    <div class="browser-badge pulse">
+                        ● LIVE SAAS PLATFORM · PRODUCT HUNT &amp; BETALIST
+                    </div>
+                </div>
+                <div class="browser-screen" onclick="openLightbox('images/05-2456-live-platform-interface.jpg', '2456.ai: Live Production Platform Interface — &quot;Find and implement any AI &amp; automation resources In Seconds&quot; (Featured on Product Hunt, BetaList &amp; SaaSHub)')">
+                    <img src="images/05-2456-live-platform-interface.jpg" alt="2456.ai Live Production Platform Interface — Find and implement any AI &amp; automation resources In Seconds" />
+                    <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect live production interface</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statement Banner -->
+    <section class="statement-banner">
+        <div class="wrapper">
+            <h2 class="statement-h2">
+                &ldquo;From <span>hours of manual tool research</span> to <span>&lt; 25ms semantic search</span> across 5,000+ indexed tools: <span>autonomous DAG workflow generation</span> with 100% validity, powered by a <span>hybrid Django + FastAPI</span> backend serving <span>&lt; 50ms API responses</span>.&rdquo;
+            </h2>
+        </div>
+    </section>
+
+    <!-- Executive Metrics Grid -->
+    <section class="section-separator">
+        <div class="wrapper">
+            <div class="exec-metrics-grid">
+                <div class="exec-metric-card">
+                    <div class="exec-num indigo">&lt; 25ms</div>
+                    <div class="exec-label">Pinecone Vector Search Latency</div>
+                    <div class="exec-sub">Semantic similarity search across 5,000+ tool embeddings with cosine distance scoring</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="exec-num emerald">&lt; 50ms</div>
+                    <div class="exec-label">FastAPI Endpoint Response Time</div>
+                    <div class="exec-sub">ASGI async microservices with uvicorn workers handling concurrent AI inference requests</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="exec-num indigo">5,000+</div>
+                    <div class="exec-label">Indexed Tools in Vector Database</div>
+                    <div class="exec-sub">Each tool embedded with metadata, API schema, category, auth type, and pricing tier</div>
+                </div>
+                <div class="exec-metric-card">
+                    <div class="exec-num gold">100%</div>
+                    <div class="exec-label">DAG Workflow Validity Rate</div>
+                    <div class="exec-sub">LangChain RAG pipeline generates deterministic directed acyclic graph workflows every time</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Master Architecture Topology Showcase Section -->
+    <section class="section-separator" id="master-architecture">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-sitemap"></i> Master Engineering Topology
+            </div>
+            <h2 class="showcase-h2" style="text-align: center; margin-bottom: 0.5rem;">Master Hybrid Architecture: Django Control Plane + FastAPI Microservices</h2>
+            <p class="showcase-desc" style="text-align: center; max-width: 820px; margin: 0 auto 2.5rem;">
+                A comprehensive architectural breakdown of the 2456.ai platform: decoupling administrative control and Stripe billing from high-concurrency asynchronous AI inference, backed by Pinecone vector search and PostgreSQL 16.
+            </p>
+
+            <div class="browser-mockup">
+                <div class="browser-bar">
+                    <div class="browser-dots">
+                        <span class="browser-dot dot-red"></span>
+                        <span class="browser-dot dot-yellow"></span>
+                        <span class="browser-dot dot-green"></span>
+                    </div>
+                    <div class="browser-url">
+                        <i class="fas fa-lock"></i>
+                        <span>https://2456.ai/architecture/master-hybrid-topology</span>
+                    </div>
+                    <div class="browser-badge">HYBRID RUNTIME VERIFIED</div>
+                </div>
+                <div class="browser-screen" onclick="openLightbox('images/00-2456-master-hybrid-architecture.jpg', '2456.ai: Master Hybrid Architecture — Django Monolith (Admin/Control Plane) + FastAPI Microservices (AI Inference) + Dual PostgreSQL &amp; Pinecone Databases')">
+                    <img src="images/00-2456-master-hybrid-architecture.jpg" alt="2456.ai Master Hybrid Architecture Diagram" />
+                    <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect full architecture</div>
+                </div>
+            </div>
+
+            <!-- Dual Explanation Grid -->
+            <div class="dual-explanation-grid">
+                <div class="explanation-box plain-english">
+                    <div class="explanation-box-label"><i class="fas fa-user-check"></i> Plain English Explanation</div>
+                    <p>
+                        2456.ai operates as two specialized engines working in complete harmony. The Django engine manages user accounts, handles payments, and provides a reliable admin panel for staff. 
+                        Meanwhile, the FastAPI engine handles the intense AI heavy-lifting &mdash; receiving user requests, searching through thousands of tools in milliseconds, and generating automation workflows without ever slowing down the user experience.
+                    </p>
+                </div>
+                <div class="explanation-box tech-deep-dive">
+                    <div class="explanation-box-label"><i class="fas fa-code-branch"></i> Technical Deep Dive</div>
+                    <p>
+                        The master architecture separates synchronous WSGI management tasks from asynchronous ASGI inference pipelines. Django 5.x handles user authentication, Stripe subscription webhooks, and relational migrations on PostgreSQL 16. 
+                        FastAPI services running under Uvicorn handle high-concurrency requests, querying Pinecone Serverless vector indices via asynchronous HTTP/2 client connections with sub-25ms approximate nearest neighbor latency.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem vs Solution Section -->
+    <section class="section-separator" id="problem-solution">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-scale-balanced"></i> Executive Comparison
+            </div>
+            <h2 class="showcase-h2" style="text-align: center; margin-bottom: 0.5rem;">How 2456.ai Replaced Manual Tool Research with Autonomous AI</h2>
+            <p class="showcase-desc" style="text-align: center; max-width: 750px; margin: 0 auto 2.5rem;">
+                See how traditional workflow assembly was transformed into an autonomous AI-driven platform that discovers tools, generates workflows, and manages subscriptions &mdash; all without manual intervention.
+            </p>
+
+            <div class="interactive-comparison-wrapper">
+                <!-- Interactive Controls -->
+                <div class="comparison-controls">
+                    <button class="compare-toggle-btn active" id="btn2456Both" onclick="set2456Filter('both')">
+                        <i class="fas fa-columns"></i> Show Both
+                    </button>
+                    <button class="compare-toggle-btn" id="btn2456Problem" onclick="set2456Filter('problem')">
+                        <i class="fas fa-times-circle"></i> Problems Only
+                    </button>
+                    <button class="compare-toggle-btn" id="btn2456Solution" onclick="set2456Filter('solution')">
+                        <i class="fas fa-check-circle"></i> Solutions Only
+                    </button>
+                </div>
+
+                <div class="comparison-cards-grid">
+                    <!-- Row 1: Tool Discovery -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label"><i class="fas fa-times-circle"></i> Problem</div>
+                            <div class="side-title">Manual Tool Research Takes Hours</div>
+                            <div class="side-desc">Engineers spend 2&ndash;4 hours per project researching which tools exist, comparing APIs, reading docs, and evaluating pricing tiers. Most tools are discovered through word of mouth or outdated blog posts.</div>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label"><i class="fas fa-check-circle"></i> Solution</div>
+                            <div class="side-title">Semantic Search Across 5,000+ Tools in &lt; 25ms</div>
+                            <div class="side-desc">User describes their need in plain English. Pinecone vector DB finds the most relevant tools by semantic meaning &mdash; not keyword matching. Results include API schemas, auth types, and pricing tiers instantly.</div>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Workflow Generation -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label"><i class="fas fa-times-circle"></i> Problem</div>
+                            <div class="side-title">Workflow Assembly Is Manual &amp; Error-Prone</div>
+                            <div class="side-desc">Developers manually wire tools together, write glue code, handle auth flows, and debug integration issues. A single workflow can take days to assemble and test, with no guarantee it is optimal.</div>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label"><i class="fas fa-check-circle"></i> Solution</div>
+                            <div class="side-title">LangChain RAG Generates Valid DAG Workflows Automatically</div>
+                            <div class="side-desc">The AI pipeline interprets user intent, retrieves relevant tools from the vector DB, and synthesizes a complete directed acyclic graph (DAG) workflow with proper ordering, dependencies, and data flow &mdash; 100% valid every time.</div>
+                        </div>
+                    </div>
+
+                    <!-- Row 3: Backend Architecture -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label"><i class="fas fa-times-circle"></i> Problem</div>
+                            <div class="side-title">Monolithic Backends Can&rsquo;t Scale AI Workloads</div>
+                            <div class="side-desc">Traditional Django monoliths handle admin panels well but choke on high-concurrency AI inference. Synchronous WSGI workers block on LLM calls, creating bottlenecks during peak usage.</div>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label"><i class="fas fa-check-circle"></i> Solution</div>
+                            <div class="side-title">Hybrid Django + FastAPI Split Architecture</div>
+                            <div class="side-desc">Django handles admin panel, user management, and control plane logic. FastAPI handles high-performance async AI inference, semantic search, and workflow generation via ASGI with uvicorn &mdash; each optimized for its workload.</div>
+                        </div>
+                    </div>
+
+                    <!-- Row 4: Code Quality -->
+                    <div class="compare-row">
+                        <div class="compare-side side-problem">
+                            <div class="side-label"><i class="fas fa-times-circle"></i> Problem</div>
+                            <div class="side-title">Code Quality Degrades Without Guardrails</div>
+                            <div class="side-desc">Fast-moving AI projects accumulate tech debt quickly. Without automated linting and pre-commit checks, inconsistent formatting, unused imports, and type errors slip into production.</div>
+                        </div>
+                        <div class="compare-arrow-box"><i class="fas fa-arrow-right"></i></div>
+                        <div class="compare-side side-solution">
+                            <div class="side-label"><i class="fas fa-check-circle"></i> Solution</div>
+                            <div class="side-title">Ruff Linter + Pre-Commit Hooks Enforce Standards</div>
+                            <div class="side-desc">Ruff runs at 10&ndash;100x the speed of traditional Python linters. Pre-commit hooks enforce formatting, import sorting, and type checking on every commit &mdash; zero tech debt reaches production.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+<!-- Showcase 1: Dual-Database Semantic Search Engine -->
+    <section class="section-separator" id="dual-database">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow">
+                        <i class="fas fa-database"></i> High-Throughput Retrieval
+                    </div>
+                    <h2 class="showcase-h2">Dual-Database Architecture: Pinecone Vector DB + PostgreSQL 16</h2>
+                    <p class="showcase-desc">
+                        A modern AI platform cannot rely solely on relational SQL or raw vector indices. 2456.ai pairs <strong>Pinecone Serverless Vector DB</strong> for sub-25ms approximate nearest neighbor (ANN) tool discovery with <strong>PostgreSQL 16</strong> for transactional consistency, user subscriptions, and immutable workflow persistence.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Cosine Semantic Search:</strong> 1536-dimensional embeddings queried against 5,000+ indexed tool nodes with real-time metadata filtering.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Single-Roundtrip Hydration:</strong> Vector IDs are retrieved asynchronously from Pinecone and joined with relational SQL schemas in under 12ms.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>ACID Relational Guarantees:</strong> Subscription tiers, Stripe webhook ledgers, and referral chains stored in normalized PostgreSQL tables.</span></li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">Pinecone Serverless</span>
+                        <span class="showcase-tag">PostgreSQL 16</span>
+                        <span class="showcase-tag">pgvector & Cosine Dist</span>
+                        <span class="showcase-tag">Metadata Filtering</span>
+                    </div>
+                </div>
+
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-lock"></i>
+                                <span>https://2456.ai/architecture/dual-database-pipeline</span>
+                            </div>
+                            <div class="browser-badge">PULSE: SUB-25MS</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/01-dual-database-semantic-search.jpg', '2456.ai: Dual-Database Semantic Search & Tool Retrieval Pipeline')">
+                            <img src="images/01-dual-database-semantic-search.jpg" alt="Dual-Database Semantic Search Pipeline" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to enlarge diagram</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dual Explanation Grid -->
+            <div class="dual-explanation-grid">
+                <div class="explanation-box plain-english">
+                    <div class="explanation-box-label"><i class="fas fa-user-check"></i> Plain English Explanation</div>
+                    <p>
+                        Imagine having a library with 5,000 different tools. If you ask a normal computer "find me something to send payment receipts", traditional search would only look for the exact word "receipt". If a tool says "invoice emailer", it gets missed. 
+                        Our Pinecone vector database understands the <em>concept and meaning</em> behind your question in 25 milliseconds. Once it identifies the top matches, PostgreSQL instantly fills in the verified pricing, API keys, and account details.
+                    </p>
+                </div>
+                <div class="explanation-box tech-deep-dive">
+                    <div class="explanation-box-label"><i class="fas fa-code-branch"></i> Technical Deep Dive</div>
+                    <p>
+                        Incoming natural language prompts undergo dense vector embedding generation. Pinecone performs approximate nearest neighbor search across 5,000+ vector vectors utilizing Cosine similarity metrics with sparse-dense hybrid metadata filtering (category, auth type, pricing tier). 
+                        The resultant vector IDs are pushed to an async SQLAlchemy hydration worker that issues a batch indexed query against PostgreSQL, yielding fully structured Pydantic schemas in under 37ms end-to-end latency.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Code Window: Semantic Search & Hydration Service -->
+            <div class="code-window">
+                <div class="code-header">
+                    <span class="code-filename"><i class="fas fa-terminal"></i> services/semantic_search_service.py</span>
+                    <span class="code-lang">Python 3.12 / FastAPI</span>
+                </div>
+                <pre class="code-body"><code><span class="kw">async def</span> <span class="fn">search_and_hydrate_tools</span>(query_embedding: <span class="kw">list</span>[<span class="kw">float</span>], top_k: <span class="kw">int</span> = <span class="num">5</span>, category: <span class="kw">str</span> | <span class="kw">None</span> = <span class="kw">None</span>) -> <span class="kw">list</span>[ToolSchema]:
+    <span class="cm"># 1. Query Pinecone Serverless Vector Index with metadata filters</span>
+    filter_dict = {<span class="str">"is_active"</span>: <span class="kw">True</span>}
+    <span class="kw">if</span> category:
+        filter_dict[<span class="str">"category"</span>] = category
+
+    pinecone_res = <span class="kw">await</span> pinecone_index.query_async(
+        vector=query_embedding,
+        top_k=top_k,
+        include_metadata=<span class="kw">True</span>,
+        filter=filter_dict
+    )
+    tool_uuids = [match[<span class="str">"id"</span>] <span class="kw">for</span> match <span class="kw">in</span> pinecone_res.matches]
+
+    <span class="cm"># 2. Single-roundtrip transactional hydration from PostgreSQL</span>
+    sql = <span class="str">"SELECT id, name, category, api_schema, auth_type, pricing_tier FROM core_tool WHERE id = ANY(:ids)"</span>
+    <span class="kw">async with</span> async_session() <span class="kw">as</span> session:
+        records = <span class="kw">await</span> session.execute(text(sql), {<span class="str">"ids"</span>: tool_uuids})
+        tools = [ToolSchema.model_validate(row._mapping) <span class="kw">for</span> row <span class="kw">in</span> records]
+    
+    <span class="kw">return</span> sorted(tools, key=<span class="kw">lambda</span> t: tool_uuids.index(str(t.id)))</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase 2: Hybrid Backend Split (Django Monolith vs FastAPI Microservices) -->
+    <section class="section-separator" id="hybrid-split">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow">
+                        <i class="fas fa-layer-group"></i> Architecture Decoupling
+                    </div>
+                    <h2 class="showcase-h2">Hybrid Backend: Django Control Plane + FastAPI Microservices</h2>
+                    <p class="showcase-desc">
+                        Instead of choosing between rapid monolithic administration and high-speed async AI execution, we architected a <strong>dual-runtime hybrid system</strong>. Django provides enterprise-grade administrative oversight, user permissions, and transactional billing, while FastAPI powers async AI inference endpoints with sub-50ms latency.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Django Monolith Control Plane:</strong> Admin dashboard, staff permissioning, billing reconciliation, and automated model migrations.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>FastAPI ASGI Async Engine:</strong> Fully asynchronous request multiplexing via Uvicorn, handling non-blocking vector searches and LLM streaming.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Shared Data Layer:</strong> Unified PostgreSQL database accessed by Django ORM for migrations and SQLAlchemy Async Engine for read-heavy API pipelines.</span></li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">Django 5.x</span>
+                        <span class="showcase-tag">FastAPI ASGI</span>
+                        <span class="showcase-tag">Uvicorn Workers</span>
+                        <span class="showcase-tag">Zero Thread-Blocking</span>
+                    </div>
+                </div>
+
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-lock"></i>
+                                <span>https://2456.ai/architecture/hybrid-django-fastapi-split</span>
+                            </div>
+                            <div class="browser-badge">HYBRID RUNTIME</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/02-fastapi-django-hybrid-split.jpg', '2456.ai: Hybrid Backend Architecture — Django Control Plane & FastAPI Microservice Isolation')">
+                            <img src="images/02-fastapi-django-hybrid-split.jpg" alt="Hybrid Django FastAPI Split Architecture Diagram" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to enlarge diagram</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dual Explanation Grid -->
+            <div class="dual-explanation-grid">
+                <div class="explanation-box plain-english">
+                    <div class="explanation-box-label"><i class="fas fa-user-check"></i> Plain English Explanation</div>
+                    <p>
+                        Think of our system like a high-end restaurant. The Django side is the front desk manager: taking reservations, checking memberships, handling receipts, and keeping guest records spotless. 
+                        The FastAPI side is the lightning-fast automated kitchen line: preparing multiple AI orders at the same time without making anyone wait in line, even during peak rush hours.
+                    </p>
+                </div>
+                <div class="explanation-box tech-deep-dive">
+                    <div class="explanation-box-label"><i class="fas fa-code-branch"></i> Technical Deep Dive</div>
+                    <p>
+                        WSGI monolithic frameworks suffer from head-of-line blocking when orchestrating long-running LLM completions. By isolating high-concurrency inference inside an ASGI FastAPI container cluster running Uvicorn workers, network I/O loops remain completely decoupled from Django’s synchronous WSGI lifecycle. 
+                        Both runtimes communicate securely via JWT bearer tokens and share the primary PostgreSQL 16 cluster with pooled asyncpg connections.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase 3: LangChain RAG & Autonomous DAG Workflow Generation -->
+    <section class="section-separator" id="workflow-generation">
+        <div class="wrapper">
+            <div class="showcase-block">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow">
+                        <i class="fas fa-project-diagram"></i> Autonomous Synthesis
+                    </div>
+                    <h2 class="showcase-h2">LangChain RAG Pipeline: Turning Natural Prompts into Valid DAGs</h2>
+                    <p class="showcase-desc">
+                        Creating multi-step automated workflows usually requires manual node configuration and tedious debugging. 2456.ai employs a <strong>LangChain-driven retrieval augmented generation (RAG)</strong> engine that parses complex multi-tool requests and outputs 100% executable Directed Acyclic Graphs (DAGs).
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Intent Disambiguation:</strong> LLM prompt decomposition identifies source triggers, intermediate transforms, and destination webhooks.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Context Injection:</strong> Retrieved tool API schemas, auth requirements, and rate limits are injected into the LLM synthesis prompt.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Topological DAG Validation:</strong> Cycle detection algorithms ensure the generated execution graph contains zero circular dependencies before saving.</span></li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">LangChain RAG</span>
+                        <span class="showcase-tag">Directed Acyclic Graph</span>
+                        <span class="showcase-tag">JSON Schema Validation</span>
+                        <span class="showcase-tag">Deterministic Workflows</span>
+                    </div>
+                </div>
+
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-lock"></i>
+                                <span>https://2456.ai/architecture/langchain-rag-workflow-generation</span>
+                            </div>
+                            <div class="browser-badge">DAG VALIDITY: 100%</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/03-langchain-rag-workflow-generation.jpg', '2456.ai: LangChain RAG Autonomous Workflow Generation & Topological Validation Pipeline')">
+                            <img src="images/03-langchain-rag-workflow-generation.jpg" alt="LangChain RAG Workflow Generation Diagram" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to enlarge diagram</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dual Explanation Grid -->
+            <div class="dual-explanation-grid">
+                <div class="explanation-box plain-english">
+                    <div class="explanation-box-label"><i class="fas fa-user-check"></i> Plain English Explanation</div>
+                    <p>
+                        Instead of dragging and dropping boxes for 3 hours, a user simply types: <em>"When a customer leaves a 1-star review on Google, summarize it with AI, alert the customer support manager in Slack, and create a high-priority ticket in Jira."</em> 
+                        Our system picks the exact right 3 tools, connects their inputs and outputs correctly, verifies that no step is stuck in an endless loop, and hands you an active, ready-to-run workflow in seconds.
+                    </p>
+                </div>
+                <div class="explanation-box tech-deep-dive">
+                    <div class="explanation-box-label"><i class="fas fa-code-branch"></i> Technical Deep Dive</div>
+                    <p>
+                        The LangChain pipeline incorporates a multi-step cognitive sequence: First, Intent Clarification & Parameter Extraction; second, Vector DB Retrieval for node candidates; third, Few-Shot Structured Synthesis utilizing constrained JSON generation. 
+                        The resulting JSON object is validated against our Pydantic <code>WorkflowDAGSchema</code>, which runs Kahn's topological sorting algorithm to verify acyclic integrity and confirm node data-type compatibility before writing to PostgreSQL.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase 4: Stripe Billing, Referral Tracking & Production DevOps -->
+    <section class="section-separator" id="stripe-devops">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow">
+                        <i class="fas fa-credit-card"></i> SaaS Monetization & DevOps
+                    </div>
+                    <h2 class="showcase-h2">Stripe Monetization, Referral Ledger & Ruff Automated DevOps</h2>
+                    <p class="showcase-desc">
+                        A production-grade AI platform must have frictionless monetization, viral growth mechanics, and unbreakable code quality. We engineered <strong>Stripe recurring subscription webhooks</strong>, an <strong>immutable multi-tier referral tracking system</strong>, and an automated <strong>Ruff + Pre-Commit CI/CD pipeline</strong>.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Stripe Billing Engine:</strong> Automated tiered subscription tiers (Starter, Pro, Enterprise) with idempotent webhook handling.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Referral Attribution Ledger:</strong> Multi-tier attribution codes with automated credit bonuses and abuse prevention checks.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Ruff 100x Fast Linting:</strong> Zero-tolerance CI/CD quality gate checking code formatting, import sorting, and type safety before push.</span></li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">Stripe Webhooks</span>
+                        <span class="showcase-tag">Idempotent Ledger</span>
+                        <span class="showcase-tag">Referral Attribution</span>
+                        <span class="showcase-tag">Ruff & Pre-Commit</span>
+                    </div>
+                </div>
+
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-lock"></i>
+                                <span>https://2456.ai/architecture/stripe-billing-and-devops</span>
+                            </div>
+                            <div class="browser-badge">ZERO DEFECT CI/CD</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/04-stripe-billing-referral-devops.jpg', '2456.ai: Stripe Billing Engine, Referral Ledger & Ruff DevOps CI/CD Architecture')">
+                            <img src="images/04-stripe-billing-referral-devops.jpg" alt="Stripe Billing and DevOps Architecture Diagram" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to enlarge diagram</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dual Explanation Grid -->
+            <div class="dual-explanation-grid">
+                <div class="explanation-box plain-english">
+                    <div class="explanation-box-label"><i class="fas fa-user-check"></i> Plain English Explanation</div>
+                    <p>
+                        Users can easily subscribe, upgrade their plan, or share invite links to earn workflow credits with zero friction. On the backend, we run industrial-grade automated quality checkers. 
+                        Every single line of code is inspected by automated robots in milliseconds before it ever touches the live server &mdash; making sure bugs and broken buttons never reach paying customers.
+                    </p>
+                </div>
+                <div class="explanation-box tech-deep-dive">
+                    <div class="explanation-box-label"><i class="fas fa-code-branch"></i> Technical Deep Dive</div>
+                    <p>
+                        Stripe subscription lifecycles are processed via HMAC-SHA256 verified webhook signatures stored in an append-only idempotency ledger table to guarantee zero duplicate credits. 
+                        On the engineering side, <code>ruff</code> is integrated into local pre-commit hooks and GitHub Actions, executing AST analysis, flake8 linting, and isort imports at 10-100x the speed of legacy Python tools, enforcing strict zero-warning policy on production branches.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparative Specification Matrix -->
+    <section class="section-separator" id="comparative-matrix">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-table-columns"></i> Engineering Benchmark
+            </div>
+            <h2 class="showcase-h2" style="text-align: center; margin-bottom: 0.5rem;">Platform Comparison: Manual vs Generic SaaS vs 2456.ai</h2>
+            <p class="showcase-desc" style="text-align: center; max-width: 750px; margin: 0 auto 2.5rem;">
+                Comparing core architectural capabilities across legacy manual workflow assembly, generic automation platforms, and 2456.ai's autonomous semantic engine.
+            </p>
+
+            <div class="phases-table-wrapper">
+                <table class="phases-table">
+                    <thead>
+                        <tr>
+                            <th>Capability Matrix</th>
+                            <th>Traditional Manual Setup</th>
+                            <th>Generic SaaS Platforms</th>
+                            <th>2456.ai Autonomous Platform</th>
+                            <th>Status / Verification</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Tool Discovery Mechanism</td>
+                            <td>Manual Google / blog search (2-4 hrs)</td>
+                            <td>Keyword dropdown filter (Limited)</td>
+                            <td>Sub-25ms Pinecone Vector Semantic Search (5,000+ tools)</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> Production Verified</span></td>
+                        </tr>
+                        <tr>
+                            <td>Workflow Construction</td>
+                            <td>Hand-written glue code & API wrappers</td>
+                            <td>Manual drag-and-drop node linking</td>
+                            <td>LangChain Autonomous DAG Synthesis from plain English</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> 100% DAG Valid</span></td>
+                        </tr>
+                        <tr>
+                            <td>Backend Architecture</td>
+                            <td>Fragmented scripts / custom servers</td>
+                            <td>Standard monolithic backend (WSGI bottlenecks)</td>
+                            <td>Hybrid Django (Control Plane) + FastAPI (Async AI Inference)</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> Sub-50ms API</span></td>
+                        </tr>
+                        <tr>
+                            <td>Data Layer Topology</td>
+                            <td>Single SQL DB or local JSON storage</td>
+                            <td>Single relational DB without semantic indexing</td>
+                            <td>Dual-DB: PostgreSQL 16 (Transactional) + Pinecone (Vector)</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> Dual Synchronized</span></td>
+                        </tr>
+                        <tr>
+                            <td>Monetization & Billing</td>
+                            <td>Manual invoicing or unmonetized</td>
+                            <td>Standard Stripe checkout without usage caps</td>
+                            <td>Stripe Webhooks + Idempotency Ledger + Referral Tracking</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> Automated Billing</span></td>
+                        </tr>
+                        <tr>
+                            <td>Codebase Linting & DevOps</td>
+                            <td>Manual code review / no hooks</td>
+                            <td>Slow Flake8 / Pylint in CI (2-5 min delays)</td>
+                            <td>Ruff (100x speed) + Git Pre-Commit Quality Guardrails</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> Zero Warnings</span></td>
+                        </tr>
+                        <tr>
+                            <td>Inference Concurrency</td>
+                            <td>Single-threaded execution blocks</td>
+                            <td>Worker pool starvation during LLM calls</td>
+                            <td>Non-blocking ASGI async event loop with pooled connections</td>
+                            <td><span class="status-pill complete"><i class="fas fa-check"></i> High Concurrency</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Complete Tech Stack Grid -->
+    <section class="section-separator" id="tech-stack">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-cubes"></i> Technology Ecosystem
+            </div>
+            <h2 class="showcase-h2" style="text-align: center; margin-bottom: 0.5rem;">Core Technologies & Architecture Stack</h2>
+            <p class="showcase-desc" style="text-align: center; max-width: 750px; margin: 0 auto 2.5rem;">
+                Built on top-tier open-source frameworks and enterprise infrastructure designed for high concurrency, zero latency, and rock-solid reliability.
+            </p>
+
+            <div class="tech-grid">
+                <!-- Tech 1 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill emerald"><i class="fab fa-python"></i></div>
+                        <div>
+                            <h3>Django 5.x</h3>
+                            <span class="meta-title">Admin & Control Plane</span>
+                        </div>
+                    </div>
+                    <p>Monolithic control plane providing robust administrative dashboards, user identity management, Stripe billing reconciliation, and schema migrations.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">Django ORM</span>
+                        <span class="showcase-tag">Admin Panel</span>
+                        <span class="showcase-tag">Auth Engine</span>
+                    </div>
+                </div>
+
+                <!-- Tech 2 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill"><i class="fas fa-bolt"></i></div>
+                        <div>
+                            <h3>FastAPI ASGI</h3>
+                            <span class="meta-title">Async AI Microservices</span>
+                        </div>
+                    </div>
+                    <p>High-performance asynchronous API engine powered by Uvicorn. Handles non-blocking vector semantic search, LLM streaming, and workflow generation.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">Pydantic v2</span>
+                        <span class="showcase-tag">ASGI Async</span>
+                        <span class="showcase-tag">&lt; 50ms Latency</span>
+                    </div>
+                </div>
+
+                <!-- Tech 3 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill"><i class="fas fa-network-wired"></i></div>
+                        <div>
+                            <h3>Pinecone Vector DB</h3>
+                            <span class="meta-title">Semantic Tool Index</span>
+                        </div>
+                    </div>
+                    <p>Serverless vector database hosting 1536-dimensional embeddings for 5,000+ software tools with sub-25ms approximate nearest neighbor retrieval.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">ANN Search</span>
+                        <span class="showcase-tag">Cosine Distance</span>
+                        <span class="showcase-tag">Metadata Filtering</span>
+                    </div>
+                </div>
+
+                <!-- Tech 4 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill gold"><i class="fas fa-database"></i></div>
+                        <div>
+                            <h3>PostgreSQL 16</h3>
+                            <span class="meta-title">Transactional RDBMS</span>
+                        </div>
+                    </div>
+                    <p>Primary ACID relational database for persistent workflow graphs, Stripe customer subscriptions, referral bonus ledgers, and audit logs.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">SQLAlchemy</span>
+                        <span class="showcase-tag">AsyncPG Pool</span>
+                        <span class="showcase-tag">JSONB DAGs</span>
+                    </div>
+                </div>
+
+                <!-- Tech 5 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill"><i class="fas fa-brain"></i></div>
+                        <div>
+                            <h3>LangChain RAG</h3>
+                            <span class="meta-title">Cognitive AI Pipeline</span>
+                        </div>
+                    </div>
+                    <p>Orchestrates query interpretation, vector context retrieval, few-shot prompt synthesis, and topological graph validation for deterministic DAGs.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">Prompt Chains</span>
+                        <span class="showcase-tag">Context RAG</span>
+                        <span class="showcase-tag">DAG Synthesis</span>
+                    </div>
+                </div>
+
+                <!-- Tech 6 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill emerald"><i class="fab fa-stripe"></i></div>
+                        <div>
+                            <h3>Stripe API & Webhooks</h3>
+                            <span class="meta-title">Subscription Billing</span>
+                        </div>
+                    </div>
+                    <p>Tiered recurring SaaS billing with automated webhook reconciliation, cryptographic HMAC verification, and append-only idempotency guards.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">Stripe Checkout</span>
+                        <span class="showcase-tag">Webhooks</span>
+                        <span class="showcase-tag">Tiered Access</span>
+                    </div>
+                </div>
+
+                <!-- Tech 7 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill rose"><i class="fas fa-broom"></i></div>
+                        <div>
+                            <h3>Ruff Linter</h3>
+                            <span class="meta-title">Rust-Powered Linter</span>
+                        </div>
+                    </div>
+                    <p>Ultra-fast Rust-based Python linter running at 10-100x the speed of flake8, enforcing uniform formatting, import ordering, and type correctness.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">100x Speed</span>
+                        <span class="showcase-tag">AST Linting</span>
+                        <span class="showcase-tag">Zero Debt</span>
+                    </div>
+                </div>
+
+                <!-- Tech 8 -->
+                <div class="tech-card">
+                    <div class="tech-header">
+                        <div class="tech-pill gold"><i class="fas fa-shield-alt"></i></div>
+                        <div>
+                            <h3>Pre-Commit CI/CD</h3>
+                            <span class="meta-title">Automated Quality Gate</span>
+                        </div>
+                    </div>
+                    <p>Automated git hooks and GitHub Actions workflows executing linting, schema validation, and unit tests on every pull request prior to deployment.</p>
+                    <div class="tech-tags">
+                        <span class="showcase-tag">Git Hooks</span>
+                        <span class="showcase-tag">GitHub Actions</span>
+                        <span class="showcase-tag">CI/CD Gate</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Systems Ownership & Engineering Contributions -->
+    <section class="section-separator" id="engineering-ownership">
+        <div class="wrapper">
+            <div class="eyebrow-badge">
+                <i class="fas fa-crown"></i> Engineering Leadership
+            </div>
+            <h2 class="showcase-h2" style="text-align: center; margin-bottom: 0.5rem;">Executive Ownership & Technical Contributions</h2>
+            <p class="showcase-desc" style="text-align: center; max-width: 750px; margin: 0 auto 2.5rem;">
+                As Lead Backend & AI Systems Engineer on <strong>2456.ai</strong>, <strong>Ahsan Tariq</strong> architected and delivered the foundational backend, vector retrieval, and subscription infrastructure.
+            </p>
+
+            <div class="ownership-grid">
+                <div class="ownership-card">
+                    <div class="ownership-card-icon"><i class="fas fa-cubes"></i></div>
+                    <h3>Hybrid Architecture Design</h3>
+                    <p>Engineered the clean architectural separation between Django (monolithic admin/control plane) and FastAPI (microservices AI runtime), preventing thread blocking and unlocking sub-50ms API responses.</p>
+                </div>
+                <div class="ownership-card">
+                    <div class="ownership-card-icon"><i class="fas fa-search"></i></div>
+                    <h3>Pinecone Vector Search Engine</h3>
+                    <p>Indexed 5,000+ API tools into high-dimensional vector embeddings, implementing dense semantic search with cosine distance metrics that slashed tool discovery time from hours to under 25ms.</p>
+                </div>
+                <div class="ownership-card">
+                    <div class="ownership-card-icon"><i class="fas fa-project-diagram"></i></div>
+                    <h3>LangChain RAG & DAG Synthesis</h3>
+                    <p>Built the core AI workflow pipeline converting natural language requests into structured, topological Directed Acyclic Graphs with cycle detection and 100% execution validity.</p>
+                </div>
+                <div class="ownership-card">
+                    <div class="ownership-card-icon"><i class="fas fa-database"></i></div>
+                    <h3>Dual-Database Data Hydration</h3>
+                    <p>Designed the async single-roundtrip data hydration layer linking Pinecone vector search results with PostgreSQL relational schemas in under 12ms.</p>
+                </div>
+                <div class="ownership-card">
+                    <div class="ownership-card-icon"><i class="fas fa-credit-card"></i></div>
+                    <h3>Stripe SaaS & Referral Engine</h3>
+                    <p>Implemented tiered subscription billing, cryptographically verified webhooks with idempotency guards, and viral referral attribution mechanics.</p>
+                </div>
+                <div class="ownership-card">
+                    <div class="ownership-card-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h3>Ruff DevOps & Code Quality</h3>
+                    <p>Established the enterprise-grade automated CI/CD quality gate utilizing Ruff and pre-commit hooks, guaranteeing clean code and zero production regressions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta-section">
+        <div class="wrapper">
+            <h2 class="cta-h2">Experience Autonomous AI Tool Discovery</h2>
+            <p class="cta-desc">
+                Discover how 2456.ai brings together high-speed vector retrieval, hybrid backend engineering, and autonomous workflow synthesis for next-generation AI platforms.
+            </p>
+            <div class="cta-btn-row">
+                <a href="https://www.2456.ai/" target="_blank" class="btn-primary">
+                    <i class="fas fa-external-link-alt"></i> Visit Live Platform (2456.ai)
+                </a>
+                <a href="../index.html" class="btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Explore All 14 Case Studies
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lightbox Modal -->
+    <div id="lightboxModal" class="lightbox-modal" onclick="closeLightbox(event)">
+        <div class="lightbox-container" onclick="event.stopPropagation()">
+            <button class="lightbox-close" onclick="closeLightbox(event)">&times;</button>
+            <img id="lightboxImg" src="" alt="Enlarged screenshot" />
+            <div id="lightboxCaption" class="lightbox-caption"></div>
+        </div>
+    </div>
+
+    <!-- Interactive JavaScript Logic -->
+    <script>
+        // Interactive Problem vs Solution Filter Engine
+        function set2456Filter(mode) {
+            const btnBoth = document.getElementById('btn2456Both');
+            const btnProblem = document.getElementById('btn2456Problem');
+            const btnSolution = document.getElementById('btn2456Solution');
+
+            btnBoth.className = 'compare-toggle-btn';
+            btnProblem.className = 'compare-toggle-btn';
+            btnSolution.className = 'compare-toggle-btn';
+
+            const rows = document.querySelectorAll('.compare-row');
+
+            if (mode === 'both') {
+                btnBoth.classList.add('active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = window.innerWidth <= 1024 ? 'minmax(0, 1fr)' : 'minmax(0, 1fr) 60px minmax(0, 1fr)';
+                    r.querySelector('.side-problem').style.display = 'block';
+                    r.querySelector('.side-solution').style.display = 'block';
+                    const arrow = r.querySelector('.compare-arrow-box');
+                    if (arrow) arrow.style.display = 'flex';
+                });
+            } else if (mode === 'problem') {
+                btnProblem.classList.add('problem-active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr)';
+                    r.querySelector('.side-problem').style.display = 'block';
+                    r.querySelector('.side-solution').style.display = 'none';
+                    const arrow = r.querySelector('.compare-arrow-box');
+                    if (arrow) arrow.style.display = 'none';
+                });
+            } else if (mode === 'solution') {
+                btnSolution.classList.add('solution-active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr)';
+                    r.querySelector('.side-problem').style.display = 'none';
+                    r.querySelector('.side-solution').style.display = 'block';
+                    const arrow = r.querySelector('.compare-arrow-box');
+                    if (arrow) arrow.style.display = 'none';
+                });
+            }
+        }
+
+        // Fullscreen Lightbox Engine
+        function openLightbox(src, caption) {
+            const modal = document.getElementById('lightboxModal');
+            const img = document.getElementById('lightboxImg');
+            const cap = document.getElementById('lightboxCaption');
+            img.src = src;
+            cap.innerText = caption;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(e) {
+            const modal = document.getElementById('lightboxModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+    </script>
+</body>
+</html>
