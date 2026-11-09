@@ -400,7 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ─── Our Projects: Category Filtering & Direct Hub Navigation ──────
+    // ─── Case Studies / Projects: Category Filtering & Direct Hub Navigation ──────
     const projectCards = document.querySelectorAll('.case-study-feature-card');
     const filterButtons = document.querySelectorAll('.project-filter-btn');
     const toggleProjectsBtn = document.getElementById('toggleProjectsBtn');
