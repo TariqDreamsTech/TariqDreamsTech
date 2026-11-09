@@ -315,7 +315,7 @@ projects_pages = [
                 "num": "18",
                 "title": "Ranbval Social Super-System — 16-Pillar Collaborative Ecosystem",
                 "slug": "ranbval-social",
-                "org": "Ranbval Platform · Founder & Architect",
+                "org": "Ranbval Platform · Lead Architect",
                 "date": "2024 – Present",
                 "badge": "Proprietary Ecosystem",
                 "badge_color": "#ec4899",
@@ -1092,7 +1092,7 @@ html += f"""
         <img src="data:image/jpeg;base64,{prof_b64}" class="cover-avatar" alt="Ahsan Tariq">
         <h1 class="cover-name">Ahsan Tariq</h1>
         <div class="cover-role-badge">
-            AI/ML Engineer <span>|</span> Forward Deployed Engineer <span>|</span> Founder @ Ranbval <span>|</span> Co-Founder @ Volvexer
+            AI/ML Engineer <span>|</span> Forward Deployed Engineer
         </div>
         <p class="cover-summary">
             Senior AI Systems Architect and Forward Deployed Engineer with an established track record of designing, building, and deploying <strong>23+ production systems</strong> across the United States, United Kingdom, and Europe. Specializing in autonomous multi-agent pipelines, multi-cloud GenAI ops, vector databases, zero-trust cryptographic vaults, and peer-reviewed deep learning research.
@@ -1371,7 +1371,7 @@ html += f"""
             <div class="prod-feature-box" style="border-left-color: #ffba49;">
                 <div class="prod-feature-header">
                     <h3>1. Ranbval — The 16-Pillar Collaborative Platform</h3>
-                    <span class="prod-badge">Founder &amp; Architect · Live</span>
+                    <span class="prod-badge">Lead Architect · Live</span>
                 </div>
                 <p class="prod-feature-desc">
                     Ranbval (<a href="https://ranbval.com" target="_blank" style="color: var(--accent); font-weight:700;">ranbval.com</a>) is an all-in-one collaborative ecosystem engineered under a single secure root. It replaces dozens of disconnected subscription tools with unified team chat, AI digital assistants, encrypted file vaults, dynamic task boards, and social connection spaces—all protected by zero-trust cryptographic access.
@@ -1399,7 +1399,7 @@ html += f"""
             <div class="prod-feature-box" style="border-left-color: #10b981;">
                 <div class="prod-feature-header">
                     <h3>2. Volvexer — Automated Global Multi-Ledger Accounting</h3>
-                    <span class="prod-badge" style="background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.35); color:#10b981;">Co-Founder &amp; Lead Architect</span>
+                    <span class="prod-badge" style="background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.35); color:#10b981;">Lead Systems Architect</span>
                 </div>
                 <p class="prod-feature-desc">
                     Volvexer (<a href="https://www.volvexer.com/" target="_blank" style="color: var(--emerald); font-weight:700;">volvexer.com</a>) is an automated accounting service engineered for multinational businesses operating across the United States, United Kingdom, Australia, and Pakistan. It bridges disparate ledgers, automates monthly tax reconciliations, and runs high-accuracy OCR invoice extraction.
