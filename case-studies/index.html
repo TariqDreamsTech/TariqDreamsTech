@@ -1,20 +1,18 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Engineering &amp; Architecture Case Studies — Ahsan Tariq</title>
-    <meta name="description" content="Deep dive case studies into Ranbval's autonomous AI social super-system and the Ranbval-Core microservices platform architecture by Ahsan Tariq.">
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
-
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Engineering &amp; Architecture Case Studies — Ahsan Tariq</title>
+<meta content="Deep dive case studies into Ranbval's autonomous AI social super-system and the Ranbval-Core microservices platform architecture by Ahsan Tariq." name="description"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&amp;family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+<style>
         :root {
             --bg: #030303;
             --bg-card: #0b0c10;
@@ -43,7 +41,7 @@
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1240px;
             margin: 0 auto;
         }
 
@@ -109,8 +107,38 @@
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 2rem;
+        }
+
+        @media (max-width: 960px) {
+            .grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .card-thumb {
+            width: 100%;
+            height: 230px;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            margin-bottom: 1.25rem;
+            position: relative;
+            background: #090d16;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .card-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+            display: block;
+            transition: transform 0.45s ease;
+        }
+
+        .card:hover .card-thumb img {
+            transform: scale(1.05);
         }
 
         .card {
@@ -120,6 +148,7 @@
             padding: 2.25rem;
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
@@ -186,6 +215,7 @@
         }
 
         .btn-read {
+            margin-top: auto;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -209,566 +239,718 @@
             .grid { grid-template-columns: 1fr; }
             h1 { font-size: 2.2rem; }
         }
+    
+        /* Category Filter Bar */
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.65rem;
+            margin-bottom: 2.5rem;
+        }
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 0.6rem 1.15rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.25s ease;
+            font-family: inherit;
+        }
+        .filter-btn:hover {
+            color: #ffffff;
+            border-color: rgba(255, 186, 73, 0.4);
+            background: rgba(255, 186, 73, 0.08);
+            transform: translateY(-1px);
+        }
+        .filter-btn.active {
+            background: linear-gradient(135deg, rgba(255, 186, 73, 0.2) 0%, rgba(255, 107, 107, 0.2) 100%);
+            border-color: var(--accent);
+            color: #ffffff;
+            box-shadow: 0 0 20px rgba(255, 186, 73, 0.25);
+        }
+        .filter-count {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--accent);
+            padding: 0.15rem 0.55rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .filter-btn.active .filter-count {
+            background: var(--accent);
+            color: #0b0f19;
+        }
+        .card.hidden {
+            display: none !important;
+        }
+
     </style>
-</head>
+</link></head>
 <body>
-    <div class="container">
-        <div class="header-box">
-            <div class="badge"><i class="fas fa-microchip"></i> Architectural Index</div>
-            <h1>Engineering Case Studies</h1>
-            <p class="subtitle">
+<div class="container">
+<div class="header-box">
+<div class="badge"><i class="fas fa-microchip"></i> Architectural Index</div>
+<h1>Engineering Case Studies</h1>
+<p class="subtitle">
                 Comprehensive technical and product breakdowns of production platforms, autonomous AI agencies, cryptographic backbones, and distributed systems engineered by Ahsan Tariq.
             </p>
-            <a href="../index.html" class="btn-back-home">
-                <i class="fas fa-arrow-left"></i> Return to Main Portfolio
+<a class="btn-back-home" href="../index.html">
+<i class="fas fa-arrow-left"></i> Return to Main Portfolio
             </a>
-        </div>
+</div>
 
-        <div class="grid">
-            <!-- Case Study 0: Ambica International (Dovetail) -->
-            <div class="card" style="border-top: 3px solid #10b981;">
-                <div class="card-tag" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: #10b981;">
-                    <i class="fas fa-hospital-user"></i> Healthcare Logistics &amp; ERP Backbone
+<div class="filter-bar">
+<button class="filter-btn active" data-filter="all" type="button">
+<i class="fas fa-border-all"></i> All Case Studies <span class="filter-count">23</span>
+</button>
+<button class="filter-btn" data-filter="ai" type="button">
+<i class="fas fa-robot"></i> AI Agents &amp; LLMs <span class="filter-count">7</span>
+</button>
+<button class="filter-btn" data-filter="cloud" type="button">
+<i class="fas fa-cloud"></i> Cloud &amp; Microservices <span class="filter-count">4</span>
+</button>
+<button class="filter-btn" data-filter="data" type="button">
+<i class="fas fa-database"></i> Vector DBs &amp; Big Data <span class="filter-count">3</span>
+</button>
+<button class="filter-btn" data-filter="enterprise" type="button">
+<i class="fas fa-building"></i> Enterprise SaaS &amp; Automation <span class="filter-count">4</span>
+</button>
+<button class="filter-btn" data-filter="research" type="button">
+<i class="fas fa-brain"></i> AI Research &amp; Autonomous Robotics <span class="filter-count">5</span>
+</button>
+</div>
+<div class="grid">
+<!-- Case Study 0: Ambica International (Dovetail) -->
+<div class="card" data-category="enterprise" data-slug="ambica-dovetail" style="border-top: 3px solid #10b981;">
+<div class="card-thumb">
+<img alt="ambica-dovetail" loading="lazy" src="ambica-dovetail/images/01-morning-brief-dashboard.jpg"/>
+</div>
+<div class="card-tag" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: #10b981;">
+<i class="fas fa-hospital-user"></i> Healthcare Logistics &amp; ERP Backbone
                 </div>
-                <h2 class="card-title">Ambica International (Dovetail): Autonomous Operations Portal &amp; Real-Time Logistics Backbone</h2>
-                <p class="card-desc">
+<h2 class="card-title">Ambica International (Dovetail): Autonomous Operations Portal &amp; Real-Time Logistics Backbone</h2>
+<p class="card-desc">
                     Transforming a multi-tenant healthcare enterprise from slow paper clipboards into an autonomous, 100% digital operations ecosystem on GCP Cloud Run. Features live telematics for 102 fleet vehicles (Cartrack GPS), $141.3M active shipment pipeline (Trello), continuous 20-stream NetSuite SuiteQL mirror (51,462 Invoices &amp; 35,935 Sales Orders), 3-second live P&amp;L ticking, DocuSign micro-approvals (&lt;60s), zero-trust 3-layer OTP physical server bridge, and Claude LLM conversational task intelligence.
                 </p>
-                <div class="pills">
-                    <span class="pill" style="border-color: rgba(16, 185, 129, 0.4); color: #10b981;">$141.3M Active Cargo</span>
-                    <span class="pill">102 Fleet Vehicles (Cartrack)</span>
-                    <span class="pill">20-Stream NetSuite Mirror</span>
-                    <span class="pill">51,462 Invoices Synced</span>
-                    <span class="pill">3-Second P&amp;L Ticking</span>
-                    <span class="pill">DocuSign Micro-Approvals (&lt;60s)</span>
-                    <span class="pill">3-Layer OTP Server Vault</span>
-                    <span class="pill">Azure Calendar &amp; SharePoint</span>
-                    <span class="pill">Claude LLM EOI Connector</span>
-                    <span class="pill">GCP Cloud Run</span>
-                </div>
-                <a href="ambica-dovetail/index.html" class="btn-read" style="background: #10b981; color: #000;">
+<div class="pills">
+<span class="pill" style="border-color: rgba(16, 185, 129, 0.4); color: #10b981;">$141.3M Active Cargo</span>
+<span class="pill">102 Fleet Vehicles (Cartrack)</span>
+<span class="pill">20-Stream NetSuite Mirror</span>
+<span class="pill">51,462 Invoices Synced</span>
+<span class="pill">3-Second P&amp;L Ticking</span>
+<span class="pill">DocuSign Micro-Approvals (&lt;60s)</span>
+<span class="pill">3-Layer OTP Server Vault</span>
+<span class="pill">Azure Calendar &amp; SharePoint</span>
+<span class="pill">Claude LLM EOI Connector</span>
+<span class="pill">GCP Cloud Run</span>
+</div>
+<a class="btn-read" href="ambica-dovetail/index.html" style="background: #10b981; color: #000;">
                     Read Dovetail Case Study <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-
-            <!-- Case Study 1: Ranbval Social Super-System -->
-            <div class="card" style="border-top: 3px solid #eab308;">
-                <div class="card-tag" style="background: rgba(234, 179, 8, 0.1); border-color: rgba(234, 179, 8, 0.3); color: #eab308;">
-                    <i class="fas fa-brain"></i> Flagship 16-Pillar Super-System
+</a>
+</div>
+<!-- Case Study 1: Ranbval Social Super-System -->
+<div class="card" data-category="enterprise" data-slug="ranbval-social" style="border-top: 3px solid #eab308;">
+<div class="card-thumb">
+<img alt="ranbval-social" loading="lazy" src="ranbval-social/images/01-ranbval-realtime-chat.jpg"/>
+</div>
+<div class="card-tag" style="background: rgba(234, 179, 8, 0.1); border-color: rgba(234, 179, 8, 0.3); color: #eab308;">
+<i class="fas fa-brain"></i> Flagship 16-Pillar Super-System
                 </div>
-                <h2 class="card-title">Ranbval: The 16-Pillar AI Social, Work, Memory &amp; Gaming Super-System</h2>
-                <p class="card-desc">
+<h2 class="card-title">Ranbval: The 16-Pillar AI Social, Work, Memory &amp; Gaming Super-System</h2>
+<p class="card-desc">
                     An all-in-one ecosystem uniting Google-caliber scale, Microsoft-level productivity, and next-gen AI agency across 16 core pillars. Integrates sub-15ms real-time chat, 30-day connection streaks, autonomous AI voice proxies, group game arcade coordination, milestone freelancing, zero-trust Constellation Privacy Vaults, and automated life memories with a cross-platform React Native client and Python FastAPI distributed backend.
                 </p>
-                <div class="pills">
-                    <span class="pill" style="border-color: rgba(234, 179, 8, 0.4); color: #eab308;">16 Core Pillars</span>
-                    <span class="pill">30-Day Connection Streaks</span>
-                    <span class="pill">AI Voice &amp; Call Proxy</span>
-                    <span class="pill">Group Game Master (Q&amp;A / Drawing)</span>
-                    <span class="pill">In-Chat Milestone Freelancing</span>
-                    <span class="pill">Memory &amp; Life Engine</span>
-                    <span class="pill">Constellation Privacy Vault</span>
-                    <span class="pill">RFC 6238 TOTP 2FA</span>
-                    <span class="pill">Sovereign Data Kill-Switch</span>
-                    <span class="pill">Triple-DB Polyglot (PG + Mongo + Redis)</span>
-                </div>
-                <a href="ranbval-social/index.html" class="btn-read" style="background: #eab308; color: #000;">
+<div class="pills">
+<span class="pill" style="border-color: rgba(234, 179, 8, 0.4); color: #eab308;">16 Core Pillars</span>
+<span class="pill">30-Day Connection Streaks</span>
+<span class="pill">AI Voice &amp; Call Proxy</span>
+<span class="pill">Group Game Master (Q&amp;A / Drawing)</span>
+<span class="pill">In-Chat Milestone Freelancing</span>
+<span class="pill">Memory &amp; Life Engine</span>
+<span class="pill">Constellation Privacy Vault</span>
+<span class="pill">RFC 6238 TOTP 2FA</span>
+<span class="pill">Sovereign Data Kill-Switch</span>
+<span class="pill">Triple-DB Polyglot (PG + Mongo + Redis)</span>
+</div>
+<a class="btn-read" href="ranbval-social/index.html" style="background: #eab308; color: #000;">
                     Read 16-Pillar Super-System Case Study <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-
-            <!-- Case Study 2: Ranbval Conversations -->
-            <div class="card">
-                <div class="card-tag">
-                    <i class="fas fa-comments"></i> Omnichannel Client Intelligence
+</a>
+</div>
+<!-- Case Study 2: Ranbval Conversations -->
+<div class="card" data-category="data" data-slug="ranbval-conversations">
+<div class="card-thumb">
+<img alt="ranbval-conversations" loading="lazy" src="ranbval-conversations/images/01-conversations-omnichannel-inbox.jpg"/>
+</div>
+<div class="card-tag">
+<i class="fas fa-comments"></i> Omnichannel Client Intelligence
                 </div>
-                <h2 class="card-title">Ranbval Conversations: Centralized Client Communication &amp; Semantic Memory</h2>
-                <p class="card-desc">
+<h2 class="card-title">Ranbval Conversations: Centralized Client Communication &amp; Semantic Memory</h2>
+<p class="card-desc">
                     Engineering a unified Single Context Layer per client across LinkedIn, Upwork, Fiverr, Facebook, WhatsApp, and Email. Integrates React Vite, Python FastAPI, Supabase PostgreSQL, Pinecone vector embeddings for sub-100ms semantic retrieval, and strict <code>.ranbval</code> configuration standards with zero <code>.env</code> tolerance.
                 </p>
-                <div class="pills">
-                    <span class="pill">Single Context Layer</span>
-                    <span class="pill">Pinecone Vector Search</span>
-                    <span class="pill">Supabase PostgreSQL</span>
-                    <span class="pill">Strict .ranbval Standard</span>
-                    <span class="pill">React Vite + FastAPI</span>
-                    <span class="pill">Dual Docker Isolation</span>
-                </div>
-                <a href="ranbval-conversations/index.html" class="btn-read">
+<div class="pills">
+<span class="pill">Single Context Layer</span>
+<span class="pill">Pinecone Vector Search</span>
+<span class="pill">Supabase PostgreSQL</span>
+<span class="pill">Strict .ranbval Standard</span>
+<span class="pill">React Vite + FastAPI</span>
+<span class="pill">Dual Docker Isolation</span>
+</div>
+<a class="btn-read" href="ranbval-conversations/index.html">
                     Read Client Memory Case Study <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-
-            <!-- Case Study: Transact ULTD -->
-            <div class="card">
-                <div class="card-tag">
-                    <i class="fas fa-headset"></i> Autonomous Voice AI &amp; FinTech Orchestration
+</a>
+</div>
+<!-- Case Study: Transact ULTD -->
+<div class="card" data-category="ai" data-slug="transact-ultd">
+<div class="card-thumb">
+<img alt="transact-ultd" loading="lazy" src="transact-ultd/images/01-transact-workflows-architecture.png"/>
+</div>
+<div class="card-tag">
+<i class="fas fa-headset"></i> Autonomous Voice AI &amp; FinTech Orchestration
                 </div>
-                <h2 class="card-title">TRANSACT ULTD: Sub-Second Voice AI &amp; Merchant Acquisition Engine</h2>
-                <p class="card-desc">
+<h2 class="card-title">TRANSACT ULTD: Sub-Second Voice AI &amp; Merchant Acquisition Engine</h2>
+<p class="card-desc">
                     Eliminated 4-hour sales lag and manual spreadsheet calculations with an autonomous event-driven voice pipeline — integrating Retell AI Conversational Voice (&lt; 850ms latency), Twilio Elastic SIP dynamic 5-specialist live call forwarding, automated IRIS CRM lead provisioning (Status 104, User 35), and ISO AMP credit card processing statement fee analysis proposals.
                 </p>
-                <div class="pills">
-                    <span class="pill">Retell Voice AI (&lt; 850ms)</span>
-                    <span class="pill">Twilio Elastic SIP Trunk</span>
-                    <span class="pill">5-Rep Smart Forwarding</span>
-                    <span class="pill">IRIS CRM REST API</span>
-                    <span class="pill">ISO AMP Statement Analysis</span>
-                </div>
-                <a href="transact-ultd/index.html" class="btn-read">
+<div class="pills">
+<span class="pill">Retell Voice AI (&lt; 850ms)</span>
+<span class="pill">Twilio Elastic SIP Trunk</span>
+<span class="pill">5-Rep Smart Forwarding</span>
+<span class="pill">IRIS CRM REST API</span>
+<span class="pill">ISO AMP Statement Analysis</span>
+</div>
+<a class="btn-read" href="transact-ultd/index.html">
                     Read Voice AI &amp; FinTech Case Study <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-
-            <!-- Case Study: Terry Accounting Automation -->
-            <div class="card">
-                <div class="card-tag">
-                    <i class="fas fa-file-invoice-dollar"></i> Autonomous FinTech &amp; Real Estate ERP
+</a>
+</div>
+<!-- Case Study: Terry Accounting Automation -->
+<div class="card" data-category="cloud" data-slug="terry-accounting">
+<div class="card-thumb">
+<img alt="terry-accounting" loading="lazy" src="terry-accounting/images/01-terry-accounting-orchestrator.jpg"/>
+</div>
+<div class="card-tag">
+<i class="fas fa-file-invoice-dollar"></i> Autonomous FinTech &amp; Real Estate ERP
                 </div>
-                <h2 class="card-title">Terry Properties: AI-Driven Accounting Automation &amp; Dual-Ledger Sync</h2>
-                <p class="card-desc">
+<h2 class="card-title">Terry Properties: AI-Driven Accounting Automation &amp; Dual-Ledger Sync</h2>
+<p class="card-desc">
                     Eliminated manual bookkeeping, delayed reconciliations, and duplicate contractor disbursements across 150 residential properties. Built an autonomous event-driven ingestion engine connecting Gmail &amp; WhatsApp attachments, Google Document AI / AWS Textract OCR extraction (99.4% precision), SHA-256 deduplication, and atomic dual-ledger synchronization into Buildium Property Bills and QuickBooks Online general ledger with zero CPA reconciliation variance.
                 </p>
-                <div class="pills">
-                    <span class="pill">Buildium REST API</span>
-                    <span class="pill">QuickBooks Online API v3</span>
-                    <span class="pill">Document AI OCR (99.4%)</span>
-                    <span class="pill">Gmail &amp; WhatsApp Ingestion</span>
-                    <span class="pill">Double-Entry Ledger</span>
-                    <span class="pill">Deduplication Gate</span>
-                    <span class="pill">Zero-Variance Audit Trail</span>
-                </div>
-                <a href="terry-accounting/index.html" class="btn-read">
+<div class="pills">
+<span class="pill">Buildium REST API</span>
+<span class="pill">QuickBooks Online API v3</span>
+<span class="pill">Document AI OCR (99.4%)</span>
+<span class="pill">Gmail &amp; WhatsApp Ingestion</span>
+<span class="pill">Double-Entry Ledger</span>
+<span class="pill">Deduplication Gate</span>
+<span class="pill">Zero-Variance Audit Trail</span>
+</div>
+<a class="btn-read" href="terry-accounting/index.html">
                     Read Accounting Automation Case Study <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-
-            <!-- Case Study: Qira AI Module -->
-            <div class="card" style="border-top: 3px solid #00f0ff;">
-                <div class="card-tag" style="background: rgba(0, 240, 255, 0.12); color: #00f0ff; border: 1px solid rgba(0, 240, 255, 0.25);">
-                    <i class="fas fa-dna"></i> Multi-Modal AI &amp; Digital Twin Ecosystem
+</a>
+</div>
+<!-- Case Study: Qira AI Module -->
+<div class="card" data-category="ai" data-slug="qira-ai" style="border-top: 3px solid #00f0ff;">
+<div class="card-thumb">
+<img alt="qira-ai" loading="lazy" src="qira-ai/images/05-qira-digital-twin-ecosystem.jpg"/>
+</div>
+<div class="card-tag" style="background: rgba(0, 240, 255, 0.12); color: #00f0ff; border: 1px solid rgba(0, 240, 255, 0.25);">
+<i class="fas fa-dna"></i> Multi-Modal AI &amp; Digital Twin Ecosystem
                 </div>
-                <h2 class="card-title">Qira AI: Real-Time Avatar Intelligence &amp; Multi-Modal Social Backbone</h2>
-                <p class="card-desc">
-                    A high-performance, production-ready backend ecosystem engineered for high-fidelity photo analysis, context-aware multilingual services, and real-time AI interactions. Built with FastAPI ASGI and containerized for Google Cloud Run, it powers 468+ MediaPipe facial landmark extraction, OpenCV biometric trait classification, OpenAI Neural TTS with &lt;100ms intelligent caching, bidirectional EN &harr; RU neural translation, and Firebase Firestore &amp; Storage synchronization.
+<h2 class="card-title">Qira AI: Real-Time Avatar Intelligence &amp; Multi-Modal Social Backbone</h2>
+<p class="card-desc">
+                    A high-performance, production-ready backend ecosystem engineered for high-fidelity photo analysis, context-aware multilingual services, and real-time AI interactions. Built with FastAPI ASGI and containerized for Google Cloud Run, it powers 468+ MediaPipe facial landmark extraction, OpenCV biometric trait classification, OpenAI Neural TTS with &lt;100ms intelligent caching, bidirectional EN ↔ RU neural translation, and Firebase Firestore &amp; Storage synchronization.
                 </p>
-                <div class="pills">
-                    <span class="pill">MediaPipe 468+ Landmarks</span>
-                    <span class="pill">FastAPI ASGI</span>
-                    <span class="pill">Google Cloud Run</span>
-                    <span class="pill">OpenAI Neural TTS (&lt;100ms)</span>
-                    <span class="pill">OpenCV Trait Profiler</span>
-                    <span class="pill">Bidirectional EN &harr; RU</span>
-                    <span class="pill">Firebase Firestore &amp; CDN</span>
-                </div>
-                <a href="qira-ai/index.html" class="btn-read">
+<div class="pills">
+<span class="pill">MediaPipe 468+ Landmarks</span>
+<span class="pill">FastAPI ASGI</span>
+<span class="pill">Google Cloud Run</span>
+<span class="pill">OpenAI Neural TTS (&lt;100ms)</span>
+<span class="pill">OpenCV Trait Profiler</span>
+<span class="pill">Bidirectional EN ↔ RU</span>
+<span class="pill">Firebase Firestore &amp; CDN</span>
+</div>
+<a class="btn-read" href="qira-ai/index.html">
                     Read Digital Twin Case Study <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-
-            <!-- Case Study: Petroski Physio -->
-            <div class="card" style="border-top: 3px solid #10b981;">
-                <div class="card-tag" style="background: rgba(16, 185, 129, 0.12); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.25);">
-                    <i class="fas fa-notes-medical"></i> Healthcare Automation &amp; CRM Governance
+</a>
+</div>
+<!-- Case Study: Petroski Physio -->
+<div class="card" data-category="enterprise" data-slug="petroski-physio" style="border-top: 3px solid #10b981;">
+<div class="card-thumb">
+<img alt="petroski-physio" loading="lazy" src="petroski-physio/images/00-petroski-master-architecture.jpg"/>
+</div>
+<div class="card-tag" style="background: rgba(16, 185, 129, 0.12); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.25);">
+<i class="fas fa-notes-medical"></i> Healthcare Automation &amp; CRM Governance
                 </div>
-                <h2 class="card-title">Petroski Physio: Two-Board Deterministic Automation Engine</h2>
-                <p class="card-desc">
+<h2 class="card-title">Petroski Physio: Two-Board Deterministic Automation Engine</h2>
+<p class="card-desc">
                     Engineered a streamlined "Filmable Athletes" architecture bridging Clinical CRM and Marketing teams at Petroski Physio. Replaced fragile mirror columns with direct field mapping, established strict one-way governance with zero clinical backflow, and built an automated Slack notification engine using Google Sheets identity resolution to route 1-click approval direct messages to treating therapists with 24-hour reminder loops and dynamic discharge re-routing.
                 </p>
-                <div class="pills">
-                    <span class="pill">Monday.com CRM</span>
-                    <span class="pill">Zapier Event Pipelines</span>
-                    <span class="pill">Slack Interactive Bots</span>
-                    <span class="pill">Google Sheets Identity Sync</span>
-                    <span class="pill">Zero Clinical Backflow</span>
-                    <span class="pill">Deterministic Field Mapping</span>
-                    <span class="pill">Dynamic Discharge Sync</span>
-                </div>
-                <a href="petroski-physio/index.html" class="btn-read">
+<div class="pills">
+<span class="pill">Monday.com CRM</span>
+<span class="pill">Zapier Event Pipelines</span>
+<span class="pill">Slack Interactive Bots</span>
+<span class="pill">Google Sheets Identity Sync</span>
+<span class="pill">Zero Clinical Backflow</span>
+<span class="pill">Deterministic Field Mapping</span>
+<span class="pill">Dynamic Discharge Sync</span>
+</div>
+<a class="btn-read" href="petroski-physio/index.html">
                     Read Clinical Automation Case Study <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-
-            <!-- Case Study: Ballyhass Adventure Group -->
-            <div class="card" style="border-top: 3px solid #00f0ff;">
-                <div class="card-tag" style="background: rgba(0, 240, 255, 0.12); color: #00f0ff; border: 1px solid rgba(0, 240, 255, 0.25);">
-                    <i class="fas fa-calendar-check"></i> Conversational AI &amp; Booking API Orchestration
+</a>
+</div>
+<!-- Case Study: Ballyhass Adventure Group -->
+<div class="card" data-category="ai" data-slug="ballyhass-booking" style="border-top: 3px solid #00f0ff;">
+<div class="card-thumb">
+<img alt="ballyhass-booking" loading="lazy" src="ballyhass-booking/images/04-ballyhass-chat-presentation-mockup.jpg"/>
+</div>
+<div class="card-tag" style="background: rgba(0, 240, 255, 0.12); color: #00f0ff; border: 1px solid rgba(0, 240, 255, 0.25);">
+<i class="fas fa-calendar-check"></i> Conversational AI &amp; Booking API Orchestration
                 </div>
-                <h2 class="card-title">Ballyhass Adventure: Autonomous Booking Assistant &amp; Real-Time API Engine</h2>
-                <p class="card-desc">
+<h2 class="card-title">Ballyhass Adventure: Autonomous Booking Assistant &amp; Real-Time API Engine</h2>
+<p class="card-desc">
                     Engineered a production-ready conversational booking assistant integrating Voiceflow Agentic AI with live booking APIs via event-driven orchestration middleware. Delivers real-time relative date resolution, venue normalization, live capacity filtering, and structured category-to-slot button arrays mapping directly to secure online checkouts with 100% deterministic precision and zero hallucinated availability.
                 </p>
-                <div class="pills">
-                    <span class="pill">Voiceflow Agentic AI</span>
-                    <span class="pill">Live Booking REST API</span>
-                    <span class="pill">API Orchestration Engine</span>
-                    <span class="pill">Deterministic Date Resolver</span>
-                    <span class="pill">Venue Normalization</span>
-                    <span class="pill">Dynamic Capacity Math</span>
-                    <span class="pill">1-Click Checkout Links</span>
-                </div>
-                <a href="ballyhass-booking/index.html" class="btn-read">
+<div class="pills">
+<span class="pill">Voiceflow Agentic AI</span>
+<span class="pill">Live Booking REST API</span>
+<span class="pill">API Orchestration Engine</span>
+<span class="pill">Deterministic Date Resolver</span>
+<span class="pill">Venue Normalization</span>
+<span class="pill">Dynamic Capacity Math</span>
+<span class="pill">1-Click Checkout Links</span>
+</div>
+<a class="btn-read" href="ballyhass-booking/index.html">
                     Read Booking AI Case Study <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-
-            <!-- Case Study: ProspectIntelligence (Gemini 2.5 Pro Explicit Caching) -->
-            <div class="card" style="border-top: 3px solid #a855f7;">
-                <div class="card-tag" style="background: rgba(168, 85, 247, 0.12); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.25);">
-                    <i class="fas fa-microchip"></i> Enterprise AI Sales Backend &amp; Explicit Caching
+</a>
+</div>
+<!-- Case Study: ProspectIntelligence (Gemini 2.5 Pro Explicit Caching) -->
+<div class="card" data-category="ai" data-slug="prospect-intelligence" style="border-top: 3px solid #a855f7;">
+<div class="card-thumb">
+<img alt="prospect-intelligence" loading="lazy" src="prospect-intelligence/images/01-production-4case-routing-workflow.jpg"/>
+</div>
+<div class="card-tag" style="background: rgba(168, 85, 247, 0.12); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.25);">
+<i class="fas fa-microchip"></i> Enterprise AI Sales Backend &amp; Explicit Caching
                 </div>
-                <h2 class="card-title">ProspectIntelligence: Autonomous Sales AI with Explicit Context Caching</h2>
-                <p class="card-desc">
+<h2 class="card-title">ProspectIntelligence: Autonomous Sales AI with Explicit Context Caching</h2>
+<p class="card-desc">
                     Designed and shipped an automated client intelligence backend giving sales reps an always-on, context-aware AI assistant without rebuilding massive 100k+ token context payloads on every query. Leverages Google Gemini 2.5 Pro explicit context caching (/v1beta/cachedContents), a deterministic 4-case cache routing engine, single-query PostgreSQL hydration, and pre-compute 75-message budget caps integrated with a React sales copilot frontend via webhooks.
                 </p>
-                <div class="pills">
-                    <span class="pill">Google Gemini 2.5 Pro</span>
-                    <span class="pill">Explicit Context Caching</span>
-                    <span class="pill">4-Case Cache Decision Router</span>
-                    <span class="pill">PostgreSQL Single-Query Hydration</span>
-                    <span class="pill">SHA-256 Invalidation Guard</span>
-                    <span class="pill">React Webhook Integration</span>
-                    <span class="pill">75-Msg Pre-Compute Cap</span>
-                </div>
-                <a href="prospect-intelligence/index.html" class="btn-read">
+<div class="pills">
+<span class="pill">Google Gemini 2.5 Pro</span>
+<span class="pill">Explicit Context Caching</span>
+<span class="pill">4-Case Cache Decision Router</span>
+<span class="pill">PostgreSQL Single-Query Hydration</span>
+<span class="pill">SHA-256 Invalidation Guard</span>
+<span class="pill">React Webhook Integration</span>
+<span class="pill">75-Msg Pre-Compute Cap</span>
+</div>
+<a class="btn-read" href="prospect-intelligence/index.html">
                     Read Sales Intelligence Case Study <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-
-            <!-- Case Study: hddisenos Enterprise Cloud Orchestration -->
-            <div class="card" style="border-top: 3px solid #10b981;">
-                <div class="card-tag" style="background: rgba(16, 185, 129, 0.12); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.25);">
-                    <i class="fas fa-server"></i> Enterprise Cloud Orchestration &amp; 57-Pipeline Fleet
+</a>
+</div>
+<!-- Case Study: hddisenos Enterprise Cloud Orchestration -->
+<div class="card" data-category="enterprise" data-slug="hddisenos-automation" style="border-top: 3px solid #10b981;">
+<div class="card-thumb">
+<img alt="hddisenos-automation" loading="lazy" src="hddisenos-automation/images/01-coolify-production-cloud.jpg"/>
+</div>
+<div class="card-tag" style="background: rgba(16, 185, 129, 0.12); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.25);">
+<i class="fas fa-server"></i> Enterprise Cloud Orchestration &amp; 57-Pipeline Fleet
                 </div>
-                <h2 class="card-title">hddisenos: Self-Hosted Cloud Automation Platform &amp; 57-Pipeline Fleet</h2>
-                <p class="card-desc">
+<h2 class="card-title">hddisenos: Self-Hosted Cloud Automation Platform &amp; 57-Pipeline Fleet</h2>
+<p class="card-desc">
                     Architected and deployed a self-hosted cloud automation engine for hddisenos (henry.lat) on a dedicated Linux VPS via Coolify PaaS with persistent PostgreSQL storage. Orchestrates 57 active production pipelines including Google Gemini multimodal AI vision pipelines, automated Facebook automotive syndication for dealerships, bi-directional HubSpot &amp; Zoho CRM syncing, and Telegram compliance bots, eliminating 60% of manual operational workload with sub-14s turnaround.
                 </p>
-                <div class="pills">
-                    <span class="pill">Dedicated Linux VPS (Coolify PaaS)</span>
-                    <span class="pill">PostgreSQL 16 Persistence</span>
-                    <span class="pill">57 Production Pipelines</span>
-                    <span class="pill">Gemini Multimodal AI</span>
-                    <span class="pill">Facebook Graph API</span>
-                    <span class="pill">HubSpot &amp; Zoho Dual Sync</span>
-                    <span class="pill">60% Workload Reduction</span>
-                    <span class="pill">Zero SaaS Per-Task Tax</span>
-                </div>
-                <a href="hddisenos-automation/index.html" class="btn-read">
+<div class="pills">
+<span class="pill">Dedicated Linux VPS (Coolify PaaS)</span>
+<span class="pill">PostgreSQL 16 Persistence</span>
+<span class="pill">57 Production Pipelines</span>
+<span class="pill">Gemini Multimodal AI</span>
+<span class="pill">Facebook Graph API</span>
+<span class="pill">HubSpot &amp; Zoho Dual Sync</span>
+<span class="pill">60% Workload Reduction</span>
+<span class="pill">Zero SaaS Per-Task Tax</span>
+</div>
+<a class="btn-read" href="hddisenos-automation/index.html">
                     Read Cloud Automation Case Study <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-
-            <!-- Case Study: Autonomous Voice AI Agent, Smart Scheduling & Meeting Intelligence Platform -->
-            <div class="card" style="border-top: 3px solid #00f0ff;">
-                <div class="card-tag" style="background: rgba(0, 240, 255, 0.12); color: #00f0ff; border: 1px solid rgba(0, 240, 255, 0.25);">
-                    <i class="fas fa-microphone-lines"></i> Conversational Voice AI &amp; Smart Scheduling
+</a>
+</div>
+<!-- Case Study: Autonomous Voice AI Agent, Smart Scheduling & Meeting Intelligence Platform -->
+<div class="card" data-category="ai" data-slug="django-voice-agent" style="border-top: 3px solid #00f0ff;">
+<div class="card-thumb">
+<img alt="django-voice-agent" loading="lazy" src="django-voice-agent/images/00-master-voice-orchestration-architecture.jpg"/>
+</div>
+<div class="card-tag" style="background: rgba(0, 240, 255, 0.12); color: #00f0ff; border: 1px solid rgba(0, 240, 255, 0.25);">
+<i class="fas fa-microphone-lines"></i> Conversational Voice AI &amp; Smart Scheduling
                 </div>
-                <h2 class="card-title">Autonomous Voice AI Agent, Smart Scheduling &amp; Meeting Intelligence Platform</h2>
-                <p class="card-desc">
+<h2 class="card-title">Autonomous Voice AI Agent, Smart Scheduling &amp; Meeting Intelligence Platform</h2>
+<p class="card-desc">
                     Engineered an end-to-end voice agent ecosystem combining Django 5.x, Retell AI, Cal.com, and Recall.ai. Enables conversational voice agents to handle inbound/outbound calls, qualify prospects through natural dialogue, check calendar availability in real time, auto-generate Google Meet, Zoom, or Teams sessions, and dispatch autonomous meeting bots that transcribe discussions and deliver structured post-meeting deal dossiers with two-way Django Admin sync.
                 </p>
-                <div class="pills">
-                    <span class="pill">Django 5.x &amp; PostgreSQL</span>
-                    <span class="pill">Retell AI Telephony (&lt;800ms)</span>
-                    <span class="pill">Cal.com Real-Time Scheduling</span>
-                    <span class="pill">Recall.ai Meeting Bot</span>
-                    <span class="pill">Google Meet, Zoom &amp; Teams</span>
-                    <span class="pill">Two-Way Django Admin Sync</span>
-                    <span class="pill">78% Booking Cycle Cut</span>
-                    <span class="pill">Automated Deal Dossiers</span>
-                </div>
-                <a href="django-voice-agent/index.html" class="btn-read">
+<div class="pills">
+<span class="pill">Django 5.x &amp; PostgreSQL</span>
+<span class="pill">Retell AI Telephony (&lt;800ms)</span>
+<span class="pill">Cal.com Real-Time Scheduling</span>
+<span class="pill">Recall.ai Meeting Bot</span>
+<span class="pill">Google Meet, Zoom &amp; Teams</span>
+<span class="pill">Two-Way Django Admin Sync</span>
+<span class="pill">78% Booking Cycle Cut</span>
+<span class="pill">Automated Deal Dossiers</span>
+</div>
+<a class="btn-read" href="django-voice-agent/index.html">
                     Read Voice AI &amp; Scheduling Case Study <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-
-            <!-- Case Study: CoreImmersive Hollywood Production Platform -->
-            <div class="card" style="border-top: 3px solid #fbbf24;">
-                <div class="card-tag" style="background: rgba(251, 191, 36, 0.12); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.25);">
-                    <i class="fas fa-clapperboard"></i> Hollywood Film &amp; Television Intelligence
+</a>
+</div>
+<!-- Case Study: CoreImmersive Hollywood Production Platform -->
+<div class="card" data-category="cloud" data-slug="coreimmersive-film" style="border-top: 3px solid #fbbf24;">
+<div class="card-thumb">
+<img alt="coreimmersive-film" loading="lazy" src="coreimmersive-film/images/02-interactive-director-producer-dashboard.jpg"/>
+</div>
+<div class="card-tag" style="background: rgba(251, 191, 36, 0.12); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.25);">
+<i class="fas fa-clapperboard"></i> Hollywood Film &amp; Television Intelligence
                 </div>
-                <h2 class="card-title">CoreImmersive: Hollywood Production Management &amp; Call Sheet Ingestion Platform</h2>
-                <p class="card-desc">
+<h2 class="card-title">CoreImmersive: Hollywood Production Management &amp; Call Sheet Ingestion Platform</h2>
+<p class="card-desc">
                     Engineered an end-to-end production management platform for CoreImmersive on Django 5.x and Google Cloud. Automatically parses dense multi-page PDF Call Sheets and production emails into structured database models, monitors SAG-AFTRA / IATSE labor compliance (6-hour meal penalty clock &amp; 12-hour rest turnaround), tracks hyperlocal weather radar, and delivers live shooting progression dashboards for Hollywood directors and producers.
                 </p>
-                <div class="pills">
-                    <span class="pill">Django 5.x &amp; Cloud SQL</span>
-                    <span class="pill">Google Document AI (99.2%)</span>
-                    <span class="pill">Google Cloud Run</span>
-                    <span class="pill">SAG-AFTRA Meal Clock</span>
-                    <span class="pill">12h Rest Turnaround</span>
-                    <span class="pill">Doppler Weather Radar</span>
-                    <span class="pill">Live Shoot Progression</span>
-                    <span class="pill">Zero Union Penalty Fines</span>
-                </div>
-                <a href="coreimmersive-film/index.html" class="btn-read">
+<div class="pills">
+<span class="pill">Django 5.x &amp; Cloud SQL</span>
+<span class="pill">Google Document AI (99.2%)</span>
+<span class="pill">Google Cloud Run</span>
+<span class="pill">SAG-AFTRA Meal Clock</span>
+<span class="pill">12h Rest Turnaround</span>
+<span class="pill">Doppler Weather Radar</span>
+<span class="pill">Live Shoot Progression</span>
+<span class="pill">Zero Union Penalty Fines</span>
+</div>
+<a class="btn-read" href="coreimmersive-film/index.html">
                     Read Film Production Case Study <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-
-
-
-
-            <!-- Case Study: 2456.ai Platform -->
-            <div class="card" style="border-top: 3px solid #6366f1;">
-                <div class="card-tag" style="background: rgba(99, 102, 241, 0.12); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.25);">
-                    <i class="fas fa-brain"></i> Autonomous AI Tool Discovery &amp; Workflow Generation
+</a>
+</div>
+<!-- Case Study: 2456.ai Platform -->
+<div class="card" data-category="ai" data-slug="2456-ai-platform" style="border-top: 3px solid #6366f1;">
+<div class="card-thumb">
+<img alt="2456-ai-platform" loading="lazy" src="2456-ai-platform/images/05-2456-live-platform-interface.jpg"/>
+</div>
+<div class="card-tag" style="background: rgba(99, 102, 241, 0.12); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.25);">
+<i class="fas fa-brain"></i> Autonomous AI Tool Discovery &amp; Workflow Generation
                 </div>
-                <h2 class="card-title">2456.ai: Autonomous AI Tool Discovery &amp; Workflow Generation Platform</h2>
-                <p class="card-desc">
+<h2 class="card-title">2456.ai: Autonomous AI Tool Discovery &amp; Workflow Generation Platform</h2>
+<p class="card-desc">
                     Engineered an AI-first SaaS platform for 2456.ai that automates tool discovery and workflow generation using semantic search and real-time LLM interaction. Built with a decoupled hybrid architecture—Django monolith for control plane administration and FastAPI microservices for non-blocking AI inference—backed by a dual-database system pairing PostgreSQL 16 with Pinecone vector DB over 5,000+ indexed tools, LangChain DAG synthesis, Stripe subscriptions, and Ruff CI/CD guardrails.
                 </p>
-                <div class="pills">
-                    <span class="pill">Django 5.x &amp; FastAPI ASGI</span>
-                    <span class="pill">Pinecone Vector DB (&lt;25ms)</span>
-                    <span class="pill">PostgreSQL 16 Relational</span>
-                    <span class="pill">LangChain RAG Pipelines</span>
-                    <span class="pill">5,000+ Indexed Tools</span>
-                    <span class="pill">100% DAG Workflow Validity</span>
-                    <span class="pill">Stripe SaaS Subscriptions</span>
-                    <span class="pill">Ruff 100x Fast Linter</span>
-                </div>
-                <a href="2456-ai-platform/index.html" class="btn-read">
+<div class="pills">
+<span class="pill">Django 5.x &amp; FastAPI ASGI</span>
+<span class="pill">Pinecone Vector DB (&lt;25ms)</span>
+<span class="pill">PostgreSQL 16 Relational</span>
+<span class="pill">LangChain RAG Pipelines</span>
+<span class="pill">5,000+ Indexed Tools</span>
+<span class="pill">100% DAG Workflow Validity</span>
+<span class="pill">Stripe SaaS Subscriptions</span>
+<span class="pill">Ruff 100x Fast Linter</span>
+</div>
+<a class="btn-read" href="2456-ai-platform/index.html">
                     Read AI Platform Case Study <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-
-            <!-- Case Study: QPharma Data Platform -->
-            <div class="card" style="border-top: 3px solid #0ea5e9;">
-                <div class="card-tag" style="background: rgba(14, 165, 233, 0.12); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.25);">
-                    <i class="fas fa-flask"></i> Enterprise Healthcare &amp; Pharmaceutical Data Engineering
+</a>
+</div>
+<!-- Case Study: QPharma Data Platform -->
+<div class="card" data-category="data" data-slug="qpharma-data-platform" style="border-top: 3px solid #0ea5e9;">
+<div class="card-thumb">
+<img alt="qpharma-data-platform" loading="lazy" src="qpharma-data-platform/images/00-qpharma-master-data-architecture.jpg"/>
+</div>
+<div class="card-tag" style="background: rgba(14, 165, 233, 0.12); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.25);">
+<i class="fas fa-flask"></i> Enterprise Healthcare &amp; Pharmaceutical Data Engineering
                 </div>
-                <h2 class="card-title">QPharma: Cloud-Native Pharma Data Lake &amp; Automated AWS ETL Pipelines</h2>
-                <p class="card-desc">
+<h2 class="card-title">QPharma: Cloud-Native Pharma Data Lake &amp; Automated AWS ETL Pipelines</h2>
+<p class="card-desc">
                     Architected and deployed scalable data engineering and analytics infrastructure for QPharma to support large-scale pharmaceutical research and clinical trials. Built automated, event-driven ETL pipelines with AWS Glue and S3, paired with AWS Lambda validation triggers for multi-source ingestion (Excel, REST APIs, social adverse event feeds). Leveraged Pandas/NumPy for clinical cleaning and ML feature engineering, enforced HIPAA/21 CFR Part 11 security via AWS IAM/KMS, and enabled team EDA in JupyterHub.
                 </p>
-                <div class="pills">
-                    <span class="pill">AWS Glue PySpark ETL</span>
-                    <span class="pill">Amazon S3 Partitioned Lake</span>
-                    <span class="pill">AWS Lambda Event Triggers</span>
-                    <span class="pill">Pandas &amp; NumPy Cleansing</span>
-                    <span class="pill">JupyterHub Collaborative EDA</span>
-                    <span class="pill">AWS IAM Least-Privilege &amp; KMS</span>
-                    <span class="pill">Amazon Athena Presto SQL</span>
-                    <span class="pill">HIPAA &amp; 21 CFR Part 11</span>
-                </div>
-                <a href="qpharma-data-platform/index.html" class="btn-read">
+<div class="pills">
+<span class="pill">AWS Glue PySpark ETL</span>
+<span class="pill">Amazon S3 Partitioned Lake</span>
+<span class="pill">AWS Lambda Event Triggers</span>
+<span class="pill">Pandas &amp; NumPy Cleansing</span>
+<span class="pill">JupyterHub Collaborative EDA</span>
+<span class="pill">AWS IAM Least-Privilege &amp; KMS</span>
+<span class="pill">Amazon Athena Presto SQL</span>
+<span class="pill">HIPAA &amp; 21 CFR Part 11</span>
+</div>
+<a class="btn-read" href="qpharma-data-platform/index.html">
                     Read Pharma Data Case Study <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-
-            <!-- Case Study: Seanz Law Firm -->
-            <div class="card" style="border-top: 3px solid #f59e0b;">
-                <div class="card-tag" style="background: rgba(245, 158, 11, 0.12); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.25);">
-                    <i class="fas fa-scale-balanced"></i> Autonomous LegalTech &amp; Immigration Intelligence
+</a>
+</div>
+<!-- Case Study: Seanz Law Firm -->
+<div class="card" data-category="ai" data-slug="seanz-law-firm" style="border-top: 3px solid #f59e0b;">
+<div class="card-thumb">
+<img alt="seanz-law-firm" loading="lazy" src="seanz-law-firm/images/00-seanz-master-intelligence-architecture.jpg"/>
+</div>
+<div class="card-tag" style="background: rgba(245, 158, 11, 0.12); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.25);">
+<i class="fas fa-scale-balanced"></i> Autonomous LegalTech &amp; Immigration Intelligence
                 </div>
-                <h2 class="card-title">Seanz Law Firm: AI-Powered Multilingual Interview Automation &amp; Tri-Database Architecture</h2>
-                <p class="card-desc">
-                    Engineered an AI-powered, multilingual immigration client intake system for Seanz Law Firm. Features an empathetic English/Spanish conversational assistant powered by OpenAI GPT-4 with immigration prompt guardrails, omnichannel messaging via Twilio WhatsApp &amp; SMS APIs, and a modular microservice backend synchronizing interview transcripts and structured client records in real time across MongoDB Atlas, PostgreSQL 16, and Google Sheets &mdash; backed by Looker Studio KPI reporting and Ruff DevOps.
+<h2 class="card-title">Seanz Law Firm: AI-Powered Multilingual Interview Automation &amp; Tri-Database Architecture</h2>
+<p class="card-desc">
+                    Engineered an AI-powered, multilingual immigration client intake system for Seanz Law Firm. Features an empathetic English/Spanish conversational assistant powered by OpenAI GPT-4 with immigration prompt guardrails, omnichannel messaging via Twilio WhatsApp &amp; SMS APIs, and a modular microservice backend synchronizing interview transcripts and structured client records in real time across MongoDB Atlas, PostgreSQL 16, and Google Sheets — backed by Looker Studio KPI reporting and Ruff DevOps.
                 </p>
-                <div class="pills">
-                    <span class="pill">OpenAI GPT-4 Bilingual</span>
-                    <span class="pill">Twilio WhatsApp &amp; SMS</span>
-                    <span class="pill">FastAPI ASGI Microservices</span>
-                    <span class="pill">PostgreSQL 16 Relational</span>
-                    <span class="pill">MongoDB Atlas Document Store</span>
-                    <span class="pill">Google Sheets Two-Way Sync</span>
-                    <span class="pill">Google Looker Studio BI</span>
-                    <span class="pill">Ruff 100x Fast Linter</span>
-                </div>
-                <a href="seanz-law-firm/index.html" class="btn-read">
+<div class="pills">
+<span class="pill">OpenAI GPT-4 Bilingual</span>
+<span class="pill">Twilio WhatsApp &amp; SMS</span>
+<span class="pill">FastAPI ASGI Microservices</span>
+<span class="pill">PostgreSQL 16 Relational</span>
+<span class="pill">MongoDB Atlas Document Store</span>
+<span class="pill">Google Sheets Two-Way Sync</span>
+<span class="pill">Google Looker Studio BI</span>
+<span class="pill">Ruff 100x Fast Linter</span>
+</div>
+<a class="btn-read" href="seanz-law-firm/index.html">
                     Read LegalTech Case Study <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-
-            <!-- Case Study: Jericho AI Platform -->
-            <div class="card" style="border-top: 3px solid #8b5cf6;">
-                <div class="card-tag" style="background: rgba(139, 92, 246, 0.12); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.25);">
-                    <i class="fas fa-network-wired"></i> Enterprise GenAI Ops &amp; Multi-Cloud Orchestration
+</a>
+</div>
+<!-- Case Study: Jericho AI Platform -->
+<div class="card" data-category="cloud" data-slug="jericho-ai-multicloud" style="border-top: 3px solid #8b5cf6;">
+<div class="card-thumb">
+<img alt="jericho-ai-multicloud" loading="lazy" src="jericho-ai-multicloud/images/00-jericho-master-multicloud-orchestrator.jpg"/>
+</div>
+<div class="card-tag" style="background: rgba(139, 92, 246, 0.12); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.25);">
+<i class="fas fa-network-wired"></i> Enterprise GenAI Ops &amp; Multi-Cloud Orchestration
                 </div>
-                <h2 class="card-title">Jericho AI: Autonomous GenAI Ops &amp; Multi-Cloud Orchestration Platform</h2>
-                <p class="card-desc">
-                    Architected and deployed Jericho AI (St. Petersburg, Florida &middot; <a href="https://jerichoai.io/" target="_blank" style="color: #c084fc; text-decoration: none;">jerichoai.io</a>) &mdash; an advanced GenAI Ops platform unifying AWS, Microsoft Azure, Google Cloud (GCP), IBM Cloud, and Oracle Cloud (OCI). Features an autonomous multi-agent AI swarm that continuously monitors, restructures workloads, and optimizes cloud spending in real time &mdash; achieving an average 38.4% cost reduction with sub-200ms self-healing and zero vendor lock-in.
+<h2 class="card-title">Jericho AI: Autonomous GenAI Ops &amp; Multi-Cloud Orchestration Platform</h2>
+<p class="card-desc">
+                    Architected and deployed Jericho AI (St. Petersburg, Florida · <a href="https://jerichoai.io/" style="color: #c084fc; text-decoration: none;" target="_blank">jerichoai.io</a>) — an advanced GenAI Ops platform unifying AWS, Microsoft Azure, Google Cloud (GCP), IBM Cloud, and Oracle Cloud (OCI). Features an autonomous multi-agent AI swarm that continuously monitors, restructures workloads, and optimizes cloud spending in real time — achieving an average 38.4% cost reduction with sub-200ms self-healing and zero vendor lock-in.
                 </p>
-                <div class="pills">
-                    <span class="pill">5 Clouds (AWS·Azure·GCP·IBM·OCI)</span>
-                    <span class="pill">Autonomous AI Swarm Core</span>
-                    <span class="pill">38.4% Cost Reduction</span>
-                    <span class="pill">&lt; 200ms Self-Healing</span>
-                    <span class="pill">Kubernetes &amp; Kubelet Mesh</span>
-                    <span class="pill">TimescaleDB &amp; PostgreSQL</span>
-                    <span class="pill">OpenTelemetry (100k+ Evt/s)</span>
-                    <span class="pill">99.99% Multi-Cloud SLA</span>
-                </div>
-                <a href="jericho-ai-multicloud/index.html" class="btn-read">
+<div class="pills">
+<span class="pill">5 Clouds (AWS·Azure·GCP·IBM·OCI)</span>
+<span class="pill">Autonomous AI Swarm Core</span>
+<span class="pill">38.4% Cost Reduction</span>
+<span class="pill">&lt; 200ms Self-Healing</span>
+<span class="pill">Kubernetes &amp; Kubelet Mesh</span>
+<span class="pill">TimescaleDB &amp; PostgreSQL</span>
+<span class="pill">OpenTelemetry (100k+ Evt/s)</span>
+<span class="pill">99.99% Multi-Cloud SLA</span>
+</div>
+<a class="btn-read" href="jericho-ai-multicloud/index.html">
                     Read GenAI Ops Case Study <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-
-            <!-- Case Study: InstaMailAI Vector Search & RAG -->
-            <div class="card" style="border-top: 3px solid #06b6d4;">
-                <div class="card-tag" style="background: rgba(6, 182, 212, 0.12); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.25);">
-                    <i class="fas fa-database"></i> Vector Database &amp; RAG Architecture
+</a>
+</div>
+<!-- Case Study: InstaMailAI Vector Search & RAG -->
+<div class="card" data-category="data" data-slug="instamail-ai" style="border-top: 3px solid #06b6d4;">
+<div class="card-thumb">
+<img alt="instamail-ai" loading="lazy" src="instamail-ai/images/00-instamail-master-vector-search-rag.jpg"/>
+</div>
+<div class="card-tag" style="background: rgba(6, 182, 212, 0.12); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.25);">
+<i class="fas fa-database"></i> Vector Database &amp; RAG Architecture
                 </div>
-                <h2 class="card-title">InstaMailAI: Scalable Vector Search &amp; RAG Architecture for Email Intelligence</h2>
-                <p class="card-desc">
-                    Engineered high-throughput vector search systems and intelligent RAG workflows for InstaMailAI. Designed semantic ingestion pipelines combining MongoDB Atlas Vector Search ($vectorSearch with HNSW indexing and scalar quantization), OpenAI 1536-dimensional embeddings, LangChain RAG pipelines, and FastAPI microservices &mdash; delivering sub-18.2ms semantic retrieval across 8.4M+ vectors, 94.8% contextual draft acceptance, and 68.2% token overhead reduction.
+<h2 class="card-title">InstaMailAI: Scalable Vector Search &amp; RAG Architecture for Email Intelligence</h2>
+<p class="card-desc">
+                    Engineered high-throughput vector search systems and intelligent RAG workflows for InstaMailAI. Designed semantic ingestion pipelines combining MongoDB Atlas Vector Search ($vectorSearch with HNSW indexing and scalar quantization), OpenAI 1536-dimensional embeddings, LangChain RAG pipelines, and FastAPI microservices — delivering sub-18.2ms semantic retrieval across 8.4M+ vectors, 94.8% contextual draft acceptance, and 68.2% token overhead reduction.
                 </p>
-                <div class="pills">
-                    <span class="pill">MongoDB Atlas Vector ($vectorSearch)</span>
-                    <span class="pill">HNSW Graph &amp; Scalar Quantization</span>
-                    <span class="pill">LangChain RAG Pipeline</span>
-                    <span class="pill">OpenAI Embeddings (1536d)</span>
-                    <span class="pill">FastAPI Async Microservices</span>
-                    <span class="pill">&lt; 18.2ms p95 Retrieval</span>
-                    <span class="pill">94.8% Draft Acceptance</span>
-                    <span class="pill">68.2% Token Noise Stripping</span>
-                </div>
-                <a href="instamail-ai/index.html" class="btn-read">
+<div class="pills">
+<span class="pill">MongoDB Atlas Vector ($vectorSearch)</span>
+<span class="pill">HNSW Graph &amp; Scalar Quantization</span>
+<span class="pill">LangChain RAG Pipeline</span>
+<span class="pill">OpenAI Embeddings (1536d)</span>
+<span class="pill">FastAPI Async Microservices</span>
+<span class="pill">&lt; 18.2ms p95 Retrieval</span>
+<span class="pill">94.8% Draft Acceptance</span>
+<span class="pill">68.2% Token Noise Stripping</span>
+</div>
+<a class="btn-read" href="instamail-ai/index.html">
                     Read Vector Search Case Study <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-
-            <!-- Case Study: MVTec AD Defect Benchmark Research -->
-            <div class="card" style="border-top: 3px solid #38bdf8;">
-                <div class="card-tag" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.25);">
-                    <i class="fas fa-microscope"></i> Computer Vision Research &middot; MVTec AD Benchmark
+</a>
+</div>
+<!-- Case Study: MVTec AD Defect Benchmark Research -->
+<div class="card" data-category="research" data-slug="mvtec-defect-benchmark" style="border-top: 3px solid #38bdf8;">
+<div class="card-thumb">
+<img alt="mvtec-defect-benchmark" loading="lazy" src="mvtec-defect-benchmark/images/fig05-mvtec-all-15-categories-grand-tour.jpg"/>
+</div>
+<div class="card-tag" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.25);">
+<i class="fas fa-microscope"></i> Computer Vision Research · MVTec AD Benchmark
                 </div>
-                <h2 class="card-title">Three Paradigms, One Benchmark: Zero-Shot CLIP, Supervised FPN–Attention and Autoencoders on MVTec AD</h2>
-                <p class="card-desc">
-                    Lead author empirical research study evaluating industrial visual anomaly detection on the MVTec AD benchmark (5,354 images across 15 categories). Conducted an empirical comparison of frozen CLIP ViT-B/32, supervised ResNet-18 + FPN + CBAM attention, and convolutional autoencoders (MSE+SSIM) &mdash; discovering that image-conditioned memory banks achieve 89.6% AUROC (+20.4 pp gain over zero-shot text prompts), exposing deceptive empty-mask metric artefacts in supervised networks (0.001 true defect IoU vs 0.313 headline), and quantifying autoencoder bottleneck defect healing.
+<h2 class="card-title">Three Paradigms, One Benchmark: Zero-Shot CLIP, Supervised FPN–Attention and Autoencoders on MVTec AD</h2>
+<p class="card-desc">
+                    Lead author empirical research study evaluating industrial visual anomaly detection on the MVTec AD benchmark (5,354 images across 15 categories). Conducted an empirical comparison of frozen CLIP ViT-B/32, supervised ResNet-18 + FPN + CBAM attention, and convolutional autoencoders (MSE+SSIM) — discovering that image-conditioned memory banks achieve 89.6% AUROC (+20.4 pp gain over zero-shot text prompts), exposing deceptive empty-mask metric artefacts in supervised networks (0.001 true defect IoU vs 0.313 headline), and quantifying autoencoder bottleneck defect healing.
                 </p>
-                <div class="pills">
-                    <span class="pill">MVTec AD (15 Categories)</span>
-                    <span class="pill">Zero-Shot CLIP ViT-B/32</span>
-                    <span class="pill">89.6% Image AUROC</span>
-                    <span class="pill">0.777 Peak Patch IoU</span>
-                    <span class="pill">ResNet-18 + FPN + CBAM</span>
-                    <span class="pill">Empty-Mask Metric Artefact Exposed</span>
-                    <span class="pill">Conv. Autoencoder (MSE + SSIM)</span>
-                    <span class="pill">19,159 Patch Token Memory Bank</span>
-                </div>
-                <a href="mvtec-defect-benchmark/index.html" class="btn-read">
+<div class="pills">
+<span class="pill">MVTec AD (15 Categories)</span>
+<span class="pill">Zero-Shot CLIP ViT-B/32</span>
+<span class="pill">89.6% Image AUROC</span>
+<span class="pill">0.777 Peak Patch IoU</span>
+<span class="pill">ResNet-18 + FPN + CBAM</span>
+<span class="pill">Empty-Mask Metric Artefact Exposed</span>
+<span class="pill">Conv. Autoencoder (MSE + SSIM)</span>
+<span class="pill">19,159 Patch Token Memory Bank</span>
+</div>
+<a class="btn-read" href="mvtec-defect-benchmark/index.html">
                     Read Computer Vision Research Study <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-
-            <!-- Case Study: Robust Federated Perception (TAG) -->
-            <div class="card" style="border-top: 3px solid #38bdf8;">
-                <div class="card-tag" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.25);">
-                    <i class="fas fa-shield-halved"></i> Adversarial Federated Learning &middot; Safety-Critical Perception
+</a>
+</div>
+<!-- Case Study: Robust Federated Perception (TAG) -->
+<div class="card" data-category="research" data-slug="robust-federated-perception" style="border-top: 3px solid #38bdf8;">
+<div class="card-thumb">
+<img alt="robust-federated-perception" loading="lazy" src="robust-federated-perception/images/00-trust-gated-aggregation-master-architecture.jpg"/>
+</div>
+<div class="card-tag" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.25);">
+<i class="fas fa-shield-halved"></i> Adversarial Federated Learning · Safety-Critical Perception
                 </div>
-                <h2 class="card-title">Trust as a Gate, Not a Weight: Robust Federated Aggregation for Safety-Critical Perception</h2>
-                <p class="card-desc">
-                    Lead author empirical research study evaluating Byzantine-robust federated learning on real-world autonomous driving perception (BDD100K dataset, 20 vehicle clients across 8 physical weather and lighting domains). Discovered that geometric aggregators (Krum) suffer from severe size bias &mdash; discarding 95% of training data and losing 9.2 balanced-accuracy points on clean data. Engineered Trust-Gated Aggregation (TAG), combining sample-count weighting with a size-invariant cosine alignment gate and median norm clipping &mdash; matching clean FedAvg (0.710) with 0.000 clean cost, remaining within 0.004 under all 6 attacks up to a 45% Byzantine fraction, and holding pedestrian miss rates within a rock-solid band of 0.012.
+<h2 class="card-title">Trust as a Gate, Not a Weight: Robust Federated Aggregation for Safety-Critical Perception</h2>
+<p class="card-desc">
+                    Lead author empirical research study evaluating Byzantine-robust federated learning on real-world autonomous driving perception (BDD100K dataset, 20 vehicle clients across 8 physical weather and lighting domains). Discovered that geometric aggregators (Krum) suffer from severe size bias — discarding 95% of training data and losing 9.2 balanced-accuracy points on clean data. Engineered Trust-Gated Aggregation (TAG), combining sample-count weighting with a size-invariant cosine alignment gate and median norm clipping — matching clean FedAvg (0.710) with 0.000 clean cost, remaining within 0.004 under all 6 attacks up to a 45% Byzantine fraction, and holding pedestrian miss rates within a rock-solid band of 0.012.
                 </p>
-                <div class="pills">
-                    <span class="pill">BDD100K Driving Fleet (20 Clients)</span>
-                    <span class="pill">Trust-Gated Aggregation (TAG)</span>
-                    <span class="pill">0.710 Clean Balanced Accuracy</span>
-                    <span class="pill">0.706 Worst-Case Attack Accuracy</span>
-                    <span class="pill">45% Byzantine Fault Tolerance</span>
-                    <span class="pill">Size-Bias in Krum Discovered</span>
-                    <span class="pill">0.012 Pedestrian Miss Rate Band</span>
-                    <span class="pill">ResNet-18 &amp; PyTorch 2.11</span>
-                </div>
-                <a href="robust-federated-perception/index.html" class="btn-read">
+<div class="pills">
+<span class="pill">BDD100K Driving Fleet (20 Clients)</span>
+<span class="pill">Trust-Gated Aggregation (TAG)</span>
+<span class="pill">0.710 Clean Balanced Accuracy</span>
+<span class="pill">0.706 Worst-Case Attack Accuracy</span>
+<span class="pill">45% Byzantine Fault Tolerance</span>
+<span class="pill">Size-Bias in Krum Discovered</span>
+<span class="pill">0.012 Pedestrian Miss Rate Band</span>
+<span class="pill">ResNet-18 &amp; PyTorch 2.11</span>
+</div>
+<a class="btn-read" href="robust-federated-perception/index.html">
                     Read Federated Learning Research Study <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-
-            <!-- Case Study: UNSW-NB15 Network Intrusion Detection (ANOVA + ML) -->
-            <div class="card" style="border-top: 3px solid #06b6d4;">
-                <div class="card-tag" style="background: rgba(6, 182, 212, 0.12); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.25);">
-                    <i class="fas fa-shield-virus"></i> Cybersecurity &middot; Network Intrusion Detection (NIDS)
+</a>
+</div>
+<!-- Case Study: UNSW-NB15 Network Intrusion Detection (ANOVA + ML) -->
+<div class="card" data-category="research" data-slug="unsw-intrusion-detection" style="border-top: 3px solid #06b6d4;">
+<div class="card-thumb">
+<img alt="unsw-intrusion-detection" loading="lazy" src="unsw-intrusion-detection/images/00-nids-master-anova-pipeline.jpg"/>
+</div>
+<div class="card-tag" style="background: rgba(6, 182, 212, 0.12); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.25);">
+<i class="fas fa-shield-virus"></i> Cybersecurity · Network Intrusion Detection (NIDS)
                 </div>
-                <h2 class="card-title">ANOVA F-Test Feature Selection for Machine Learning-Based Network Intrusion Detection on UNSW-NB15</h2>
-                <p class="card-desc">
+<h2 class="card-title">ANOVA F-Test Feature Selection for Machine Learning-Based Network Intrusion Detection on UNSW-NB15</h2>
+<p class="card-desc">
                     Lead author empirical research study designing a lightweight, high-performance two-stage Network Intrusion Detection System on the modern UNSW-NB15 benchmark (82,332 flow records). Applied an ANOVA F-statistic to compress 49 raw network flow attributes down to 15 top-ranked features (69.4% dimensional reduction) shared identically across binary and multi-class tasks. Attained 98.67% binary detection accuracy via variance-smoothed Gaussian Naive Bayes (surpassing Random Forest at 97.49% and SVM at 85.99%), achieved 78.13% multi-class attack identification via tuned XGBoost across 9 threat families, and diagnosed critical minority class imbalance bottlenecks (macro-F1 = 0.39). Open-source verified on GitHub.
                 </p>
-                <div class="pills">
-                    <span class="pill">UNSW-NB15 Benchmark</span>
-                    <span class="pill">ANOVA F-Test Selection</span>
-                    <span class="pill">98.67% Binary Accuracy</span>
-                    <span class="pill">78.13% Multi-Class Accuracy</span>
-                    <span class="pill">15 Optimal Features (69.4% Cut)</span>
-                    <span class="pill">Gaussian Naive Bayes &amp; XGBoost</span>
-                    <span class="pill">Minority Class Diagnosis (0.39 F1)</span>
-                    <span class="pill">Federated IIoT Vision</span>
-                </div>
-                <a href="unsw-intrusion-detection/index.html" class="btn-read">
+<div class="pills">
+<span class="pill">UNSW-NB15 Benchmark</span>
+<span class="pill">ANOVA F-Test Selection</span>
+<span class="pill">98.67% Binary Accuracy</span>
+<span class="pill">78.13% Multi-Class Accuracy</span>
+<span class="pill">15 Optimal Features (69.4% Cut)</span>
+<span class="pill">Gaussian Naive Bayes &amp; XGBoost</span>
+<span class="pill">Minority Class Diagnosis (0.39 F1)</span>
+<span class="pill">Federated IIoT Vision</span>
+</div>
+<a class="btn-read" href="unsw-intrusion-detection/index.html">
                     Read Intrusion Detection Case Study <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-
-            
-            <!-- Case Study: Clearpath Husky A200 UGV -->
-            <div class="card" style="border-top: 3px solid #f59e0b;">
-                <div class="card-tag" style="background: rgba(245, 158, 11, 0.12); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.25);">
-                    <i class="fas fa-crosshairs"></i> Autonomous Field Robotics &amp; SLAM
+</a>
+</div>
+<!-- Case Study: Clearpath Husky A200 UGV -->
+<div class="card" data-category="research" data-slug="husky-slam-navigation" style="border-top: 3px solid #f59e0b;">
+<div class="card-thumb">
+<img alt="husky-slam-navigation" loading="lazy" src="husky-slam-navigation/images/04-husky-gmapping-slam-occupancy-grid.jpg"/>
+</div>
+<div class="card-tag" style="background: rgba(245, 158, 11, 0.12); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.25);">
+<i class="fas fa-crosshairs"></i> Autonomous Field Robotics &amp; SLAM
                 </div>
-                <h2 class="card-title">Clearpath Husky A200 UGV: Autonomous Gmapping SLAM &amp; Dijkstra Navigation</h2>
-                <p class="card-desc">
+<h2 class="card-title">Clearpath Husky A200 UGV: Autonomous Gmapping SLAM &amp; Dijkstra Navigation</h2>
+<p class="card-desc">
                     Engineered an autonomous navigation stack for the heavy-duty Clearpath Husky A200 UGV. Calibrated differential skid-steer odometry (wheel separation 1.07025m, radius 0.1651m), deployed Rao-Blackwellized particle filter Gmapping SLAM (20mm grid resolution) with planar laser scan matching, dynamic dual-layer costmap inflation, and Dijkstra global path planning in ROS and Gazebo.
                 </p>
-                <div class="pills">
-                    <span class="pill">Clearpath Husky A200</span>
-                    <span class="pill">Gmapping SLAM (RBPF)</span>
-                    <span class="pill">Dijkstra Global Planner</span>
-                    <span class="pill">DWA Local Obstacle Avoidance</span>
-                    <span class="pill">50 Hz Odometry Loop</span>
-                    <span class="pill">Gazebo ODE Simulation</span>
-                </div>
-                <a href="husky-slam-navigation/index.html" class="btn-read">
+<div class="pills">
+<span class="pill">Clearpath Husky A200</span>
+<span class="pill">Gmapping SLAM (RBPF)</span>
+<span class="pill">Dijkstra Global Planner</span>
+<span class="pill">DWA Local Obstacle Avoidance</span>
+<span class="pill">50 Hz Odometry Loop</span>
+<span class="pill">Gazebo ODE Simulation</span>
+</div>
+<a class="btn-read" href="husky-slam-navigation/index.html">
                     Read Husky UGV Case Study <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-
-            <!-- Case Study: Hector Quadrotor UAV & Smart Wheelchair -->
-            <div class="card" style="border-top: 3px solid #38bdf8;">
-                <div class="card-tag" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.25);">
-                    <i class="fas fa-helicopter"></i> Aerial Robotics &amp; Assistive Mobility
+</a>
+</div>
+<!-- Case Study: Hector Quadrotor UAV & Smart Wheelchair -->
+<div class="card" data-category="research" data-slug="hector-quadrotor-uav" style="border-top: 3px solid #38bdf8;">
+<div class="card-thumb">
+<img alt="hector-quadrotor-uav" loading="lazy" src="hector-quadrotor-uav/images/04-hector-quadrotor-gazebo-flight-arena.jpg"/>
+</div>
+<div class="card-tag" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.25);">
+<i class="fas fa-helicopter"></i> Aerial Robotics &amp; Assistive Mobility
                 </div>
-                <h2 class="card-title">Hector Quadrotor UAV &amp; Smart Wheelchair: Autonomous Flight Dynamics &amp; Assistive SLAM</h2>
-                <p class="card-desc">
+<h2 class="card-title">Hector Quadrotor UAV &amp; Smart Wheelchair: Autonomous Flight Dynamics &amp; Assistive SLAM</h2>
+<p class="card-desc">
                     Architected a dual autonomous robotics suite featuring a 6-DOF Hector Quadrotor UAV with cascade PID attitude stabilization (100 Hz inner loop), motor arming RPC services (/enable_motors), and sonar/barometric altitude hold (&lt; 0.05m error), alongside an autonomous smart wheelchair for collision-free hospital corridor and doorway traversal in ROS and Gazebo.
                 </p>
-                <div class="pills">
-                    <span class="pill">Hector Quadrotor UAV</span>
-                    <span class="pill">Cascade PID Attitude Rate</span>
-                    <span class="pill">Smart Wheelchair Autonav</span>
-                    <span class="pill">Motor Arming Guard</span>
-                    <span class="pill">100 Hz Flight Loop</span>
-                    <span class="pill">Doorway Clearance Envelope</span>
-                </div>
-                <a href="hector-quadrotor-uav/index.html" class="btn-read">
+<div class="pills">
+<span class="pill">Hector Quadrotor UAV</span>
+<span class="pill">Cascade PID Attitude Rate</span>
+<span class="pill">Smart Wheelchair Autonav</span>
+<span class="pill">Motor Arming Guard</span>
+<span class="pill">100 Hz Flight Loop</span>
+<span class="pill">Doorway Clearance Envelope</span>
+</div>
+<a class="btn-read" href="hector-quadrotor-uav/index.html">
                     Read Quadrotor &amp; Wheelchair Study <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-
-            <!-- Case Study 3: Ranbval-Core Architecture -->
-            <div class="card">
-                <div class="card-tag">
-                    <i class="fas fa-shield-halved"></i> Internal Developer Platform (IDP)
+</a>
+</div>
+<!-- Case Study 3: Ranbval-Core Architecture -->
+<div class="card" data-category="cloud" data-slug="ranbval-core">
+<div class="card-thumb">
+<img alt="ranbval-core" loading="lazy" src="ranbval-core/images/01-core-security-architecture.jpg"/>
+</div>
+<div class="card-tag">
+<i class="fas fa-shield-halved"></i> Internal Developer Platform (IDP)
                 </div>
-                <h2 class="card-title">Ranbval-Core: Enterprise Microservices Security Backbone</h2>
-                <p class="card-desc">
+<h2 class="card-title">Ranbval-Core: Enterprise Microservices Security Backbone</h2>
+<p class="card-desc">
                     How we solved microservice sprawl, fragmented security logic, and contract regressions across the Ranbval ecosystem. Engineered as a centralized Python runtime featuring pure ASGI payload auto-decryption (AES-GCM / ChaCha20), distributed JWT revocation via Redis, anti-replay guards, OpenTelemetry tracing, and 100% CI coverage enforcement across 14+ automated pre-commit tools.
                 </p>
-                <div class="pills">
-                    <span class="pill">100% Line Coverage</span>
-                    <span class="pill">AES-256-GCM / ChaCha20</span>
-                    <span class="pill">Redis JTI Revocation</span>
-                    <span class="pill">OpenTelemetry Tracing</span>
-                    <span class="pill">14+ Pre-Commit Gates</span>
-                    <span class="pill">KMS Envelope Encryption</span>
-                </div>
-                <a href="ranbval-core/index.html" class="btn-read">
+<div class="pills">
+<span class="pill">100% Line Coverage</span>
+<span class="pill">AES-256-GCM / ChaCha20</span>
+<span class="pill">Redis JTI Revocation</span>
+<span class="pill">OpenTelemetry Tracing</span>
+<span class="pill">14+ Pre-Commit Gates</span>
+<span class="pill">KMS Envelope Encryption</span>
+</div>
+<a class="btn-read" href="ranbval-core/index.html">
                     Read Platform Core Case Study <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-</body>
+</a>
+</div>
+</div>
+</div>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const cards = document.querySelectorAll('.card');
+
+            const params = new URLSearchParams(window.location.search);
+            const initialCat = params.get('cat') || 'all';
+
+            function applyFilter(cat) {
+                cards.forEach(card => {
+                    const cardCat = card.getAttribute('data-category');
+                    if (cat === 'all' || cardCat === cat) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+                filterBtns.forEach(btn => {
+                    if (btn.getAttribute('data-filter') === cat) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+            }
+
+            if (initialCat !== 'all') {
+                applyFilter(initialCat);
+            }
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const filter = btn.getAttribute('data-filter');
+                    applyFilter(filter);
+                });
+            });
+        });
+    </script></body>
 </html>

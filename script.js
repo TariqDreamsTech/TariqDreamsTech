@@ -443,7 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ─── Our Projects: Category Filtering & Expand/Collapse Toggle ──────
+    // ─── Our Projects: Category Filtering & Direct Hub Navigation ──────
     const projectCards = document.querySelectorAll('.case-study-feature-card');
     const filterButtons = document.querySelectorAll('.project-filter-btn');
     const toggleProjectsBtn = document.getElementById('toggleProjectsBtn');
@@ -451,13 +451,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleProjectsBtnIcon = document.getElementById('toggleProjectsBtnIcon');
     const projectsCountIndicator = document.getElementById('projectsCountIndicator');
 
-    if (projectCards.length && toggleProjectsBtn) {
-        let isExpanded = false;
+    if (projectCards.length) {
         let currentFilter = 'all';
-        const INITIAL_LIMIT = 3;
+        const INITIAL_LIMIT = 4; // Clean 2x2 symmetrical grid (2 columns x 2 rows)
         const totalAllCount = projectCards.length;
 
-        function updateProjectsView(scrollOnChange = false) {
+        function updateProjectsView() {
             const matchingCards = [];
             projectCards.forEach(card => {
                 const cat = card.getAttribute('data-category');
@@ -471,31 +470,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const totalMatching = matchingCards.length;
 
-            if (isExpanded) {
-                // Show ALL matching cards
-                matchingCards.forEach((card) => {
-                    card.classList.remove('project-card-hidden');
-                    card.style.display = 'block';
-                    card.classList.add('visible');
-                    card.style.opacity = '1';
-                });
-
-                if (toggleProjectsBtnText) {
-                    toggleProjectsBtnText.textContent = `Show Less (Top ${Math.min(INITIAL_LIMIT, totalMatching)})`;
-                }
-                if (toggleProjectsBtnIcon) {
-                    toggleProjectsBtnIcon.className = 'fas fa-chevron-up';
-                }
-                if (projectsCountIndicator) {
-                    projectsCountIndicator.innerHTML = `Showing all <strong>${totalMatching}</strong> of <strong>${totalAllCount}</strong> Projects`;
-                }
-                toggleProjectsBtn.style.display = 'inline-flex';
-            } else {
-                // Show only first INITIAL_LIMIT matching cards
+            if (currentFilter === 'all') {
+                // Show top 4 flagship cards in balanced 2x2 grid
                 matchingCards.forEach((card, index) => {
                     if (index < INITIAL_LIMIT) {
                         card.classList.remove('project-card-hidden');
-                        card.style.display = 'block';
+                        card.style.display = '';
                         card.classList.add('visible');
                         card.style.opacity = '1';
                     } else {
@@ -504,41 +484,36 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
-                const visibleCount = Math.min(INITIAL_LIMIT, totalMatching);
-                if (toggleProjectsBtnText) {
-                    if (currentFilter === 'all') {
-                        toggleProjectsBtnText.textContent = `View More Projects (${totalAllCount} Total)`;
-                    } else {
-                        toggleProjectsBtnText.textContent = `View More Projects (${totalMatching} in Category · ${totalAllCount} Total)`;
-                    }
-                }
-                if (toggleProjectsBtnIcon) {
-                    toggleProjectsBtnIcon.className = 'fas fa-chevron-down';
-                }
                 if (projectsCountIndicator) {
-                    projectsCountIndicator.innerHTML = `Showing <strong>${visibleCount}</strong> of <strong>${totalMatching}</strong> Projects (${totalAllCount} Total)`;
+                    projectsCountIndicator.innerHTML = `Showing <strong>${INITIAL_LIMIT}</strong> of <strong>${totalAllCount}</strong> Featured Projects`;
                 }
+                if (toggleProjectsBtnText) {
+                    toggleProjectsBtnText.textContent = `View All ${totalAllCount} Case Studies & Projects`;
+                }
+            } else {
+                // When a category filter is selected, show matching cards
+                matchingCards.forEach((card) => {
+                    card.classList.remove('project-card-hidden');
+                    card.style.display = '';
+                    card.classList.add('visible');
+                    card.style.opacity = '1';
+                });
 
-                if (totalMatching <= INITIAL_LIMIT) {
-                    toggleProjectsBtn.style.display = 'none';
-                } else {
-                    toggleProjectsBtn.style.display = 'inline-flex';
+                if (projectsCountIndicator) {
+                    projectsCountIndicator.innerHTML = `Showing <strong>${totalMatching}</strong> Projects in Category (${totalAllCount} Total)`;
+                }
+                if (toggleProjectsBtnText) {
+                    toggleProjectsBtnText.textContent = `Explore All ${totalAllCount} Case Studies in Hub`;
                 }
             }
 
-            if (scrollOnChange) {
-                const projSec = document.getElementById('projects') || document.getElementById('case-studies');
-                if (projSec) {
-                    projSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+            if (toggleProjectsBtn) {
+                toggleProjectsBtn.style.display = 'inline-flex';
             }
         }
 
-        // Toggle Expand / Collapse
-        toggleProjectsBtn.addEventListener('click', () => {
-            isExpanded = !isExpanded;
-            updateProjectsView(!isExpanded);
-        });
+        // Initialize view
+        updateProjectsView();
 
         // Filter button click handler
         filterButtons.forEach(btn => {
@@ -550,12 +525,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.classList.add('active');
 
                 currentFilter = filter;
-                if (filter !== 'all') {
-                    isExpanded = true;
-                } else {
-                    isExpanded = false;
-                }
-                updateProjectsView(false);
+                updateProjectsView();
             });
         });
 
@@ -569,6 +539,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         });
+    }
 
         // Initialize with top 3
         updateProjectsView(false);
