@@ -85,26 +85,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ─── View Mode Toggle (Technical vs Plain English) ───
-    const techRoles = [
-        'AI Product Builder',
-        'Founder @ Ranbval',
-        'Senior Python Engineer',
-        'N8N Automation Architect',
-        'Encrypted Infra Engineer',
-    ];
-    const ntRoles = [
-        'AI Problem Solver',
-        'Business Automation Expert',
-        'Company Founder & Product Builder',
-        'Zero-Touch System Architect',
-    ];
-
     let currentMode = 'tech';
     try {
         currentMode = localStorage.getItem('portfolio_view_mode') || 'tech';
     } catch (e) {}
-
-    let currentRoles = currentMode === 'nt' ? ntRoles : techRoles;
 
     function setViewMode(mode) {
         currentMode = mode;
@@ -113,8 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             localStorage.setItem('portfolio_view_mode', mode);
         } catch (e) {}
-
-        currentRoles = isNT ? ntRoles : techRoles;
 
         document.querySelectorAll('.vt-btn').forEach(btn => {
             const btnMode = btn.getAttribute('data-mode');
@@ -182,35 +164,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ─── Typing Animation ─────────────────────────────
+    // ─── Hero Role Display ───────────────────────────
     const roleEl = document.querySelector('.hero-role');
-    if (roleEl) {
-        if (isPdfMode) {
-            roleEl.textContent = 'AI Systems Architect · Founder @ Ranbval · Co-Founder @ Volvexer';
-        } else {
-            roleEl.innerHTML = '<span class="typed-text"></span><span class="typed-cursor">|</span>';
-            const typedText = roleEl.querySelector('.typed-text');
-            let roleIdx = 0, charIdx = 0, deleting = false;
-
-            function type() {
-                const list = currentRoles || techRoles;
-                const current = list[roleIdx % list.length];
-                typedText.textContent = deleting
-                    ? current.slice(0, charIdx--)
-                    : current.slice(0, charIdx++);
-
-                let delay = deleting ? 45 : 90;
-                if (!deleting && charIdx === current.length + 1) {
-                    delay = 1800; deleting = true;
-                } else if (deleting && charIdx === 0) {
-                    deleting = false;
-                    roleIdx = (roleIdx + 1) % list.length;
-                    delay = 400;
-                }
-                setTimeout(type, delay);
-            }
-            setTimeout(type, 800);
-        }
+    if (roleEl && isPdfMode) {
+        roleEl.textContent = 'AI/ML Engineer | Forward Deployed Engineer';
     }
 
     // ─── Experience Grid Pagination (9 per page) ──────

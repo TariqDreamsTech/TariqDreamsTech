@@ -367,11 +367,25 @@ img { max-width: 100%; display: block; }
 }
 .hero-role {
     font-family: var(--font-h);
-    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
-    color: var(--text-muted);
+    font-size: clamp(1.2rem, 2.5vw, 1.65rem);
+    color: #e2e8f0;
     margin-bottom: 1.75rem;
-    font-weight: 500;
-    min-height: 2rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+.hero-role .hero-role-title {
+    color: #f1f5f9;
+}
+.hero-role .role-separator {
+    color: var(--accent);
+    font-weight: 700;
+    margin: 0 0.45rem;
+    opacity: 0.9;
 }
 .typed-cursor {
     color: var(--accent);
