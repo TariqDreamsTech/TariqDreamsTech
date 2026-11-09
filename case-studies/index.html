@@ -630,6 +630,78 @@
                 </a>
             </div>
 
+            <!-- Case Study: MVTec AD Defect Benchmark Research -->
+            <div class="card" style="border-top: 3px solid #38bdf8;">
+                <div class="card-tag" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.25);">
+                    <i class="fas fa-microscope"></i> Computer Vision Research &middot; MVTec AD Benchmark
+                </div>
+                <h2 class="card-title">Three Paradigms, One Benchmark: Zero-Shot CLIP, Supervised FPN–Attention and Autoencoders on MVTec AD</h2>
+                <p class="card-desc">
+                    Lead author empirical research study evaluating industrial visual anomaly detection on the MVTec AD benchmark (5,354 images across 15 categories). Conducted an empirical comparison of frozen CLIP ViT-B/32, supervised ResNet-18 + FPN + CBAM attention, and convolutional autoencoders (MSE+SSIM) &mdash; discovering that image-conditioned memory banks achieve 89.6% AUROC (+20.4 pp gain over zero-shot text prompts), exposing deceptive empty-mask metric artefacts in supervised networks (0.001 true defect IoU vs 0.313 headline), and quantifying autoencoder bottleneck defect healing.
+                </p>
+                <div class="pills">
+                    <span class="pill">MVTec AD (15 Categories)</span>
+                    <span class="pill">Zero-Shot CLIP ViT-B/32</span>
+                    <span class="pill">89.6% Image AUROC</span>
+                    <span class="pill">0.777 Peak Patch IoU</span>
+                    <span class="pill">ResNet-18 + FPN + CBAM</span>
+                    <span class="pill">Empty-Mask Metric Artefact Exposed</span>
+                    <span class="pill">Conv. Autoencoder (MSE + SSIM)</span>
+                    <span class="pill">19,159 Patch Token Memory Bank</span>
+                </div>
+                <a href="mvtec-defect-benchmark/index.html" class="btn-read">
+                    Read Computer Vision Research Study <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <!-- Case Study: Robust Federated Perception (TAG) -->
+            <div class="card" style="border-top: 3px solid #38bdf8;">
+                <div class="card-tag" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.25);">
+                    <i class="fas fa-shield-halved"></i> Adversarial Federated Learning &middot; Safety-Critical Perception
+                </div>
+                <h2 class="card-title">Trust as a Gate, Not a Weight: Robust Federated Aggregation for Safety-Critical Perception</h2>
+                <p class="card-desc">
+                    Lead author empirical research study evaluating Byzantine-robust federated learning on real-world autonomous driving perception (BDD100K dataset, 20 vehicle clients across 8 physical weather and lighting domains). Discovered that geometric aggregators (Krum) suffer from severe size bias &mdash; discarding 95% of training data and losing 9.2 balanced-accuracy points on clean data. Engineered Trust-Gated Aggregation (TAG), combining sample-count weighting with a size-invariant cosine alignment gate and median norm clipping &mdash; matching clean FedAvg (0.710) with 0.000 clean cost, remaining within 0.004 under all 6 attacks up to a 45% Byzantine fraction, and holding pedestrian miss rates within a rock-solid band of 0.012.
+                </p>
+                <div class="pills">
+                    <span class="pill">BDD100K Driving Fleet (20 Clients)</span>
+                    <span class="pill">Trust-Gated Aggregation (TAG)</span>
+                    <span class="pill">0.710 Clean Balanced Accuracy</span>
+                    <span class="pill">0.706 Worst-Case Attack Accuracy</span>
+                    <span class="pill">45% Byzantine Fault Tolerance</span>
+                    <span class="pill">Size-Bias in Krum Discovered</span>
+                    <span class="pill">0.012 Pedestrian Miss Rate Band</span>
+                    <span class="pill">ResNet-18 &amp; PyTorch 2.11</span>
+                </div>
+                <a href="robust-federated-perception/index.html" class="btn-read">
+                    Read Federated Learning Research Study <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <!-- Case Study: UNSW-NB15 Network Intrusion Detection (ANOVA + ML) -->
+            <div class="card" style="border-top: 3px solid #06b6d4;">
+                <div class="card-tag" style="background: rgba(6, 182, 212, 0.12); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.25);">
+                    <i class="fas fa-shield-virus"></i> Cybersecurity &middot; Network Intrusion Detection (NIDS)
+                </div>
+                <h2 class="card-title">ANOVA F-Test Feature Selection for Machine Learning-Based Network Intrusion Detection on UNSW-NB15</h2>
+                <p class="card-desc">
+                    Lead author empirical research study designing a lightweight, high-performance two-stage Network Intrusion Detection System on the modern UNSW-NB15 benchmark (82,332 flow records). Applied an ANOVA F-statistic to compress 49 raw network flow attributes down to 15 top-ranked features (69.4% dimensional reduction) shared identically across binary and multi-class tasks. Attained 98.67% binary detection accuracy via variance-smoothed Gaussian Naive Bayes (surpassing Random Forest at 97.49% and SVM at 85.99%), achieved 78.13% multi-class attack identification via tuned XGBoost across 9 threat families, and diagnosed critical minority class imbalance bottlenecks (macro-F1 = 0.39). Open-source verified on GitHub.
+                </p>
+                <div class="pills">
+                    <span class="pill">UNSW-NB15 Benchmark</span>
+                    <span class="pill">ANOVA F-Test Selection</span>
+                    <span class="pill">98.67% Binary Accuracy</span>
+                    <span class="pill">78.13% Multi-Class Accuracy</span>
+                    <span class="pill">15 Optimal Features (69.4% Cut)</span>
+                    <span class="pill">Gaussian Naive Bayes &amp; XGBoost</span>
+                    <span class="pill">Minority Class Diagnosis (0.39 F1)</span>
+                    <span class="pill">Federated IIoT Vision</span>
+                </div>
+                <a href="unsw-intrusion-detection/index.html" class="btn-read">
+                    Read Intrusion Detection Case Study <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+
             <!-- Case Study 3: Ranbval-Core Architecture -->
             <div class="card">
                 <div class="card-tag">

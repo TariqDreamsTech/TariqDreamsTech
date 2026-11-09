@@ -443,6 +443,137 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // ─── Our Projects: Category Filtering & Expand/Collapse Toggle ──────
+    const projectCards = document.querySelectorAll('.case-study-feature-card');
+    const filterButtons = document.querySelectorAll('.project-filter-btn');
+    const toggleProjectsBtn = document.getElementById('toggleProjectsBtn');
+    const toggleProjectsBtnText = document.getElementById('toggleProjectsBtnText');
+    const toggleProjectsBtnIcon = document.getElementById('toggleProjectsBtnIcon');
+    const projectsCountIndicator = document.getElementById('projectsCountIndicator');
+
+    if (projectCards.length && toggleProjectsBtn) {
+        let isExpanded = false;
+        let currentFilter = 'all';
+        const INITIAL_LIMIT = 3;
+        const totalAllCount = projectCards.length;
+
+        function updateProjectsView(scrollOnChange = false) {
+            const matchingCards = [];
+            projectCards.forEach(card => {
+                const cat = card.getAttribute('data-category');
+                if (currentFilter === 'all' || cat === currentFilter) {
+                    matchingCards.push(card);
+                } else {
+                    card.classList.add('project-card-hidden');
+                    card.style.display = 'none';
+                }
+            });
+
+            const totalMatching = matchingCards.length;
+
+            if (isExpanded) {
+                // Show ALL matching cards
+                matchingCards.forEach((card) => {
+                    card.classList.remove('project-card-hidden');
+                    card.style.display = 'block';
+                    card.classList.add('visible');
+                    card.style.opacity = '1';
+                });
+
+                if (toggleProjectsBtnText) {
+                    toggleProjectsBtnText.textContent = `Show Less (Top ${Math.min(INITIAL_LIMIT, totalMatching)})`;
+                }
+                if (toggleProjectsBtnIcon) {
+                    toggleProjectsBtnIcon.className = 'fas fa-chevron-up';
+                }
+                if (projectsCountIndicator) {
+                    projectsCountIndicator.innerHTML = `Showing all <strong>${totalMatching}</strong> of <strong>${totalAllCount}</strong> Projects`;
+                }
+                toggleProjectsBtn.style.display = 'inline-flex';
+            } else {
+                // Show only first INITIAL_LIMIT matching cards
+                matchingCards.forEach((card, index) => {
+                    if (index < INITIAL_LIMIT) {
+                        card.classList.remove('project-card-hidden');
+                        card.style.display = 'block';
+                        card.classList.add('visible');
+                        card.style.opacity = '1';
+                    } else {
+                        card.classList.add('project-card-hidden');
+                        card.style.display = 'none';
+                    }
+                });
+
+                const visibleCount = Math.min(INITIAL_LIMIT, totalMatching);
+                if (toggleProjectsBtnText) {
+                    if (currentFilter === 'all') {
+                        toggleProjectsBtnText.textContent = `View More Projects (${totalAllCount} Total)`;
+                    } else {
+                        toggleProjectsBtnText.textContent = `View More Projects (${totalMatching} in Category · ${totalAllCount} Total)`;
+                    }
+                }
+                if (toggleProjectsBtnIcon) {
+                    toggleProjectsBtnIcon.className = 'fas fa-chevron-down';
+                }
+                if (projectsCountIndicator) {
+                    projectsCountIndicator.innerHTML = `Showing <strong>${visibleCount}</strong> of <strong>${totalMatching}</strong> Projects (${totalAllCount} Total)`;
+                }
+
+                if (totalMatching <= INITIAL_LIMIT) {
+                    toggleProjectsBtn.style.display = 'none';
+                } else {
+                    toggleProjectsBtn.style.display = 'inline-flex';
+                }
+            }
+
+            if (scrollOnChange) {
+                const projSec = document.getElementById('projects') || document.getElementById('case-studies');
+                if (projSec) {
+                    projSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        }
+
+        // Toggle Expand / Collapse
+        toggleProjectsBtn.addEventListener('click', () => {
+            isExpanded = !isExpanded;
+            updateProjectsView(!isExpanded);
+        });
+
+        // Filter button click handler
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const filter = btn.getAttribute('data-filter');
+                if (filter === currentFilter) return;
+
+                filterButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                currentFilter = filter;
+                if (filter !== 'all') {
+                    isExpanded = true;
+                } else {
+                    isExpanded = false;
+                }
+                updateProjectsView(false);
+            });
+        });
+
+        // Allow whole card click navigation to its study
+        projectCards.forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('a') || e.target.closest('button')) return;
+                const link = card.querySelector('h3.case-title a');
+                if (link && link.href) {
+                    window.location.href = link.href;
+                }
+            });
+        });
+
+        // Initialize with top 3
+        updateProjectsView(false);
+    }
+
     // ─── Back to Top ──────────────────────────────────
     const backToTop = document.getElementById('back-to-top');
     window.addEventListener('scroll', () => {
