@@ -3770,6 +3770,14 @@ body.nt-mode .about-highlights.nt-only {
   display: grid !important;
 }
 
+body.nt-mode .case-tech-strip.nt-only {
+  display: flex !important;
+}
+
+body.nt-mode .section-tag.nt-only {
+  display: inline-flex !important;
+}
+
 /* NT mode: accent color shifts to crisp sky blue to visually clarify mode */
 body.nt-mode .section-title { 
   background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);

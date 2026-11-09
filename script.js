@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
             const mode = btn.getAttribute('data-mode');
-            if (mode && mode !== currentMode) {
+            if (mode) {
                 setViewMode(mode);
                 try {
                     localStorage.setItem('portfolio_view_mode_chosen', 'true');
@@ -539,10 +539,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         });
-    }
-
-        // Initialize with top 3
-        updateProjectsView(false);
     }
 
     // ─── Back to Top ──────────────────────────────────
