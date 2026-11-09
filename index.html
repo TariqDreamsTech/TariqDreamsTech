@@ -510,17 +510,17 @@ I've worked with over <strong>23 companies</strong> across the US, UK, and Europ
 <h2 class="section-title nt-only" style="display:none;"><i class="fas fa-briefcase"></i> Our Projects &amp; Case Studies</h2>
 <div class="line"></div>
 <p class="section-subtitle tech-only">
-Explore <strong>21 production systems &amp; in-depth architectural case studies</strong> spanning autonomous AI agents, multi-cloud GenAI ops, vector databases, high-throughput microservices, and peer-reviewed deep learning research.
+Explore <strong>23 production systems &amp; in-depth architectural case studies</strong> spanning autonomous AI agents, multi-cloud GenAI ops, vector databases, high-throughput microservices, and peer-reviewed deep learning research.
 </p>
 <p class="section-subtitle nt-only" style="display:none;">
-Here are <strong>21 real-world projects and case studies</strong> I engineered — showing the challenges faced, the architecture built, and the real-world results delivered.
+Here are <strong>23 real-world projects and case studies</strong> I engineered — showing the challenges faced, the architecture built, and the real-world results delivered.
 </p>
 </div>
 
 <!-- Category Filter Bar -->
 <div class="projects-filter-bar reveal">
 <button class="project-filter-btn active" data-filter="all" type="button">
-<i class="fas fa-border-all"></i> All Projects <span class="filter-count">21</span>
+<i class="fas fa-border-all"></i> All Projects <span class="filter-count">23</span>
 </button>
 <button class="project-filter-btn" data-filter="ai" type="button">
 <i class="fas fa-robot"></i> AI Agents &amp; LLMs <span class="filter-count">7</span>
@@ -535,7 +535,7 @@ Here are <strong>21 real-world projects and case studies</strong> I engineered �
 <i class="fas fa-building"></i> Enterprise SaaS &amp; Automation <span class="filter-count">4</span>
 </button>
 <button class="project-filter-btn" data-filter="research" type="button">
-<i class="fas fa-brain"></i> AI Research &amp; Cybersecurity <span class="filter-count">3</span>
+<i class="fas fa-brain"></i> AI Research &amp; Autonomous Robotics <span class="filter-count">5</span>
 </button>
 </div>
 <p class="section-subtitle tech-only">
@@ -1737,12 +1737,156 @@ Empirical machine learning and cybersecurity research developing an accurate, co
 
 
 
+
+<!-- Featured Flagship 21: Clearpath Husky A200 UGV -->
+<div class="case-study-feature-card reveal project-card-hidden" data-category="research" data-project-slug="husky-slam-navigation" style="border-left: 4px solid #f59e0b; display: none;">
+<div class="case-card-header">
+<div class="case-badge-pill" style="background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3); color: #f59e0b;">
+<i class="fas fa-crosshairs"></i>
+<span>Field Robotics · Autonomous SLAM &amp; Odometry · Clearpath Husky A200</span>
+</div>
+<span class="case-read-time"><i class="far fa-clock"></i> 10 Min Deep Dive</span>
+</div>
+<div class="case-card-content">
+<h3 class="case-title">
+<a href="case-studies/husky-slam-navigation/index.html">Clearpath Husky A200 UGV: Autonomous Gmapping SLAM, Multi-Sensor Odometry Calibration &amp; Dijkstra Navigation</a>
+</h3>
+<p class="case-desc tech-only">
+Engineered an end-to-end autonomous navigation stack on a Clearpath Husky A200 UGV in ROS and Gazebo. Calibrated differential skid-steer odometry (wheel separation 1.07025m, wheel radius 0.1651m), deployed Rao-Blackwellized particle filter SLAM (20mm grid resolution) with planar laser scan matching, dynamic dual-layer costmap inflation, and Dijkstra global trajectory execution.
+</p>
+<p class="case-desc nt-only" style="display:none;">
+I built a smart navigation brain for a heavy-duty 4x4 outdoor robot (Clearpath Husky). The robot drives itself through unmapped hazardous environments, creates a digital map in real time using laser scans, and avoids obstacles autonomously without needing a human remote control.
+</p>
+<div class="case-tech-strip tech-only">
+<span>ROS Navigation Stack</span>
+<span>Gmapping (RBPF)</span>
+<span>Dijkstra Global Planner</span>
+<span>DWA Local Planner</span>
+<span>Odometry Calibration</span>
+<span>Gazebo ODE Physics</span>
+<span>RViz Visualization</span>
+</div>
+<div class="case-tech-strip nt-only" style="display:none;">
+<span>Smart 4x4 Ground Robot</span>
+<span>Live Laser 2D Mapping</span>
+<span>Self-Driving Autonav</span>
+<span>Zero Crash Protection</span>
+<span>Virtual Field Simulation</span>
+</div>
+<div class="case-stats-row">
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #f59e0b;">50 Hz</span>
+<span class="case-stat-lbl">Odometry Loop</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #10b981;">20 mm</span>
+<span class="case-stat-lbl">SLAM Grid Resolution</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #38bdf8;">&lt; 12 ms</span>
+<span class="case-stat-lbl">Dijkstra Re-compute</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #a855f7;">100%</span>
+<span class="case-stat-lbl">Loop Closure Sync</span>
+</div>
+</div>
+<div class="case-tags">
+<span class="case-tag"><i class="fas fa-robot"></i> Clearpath Husky A200</span>
+<span class="case-tag"><i class="fas fa-map"></i> Gmapping SLAM</span>
+<span class="case-tag"><i class="fas fa-route"></i> Dijkstra Pathing</span>
+<span class="case-tag"><i class="fas fa-cogs"></i> Odometry Multiplier</span>
+<span class="case-tag"><i class="fas fa-cubes"></i> Gazebo 11</span>
+<span class="case-tag"><i class="fas fa-chart-line"></i> RViz Coordinate Tree</span>
+</div>
+<div class="case-actions">
+<a class="btn btn-primary" href="case-studies/husky-slam-navigation/index.html">
+<i class="fas fa-book-open"></i> Read Husky UGV Case Study
+</a>
+<a class="btn btn-secondary" href="case-studies/husky-slam-navigation/index.html#architecture">
+<i class="fas fa-sitemap"></i> View ROS Graph
+</a>
+</div>
+</div>
+</div>
+
+<!-- Featured Flagship 22: Hector Quadrotor UAV & Smart Wheelchair -->
+<div class="case-study-feature-card reveal project-card-hidden" data-category="research" data-project-slug="hector-quadrotor-uav" style="border-left: 4px solid #38bdf8; display: none;">
+<div class="case-card-header">
+<div class="case-badge-pill" style="background: rgba(56, 189, 248, 0.1); border-color: rgba(56, 189, 248, 0.3); color: #38bdf8;">
+<i class="fas fa-helicopter"></i>
+<span>Aerial Robotics &amp; Assistive Systems · 6-DOF Flight Control · Hector UAV</span>
+</div>
+<span class="case-read-time"><i class="far fa-clock"></i> 9 Min Deep Dive</span>
+</div>
+<div class="case-card-content">
+<h3 class="case-title">
+<a href="case-studies/hector-quadrotor-uav/index.html">Hector Quadrotor UAV &amp; Smart Wheelchair: Autonomous 3D Flight Control, Motor Arming Telemetry &amp; Indoor Assistive SLAM</a>
+</h3>
+<p class="case-desc tech-only">
+Architected a dual aerial-ground robotics system featuring a 6-DOF Hector Quadrotor UAV with cascade PID attitude stabilization (100 Hz inner loop), motor arming RPC services (/enable_motors), and sonar/barometric altitude hold (&lt; 0.05m error), alongside an autonomous smart electric wheelchair for collision-free hospital corridor and doorway traversal in ROS and Gazebo.
+</p>
+<p class="case-desc nt-only" style="display:none;">
+I built autonomous self-controlling robotics systems for both the air and ground: an aerial drone (quadrotor) that stabilizes its own flight, balances in mid-air, and navigates 3D space, and a smart electric wheelchair that drives itself through narrow hospital doors and hallways to safely help mobility-impaired patients.
+</p>
+<div class="case-tech-strip tech-only">
+<span>Hector Quadrotor UAV</span>
+<span>Cascade PID Controller</span>
+<span>Motor Arming Protocol</span>
+<span>Smart Wheelchair Autonav</span>
+<span>Gazebo 6-DOF Aerodynamics</span>
+<span>Doorway Margin Envelope</span>
+</div>
+<div class="case-tech-strip nt-only" style="display:none;">
+<span>Autonomous Flying Drone</span>
+<span>Mid-Air Auto Hover</span>
+<span>Self-Driving Wheelchair</span>
+<span>Hospital Corridor Centering</span>
+<span>3D Physics Flight Sim</span>
+</div>
+<div class="case-stats-row">
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #38bdf8;">100 Hz</span>
+<span class="case-stat-lbl">Attitude Rate PID</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #10b981;">6-DOF</span>
+<span class="case-stat-lbl">Rigid Dynamics</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #f59e0b;">&lt; 0.05 m</span>
+<span class="case-stat-lbl">Altitude Error</span>
+</div>
+<div class="case-stat-item">
+<span class="case-stat-val" style="color: #a855f7;">100%</span>
+<span class="case-stat-lbl">Door Passage Safety</span>
+</div>
+</div>
+<div class="case-tags">
+<span class="case-tag"><i class="fas fa-helicopter"></i> Hector Quadrotor</span>
+<span class="case-tag"><i class="fas fa-microchip"></i> Cascade PID</span>
+<span class="case-tag"><i class="fas fa-wheelchair"></i> Smart Wheelchair</span>
+<span class="case-tag"><i class="fas fa-shield"></i> Motor Arming Guard</span>
+<span class="case-tag"><i class="fas fa-wind"></i> 6-DOF Aerodynamics</span>
+<span class="case-tag"><i class="fas fa-door-open"></i> Doorway Clearance</span>
+</div>
+<div class="case-actions">
+<a class="btn btn-primary" href="case-studies/hector-quadrotor-uav/index.html">
+<i class="fas fa-book-open"></i> Read Quadrotor &amp; Wheelchair Study
+</a>
+<a class="btn btn-secondary" href="case-studies/hector-quadrotor-uav/index.html#flight-architecture">
+<i class="fas fa-sitemap"></i> View Flight Control Graph
+</a>
+</div>
+</div>
+</div>
+
 <!-- Projects Expand/Collapse Toggle & Counter -->
 <div class="projects-toggle-wrapper reveal">
 <div class="projects-count-indicator" id="projectsCountIndicator">Showing <strong>3</strong> of <strong>21</strong> Projects</div>
 <button class="projects-toggle-btn" id="toggleProjectsBtn" type="button">
 <i class="fas fa-layer-group"></i>
-<span id="toggleProjectsBtnText">View More Projects (21 Total)</span>
+<span id="toggleProjectsBtnText">View More Projects (23 Total)</span>
 <i class="fas fa-chevron-down" id="toggleProjectsBtnIcon"></i>
 </button>
 </div>
