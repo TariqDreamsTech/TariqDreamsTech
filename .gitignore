@@ -113,7 +113,7 @@ Research Projects/**
 
 
 # Embedded local repositories
-ranbval-core/
+/ranbval-core/
 
 # Video files and raw extraction frames
 *.webm

@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANOVA F-Test Feature Selection for Network Intrusion Detection on UNSW-NB15 | Ahsan Tariq</title>
+    <meta name="description" content="Empirical research study and lightweight machine learning NIDS pipeline by Ahsan Tariq using ANOVA F-test feature selection on UNSW-NB15 — achieving 98.67% binary accuracy, 78.13% multi-class accuracy, and diagnosing class imbalance.">
+
+    <!-- Google Fonts: Plus Jakarta Sans & Outfit & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-main: #060913;
+            --bg-surface: #0a0f1e;
+            --bg-card: #0e152a;
+            --bg-card-hover: #141e3a;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-highlight: rgba(6, 182, 212, 0.35);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --cyan: #06b6d4;
+            --cyan-glow: rgba(6, 182, 212, 0.18);
+            --electric-blue: #38bdf8;
+            --indigo: #6366f1;
+            --emerald: #10b981;
+            --emerald-glow: rgba(16, 185, 129, 0.16);
+            --amber: #f59e0b;
+            --rose: #f43f5e;
+            --rose-glow: rgba(244, 63, 94, 0.18);
+            --purple: #a855f7;
+            --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-display: 'Outfit', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --radius-xl: 24px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --container-max: 1260px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: var(--cyan);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        a:hover {
+            color: #22d3ee;
+            text-decoration: underline;
+        }
+
+        .wrapper {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(6, 9, 19, 0.92);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 16px 0;
+        }
+
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            padding: 6px 14px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            color: var(--text-primary);
+            background: rgba(6, 182, 212, 0.12);
+            border-color: rgba(6, 182, 212, 0.3);
+            text-decoration: none;
+        }
+
+        .breadcrumbs {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .breadcrumbs span {
+            color: var(--text-secondary);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .badge-live {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-family: var(--font-mono);
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 9999px;
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            color: #34d399;
+            letter-spacing: 0.02em;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #10b981;
+            animation: pulse-ring 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(0.9); opacity: 0.8; }
+            50% { transform: scale(1.3); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.8; }
+        }
+
+        .toggle-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 7px 15px;
+            border-radius: 9999px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(6, 182, 212, 0.15);
+            border-color: var(--cyan);
+            color: #ffffff;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 70px 0 50px;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -120px;
+            right: 15%;
+            width: 550px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+            filter: blur(90px);
+        }
+
+        .meta-tagline {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            font-family: var(--font-mono);
+            color: #22d3ee;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.25);
+            padding: 6px 14px;
+            border-radius: 9999px;
+            margin-bottom: 24px;
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(32px, 4.2vw, 52px);
+            font-weight: 800;
+            line-height: 1.18;
+            letter-spacing: -0.02em;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .hero-title span {
+            background: linear-gradient(135deg, #22d3ee 0%, #38bdf8 50%, #818cf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-author-strip {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .author-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .author-badge i {
+            color: #22d3ee;
+        }
+
+        .inst-tag {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        .repo-pills {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 6px;
+            flex-wrap: wrap;
+        }
+
+        .repo-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-family: var(--font-mono);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            padding: 4px 10px;
+            border-radius: 6px;
+            color: var(--text-secondary);
+        }
+
+        .repo-pill:hover {
+            color: var(--text-primary);
+            border-color: var(--cyan);
+        }
+
+        .hero-lead {
+            font-size: clamp(17px, 1.8vw, 19.5px);
+            color: var(--text-secondary);
+            max-width: 1020px;
+            margin-bottom: 38px;
+            line-height: 1.68;
+        }
+
+        /* Hero Stats Grid */
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 18px;
+            margin-bottom: 48px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(6, 182, 212, 0.4);
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--cyan);
+        }
+
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: 38px;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.1;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .stat-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 6px;
+            font-family: var(--font-mono);
+        }
+
+        /* Hero Master Diagram Mockup */
+        .browser-mockup {
+            background: #080c18;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 40px rgba(6, 182, 212, 0.08);
+            margin-bottom: 70px;
+        }
+
+        .browser-chrome {
+            background: #0c1224;
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .dots {
+            display: flex;
+            gap: 7px;
+        }
+
+        .dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background: #ef4444; }
+        .dot-yellow { background: #f59e0b; }
+        .dot-green { background: #10b981; }
+
+        .address-bar {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 6px 16px;
+            font-size: 12px;
+            font-family: var(--font-mono);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-grow: 1;
+            max-width: 600px;
+        }
+
+        .address-bar i {
+            color: #10b981;
+        }
+
+        .diagram-container {
+            padding: 24px;
+            background: #060913;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .diagram-container img {
+            width: 100%;
+            height: auto;
+            border-radius: var(--radius-md);
+            display: block;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: transform 0.25s ease, filter 0.25s ease;
+        }
+
+        .diagram-container:hover img {
+            filter: brightness(1.03);
+        }
+
+        .zoom-overlay-hint {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            background: rgba(6, 9, 19, 0.9);
+            border: 1px solid var(--border-highlight);
+            color: #22d3ee;
+            font-size: 13px;
+            font-family: var(--font-mono);
+            padding: 8px 16px;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+        }
+
+        /* Statement Banner */
+        .statement-banner {
+            padding: 48px 0;
+            background: linear-gradient(180deg, rgba(6, 182, 212, 0.05) 0%, rgba(6, 9, 19, 0) 100%);
+            border-top: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border-subtle);
+            margin-bottom: 70px;
+        }
+
+        .statement-text {
+            font-family: var(--font-display);
+            font-size: clamp(19px, 2.3vw, 28px);
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.5;
+            text-align: center;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .statement-text span {
+            color: #22d3ee;
+            border-bottom: 2px dashed rgba(6, 182, 212, 0.5);
+            padding-bottom: 2px;
+        }
+
+        /* Section Headings */
+        .section-header {
+            margin-bottom: 42px;
+        }
+
+        .section-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-family: var(--font-mono);
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #22d3ee;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(26px, 3.2vw, 40px);
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.22;
+            letter-spacing: -0.01em;
+        }
+
+        .section-lead {
+            font-size: 16.5px;
+            color: var(--text-secondary);
+            max-width: 900px;
+            margin-top: 10px;
+        }
+
+        /* Deep Dive Showcases */
+        .showcase-block {
+            margin-bottom: 90px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .showcase-header {
+            padding: 30px 36px;
+            border-bottom: 1px solid var(--border-subtle);
+            background: #0b1122;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .showcase-number {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: #22d3ee;
+            background: rgba(6, 182, 212, 0.12);
+            padding: 4px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .showcase-title {
+            font-family: var(--font-display);
+            font-size: clamp(22px, 2.2vw, 28px);
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .showcase-body {
+            padding: 36px;
+        }
+
+        .showcase-diagram-wrap {
+            margin-bottom: 30px;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #080c16;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .showcase-diagram-wrap img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.25s ease;
+        }
+
+        .showcase-diagram-wrap:hover img {
+            transform: scale(1.008);
+        }
+
+        /* Dual Explanation Tabs */
+        .dual-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .dual-tabs {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .plain-box {
+            background: rgba(6, 182, 212, 0.04);
+            border: 1px solid rgba(6, 182, 212, 0.25);
+            border-radius: var(--radius-md);
+            padding: 24px;
+        }
+
+        .plain-box h5 {
+            color: #22d3ee;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .plain-box p {
+            font-size: 14.5px;
+            color: #cbd5e1;
+            line-height: 1.65;
+            margin-bottom: 12px;
+        }
+
+        .plain-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .tech-box {
+            background: rgba(99, 102, 241, 0.04);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            border-radius: var(--radius-md);
+            padding: 24px;
+        }
+
+        .tech-box h5 {
+            color: #818cf8;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tech-box p {
+            font-size: 14px;
+            color: #cbd5e1;
+            line-height: 1.65;
+            margin-bottom: 12px;
+        }
+
+        .tech-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .tech-box li {
+            font-size: 13.5px;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .tech-box li::before {
+            content: '▹';
+            position: absolute;
+            left: 0;
+            color: #818cf8;
+            font-size: 14px;
+        }
+
+        /* Multi-Image Gallery */
+        .image-gallery-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 24px 0;
+        }
+
+        @media (max-width: 800px) {
+            .image-gallery-2col {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .gallery-item {
+            background: #080c16;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .gallery-caption {
+            padding: 10px 14px;
+            font-size: 12px;
+            font-family: var(--font-mono);
+            color: var(--text-secondary);
+            background: #0c1222;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        /* Code Block Snippet */
+        .code-container {
+            background: #080d1a;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            margin-top: 24px;
+        }
+
+        .code-header {
+            background: #0e1526;
+            padding: 10px 18px;
+            font-size: 12px;
+            font-family: var(--font-mono);
+            color: var(--text-secondary);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .code-header span i {
+            margin-right: 6px;
+            color: #22d3ee;
+        }
+
+        pre code {
+            display: block;
+            padding: 20px;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: #e2e8f0;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+
+        .c-kw { color: #f43f5e; font-weight: 600; }
+        .c-fn { color: #38bdf8; font-weight: 600; }
+        .c-str { color: #34d399; }
+        .c-num { color: #fbbf24; }
+        .c-cmt { color: #64748b; font-style: italic; }
+        .c-cls { color: #a855f7; font-weight: 600; }
+
+        /* Tables */
+        .table-responsive {
+            overflow-x: auto;
+            margin: 30px 0 50px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13.5px;
+        }
+
+        th {
+            background: #0b1122;
+            padding: 16px 20px;
+            color: #ffffff;
+            font-weight: 700;
+            font-family: var(--font-display);
+            font-size: 13.5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        td {
+            padding: 14px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #cbd5e1;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .highlight-col {
+            background: rgba(6, 182, 212, 0.05);
+            color: #22d3ee;
+            font-weight: 600;
+        }
+
+        .pos-result {
+            color: #34d399;
+            font-weight: 600;
+        }
+
+        .neg-result {
+            color: #f87171;
+            font-weight: 600;
+        }
+
+        /* Tech Stack Grid */
+        .stack-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 80px;
+        }
+
+        .stack-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .stack-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(6, 182, 212, 0.4);
+        }
+
+        .stack-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            background: rgba(6, 182, 212, 0.12);
+            color: #22d3ee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+
+        .stack-name {
+            font-family: var(--font-display);
+            font-size: 17px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+
+        .stack-role {
+            font-size: 12.5px;
+            font-family: var(--font-mono);
+            color: #38bdf8;
+            margin-bottom: 12px;
+        }
+
+        .stack-desc {
+            font-size: 13.5px;
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
+
+        /* Ownership Grid */
+        .ownership-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 22px;
+            margin-bottom: 90px;
+        }
+
+        .owner-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            border-left: 4px solid #06b6d4;
+        }
+
+        .owner-card h4 {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .owner-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Next Steps CTA */
+        .cta-section {
+            background: linear-gradient(135deg, #0e162c 0%, #060913 100%);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: var(--radius-xl);
+            padding: 60px 40px;
+            text-align: center;
+            margin-bottom: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-title {
+            font-family: var(--font-display);
+            font-size: clamp(26px, 3vw, 38px);
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 16px;
+        }
+
+        .cta-desc {
+            font-size: 17px;
+            color: var(--text-secondary);
+            max-width: 750px;
+            margin: 0 auto 32px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14.5px;
+            font-weight: 600;
+            padding: 12px 26px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 18px rgba(6, 182, 212, 0.35);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 24px rgba(6, 182, 212, 0.5);
+            transform: translateY(-2px);
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            color: #ffffff;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-subtle);
+            padding: 40px 0;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Lightbox Modal */
+        .lightbox-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            backdrop-filter: blur(8px);
+        }
+
+        .lightbox-modal.active {
+            display: flex;
+        }
+
+        .lightbox-content {
+            max-width: 95vw;
+            max-height: 90vh;
+            position: relative;
+        }
+
+        .lightbox-content img {
+            max-width: 100%;
+            max-height: 85vh;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+            display: block;
+        }
+
+        .lightbox-caption {
+            color: #e2e8f0;
+            font-size: 14px;
+            font-family: var(--font-mono);
+            text-align: center;
+            margin-top: 14px;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: -45px;
+            right: 0;
+            color: #ffffff;
+            font-size: 26px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 6px;
+            transition: color 0.2s ease;
+        }
+
+        .lightbox-close:hover {
+            color: #22d3ee;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sticky Navigation -->
+    <nav class="top-nav">
+        <div class="wrapper nav-inner">
+            <div class="nav-left">
+                <a href="../index.html" class="back-link">
+                    <i class="fas fa-arrow-left"></i> All Case Studies
+                </a>
+                <div class="breadcrumbs">
+                    <a href="../../index.html">Portfolio</a>
+                    <i class="fas fa-chevron-right" style="font-size: 10px;"></i>
+                    <a href="../index.html">Case Studies</a>
+                    <i class="fas fa-chevron-right" style="font-size: 10px;"></i>
+                    <span>UNSW-NB15 Intrusion Detection</span>
+                </div>
+            </div>
+            <div class="nav-right">
+                <div class="badge-live">
+                    <span class="pulse-dot"></span>
+                    <span>GITHUB VERIFIED · UNSW-NB15</span>
+                </div>
+                <button class="toggle-btn" id="audienceToggle" onclick="toggleAudience()">
+                    <i class="fas fa-sliders"></i>
+                    <span id="toggleLabel">Audience: Technical Research View</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="wrapper">
+            <div class="meta-tagline">
+                <i class="fas fa-shield-virus"></i> STATISTICAL FEATURE SELECTION &middot; NETWORK CYBERSECURITY
+            </div>
+            <h1 class="hero-title">
+                ANOVA F-Test Feature Selection for <span>Machine Learning-Based Network Intrusion Detection</span> on UNSW-NB15
+            </h1>
+
+            <div class="hero-author-strip">
+                <div class="author-badge">
+                    <i class="fas fa-user-shield"></i> Ahsan Tariq &middot; Lead Machine Learning &amp; Cybersecurity Researcher
+                </div>
+                <span class="inst-tag"><i class="fas fa-graduation-cap"></i> Dept. of Computer Systems Engineering, The Islamia University of Bahawalpur</span>
+            </div>
+
+            <div class="repo-pills">
+                <a href="https://github.com/ahsantariq7/Intrusion-Detection-System" target="_blank" class="repo-pill">
+                    <i class="fab fa-github"></i> ahsantariq7/Intrusion-Detection-System ↗
+                </a>
+                <a href="https://github.com/ahsantariq7/Intusion-detection-System-Web" target="_blank" class="repo-pill">
+                    <i class="fab fa-github"></i> ahsantariq7/Intusion-detection-System-Web ↗
+                </a>
+            </div>
+
+            <p class="hero-lead" id="heroDesc" style="margin-top: 20px;">
+                Designed, implemented, and benchmarked an accurate, computationally lightweight two-stage Network Intrusion Detection System (NIDS) on the modern UNSW-NB15 dataset (82,332 benchmark network flows). Applied an Analysis of Variance (ANOVA) F-statistic to rank features and isolate the top 15 most discriminative fields (69.4% dimensional reduction), shared identically across both binary screening and multi-class threat family classification. Tuned across Logistic Regression, Gaussian Naive Bayes, and Gradient Boosting (XGBoost) &mdash; achieving <strong>98.67% binary accuracy</strong>, <strong>78.13% multi-class accuracy</strong>, exposing minority class imbalance bottlenecks (macro-F1 = 0.39), and linking centralized architectures to privacy-preserving federated learning.
+            </p>
+
+            <!-- Hero Metrics Grid -->
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #22d3ee;">98.67%</div>
+                    <div class="stat-label">Binary Detection Accuracy</div>
+                    <div class="stat-sub">Variance-Smoothed Gaussian NB (Beats RF 97.49%)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #34d399;">15 Features</div>
+                    <div class="stat-label">Retained via ANOVA F-Test</div>
+                    <div class="stat-sub">69.4% Reduction from 49 Raw Attributes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #fbbf24;">78.13%</div>
+                    <div class="stat-label">Multi-Class Attack Accuracy</div>
+                    <div class="stat-sub">Across 9 Attack Families (Tuned XGBoost)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #f43f5e;">0.39</div>
+                    <div class="stat-label">Macro-Averaged F1 Score</div>
+                    <div class="stat-sub">Diagnosed Severe Rare Class Imbalance</div>
+                </div>
+            </div>
+
+            <!-- Master Architecture Diagram Mockup -->
+            <div class="browser-mockup" id="master-architecture">
+                <div class="browser-chrome">
+                    <div class="dots">
+                        <span class="dot dot-red"></span>
+                        <span class="dot dot-yellow"></span>
+                        <span class="dot dot-green"></span>
+                    </div>
+                    <div class="address-bar">
+                        <i class="fas fa-lock"></i>
+                        <span>github.com/ahsantariq7/Intrusion-Detection-System/pipeline</span>
+                    </div>
+                </div>
+                <div class="diagram-container" onclick="openLightbox('images/00-nids-master-anova-pipeline.jpg', 'ANOVA F-Test Network Intrusion Detection: Master Two-Stage Architecture')">
+                    <img src="images/00-nids-master-anova-pipeline.jpg" alt="ANOVA F-Test Network Intrusion Detection Master Architecture Diagram">
+                    <div class="zoom-overlay-hint">
+                        <i class="fas fa-search-plus"></i> Click for full-resolution architectural blueprint
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Statement Banner -->
+    <section class="statement-banner">
+        <div class="wrapper">
+            <p class="statement-text">
+                &ldquo;In modern enterprise security, <span>feature sprawl creates latency and overfitting</span>. A lean 15-feature ANOVA F-statistic pipeline delivers <span>sub-millisecond 98.67% binary detection</span>, while exposing the critical real-world bottleneck of <span>minority class imbalance</span> in multi-class threat classification.&rdquo;
+            </p>
+        </div>
+    </section>
+
+    <!-- Showcase 1: The Two-Step Detection Flow -->
+    <main class="wrapper">
+        <article class="showcase-block">
+            <div class="showcase-header">
+                <div>
+                    <span class="showcase-number">SYSTEM ARCHITECTURE</span>
+                    <h3 class="showcase-title">Two-Step Detection Pipeline &amp; ANOVA F-Test Feature Selection</h3>
+                </div>
+                <span class="badge-live"><i class="fas fa-filter"></i> 49 &rarr; 15 ATTRIBUTES</span>
+            </div>
+            <div class="showcase-body">
+                <div class="image-gallery-2col">
+                    <div class="gallery-item" onclick="openLightbox('images/fig01-nids-pipeline-overview.png', 'Figure 1: The proposed machine-learning-driven network intrusion detection pipeline')">
+                        <img src="images/fig01-nids-pipeline-overview.png" alt="NIDS Pipeline Overview Diagram">
+                        <div class="gallery-caption">Fig. 1: End-to-End Enterprise Flow: Server &rarr; Packets &rarr; Router &rarr; Firewall &rarr; NIDS (ANOVA + ML) &rarr; Alert</div>
+                    </div>
+                    <div class="gallery-item" onclick="openLightbox('images/fig02-two-step-anova-detection-flow.png', 'Figure 2: Two-step detection process using ANOVA F-test feature selection')">
+                        <img src="images/fig02-two-step-anova-detection-flow.png" alt="Two-Step Detection Process Diagram">
+                        <div class="gallery-caption">Fig. 2: Two-Step Screening Logic: Traffic Data &rarr; Preprocessing &rarr; ANOVA F &rarr; Binary &rarr; Multi-Class</div>
+                    </div>
+                </div>
+
+                <div class="dual-tabs">
+                    <div class="plain-box">
+                        <h5><i class="fas fa-comment-dots"></i> Plain English Explanation</h5>
+                        <p>Computer networks generate massive amounts of diagnostic information &mdash; 49 different variables for every single connection. Running heavy machine learning algorithms on all 49 numbers simultaneously slows down network routers and causes false alarms.</p>
+                        <p>We designed a high-speed mathematical filter called the <strong>ANOVA F-Test</strong>. It checks how much each variable changes when an attack happens compared to when traffic is normal, and keeps only the <strong>top 15 most informative fields</strong>. This 69.4% reduction allows the security system to inspect traffic at lightning speed, first checking if an attack is happening (Stage 1), and then identifying the exact attack category (Stage 2).</p>
+                    </div>
+                    <div class="tech-box">
+                        <h5><i class="fas fa-terminal"></i> Technical Deep Dive</h5>
+                        <ul>
+                            <li><strong>ANOVA F-Statistic Formula:</strong> Evaluates feature $X_i$ across groups $g \in \{1,\dots,k\}$ via between-group variance ($SSB_i$) and within-group variance ($SSW_i$):
+                                <div style="font-family: var(--font-mono); color: #22d3ee; margin: 8px 0; font-size: 13px;">
+                                    F_i = [SSB_i / (k - 1)] / [SSW_i / (n - k)]
+                                </div>
+                            </li>
+                            <li><strong>Unified Feature Space:</strong> Rather than fitting different feature sets for binary and multi-class tasks, a single consistent 15-feature space is shared across both stages, preventing architectural drift and reducing runtime memory footprint.</li>
+                            <li><strong>Zero Data Leakage Protocol:</strong> Categorical encoding, missing value imputation, and ANOVA F-ranking were fitted strictly inside a cross-validation loop on the training partition; the held-out test split was kept isolated until final scoring.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Showcase 2: Target Variables & Attack Categories -->
+        <article class="showcase-block">
+            <div class="showcase-header">
+                <div>
+                    <span class="showcase-number">DATASET ANATOMY</span>
+                    <h3 class="showcase-title">UNSW-NB15 Benchmark Distribution &amp; Threat Taxonomy</h3>
+                </div>
+                <span class="badge-live"><i class="fas fa-database"></i> 82,332 BENCHMARK RECORDS</span>
+            </div>
+            <div class="showcase-body">
+                <div class="image-gallery-2col">
+                    <div class="gallery-item" onclick="openLightbox('images/fig03-binary-label-distribution.jpg', 'Figure 3: Distribution of the label field for the binary task (45,332 Normal vs 37,000 Attack)')">
+                        <img src="images/fig03-binary-label-distribution.jpg" alt="Binary Label Distribution">
+                        <div class="gallery-caption">Fig. 3: Binary Task Balance: Normal (45,332 / 55.06%) vs Attack (37,000 / 44.94%)</div>
+                    </div>
+                    <div class="gallery-item" onclick="openLightbox('images/fig04-multiclass-attack-distribution.jpg', 'Figure 4: Distribution of the attack_cat field for the multi-class task across 9 attack types')">
+                        <img src="images/fig04-multiclass-attack-distribution.jpg" alt="Multi-Class Attack Category Distribution">
+                        <div class="gallery-caption">Fig. 4: Multi-Class Imbalance: Normal (37k) down to Worms (44 records) &mdash; an 840&times; disparity!</div>
+                    </div>
+                </div>
+
+                <!-- Table III: Attack Families -->
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Attack Family</th>
+                                <th>Category Description &amp; Mechanism</th>
+                                <th>Sample Count</th>
+                                <th>Imbalance Profile</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>Normal</strong></td><td>Legitimate everyday enterprise network traffic</td><td>37,000</td><td class="pos-result">Majority Class</td></tr>
+                            <tr><td><strong>Generic</strong></td><td>Cryptographic collision &amp; block-cipher attacks independent of structure</td><td>18,871</td><td class="pos-result">Dominant Attack</td></tr>
+                            <tr><td><strong>Exploits</strong></td><td>Leveraging known software, buffer overflow, or hardware vulnerabilities</td><td>11,132</td><td class="pos-result">Frequent Attack</td></tr>
+                            <tr><td><strong>Fuzzers</strong></td><td>Injecting randomized malformed packets to crash or hang services</td><td>6,062</td><td>Moderate</td></tr>
+                            <tr><td><strong>DoS</strong></td><td>Denial-of-Service overwhelming network bandwidth or compute</td><td>4,089</td><td>Moderate</td></tr>
+                            <tr><td><strong>Reconnaissance</strong></td><td>Port scanning, vulnerability sweeping, and defense probing</td><td>3,496</td><td>Moderate</td></tr>
+                            <tr><td><strong>Analysis</strong></td><td>Intrusive port probes, spam vectors, and HTML penetration attempts</td><td>677</td><td class="neg-result">Minority Class</td></tr>
+                            <tr><td><strong>Backdoors</strong></td><td>Covert administrative bypass for stealth remote persistent access</td><td>583</td><td class="neg-result">Minority Class</td></tr>
+                            <tr><td><strong>Shellcode</strong></td><td>Injected machine code used to seize shell control on a compromised host</td><td>378</td><td class="neg-result">Minority Class</td></tr>
+                            <tr><td><strong>Worms</strong></td><td>Self-replicating automated network malware spreading across nodes</td><td>44</td><td class="neg-result">Extreme Tail (0.05%)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </article>
+
+        <!-- Showcase 3: Methodology & Hyperparameter Tuning -->
+        <article class="showcase-block">
+            <div class="showcase-header">
+                <div>
+                    <span class="showcase-number">MODEL OPTIMIZATION</span>
+                    <h3 class="showcase-title">Classifier Tuning, Regularization &amp; Time Complexity</h3>
+                </div>
+                <span class="badge-live"><i class="fas fa-sliders"></i> L1 / L2 &middot; GSCV &middot; VAR_SMOOTHING</span>
+            </div>
+            <div class="showcase-body">
+                <div class="gallery-item" style="margin-bottom: 24px;" onclick="openLightbox('images/fig05-methodology-stages-sequence.png', 'Figure 5: Sequence of stages in the proposed methodology from data cleaning to NIDS deployment')">
+                    <img src="images/fig05-methodology-stages-sequence.png" alt="Methodology Stages Sequence">
+                    <div class="gallery-caption">Fig. 5: Complete Methodology Pipeline: Cleaning &rarr; EDA &rarr; Engineering &rarr; ANOVA F-Test &rarr; Model Training &rarr; IDS</div>
+                </div>
+
+                <div class="dual-tabs">
+                    <div class="plain-box">
+                        <h5><i class="fas fa-comment-dots"></i> Plain English Explanation</h5>
+                        <p>We tested three distinct families of machine learning algorithms to find the sweet spot between speed and accuracy:</p>
+                        <p><strong>1. Gaussian Naive Bayes:</strong> A super-fast probabilistic calculator. When we smoothed its variance parameter, it achieved near-perfect accuracy (98.67%) in less than a millisecond.<br>
+                        <strong>2. Logistic Regression:</strong> A classic linear model tuned with L1 and L2 penalties (91.68%).<br>
+                        <strong>3. Gradient Boosting (XGBoost):</strong> A sequential tree ensemble that corrects errors round-by-round. It proved best at sorting complex attack types (78.13%).</p>
+                    </div>
+                    <div class="tech-box">
+                        <h5><i class="fas fa-terminal"></i> Technical Deep Dive</h5>
+                        <ul>
+                            <li><strong>Gaussian Naive Bayes Tuning:</strong> Adjusted <code>var_smoothing = 1e-20</code>, suppressing feature noise and allowing conditional probabilities $P(x_i | y)$ to model tight Gaussian clusters.</li>
+                            <li><strong>Regularized Logistic Regression:</strong> Fitted cost function with Lasso (L1) and Ridge (L2) penalties: $J(	heta) = rac{1}{m}\sum [ -y\log h_	heta - (1-y)\log(1-h_	heta) ] + \lambda \|	heta\|$.</li>
+                            <li><strong>Constrained Gradient Boosting:</strong> Additive tree ensemble $F_m(x) = F_{m-1}(x) + \lambda h_m(x)$ tuned via Grid Search CV with max_depth=3, 10 boosting iterations, and L1 shrinkage to prevent overfitting on 15 features.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Table II: Time Complexity -->
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Algorithm Family</th>
+                                <th>Training Time Complexity</th>
+                                <th>Inference (Prediction) Complexity</th>
+                                <th>Operational Deployment Role</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="highlight-col">
+                                <td><strong>Gaussian Naive Bayes</strong></td>
+                                <td>$\mathcal{O}(n \cdot m)$ (Linear)</td>
+                                <td>$\mathcal{O}(n)$ (Sub-millisecond)</td>
+                                <td>High-speed Edge Line-Rate Packet Screening</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Gradient Boosting (XGBoost)</strong></td>
+                                <td>$\mathcal{O}(n \cdot m \log m)$</td>
+                                <td>$\mathcal{O}(n \log m)$</td>
+                                <td>In-Depth Multi-Class Threat Classification</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Logistic Regression</strong></td>
+                                <td>$\mathcal{O}(n \cdot m^2)$</td>
+                                <td>$\mathcal{O}(n)$</td>
+                                <td>Interpretable Baseline Linear Scoring</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </article>
+
+        <!-- Showcase 4: Binary Classification & SOTA Benchmark Comparison -->
+        <article class="showcase-block">
+            <div class="showcase-header">
+                <div>
+                    <span class="showcase-number">BINARY BENCHMARK</span>
+                    <h3 class="showcase-title">Stage 1 Binary Screening: 98.67% SOTA Accuracy</h3>
+                </div>
+                <span class="badge-live"><i class="fas fa-trophy"></i> SURPASSES RANDOM FOREST (97.49%)</span>
+            </div>
+            <div class="showcase-body">
+                <div class="image-gallery-2col">
+                    <div class="gallery-item" onclick="openLightbox('images/fig06-binary-roc-curve.jpg', 'Figure 6: ROC curve for binary classification task using Logistic Regression (AUC = 0.80)')">
+                        <img src="images/fig06-binary-roc-curve.jpg" alt="Binary ROC Curve">
+                        <div class="gallery-caption">Fig. 6: Binary ROC Curve: Logistic Regression baseline achieving AUC = 0.80</div>
+                    </div>
+                    <div class="gallery-item" onclick="openLightbox('images/fig07-binary-post-tuning-accuracy.jpg', 'Figure 7: Post-tuning accuracy scores across binary classifiers showing Gaussian NB leading at 0.9867')">
+                        <img src="images/fig07-binary-post-tuning-accuracy.jpg" alt="Binary Accuracy Bar Chart">
+                        <div class="gallery-caption">Fig. 7: Post-Tuning Accuracy: Gaussian NB leads at 98.67%, followed by GB at 96.53%</div>
+                    </div>
+                </div>
+
+                <!-- Table IV & Table VI Comparison -->
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Method / Publication</th>
+                                <th>Feature Selection Strategy</th>
+                                <th>Feature Count</th>
+                                <th>Binary Accuracy (%)</th>
+                                <th>Precision / Recall</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>SVM [Jing &amp; Chen, 2019]</td><td>All Raw Attributes</td><td>49 features</td><td>85.99%</td><td>—</td></tr>
+                            <tr><td>Decision Tree / MLP [Kasongo &amp; Sun, 2020]</td><td>XGBoost Importance</td><td>19 features</td><td>90.85% / 84.39%</td><td>—</td></tr>
+                            <tr><td>Random Forest [Tahri et al., 2022]</td><td>Comparative Heuristics</td><td>Full set</td><td>97.49%</td><td>—</td></tr>
+                            <tr><td>Stacking Ensemble [Kabir et al., 2022]</td><td>Mutual Info + Extra-Trees</td><td>Multiple sets</td><td>96.24%</td><td>—</td></tr>
+                            <tr><td>ANOVA-B-LR (L2 Regularized)</td><td>ANOVA F-Statistic</td><td><strong>15 features</strong></td><td>91.68%</td><td>0.90 / 0.94</td></tr>
+                            <tr><td>ANOVA-B-GB (Grid-Searched XGB)</td><td>ANOVA F-Statistic</td><td><strong>15 features</strong></td><td>96.53%</td><td>0.99 / 0.98</td></tr>
+                            <tr class="highlight-col" style="background: rgba(16, 185, 129, 0.08);">
+                                <td><strong>ANOVA-B-GN (Variance-Smoothed NB)</strong></td>
+                                <td><strong>ANOVA F-Statistic</strong></td>
+                                <td><strong>15 features</strong></td>
+                                <td class="pos-result"><strong>98.67% (New Best!)</strong></td>
+                                <td class="pos-result"><strong>0.99 / 0.98</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </article>
+
+        <!-- Showcase 5: Multi-Class Confusion Matrix & Class Imbalance Bottleneck -->
+        <article class="showcase-block">
+            <div class="showcase-header">
+                <div>
+                    <span class="showcase-number">MULTI-CLASS INVESTIGATION</span>
+                    <h3 class="showcase-title">Stage 2 Attack Identification &amp; Minority Class Bottleneck</h3>
+                </div>
+                <span class="badge-live" style="background: rgba(244, 63, 94, 0.12); border-color: rgba(244, 63, 94, 0.35); color: #f43f5e;"><i class="fas fa-triangle-exclamation"></i> MACRO-F1 = 0.39 DIAGNOSIS</span>
+            </div>
+            <div class="showcase-body">
+                <div class="gallery-item" style="margin-bottom: 24px;" onclick="openLightbox('images/fig09-multiclass-confusion-matrix.png', 'Figure 9: Confusion matrix of the Gradient Boosting multi-class classifier with values and percentages')">
+                    <img src="images/fig09-multiclass-confusion-matrix.png" alt="Multi-Class Confusion Matrix">
+                    <div class="gallery-caption">Fig. 9: Multi-Class Confusion Matrix: Majority classes (Normal, Generic) score near 100%, while Worms, Shellcode, and Backdoor collapse</div>
+                </div>
+
+                <div class="dual-tabs">
+                    <div class="plain-box">
+                        <h5><i class="fas fa-comment-dots"></i> Plain English Explanation</h5>
+                        <p>In multi-class detection, our Gradient Boosting model reached 78.13% overall accuracy. But as honest researchers, we investigated deeper: <strong>Why was the macro-average score only 0.39?</strong></p>
+                        <p>The answer is extreme real-world class imbalance. Out of 82,000 records, there are 37,000 Normal samples and 18,000 Generic attacks &mdash; but only <strong>44 Worms and 378 Shellcode attacks</strong>! The AI learned to recognize the common attacks perfectly, but almost completely missed the rare, highly dangerous attacks. This proved that standard accuracy is misleading in cybersecurity, and future IDS must use SMOTE or class-weighted losses to protect against stealth zero-day attacks.</p>
+                    </div>
+                    <div class="tech-box">
+                        <h5><i class="fas fa-terminal"></i> Technical Deep Dive</h5>
+                        <ul>
+                            <li><strong>Headline vs. Macro-Averaged Metric Gap:</strong> While micro-accuracy reached 78.13% (dominated by Normal and Generic), macro-averaged F1 was only 0.39, revealing zero or near-zero recall on minority classes (Analysis, Backdoor, Shellcode, Worms).</li>
+                            <li><strong>ANOVA F Limitation:</strong> The ANOVA F-test ranks features by overall between-group variance; it possesses no inherent weighting to offset extreme class frequency skews.</li>
+                            <li><strong>Remediation Roadmap:</strong> Future work must incorporate synthetic minority oversampling (SMOTE), focal loss $\mathcal{L}_{	ext{focal}} = -lpha_t (1 - p_t)^\gamma \log(p_t)$, and cost-sensitive matrix penalties to ensure rare attacks are caught.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Table V: Multi-Class Accuracies -->
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Method Configuration</th>
+                                <th>Classifier Architecture</th>
+                                <th>Multi-Class Accuracy (%)</th>
+                                <th>Operational Characteristics</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>ANOVA-M-GN (Baseline)</td><td>Gaussian Naive Bayes</td><td>44.00%</td><td>Untuned probabilistic baseline</td></tr>
+                            <tr><td>ANOVA-M-LR (Baseline)</td><td>Logistic Regression</td><td>44.00%</td><td>Untuned linear softmax baseline</td></tr>
+                            <tr><td>ANOVA-M-GB (Baseline)</td><td>Gradient Boosting</td><td>75.00%</td><td>Untuned tree ensemble baseline</td></tr>
+                            <tr><td>ANOVA-M-GN (Tuned L1)</td><td>Tuned Gaussian Naive Bayes</td><td>67.72%</td><td>Variance-smoothed multi-class</td></tr>
+                            <tr><td>ANOVA-M-GB (Random Forest)</td><td>Random Forest Ensemble</td><td>76.71%</td><td>Bagged decision forest baseline</td></tr>
+                            <tr class="highlight-col" style="background: rgba(16, 185, 129, 0.08);">
+                                <td><strong>ANOVA-M-GB (Tuned XGBoost)</strong></td>
+                                <td><strong>L1-Regularized Gradient Boosting</strong></td>
+                                <td class="pos-result"><strong>78.13% (Best Multi-Class)</strong></td>
+                                <td>Depth 3, 10 rounds, L1 regularization</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </article>
+
+        <!-- Showcase 6: Centralized vs. Privacy-Preserving Federated NIDS -->
+        <article class="showcase-block">
+            <div class="showcase-header">
+                <div>
+                    <span class="showcase-number">IIOT &amp; PRIVACY HORIZON</span>
+                    <h3 class="showcase-title">Centralized vs. Privacy-Preserving Federated Learning in IIoT</h3>
+                </div>
+                <span class="badge-live"><i class="fas fa-network-wired"></i> FEDERATED CYBER INTELLIGENCE</span>
+            </div>
+            <div class="showcase-body">
+                <div class="gallery-item" style="margin-bottom: 24px;" onclick="openLightbox('images/fig08-centralized-vs-federated-nids.png', 'Figure 8: Centralized machine learning contrasted with federated learning for network intrusion detection')">
+                    <img src="images/fig08-centralized-vs-federated-nids.png" alt="Centralized vs Federated Machine Learning">
+                    <div class="gallery-caption">Fig. 8: Architecture Comparison: (a) Centralized ML requires sensitive raw data pooling vs (b) Federated Learning shares only parameter updates</div>
+                </div>
+
+                <div class="dual-tabs">
+                    <div class="plain-box">
+                        <h5><i class="fas fa-comment-dots"></i> Plain English Explanation</h5>
+                        <p>In standard security systems, every factory or hospital has to upload their raw private network packets to a central company cloud. This creates massive privacy risks and violates strict data protection regulations.</p>
+                        <p>We demonstrated how this ANOVA NIDS pipeline seamlessly transitions into <strong>Federated Learning (FL)</strong>. Factories train their intrusion detectors locally on their own firewalls and only share encrypted mathematical weights &mdash; enabling collective cyber defense without ever exposing sensitive company data.</p>
+                    </div>
+                    <div class="tech-box">
+                        <h5><i class="fas fa-terminal"></i> Technical Deep Dive</h5>
+                        <ul>
+                            <li><strong>Industrial IoT (IIoT) Alignment:</strong> Distributed factories and edge routers aggregate local gradients via Federated Averaging (FedAvg), pooling diverse threat intelligence while raw packet headers remain on-premise.</li>
+                            <li><strong>Communication Efficiency:</strong> Because the ANOVA F-test restricts models to only 15 features, the parameter vector is minuscule (under 50 KB), minimizing uplink bandwidth on cellular or satellite IoT links.</li>
+                            <li><strong>Byzantine Safeguards:</strong> Motivated by recent robust aggregation research, federated NIDS must incorporate trust-gating to prevent compromised rogue edge nodes from poisoning the global security model.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Production Code Block -->
+                <div class="code-container">
+                    <div class="code-header">
+                        <span><i class="fas fa-code"></i> anova_nids_pipeline.py — Scikit-Learn Feature Selection &amp; Classifier Tuning</span>
+                        <span>Python 3.11 / Scikit-Learn / XGBoost</span>
+                    </div>
+                    <pre><code><span class="c-kw">from</span> sklearn.feature_selection <span class="c-kw">import</span> SelectKBest, f_classif
+<span class="c-kw">from</span> sklearn.naive_bayes <span class="c-kw">import</span> GaussianNB
+<span class="c-kw">from</span> sklearn.linear_model <span class="c-kw">import</span> LogisticRegression
+<span class="c-kw">import</span> xgboost <span class="c-kw">as</span> xgb
+
+<span class="c-kw">def</span> <span class="c-fn">build_nids_pipeline</span>(X_train, y_train_binary, y_train_multi):
+    <span class="c-cmt"># Step 1: Select top 15 features using ANOVA F-statistic</span>
+    selector = SelectKBest(score_func=f_classif, k=<span class="c-num">15</span>)
+    X_train_selected = selector.fit_transform(X_train, y_train_binary)
+    
+    <span class="c-cmt"># Step 2: Stage 1 Binary Screening (Variance-Smoothed Gaussian NB)</span>
+    binary_model = GaussianNB(var_smoothing=<span class="c-num">1e-20</span>)
+    binary_model.fit(X_train_selected, y_train_binary)
+    <span class="c-cmt"># Evaluates to 98.67% binary accuracy on held-out test split!</span>
+    
+    <span class="c-cmt"># Step 3: Stage 2 Multi-Class Categorization (Regularized XGBoost)</span>
+    multiclass_model = xgb.XGBClassifier(
+        max_depth=<span class="c-num">3</span>,
+        n_estimators=<span class="c-num">10</span>,
+        reg_alpha=<span class="c-num">0.1</span>,  <span class="c-cmt"># L1 Regularization</span>
+        learning_rate=<span class="c-num">0.1</span>,
+        random_state=<span class="c-num">42</span>
+    )
+    multiclass_model.fit(X_train_selected, y_train_multi)
+    <span class="c-cmt"># Evaluates to 78.13% multi-class accuracy across 9 attack types</span>
+    
+    <span class="c-kw">return</span> selector, binary_model, multiclass_model</code></pre>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <!-- Key Scientific Contributions Grid -->
+    <section class="wrapper">
+        <div class="section-header">
+            <span class="section-tag"><i class="fas fa-award"></i> Core Scientific Contributions</span>
+            <h2 class="section-title">Key Contributions &amp; Architectural Insights</h2>
+            <p class="section-lead">Major milestones achieved in statistical network intrusion detection and machine learning cybersecurity.</p>
+        </div>
+
+        <div class="ownership-grid">
+            <div class="owner-card">
+                <h4><i class="fas fa-filter"></i> Unified ANOVA F-Feature Space</h4>
+                <p>Reduced 49 raw network flow attributes to 15 top-ranked features (69.4% compression) shared identically across binary and multi-class tasks, eliminating feature redundancy and runtime drift.</p>
+            </div>
+            <div class="owner-card">
+                <h4><i class="fas fa-trophy"></i> SOTA 98.67% Binary Detection</h4>
+                <p>Demonstrated that variance-smoothed Gaussian Naive Bayes outperforms heavy ensemble baselines (Random Forest at 97.49% and Stacking at 96.24%) with sub-millisecond linear complexity.</p>
+            </div>
+            <div class="owner-card">
+                <h4><i class="fas fa-shield-virus"></i> Multi-Class Attack Identification</h4>
+                <p>Attained 78.13% multi-class classification accuracy across 9 diverse threat families using depth-constrained, L1-regularized Gradient Tree Boosting.</p>
+            </div>
+            <div class="owner-card">
+                <h4><i class="fas fa-chart-pie"></i> Minority Class Imbalance Diagnosis</h4>
+                <p>Identified the macro-F1 bottleneck (0.39) on extreme tail classes (Worms 44 records, Shellcode 378 records), warning the security community against uncritical reliance on headline accuracy.</p>
+            </div>
+            <div class="owner-card">
+                <h4><i class="fas fa-lock"></i> Zero Data Leakage Pipeline</h4>
+                <p>Enforced strict partitioning where label encoding, imputation, and feature ranking were fitted exclusively on training cross-validation splits without touching test records.</p>
+            </div>
+            <div class="owner-card">
+                <h4><i class="fas fa-globe"></i> Open Source Web NIDS Deployment</h4>
+                <p>Published complete production code and interactive web-based dashboard integrations across two public GitHub repositories for transparent community reproducibility.</p>
+            </div>
+        </div>
+
+        <!-- Tech Stack Grid -->
+        <div class="section-header">
+            <span class="section-tag"><i class="fas fa-laptop-code"></i> Research Infrastructure</span>
+            <h2 class="section-title">Research Technologies &amp; Implementation Stack</h2>
+        </div>
+
+        <div class="stack-grid">
+            <div class="stack-card">
+                <div class="stack-icon"><i class="fas fa-database"></i></div>
+                <h4 class="stack-name">UNSW-NB15 Benchmark</h4>
+                <div class="stack-role">MODERN NETWORK FLOW CORPUS</div>
+                <p class="stack-desc">82,332 benchmark records capturing realistic synthesized normal traffic and 9 modern cyber attack vectors generated via Bro-IDS &amp; Argus.</p>
+            </div>
+            <div class="stack-card">
+                <div class="stack-icon"><i class="fas fa-calculator"></i></div>
+                <h4 class="stack-name">ANOVA F-Statistic</h4>
+                <div class="stack-role">STATISTICAL FEATURE SELECTOR</div>
+                <p class="stack-desc">SelectKBest variance-ratio hypothesis testing isolating the 15 features with maximum between-group variance relative to within-group noise.</p>
+            </div>
+            <div class="stack-card">
+                <div class="stack-icon"><i class="fas fa-bolt"></i></div>
+                <h4 class="stack-name">Gaussian Naive Bayes</h4>
+                <div class="stack-role">STAGE 1 BINARY CLASSIFIER</div>
+                <p class="stack-desc">Linear-time probabilistic classifier with variance smoothing (1e-20) delivering 98.67% binary accuracy at line-rate speed.</p>
+            </div>
+            <div class="stack-card">
+                <div class="stack-icon"><i class="fas fa-tree"></i></div>
+                <h4 class="stack-name">XGBoost / Gradient Boosting</h4>
+                <div class="stack-role">STAGE 2 MULTI-CLASS ENGINE</div>
+                <p class="stack-desc">Additive gradient-boosted decision trees with depth regularization and L1 shrinkage achieving 78.13% multi-class threat recognition.</p>
+            </div>
+            <div class="stack-card">
+                <div class="stack-icon"><i class="fas fa-chart-line"></i></div>
+                <h4 class="stack-name">Scikit-Learn 1.4</h4>
+                <div class="stack-role">MACHINE LEARNING FRAMEWORK</div>
+                <p class="stack-desc">GridSearchCV hyperparameter tuning, cross-validation pipelining, and multi-class confusion matrix evaluation.</p>
+            </div>
+            <div class="stack-card">
+                <div class="stack-icon"><i class="fab fa-python"></i></div>
+                <h4 class="stack-name">Python 3.11 Runtime</h4>
+                <div class="stack-role">CORE SCIENTIFIC ENVIRONMENT</div>
+                <p class="stack-desc">NumPy, Pandas, Matplotlib, and Seaborn for statistical computing, distribution analysis, and ROC curve generation.</p>
+            </div>
+        </div>
+
+        <!-- Next Steps CTA -->
+        <div class="cta-section">
+            <h3 class="cta-title">Explore More Machine Learning &amp; Security Case Studies</h3>
+            <p class="cta-desc">Discover how I apply statistical rigor, distributed federated systems, and machine learning architectures to real-world cybersecurity problems.</p>
+            <div class="cta-buttons">
+                <a href="../robust-federated-perception/index.html" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Previous: Robust Federated Perception
+                </a>
+                <a href="../index.html" class="btn btn-primary">
+                    <i class="fas fa-th-large"></i> Explore All 21 Case Studies
+                </a>
+                <a href="../../index.html#contact" class="btn btn-secondary">
+                    <i class="fas fa-envelope"></i> Get in Touch
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="wrapper">
+            <p>&copy; 2026 Ahsan Tariq &middot; Lead Machine Learning &amp; Cybersecurity Researcher. Dept. of Computer Systems Engineering, The Islamia University of Bahawalpur. Open source implementations available on GitHub.</p>
+        </div>
+    </footer>
+
+    <!-- Fullscreen Lightbox Modal -->
+    <div class="lightbox-modal" id="lightboxModal" onclick="closeLightbox(event)">
+        <div class="lightbox-content">
+            <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+            <img id="lightboxImg" src="" alt="Enlarged Research Figure">
+            <div class="lightbox-caption" id="lightboxCaption"></div>
+        </div>
+    </div>
+
+    <!-- Interactive Scripts -->
+    <script>
+        function openLightbox(src, caption) {
+            const modal = document.getElementById('lightboxModal');
+            const img = document.getElementById('lightboxImg');
+            const cap = document.getElementById('lightboxCaption');
+            img.src = src;
+            cap.innerText = caption;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(e) {
+            if (!e || e.target.id === 'lightboxModal' || e.target.classList.contains('lightbox-close')) {
+                const modal = document.getElementById('lightboxModal');
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+
+        // Audience Toggle (Technical Research View vs Plain English)
+        let isTechnical = true;
+        function toggleAudience() {
+            isTechnical = !isTechnical;
+            const label = document.getElementById('toggleLabel');
+            const heroDesc = document.getElementById('heroDesc');
+            const plainBoxes = document.querySelectorAll('.plain-box');
+            const techBoxes = document.querySelectorAll('.tech-box');
+
+            if (isTechnical) {
+                label.innerText = 'Audience: Technical Research View';
+                heroDesc.innerHTML = 'Designed, implemented, and benchmarked an accurate, computationally lightweight two-stage Network Intrusion Detection System (NIDS) on the modern UNSW-NB15 dataset (82,332 benchmark network flows). Applied an Analysis of Variance (ANOVA) F-statistic to rank features and isolate the top 15 most discriminative fields (69.4% dimensional reduction), shared identically across both binary screening and multi-class threat family classification. Tuned across Logistic Regression, Gaussian Naive Bayes, and Gradient Boosting (XGBoost) &mdash; achieving <strong>98.67% binary accuracy</strong>, <strong>78.13% multi-class accuracy</strong>, exposing minority class imbalance bottlenecks (macro-F1 = 0.39), and linking centralized architectures to privacy-preserving federated learning.';
+                plainBoxes.forEach(b => b.style.display = 'block');
+                techBoxes.forEach(b => b.style.display = 'block');
+            } else {
+                label.innerText = 'Audience: Plain English';
+                heroDesc.innerHTML = 'Modern computer networks are attacked every day by hackers using viruses, Denial-of-Service floods, and backdoors. Usually, security software gets overloaded trying to check dozens of network settings at once. In this research, Ahsan Tariq built a lightweight security system that uses smart math (the ANOVA F-Test) to eliminate 70% of useless network noise &mdash; keeping only the 15 most important signals. The AI achieved a staggering 98.67% accuracy in blocking cyber attacks in less than a millisecond, and exposed key secrets on how to catch rare, stealthy computer worms.';
+                plainBoxes.forEach(b => {
+                    b.style.display = 'block';
+                    b.style.gridColumn = '1 / -1';
+                });
+                techBoxes.forEach(b => b.style.display = 'none');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -85,26 +85,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ─── View Mode Toggle (Technical vs Plain English) ───
-    const techRoles = [
-        'AI Product Builder',
-        'Founder @ Ranbval',
-        'Senior Python Engineer',
-        'N8N Automation Architect',
-        'Encrypted Infra Engineer',
-    ];
-    const ntRoles = [
-        'AI Problem Solver',
-        'Business Automation Expert',
-        'Company Founder & Product Builder',
-        'Zero-Touch System Architect',
-    ];
-
     let currentMode = 'tech';
     try {
         currentMode = localStorage.getItem('portfolio_view_mode') || 'tech';
     } catch (e) {}
-
-    let currentRoles = currentMode === 'nt' ? ntRoles : techRoles;
 
     function setViewMode(mode) {
         currentMode = mode;
@@ -113,8 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             localStorage.setItem('portfolio_view_mode', mode);
         } catch (e) {}
-
-        currentRoles = isNT ? ntRoles : techRoles;
 
         document.querySelectorAll('.vt-btn').forEach(btn => {
             const btnMode = btn.getAttribute('data-mode');
@@ -130,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
             const mode = btn.getAttribute('data-mode');
-            if (mode && mode !== currentMode) {
+            if (mode) {
                 setViewMode(mode);
                 try {
                     localStorage.setItem('portfolio_view_mode_chosen', 'true');
@@ -182,35 +164,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ─── Typing Animation ─────────────────────────────
+    // ─── Hero Role Display ───────────────────────────
     const roleEl = document.querySelector('.hero-role');
-    if (roleEl) {
-        if (isPdfMode) {
-            roleEl.textContent = 'AI Systems Architect · Founder @ Ranbval · Co-Founder @ Volvexer';
-        } else {
-            roleEl.innerHTML = '<span class="typed-text"></span><span class="typed-cursor">|</span>';
-            const typedText = roleEl.querySelector('.typed-text');
-            let roleIdx = 0, charIdx = 0, deleting = false;
-
-            function type() {
-                const list = currentRoles || techRoles;
-                const current = list[roleIdx % list.length];
-                typedText.textContent = deleting
-                    ? current.slice(0, charIdx--)
-                    : current.slice(0, charIdx++);
-
-                let delay = deleting ? 45 : 90;
-                if (!deleting && charIdx === current.length + 1) {
-                    delay = 1800; deleting = true;
-                } else if (deleting && charIdx === 0) {
-                    deleting = false;
-                    roleIdx = (roleIdx + 1) % list.length;
-                    delay = 400;
-                }
-                setTimeout(type, delay);
-            }
-            setTimeout(type, 800);
-        }
+    if (roleEl && isPdfMode) {
+        roleEl.textContent = 'AI/ML Engineer | Forward Deployed Engineer';
     }
 
     // ─── Experience Grid Pagination (9 per page) ──────
@@ -442,6 +399,104 @@ document.addEventListener('DOMContentLoaded', () => {
             closeCoursework();
         }
     });
+
+    // ─── Case Studies / Projects: Category Filtering & Direct Hub Navigation ──────
+    const projectCards = document.querySelectorAll('.case-study-feature-card');
+    const filterButtons = document.querySelectorAll('.project-filter-btn');
+    const toggleProjectsBtn = document.getElementById('toggleProjectsBtn');
+    const toggleProjectsBtnText = document.getElementById('toggleProjectsBtnText');
+    const toggleProjectsBtnIcon = document.getElementById('toggleProjectsBtnIcon');
+    const projectsCountIndicator = document.getElementById('projectsCountIndicator');
+
+    if (projectCards.length) {
+        let currentFilter = 'all';
+        const INITIAL_LIMIT = 4; // Clean 2x2 symmetrical grid (2 columns x 2 rows)
+        const totalAllCount = projectCards.length;
+
+        function updateProjectsView() {
+            const matchingCards = [];
+            projectCards.forEach(card => {
+                const cat = card.getAttribute('data-category');
+                if (currentFilter === 'all' || cat === currentFilter) {
+                    matchingCards.push(card);
+                } else {
+                    card.classList.add('project-card-hidden');
+                    card.style.display = 'none';
+                }
+            });
+
+            const totalMatching = matchingCards.length;
+
+            if (currentFilter === 'all') {
+                // Show top 4 flagship cards in balanced 2x2 grid
+                matchingCards.forEach((card, index) => {
+                    if (index < INITIAL_LIMIT) {
+                        card.classList.remove('project-card-hidden');
+                        card.style.display = '';
+                        card.classList.add('visible');
+                        card.style.opacity = '1';
+                    } else {
+                        card.classList.add('project-card-hidden');
+                        card.style.display = 'none';
+                    }
+                });
+
+                if (projectsCountIndicator) {
+                    projectsCountIndicator.innerHTML = `Showing <strong>${INITIAL_LIMIT}</strong> of <strong>${totalAllCount}</strong> Featured Projects`;
+                }
+                if (toggleProjectsBtnText) {
+                    toggleProjectsBtnText.textContent = `View All ${totalAllCount} Case Studies & Projects`;
+                }
+            } else {
+                // When a category filter is selected, show matching cards
+                matchingCards.forEach((card) => {
+                    card.classList.remove('project-card-hidden');
+                    card.style.display = '';
+                    card.classList.add('visible');
+                    card.style.opacity = '1';
+                });
+
+                if (projectsCountIndicator) {
+                    projectsCountIndicator.innerHTML = `Showing <strong>${totalMatching}</strong> Projects in Category (${totalAllCount} Total)`;
+                }
+                if (toggleProjectsBtnText) {
+                    toggleProjectsBtnText.textContent = `Explore All ${totalAllCount} Case Studies in Hub`;
+                }
+            }
+
+            if (toggleProjectsBtn) {
+                toggleProjectsBtn.style.display = 'inline-flex';
+            }
+        }
+
+        // Initialize view
+        updateProjectsView();
+
+        // Filter button click handler
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const filter = btn.getAttribute('data-filter');
+                if (filter === currentFilter) return;
+
+                filterButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                currentFilter = filter;
+                updateProjectsView();
+            });
+        });
+
+        // Allow whole card click navigation to its study
+        projectCards.forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('a') || e.target.closest('button')) return;
+                const link = card.querySelector('h3.case-title a');
+                if (link && link.href) {
+                    window.location.href = link.href;
+                }
+            });
+        });
+    }
 
     // ─── Back to Top ──────────────────────────────────
     const backToTop = document.getElementById('back-to-top');

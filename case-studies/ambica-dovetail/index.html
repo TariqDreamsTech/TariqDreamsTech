@@ -919,6 +919,274 @@
             transform: scale(1.15);
         }
 
+        /* ─── Interactive Comparison Wrapper & Controls ─────────────────── */
+        .interactive-comparison-wrapper {
+            background: linear-gradient(180deg, rgba(14, 18, 25, 0.8) 0%, rgba(10, 13, 19, 0.95) 100%);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            padding: 2.5rem;
+            margin-top: 2.5rem;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+
+        .comparison-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+        }
+
+        .compare-toggle-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            padding: 0.75rem 1.4rem;
+            border-radius: 50px;
+            font-family: var(--font-main);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.55rem;
+        }
+
+        .compare-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        .compare-toggle-btn.active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(56, 189, 248, 0.2));
+            color: #ffffff;
+            border-color: var(--emerald);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.35);
+            transform: scale(1.03);
+        }
+
+        .compare-toggle-btn.problem-active {
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.25), rgba(244, 63, 94, 0.15));
+            color: #ffffff;
+            border-color: var(--rose);
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.35);
+            transform: scale(1.03);
+        }
+
+        .compare-toggle-btn.solution-active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(16, 185, 129, 0.15));
+            color: #ffffff;
+            border-color: var(--emerald);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.35);
+            transform: scale(1.03);
+        }
+
+        .comparison-cards-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.75rem;
+        }
+
+        .compare-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 56px minmax(0, 1fr);
+            gap: 1.5rem;
+            align-items: stretch;
+            width: 100%;
+            transition: all 0.35s ease;
+        }
+
+        .compare-side {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 2rem 2.25rem;
+            border: 1px solid var(--border-subtle);
+            min-width: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+        }
+
+        .compare-side.side-problem {
+            border-left: 4px solid var(--rose);
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.06) 0%, rgba(14, 18, 25, 0.95) 100%);
+        }
+
+        .compare-side.side-solution {
+            border-left: 4px solid var(--emerald);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.06) 0%, rgba(14, 18, 25, 0.95) 100%);
+        }
+
+        .compare-side:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .compare-side.side-problem:hover {
+            box-shadow: 0 12px 30px rgba(244, 63, 94, 0.15);
+        }
+
+        .compare-side.side-solution:hover {
+            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.15);
+        }
+
+        .compare-arrow-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #111827;
+            border: 1px solid var(--border-subtle);
+            color: var(--emerald);
+            font-size: 1.1rem;
+            margin: auto;
+            box-shadow: 0 0 16px rgba(16, 185, 129, 0.2);
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .side-label {
+            font-family: var(--font-mono);
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.65rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .side-label.before, .side-problem .side-label {
+            color: var(--rose);
+        }
+
+        .side-label.after, .side-solution .side-label {
+            color: var(--emerald);
+        }
+
+        .side-title {
+            font-family: var(--font-display);
+            font-size: 1.22rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.75rem;
+            line-height: 1.35;
+        }
+
+        .side-desc {
+            color: var(--text-secondary);
+            font-size: 0.93rem;
+            line-height: 1.65;
+            margin: 0;
+        }
+
+        /* ─── Before vs After Executive Transformation Table ─────────────── */
+        .transformation-table-wrapper {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            overflow-x: auto;
+            margin-top: 3rem;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+        }
+        .transformation-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.92rem;
+            text-align: left;
+        }
+        .transformation-table th {
+            background: #111622;
+            padding: 1.1rem 1.4rem;
+            font-family: var(--font-mono);
+            font-size: 0.76rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            border-bottom: 2px solid var(--border-subtle);
+            white-space: nowrap;
+        }
+        .transformation-table th.th-before {
+            color: var(--rose);
+            border-bottom-color: rgba(244, 63, 94, 0.4);
+        }
+        .transformation-table th.th-after {
+            color: var(--emerald);
+            border-bottom-color: rgba(16, 185, 129, 0.4);
+        }
+        .transformation-table th.th-impact {
+            color: var(--cyan);
+            border-bottom-color: rgba(56, 189, 248, 0.4);
+        }
+        .transformation-table td {
+            padding: 1.25rem 1.4rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            line-height: 1.55;
+            vertical-align: middle;
+        }
+        .transformation-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .transformation-table td.td-dimension {
+            font-family: var(--font-display);
+            font-weight: 700;
+            color: #ffffff;
+            font-size: 0.96rem;
+            white-space: nowrap;
+        }
+        .transformation-table td.td-dimension i {
+            color: var(--cyan);
+            margin-right: 0.5rem;
+            width: 18px;
+            text-align: center;
+        }
+        .transformation-table td.td-before {
+            color: #fca5a5;
+            background: rgba(244, 63, 94, 0.02);
+        }
+        .transformation-table td.td-after {
+            color: #86efac;
+            background: rgba(16, 185, 129, 0.02);
+            font-weight: 500;
+        }
+        .transformation-table td.td-impact {
+            white-space: nowrap;
+        }
+        .impact-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--emerald);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+        }
+        .impact-badge.gold {
+            background: rgba(245, 158, 11, 0.12);
+            color: var(--amber);
+            border-color: rgba(245, 158, 11, 0.25);
+        }
+        .impact-badge.cyan {
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--cyan);
+            border-color: rgba(56, 189, 248, 0.25);
+        }
+
         /* Responsive Breakpoints */
         @media (max-width: 1024px) {
             .meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1818,6 +2086,58 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Executive Transformation Table: Before vs After Dovetail -->
+            <div class="transformation-table-wrapper">
+                <table class="transformation-table">
+                    <thead>
+                        <tr>
+                            <th>Operational Dimension</th>
+                            <th class="th-before"><i class="fas fa-circle-xmark"></i> Before Dovetail (Legacy Bottleneck)</th>
+                            <th class="th-after"><i class="fas fa-circle-check"></i> After Dovetail (Engineered by Ahsan Tariq)</th>
+                            <th class="th-impact"><i class="fas fa-bolt"></i> Measurable Impact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="td-dimension"><i class="fas fa-file-signature"></i> Document Signatures</td>
+                            <td class="td-before"><strong>4–7 day stalls</strong> waiting for directors' physical wet-ink signatures on clipboards. Urgent medicine held in warehouses.</td>
+                            <td class="td-after"><strong>&lt; 60-second mobile approvals</strong> via DocuSign automated alerts from any smartphone or tablet worldwide.</td>
+                            <td class="td-impact"><span class="impact-badge"><i class="fas fa-arrow-trend-up"></i> 99% Faster Flow</span></td>
+                        </tr>
+                        <tr>
+                            <td class="td-dimension"><i class="fas fa-truck-fast"></i> Fleet Visibility</td>
+                            <td class="td-before"><strong>0% live tracking</strong> across 102 delivery vehicles. 10+ frantic phone calls to drivers stuck in traffic.</td>
+                            <td class="td-after"><strong>100% Cartrack GPS radar</strong> streaming live vehicle speed (e.g. 42 km/h), fuel/battery health, and minute-accurate ETAs.</td>
+                            <td class="td-impact"><span class="impact-badge cyan"><i class="fas fa-satellite-dish"></i> 100% Fleet Radar</span></td>
+                        </tr>
+                        <tr>
+                            <td class="td-dimension"><i class="fas fa-vault"></i> Regulatory Compliance</td>
+                            <td class="td-before"><strong>Locked on physical office hard drives</strong> in central IT room. Evening regulatory audits required driving through traffic.</td>
+                            <td class="td-after"><strong>Zero-Trust 3-Layer OTP Cloud Vault</strong> streaming confidential FDA CPRs and contracts securely with zero firewall port-forwarding.</td>
+                            <td class="td-impact"><span class="impact-badge"><i class="fas fa-shield-halved"></i> 24/7 Secure Access</span></td>
+                        </tr>
+                        <tr>
+                            <td class="td-dimension"><i class="fas fa-gauge-high"></i> ERP Query Latency</td>
+                            <td class="td-before"><strong>15-second freezes</strong> and repeated NetSuite "Rate Limit Exceeded" errors when multiple accountants consolidated month-end books.</td>
+                            <td class="td-after"><strong>&lt; 15ms query response</strong> backed by 20-stream continuous local PostgreSQL mirror (51,462 invoices, 35,935 orders).</td>
+                            <td class="td-impact"><span class="impact-badge gold"><i class="fas fa-bolt"></i> 1,000x Speedup</span></td>
+                        </tr>
+                        <tr>
+                            <td class="td-dimension"><i class="fas fa-ship"></i> International Cargo</td>
+                            <td class="td-before"><strong>$140M in active freight</strong> scattered across disjointed personal Excel files with inconsistent numbers across teams.</td>
+                            <td class="td-after"><strong>$141.3M Unified Trello Radar</strong> tracking 1,466 global air &amp; container shipments from manufacturer dispatch to port clearance.</td>
+                            <td class="td-impact"><span class="impact-badge cyan"><i class="fas fa-boxes-packing"></i> 1,466 Active Loads</span></td>
+                        </tr>
+                        <tr>
+                            <td class="td-dimension"><i class="fas fa-chart-line"></i> Financial Intelligence</td>
+                            <td class="td-before"><strong>10–14 days</strong> manual ledger consolidation to close monthly books. Unknown cash balance deficits until month-end.</td>
+                            <td class="td-after"><strong>Live 3-second SuiteQL P&amp;L ticking</strong> + 8-week predictive cash-flow forecasting to pre-emptively defend liquidity.</td>
+                            <td class="td-impact"><span class="impact-badge"><i class="fas fa-coins"></i> 3s Live Telemetry</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </section>
 <section class="section-separator" id="tech-stack">
@@ -1978,7 +2298,7 @@
         </div>
     </div>
 
-    <!-- Lightbox JavaScript -->
+    <!-- Lightbox & Interactive Comparison JavaScript -->
     <script>
         function openLightbox(src, caption) {
             const modal = document.getElementById('lightboxModal');
@@ -1999,6 +2319,67 @@
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeLightbox();
+            }
+        });
+
+        // Interactive Problem vs Solution Comparison Engine
+        function filterComparisonAmbica(mode) {
+            const btnBoth = document.getElementById('btnAmbicaBoth');
+            const btnProblem = document.getElementById('btnAmbicaProblem');
+            const btnSolution = document.getElementById('btnAmbicaSolution');
+
+            if (!btnBoth || !btnProblem || !btnSolution) return;
+
+            btnBoth.className = 'compare-toggle-btn';
+            btnProblem.className = 'compare-toggle-btn';
+            btnSolution.className = 'compare-toggle-btn';
+
+            const rows = document.querySelectorAll('#compareGridAmbica .compare-row');
+
+            if (mode === 'both') {
+                btnBoth.classList.add('active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = window.innerWidth <= 1024 ? 'minmax(0, 1fr)' : 'minmax(0, 1fr) 56px minmax(0, 1fr)';
+                    const prob = r.querySelector('.side-problem');
+                    const sol = r.querySelector('.side-solution');
+                    const arrow = r.querySelector('.compare-arrow-box');
+                    if (prob) prob.style.display = 'flex';
+                    if (sol) sol.style.display = 'flex';
+                    if (arrow) arrow.style.display = 'flex';
+                });
+            } else if (mode === 'problem') {
+                btnProblem.classList.add('problem-active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr)';
+                    const prob = r.querySelector('.side-problem');
+                    const sol = r.querySelector('.side-solution');
+                    const arrow = r.querySelector('.compare-arrow-box');
+                    if (prob) prob.style.display = 'flex';
+                    if (sol) sol.style.display = 'none';
+                    if (arrow) arrow.style.display = 'none';
+                });
+            } else if (mode === 'solution') {
+                btnSolution.classList.add('solution-active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr)';
+                    const prob = r.querySelector('.side-problem');
+                    const sol = r.querySelector('.side-solution');
+                    const arrow = r.querySelector('.compare-arrow-box');
+                    if (prob) prob.style.display = 'none';
+                    if (sol) sol.style.display = 'flex';
+                    if (arrow) arrow.style.display = 'none';
+                });
+            }
+        }
+
+        // Handle resize to preserve responsive columns
+        window.addEventListener('resize', function() {
+            const btnBoth = document.getElementById('btnAmbicaBoth');
+            if (btnBoth && btnBoth.classList.contains('active')) {
+                const rows = document.querySelectorAll('#compareGridAmbica .compare-row');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = window.innerWidth <= 1024 ? 'minmax(0, 1fr)' : 'minmax(0, 1fr) 56px minmax(0, 1fr)';
+                });
             }
         });
     </script>
