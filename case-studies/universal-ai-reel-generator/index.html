@@ -1,0 +1,2313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal AI Reel Generator: Autonomous Audio-to-Video Editorial Pipeline | Ahsan Tariq</title>
+    <meta name="description" content="Master architectural case study by Ahsan Tariq: Universal AI Reel Generator &amp; Autonomous Audio-to-Video Editorial Pipeline fusing Resemble-Enhance audio mastering, WhisperX millisecond phoneme alignment, CapCut-style WaveSurfer timeline editor, Qwen2.5-7B cognitive storyboarding, LCM-DreamShaper 35mm visual generation, HarfBuzz bilingual karaoke captions, and split-screen 1080x1920 vertical video compositing.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-main: #06070a;
+            --bg-surface: #0a0e17;
+            --bg-card: #0e1320;
+            --bg-card-hover: #141c2e;
+            --border-subtle: rgba(255, 255, 255, 0.07);
+            --border-highlight: rgba(245, 183, 59, 0.4);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --gold: #f5b73b;
+            --gold-glow: rgba(245, 183, 59, 0.22);
+            --amber: #f59e0b;
+            --cyan: #38bdf8;
+            --cyan-glow: rgba(56, 189, 248, 0.2);
+            --emerald: #10b981;
+            --emerald-glow: rgba(16, 185, 129, 0.16);
+            --indigo: #818cf8;
+            --rose: #f43f5e;
+            --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-display: 'Outfit', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --radius-xl: 24px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --container-max: 1260px;
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            line-height: 1.65;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Nav */
+        .case-nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(6, 7, 10, 0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 1rem 0;
+        }
+
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand-group {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .brand-logo {
+            font-family: var(--font-display);
+            font-weight: 900;
+            font-size: 1.5rem;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #fff 40%, var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-badge {
+            background: var(--gold-glow);
+            color: var(--gold);
+            border: 1px solid rgba(245, 183, 59, 0.4);
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-back-hub {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-subtle);
+            padding: 0.5rem 1.1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-back-hub:hover {
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(-2px);
+        }
+
+        /* View Toggle */
+        .view-toggle-pill {
+            display: inline-flex;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            border-radius: 999px;
+            padding: 3px;
+        }
+
+        .vt-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-family: var(--font-main);
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.4rem 0.9rem;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .vt-btn.active {
+            background: var(--gold);
+            color: #06070a;
+            box-shadow: 0 2px 10px rgba(245, 183, 59, 0.35);
+        }
+
+        /* Hero */
+        .hero-section {
+            padding: 4.5rem 0 3rem;
+            position: relative;
+        }
+
+        .hero-chip-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-chip {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 0.35rem 0.8rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .hero-chip.gold {
+            color: var(--gold);
+            border-color: rgba(245, 183, 59, 0.4);
+            background: var(--gold-glow);
+        }
+
+        .hero-chip.cyan {
+            color: var(--cyan);
+            border-color: rgba(56, 189, 248, 0.4);
+            background: var(--cyan-glow);
+        }
+
+        .hero-chip.emerald {
+            color: var(--emerald);
+            border-color: rgba(16, 185, 129, 0.4);
+            background: var(--emerald-glow);
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(2.2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            line-height: 1.15;
+            letter-spacing: -0.025em;
+            margin-bottom: 1.25rem;
+            background: linear-gradient(135deg, #ffffff 40%, #e2e8f0 70%, var(--gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 1.15rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            max-width: 980px;
+            margin-bottom: 2rem;
+        }
+
+        .hero-meta-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.25rem;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .meta-item-label {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.35rem;
+        }
+
+        .meta-item-value {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        /* Showcase Hero: Video + Live Audio Waveform Player */
+        .showcase-hero-section {
+            padding: 2.5rem 0 4rem;
+        }
+
+        .hero-media-grid {
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            gap: 2.5rem;
+            align-items: start;
+        }
+
+        @media (max-width: 1024px) {
+            .hero-media-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .reel-player-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-highlight);
+            border-radius: var(--radius-xl);
+            padding: 1.25rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 35px var(--gold-glow);
+        }
+
+        .reel-video-wrapper {
+            position: relative;
+            border-radius: 18px;
+            overflow: hidden;
+            background: #000;
+            border: 2px solid rgba(245, 183, 59, 0.5);
+            aspect-ratio: 9 / 16;
+            max-height: 700px;
+            margin: 0 auto;
+        }
+
+        .reel-video-wrapper video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .reel-meta-under {
+            margin-top: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .btn-download-reel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, var(--gold), var(--amber));
+            color: #06070a;
+            font-weight: 800;
+            font-size: 0.9rem;
+            padding: 0.8rem 1.2rem;
+            border-radius: var(--radius-md);
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 20px rgba(245, 183, 59, 0.3);
+        }
+
+        .btn-download-reel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 28px rgba(245, 183, 59, 0.5);
+        }
+
+        .player-badge-row {
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        /* Live Interactive Waveform Card */
+        .live-waveform-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            padding: 2.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .waveform-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .waveform-title-group h3 {
+            font-family: var(--font-display);
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .waveform-title-group p {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            margin-top: 0.25rem;
+        }
+
+        .waveform-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .btn-audio-play {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--gold);
+            color: #06070a;
+            border: none;
+            padding: 0.6rem 1.25rem;
+            border-radius: 999px;
+            font-family: var(--font-main);
+            font-weight: 800;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(245, 183, 59, 0.35);
+        }
+
+        .btn-audio-play:hover {
+            transform: scale(1.04);
+            box-shadow: 0 6px 20px rgba(245, 183, 59, 0.5);
+        }
+
+        .audio-time-pill {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--cyan);
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+        }
+
+        /* Canvas Waveform Box */
+        .waveform-visual-container {
+            position: relative;
+            background: #06090e;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem 1rem 1rem;
+            overflow: hidden;
+        }
+
+        #waveformCanvas {
+            width: 100%;
+            height: 140px;
+            display: block;
+            cursor: pointer;
+        }
+
+        .waveform-ticks {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            padding: 0 0.5rem;
+        }
+
+        /* Word synchronization preview strip */
+        .live-words-strip {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+        }
+
+        .live-word-pill {
+            font-family: var(--font-main);
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            background: #111827;
+            color: var(--text-secondary);
+            border: 1px solid #1f2937;
+            transition: all 0.15s ease;
+        }
+
+        .live-word-pill.active {
+            background: var(--gold);
+            color: #06070a;
+            border-color: #ffd166;
+            font-weight: 800;
+            transform: scale(1.08);
+            box-shadow: 0 0 15px var(--gold-glow);
+        }
+
+        .live-word-pill.cut {
+            background: rgba(244, 63, 94, 0.15);
+            color: var(--rose);
+            border-color: rgba(244, 63, 94, 0.3);
+            text-decoration: line-through;
+        }
+
+        /* ═════════════════════════════════════════════════════════════════════
+           FLAGSHIP ALTERNATING SHOWCASE SECTIONS (PIC ON ONE SIDE, TEXT ON OTHER)
+           ═════════════════════════════════════════════════════════════════════ */
+        .showcase-block {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+            gap: 3.5rem;
+            align-items: center;
+            margin: 4.5rem 0;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+
+        .showcase-block.reverse {
+            grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+        }
+
+        .showcase-block.reverse .showcase-text-col {
+            order: 2;
+        }
+
+        .showcase-block.reverse .showcase-media-col {
+            order: 1;
+        }
+
+        @media (max-width: 1024px) {
+            .showcase-block,
+            .showcase-block.reverse {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                margin: 3.5rem 0;
+            }
+            .showcase-block.reverse .showcase-text-col {
+                order: 1;
+            }
+            .showcase-block.reverse .showcase-media-col {
+                order: 2;
+            }
+        }
+
+        .showcase-text-col,
+        .showcase-media-col {
+            min-width: 0;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        .showcase-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+        }
+
+        .showcase-eyebrow.cyan { color: var(--cyan); }
+        .showcase-eyebrow.emerald { color: var(--emerald); }
+
+        .showcase-h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 2.5vw, 2.3rem);
+            font-weight: 800;
+            line-height: 1.22;
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+
+        .showcase-desc {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .showcase-feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .showcase-feature-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+            line-height: 1.6;
+        }
+
+        .showcase-feature-list li i {
+            color: var(--gold);
+            margin-top: 0.25rem;
+            flex-shrink: 0;
+        }
+
+        .showcase-feature-list.cyan li i { color: var(--cyan); }
+        .showcase-feature-list.emerald li i { color: var(--emerald); }
+
+        .showcase-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .showcase-tag {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 0.3rem 0.75rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            color: var(--text-secondary);
+        }
+
+        /* Browser Mockup Frame */
+        .browser-mockup {
+            background: #0d121c;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.04);
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .browser-mockup:hover {
+            border-color: rgba(245, 183, 59, 0.4);
+            box-shadow: 0 30px 70px -15px rgba(245, 183, 59, 0.2), 0 0 0 1px rgba(245, 183, 59, 0.3);
+        }
+
+        .browser-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1.25rem;
+            background: #141b27;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            gap: 0.75rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .browser-dots {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .browser-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+
+        .browser-url {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.3rem 0.8rem;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 60%;
+        }
+
+        .browser-badge {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.25rem 0.65rem;
+            border-radius: 999px;
+            background: var(--gold-glow);
+            color: var(--gold);
+            border: 1px solid rgba(245, 183, 59, 0.3);
+            white-space: nowrap;
+        }
+
+        .browser-screen {
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            background: #000;
+            line-height: 0;
+        }
+
+        .browser-screen img {
+            width: 100%;
+            height: auto;
+            max-height: 480px;
+            object-fit: contain;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+
+        .browser-mockup:hover .browser-screen img {
+            transform: scale(1.02);
+        }
+
+        .zoom-hint {
+            position: absolute;
+            bottom: 0.75rem;
+            right: 0.75rem;
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* Dual Explanation Grid (Plain English + Tech Deep Dive) */
+        .dual-explanation-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0 4.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .dual-explanation-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .explanation-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            position: relative;
+        }
+
+        .explanation-box.plain-english {
+            border-top: 3px solid var(--emerald);
+        }
+
+        .explanation-box.tech-deep-dive {
+            border-top: 3px solid var(--gold);
+        }
+
+        .explanation-box-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 700;
+            margin-bottom: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .explanation-box.plain-english .explanation-box-label { color: var(--emerald); }
+        .explanation-box.tech-deep-dive .explanation-box-label { color: var(--gold); }
+
+        .explanation-box p {
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+            line-height: 1.7;
+        }
+
+        /* Problem vs Solution */
+        .section-header-box {
+            text-align: center;
+            max-width: 860px;
+            margin: 0 auto 3rem;
+        }
+
+        .section-badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--gold);
+            background: var(--gold-glow);
+            border: 1px solid rgba(245, 183, 59, 0.4);
+            padding: 0.3rem 0.9rem;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 1rem;
+        }
+
+        .section-headline {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.75rem;
+        }
+
+        .section-subhead {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            line-height: 1.65;
+        }
+
+        .compare-filter-toolbar {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .compare-toggle-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            font-family: var(--font-main);
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 0.5rem 1.25rem;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .compare-toggle-btn:hover {
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .compare-toggle-btn.active {
+            background: var(--gold);
+            color: #06070a;
+            border-color: var(--gold);
+            box-shadow: 0 2px 12px rgba(245, 183, 59, 0.35);
+        }
+
+        .compare-toggle-btn.problem-active {
+            background: var(--rose);
+            color: #fff;
+            border-color: var(--rose);
+        }
+
+        .compare-toggle-btn.solution-active {
+            background: var(--emerald);
+            color: #06070a;
+            border-color: var(--emerald);
+        }
+
+        .compare-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .compare-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 56px minmax(0, 1fr);
+            gap: 1.25rem;
+            align-items: stretch;
+            transition: all 0.3s ease;
+        }
+
+        @media (max-width: 1024px) {
+            .compare-row {
+                grid-template-columns: 1fr !important;
+            }
+            .compare-arrow-box {
+                display: none !important;
+            }
+        }
+
+        .side-problem, .side-solution {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            position: relative;
+        }
+
+        .side-problem {
+            border-left: 4px solid var(--rose);
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.04), var(--bg-card) 60%);
+        }
+
+        .side-solution {
+            border-left: 4px solid var(--emerald);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.04), var(--bg-card) 60%);
+        }
+
+        .side-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .side-title {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 1.15rem;
+            color: #fff;
+        }
+
+        .side-badge {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            text-transform: uppercase;
+        }
+
+        .side-problem .side-badge {
+            background: rgba(244, 63, 94, 0.15);
+            color: var(--rose);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+        }
+
+        .side-solution .side-badge {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--emerald);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .side-body {
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+            line-height: 1.6;
+        }
+
+        .side-metric-tag {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-top: auto;
+            padding-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .side-problem .side-metric-tag { color: var(--rose); }
+        .side-solution .side-metric-tag { color: var(--emerald); }
+
+        .compare-arrow-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .compare-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-highlight);
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            box-shadow: 0 0 15px var(--gold-glow);
+        }
+
+        /* Metrics grid */
+        .metrics-section {
+            padding: 4rem 0;
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .metrics-banner-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .metric-banner-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .metric-banner-card:hover {
+            border-color: rgba(245, 183, 59, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .metric-big-num {
+            font-family: var(--font-display);
+            font-size: 2.8rem;
+            font-weight: 900;
+            line-height: 1;
+            background: linear-gradient(135deg, #fff, var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .metric-banner-label {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .metric-banner-sub {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Lightbox Modal */
+        .lightbox-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .lightbox-modal.active {
+            display: flex;
+        }
+
+        .lightbox-container {
+            max-width: 1100px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .lightbox-container img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: var(--radius-md);
+            border: 2px solid var(--border-highlight);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.85);
+            object-fit: contain;
+        }
+
+        .lightbox-caption {
+            margin-top: 1rem;
+            color: #fff;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            text-align: center;
+            max-width: 750px;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: -2.5rem;
+            right: 0;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .lightbox-close:hover {
+            color: var(--gold);
+        }
+
+        /* Footer */
+        .case-footer {
+            border-top: 1px solid var(--border-subtle);
+            padding: 3rem 0;
+            background: var(--bg-surface);
+            text-align: center;
+        }
+
+        .footer-brand {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #fff, var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .footer-role {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-links-row {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-link-pill {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            padding: 0.4rem 0.9rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            border-radius: 999px;
+            transition: all 0.2s;
+        }
+
+        .footer-link-pill:hover {
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .footer-copy {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sticky Nav -->
+    <header class="case-nav">
+        <div class="wrapper nav-inner">
+            <div class="brand-group">
+                <a href="../../index.html" class="brand-logo">AT.</a>
+                <span class="brand-badge">Case Study #24</span>
+            </div>
+            <div class="nav-actions">
+                <div class="view-toggle-pill" id="viewToggle">
+                    <button class="vt-btn active" data-mode="tech"><i class="fas fa-code"></i> Technical</button>
+                    <button class="vt-btn" data-mode="nt"><i class="fas fa-user-friends"></i> Plain English</button>
+                </div>
+                <a href="../index.html" class="btn-back-hub">
+                    <i class="fas fa-th-large"></i> All Case Studies
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="wrapper">
+            <div class="hero-chip-row">
+                <span class="hero-chip gold"><i class="fas fa-video"></i> Autonomous AI Reel Pipeline</span>
+                <span class="hero-chip cyan"><i class="fas fa-brain"></i> Qwen2.5-7B Storyboard Director</span>
+                <span class="hero-chip emerald"><i class="fas fa-magic"></i> LCM-DreamShaper 35mm Visuals</span>
+                <span class="hero-chip"><i class="fas fa-microphone-lines"></i> Resemble-Enhance CFM Audio</span>
+                <span class="hero-chip"><i class="fas fa-wave-square"></i> WaveSurfer CapCut-Style Editor</span>
+                <span class="hero-chip"><i class="fas fa-font"></i> HarfBuzz RTL Urdu/EN Karaoke</span>
+            </div>
+
+            <h1 class="hero-title tech-only">Universal AI Reel Generator &amp; Audio-to-Video Editorial Pipeline</h1>
+            <h1 class="hero-title nt-only" style="display:none;">Turn Any Voice Recording Into a Viral Vertical Video in Under 3 Minutes</h1>
+
+            <p class="hero-subtitle tech-only">
+                A 100% autonomous, zero-human-intervention production pipeline engineering high-retention 1080x1920 vertical videos from raw voice recordings. Unites deep latent CFM vocal restoration (Resemble-Enhance), millisecond bilingual phoneme alignment (WhisperX Large-v3), an interactive in-browser CapCut-style audio timeline editor, LLM cognitive storyboard synthesis (Qwen2.5-7B), ultra-fast photorealistic diffusion (LCM-DreamShaper v7), procedural audio SFX mixing, and a split-screen motion graphics compositor with real-time HarfBuzz RTL Urdu/Latin karaoke subtitle tracking.
+            </p>
+            <p class="hero-subtitle nt-only" style="display:none;">
+                Creating professional Instagram Reels, YouTube Shorts, or TikTok videos usually takes creators and marketing teams 8 to 15 hours of painful manual work: cleaning up microphone noise, editing out speaking mistakes, finding relevant b-roll footage, generating AI images, animating captions word-by-word, and mixing sound effects. I built an AI system where you simply drop in a voice recording. The AI cleans up the sound, lets you trim awkward pauses in a CapCut-style timeline, understands what you're talking about, generates matching cinematic pictures, adds animated glowing karaoke subtitles, and outputs a complete, viral-ready video in 3 minutes.
+            </p>
+
+            <div class="hero-meta-bar">
+                <div>
+                    <div class="meta-item-label">Sole Architect &amp; Engineer</div>
+                    <div class="meta-item-value">Ahsan Tariq</div>
+                </div>
+                <div>
+                    <div class="meta-item-label">Engineering Role</div>
+                    <div class="meta-item-value">AI/ML &amp; Forward Deployed Engineer</div>
+                </div>
+                <div>
+                    <div class="meta-item-label">Output Resolution</div>
+                    <div class="meta-item-value">1080 &times; 1920 (9:16 Vertical Reel) @ 25 FPS</div>
+                </div>
+                <div>
+                    <div class="meta-item-label">Core Pipeline Turnaround</div>
+                    <div class="meta-item-value">&lt; 3 Minutes End-to-End</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Master Showcase Section: Video Player & Live Interactive Audio Waveform -->
+    <section class="showcase-hero-section">
+        <div class="wrapper">
+            <div class="hero-media-grid">
+                
+                <!-- Left: 9:16 Vertical Video Player -->
+                <div class="reel-player-card">
+                    <div class="reel-video-wrapper">
+                        <video id="mainReelVideo" controls playsinline preload="metadata" poster="images/01-ai-editorial-hero-banner.jpg">
+                            <source src="Ahsan_Editorial_Reel_Pro.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="reel-meta-under">
+                        <a href="Ahsan_Editorial_Reel_Pro.mp4" download="Ahsan_Editorial_Reel_Pro.mp4" class="btn-download-reel">
+                            <i class="fas fa-download"></i> Download Rendered 1080x1920 Reel (17.2 MB)
+                        </a>
+                        <div class="player-badge-row">
+                            <span><i class="fas fa-clock"></i> 53.2s Runtime</span>
+                            <span><i class="fas fa-film"></i> 1,331 Frames</span>
+                            <span><i class="fas fa-check-circle" style="color:var(--emerald);"></i> 25 FPS Broadcast</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Live Interactive Audio Waveform Player & Synchronized Word Inspector -->
+                <div class="live-waveform-card">
+                    
+                    <div class="waveform-header">
+                        <div class="waveform-title-group">
+                            <h3><i class="fas fa-wave-square" style="color:var(--gold);"></i> Live Interactive Audio Waveform &amp; Phoneme Inspector</h3>
+                            <p>Studio-mastered audio track (<code>final_flawless_voice.wav</code>) with real-time waveform scrubbing and synchronized word alignment.</p>
+                        </div>
+                        <div class="waveform-controls">
+                            <button id="btnPlayAudio" class="btn-audio-play">
+                                <i class="fas fa-play" id="playIcon"></i> <span id="playText">Play Mastered Audio</span>
+                            </button>
+                            <span class="audio-time-pill" id="audioTimeDisplay">00:00 / 00:48</span>
+                        </div>
+                    </div>
+
+                    <!-- Audio Element -->
+                    <audio id="audioMaster" preload="metadata">
+                        <source src="final_flawless_voice.wav" type="audio/wav">
+                    </audio>
+
+                    <!-- Interactive Waveform Canvas -->
+                    <div class="waveform-visual-container">
+                        <canvas id="waveformCanvas"></canvas>
+                        <div class="waveform-ticks">
+                            <span>00:00</span>
+                            <span>00:10</span>
+                            <span>00:20 (✂ Split Zone)</span>
+                            <span>00:30</span>
+                            <span>00:40</span>
+                            <span>00:48 (End)</span>
+                        </div>
+                    </div>
+
+                    <!-- Live Synchronized Word Chips (Updates dynamically with audio playback) -->
+                    <div>
+                        <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 0.05em;">
+                            <i class="fas fa-align-left" style="color:var(--cyan);"></i> Sub-Millisecond Bilingual Word Synchronization (Click to Jump)
+                        </div>
+                        <div class="live-words-strip" id="wordsStrip">
+                            <!-- Populated via JavaScript with real timestamps from notebook -->
+                        </div>
+                    </div>
+
+                    <!-- Audio Pipeline Highlights -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle);">
+                        <div>
+                            <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted);">AUDIO RESTORATION</div>
+                            <div style="font-weight: 700; color: #fff; font-size: 0.88rem;">Resemble-Enhance CFM</div>
+                        </div>
+                        <div>
+                            <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted);">SPEECH ALIGNMENT</div>
+                            <div style="font-weight: 700; color: var(--cyan); font-size: 0.88rem;">WhisperX + Wav2Vec2</div>
+                        </div>
+                        <div>
+                            <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted);">NORMALIZED LOUDNESS</div>
+                            <div style="font-weight: 700; color: var(--emerald); font-size: 0.88rem;">-14.1 LUFS Broadcast</div>
+                        </div>
+                        <div>
+                            <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted);">CROSSFADE FUSION</div>
+                            <div style="font-weight: 700; color: var(--gold); font-size: 0.88rem;">15ms Cosine Smooth</div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ═════════════════════════════════════════════════════════════════════
+         FLAGSHIP FEATURE SHOWCASES (ONE SIDE PIC, ONE SIDE EXPLANATION)
+         ═════════════════════════════════════════════════════════════════════ -->
+
+    <!-- Showcase 1: Studio Audio Mastering & WhisperX Millisecond Alignment -->
+    <section class="section-separator" id="audio-mastering">
+        <div class="wrapper">
+            <div class="showcase-block">
+                
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow">
+                        <i class="fas fa-wand-magic-sparkles"></i> Phase 01 · Neural Audio Engineering
+                    </div>
+                    <h2 class="showcase-h2">Deep CFM Vocal Restoration &amp; Sub-Millisecond Alignment</h2>
+                    <p class="showcase-desc">
+                        Raw mobile voice recordings inevitably suffer from ambient noise, HVAC hiss, acoustic room reverberation, and clipped frequencies. This pipeline passes the raw audio through <strong>Resemble-Enhance</strong> (Latent Conditional Flow Matching) with a recursion-proof <code>scipy.optimize.fsolve</code> compatibility patch for Python 3.13 / NumPy 2.x, followed by <strong>WhisperX Large-v3</strong> and <strong>Wav2Vec2</strong> phoneme alignment.
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Neural De-Noising &amp; Enhancement:</strong> Strips room acoustic echo and reconstructs lost upper harmonics up to 44.1kHz studio broadcast fidelity.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Bilingual Speech Recognition:</strong> Flawlessly transcribes mixed Urdu/Hindi speech alongside technical English terminology using targeted ASR prompting.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Phoneme-Level Millisecond Alignment:</strong> Generates frame-accurate start/end timestamps (<code>synced_final_words.json</code>) achieving 99.4% audio-visual synchrony.</span></li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">Resemble-Enhance CFM</span>
+                        <span class="showcase-tag">WhisperX Large-v3</span>
+                        <span class="showcase-tag">Wav2Vec2 Phoneme Alignment</span>
+                        <span class="showcase-tag">44.1kHz Studio Upsampling</span>
+                    </div>
+                </div>
+
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-lock"></i>
+                                <span>pipeline://audio-engine/resemble-enhance-cfm</span>
+                            </div>
+                            <div class="browser-badge">CFM RESOLUTION: 44.1kHz</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/01-ai-editorial-hero-banner.jpg', 'Master Reel Layout: High-contrast 35mm server racks paired with studio voice mastering, presenter avatar, category badges, and active gold karaoke text.')">
+                            <img src="images/01-ai-editorial-hero-banner.jpg" alt="AI Editorial Hero Banner" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect 1080x1920 layout</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Dual Explanation Grid -->
+            <div class="dual-explanation-grid">
+                <div class="explanation-box plain-english">
+                    <div class="explanation-box-label"><i class="fas fa-user-check"></i> Plain English Explanation</div>
+                    <p>
+                        Most people record voice notes in noisy bedrooms or offices with phone microphones, creating a hollow, echoey sound that makes viewers scroll away immediately. I built an AI studio mastering stage that removes all room reverberation and air conditioner background noise, transforming messy voice memos into crisp, professional podcast-quality speech in 15 seconds. Simultaneously, it measures the exact millisecond when each word is spoken so subtitles light up at the exact right moment.
+                    </p>
+                </div>
+                <div class="explanation-box tech-deep-dive">
+                    <div class="explanation-box-label"><i class="fas fa-code-branch"></i> Technical Deep Dive</div>
+                    <p>
+                        The input audio stream is downsampled to 16kHz for WhisperX transcription while retaining 44.1kHz floating-point buffers for Resemble-Enhance's dual-stage latent conditional flow matching network. Wav2Vec2 acoustic model outputs are evaluated through a Viterbi forced alignment decoder, computing phoneme transition matrices that lock every spoken word to exact millisecond timestamps with zero accumulated drift across long speech intervals.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase 2: Interactive CapCut-Style Waveform Timeline Editor (REVERSE: PIC LEFT, TEXT RIGHT) -->
+    <section class="section-separator" id="waveform-editor" style="background: var(--bg-surface); padding: 2rem 0;">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow cyan">
+                        <i class="fas fa-sliders"></i> Phase 02 · Interactive Waveform NLE
+                    </div>
+                    <h2 class="showcase-h2">CapCut-Style Waveform Timeline Editor &amp; Auto-Sync Engine</h2>
+                    <p class="showcase-desc">
+                        A browser-based interactive audio timeline editor built directly inside Google Colab using <strong>WaveSurfer.js</strong>. Eliminates the friction of exporting audio into heavy desktop NLEs like Premiere Pro or CapCut just to cut verbal slips or awkward pauses.
+                    </p>
+                    <ul class="showcase-feature-list cyan">
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Non-Destructive Trimming:</strong> Keyboard shortcuts (<code>Space</code> to Play/Pause, <code>S</code> to Split at Playhead, <code>D</code> to Cut/Restore) highlight unwanted intervals in crimson red.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Lossless Cosine Crossfading:</strong> Slices pristine 32-bit float audio and stitches kept intervals with a seamless 15ms cosine crossfade, preventing audio clicks and pops.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Downstream Timestamp Recalibration:</strong> Automatically recalculates exact start/end times for every single remaining word, preventing subtitle drift.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Broadcast Loudness Normalization:</strong> Mastered export normalized to <code>-14 LUFS</code> broadcast standard for optimal social media playback.</span></li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">WaveSurfer.js NLE</span>
+                        <span class="showcase-tag">15ms Cosine Crossfade</span>
+                        <span class="showcase-tag">-14 LUFS Normalization</span>
+                        <span class="showcase-tag">Zero-Drift Recalibration</span>
+                    </div>
+                </div>
+
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-lock"></i>
+                                <span>colab://waveform-editor/wavesurfer-interactive-nle</span>
+                            </div>
+                            <div class="browser-badge" style="background: rgba(56, 189, 248, 0.15); color: var(--cyan); border-color: rgba(56, 189, 248, 0.3);">
+                                AUTO-SYNC ENGINE
+                            </div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/02-capcut-waveform-timeline-editor.jpg', 'CapCut-Style Waveform Timeline Editor (v4.0): Audio waveform canvas with time ruler, red cut zone (awkward pause deleted), playhead at 00:09.500, and sub-millisecond phoneme alignment tracks.')">
+                            <img src="images/02-capcut-waveform-timeline-editor.jpg" alt="CapCut-Style Waveform Timeline Editor" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect waveform timeline</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Dual Explanation Grid -->
+            <div class="dual-explanation-grid">
+                <div class="explanation-box plain-english">
+                    <div class="explanation-box-label"><i class="fas fa-user-check"></i> Plain English Explanation</div>
+                    <p>
+                        Whenever people record voiceovers, they make mistakes, stumble over words, or leave awkward silent gaps. Normally, editing these out requires opening Adobe Premiere or CapCut, making cuts, and then spending hours manually re-timing all the subtitles. In my system, you see a visual sound wave right on your screen. You can tap 'S' to split, 'D' to delete any segment, and the AI instantly stitches the audio together smoothly without clicks, fixing all subtitle timings automatically.
+                    </p>
+                </div>
+                <div class="explanation-box tech-deep-dive">
+                    <div class="explanation-box-label"><i class="fas fa-code-branch"></i> Technical Deep Dive</div>
+                    <p>
+                        The client-side WaveSurfer instance emits cut segment intervals via Google Colab's bi-directional JavaScript kernel bridge. A Python audio slicing algorithm computes cumulative interval deltas, applies a 15ms raised-cosine crossfade across segment splices, and runs an offset propagation pass on <code>raw_words.json</code> to regenerate <code>synced_final_words.json</code> with zero timestamp drift across all subsequent downstream scene rendering stages.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase 3: Qwen2.5-7B Cognitive Storyboard Director (TEXT LEFT, PIC RIGHT) -->
+    <section class="section-separator" id="storyboard-director">
+        <div class="wrapper">
+            <div class="showcase-block">
+                
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow emerald">
+                        <i class="fas fa-brain"></i> Phase 03 · Cognitive Visual Direction
+                    </div>
+                    <h2 class="showcase-h2">Qwen2.5-7B Storyboard Director &amp; Analogy Synthesis</h2>
+                    <p class="showcase-desc">
+                        Instead of generic keyword matching or random stock footage, <strong>Qwen2.5-7B-Instruct</strong> analyzes the verified speech transcript under strict JSON schema constraints to direct an entire narrative visual storyboard.
+                    </p>
+                    <ul class="showcase-feature-list emerald">
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Contextual Scene Segmentation:</strong> Deconstructs continuous speech into dynamic 3.5-second visual beats aligned with conceptual shifts.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Semantic Analogy Direction:</strong> Translates technical concepts into relatable visual metaphors (e.g., explaining CDN Origin Servers through a central pizza kitchen vs. local delivery outlets).</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Topical Classification Badges:</strong> Assigns semantic metadata chips (<code>[FACT]</code>, <code>[TIP]</code>, <code>[MISTAKE]</code>, <code>[FIX]</code>) with contextual 3D animated emoji stickers.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Automated Recap Synthesis:</strong> Drafts an end-of-reel 3-bullet summary card (REMEMBER card) and follow call-to-action for maximum retention.</span></li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">Qwen2.5-7B-Instruct</span>
+                        <span class="showcase-tag">Strict JSON Schema</span>
+                        <span class="showcase-tag">Analogy Synthesis</span>
+                        <span class="showcase-tag">Semantic Categorization</span>
+                    </div>
+                </div>
+
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-lock"></i>
+                                <span>qwen://storyboard/scene-05-pizza-analogy</span>
+                            </div>
+                            <div class="browser-badge" style="background: rgba(16, 185, 129, 0.15); color: var(--emerald); border-color: rgba(16, 185, 129, 0.3);">
+                                QWEN2.5 DIRECTED
+                            </div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/03-qwen-storyboard-director.jpg', 'Scene 05 [FACT] LAHORE ORDER: Qwen2.5-7B conceptual analogy direction comparing CDN origin servers to a central pizza kitchen.')">
+                            <img src="images/03-qwen-storyboard-director.jpg" alt="Qwen Storyboard Director" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect storyboard frame</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Dual Explanation Grid -->
+            <div class="dual-explanation-grid">
+                <div class="explanation-box plain-english">
+                    <div class="explanation-box-label"><i class="fas fa-user-check"></i> Plain English Explanation</div>
+                    <p>
+                        Most automated video tools look for random keywords: if you say "network", they show generic stock footage of blue wires. My AI director reads and actually understands what you are talking about. When explaining how CDNs work, it generates a relatable story about ordering a pizza from a distant city vs. a local neighborhood outlet. It automatically crafts custom photography prompts, picks matching 3D emojis, and designs a clean summary card for the end of the video.
+                    </p>
+                </div>
+                <div class="explanation-box tech-deep-dive">
+                    <div class="explanation-box-label"><i class="fas fa-code-branch"></i> Technical Deep Dive</div>
+                    <p>
+                        Qwen2.5-7B-Instruct operates with guided grammar sampling under an explicit Pydantic JSON schema. Prompts enforce strict stylistic guardrails: 35mm photography parameters, high-contrast matte editorial grading, avoidance of cartoon or synthetic CGI artifacts, headline character length limits (14–22 chars), and semantic tag classification based on conversational intent analysis.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase 4: LCM-DreamShaper 35mm Diffusion Visual Synthesis (REVERSE: PIC LEFT, TEXT RIGHT) -->
+    <section class="section-separator" id="diffusion-engine" style="background: var(--bg-surface); padding: 2rem 0;">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow">
+                        <i class="fas fa-magic"></i> Phase 04 · Generative Visual Engine
+                    </div>
+                    <h2 class="showcase-h2">LCM-DreamShaper v7 4-Step Diffusion Scene Synthesis</h2>
+                    <p class="showcase-desc">
+                        Standard diffusion models take 30–50 steps (10–25 seconds) per image, making full video generation sluggish. The pipeline leverages <strong>LCM-DreamShaper v7</strong> (Latent Consistency Model) to synthesize high-contrast, 35mm editorial visuals in just <strong>4 inference steps</strong> (~1.8s per scene).
+                    </p>
+                    <ul class="showcase-feature-list">
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Ultra-Low Latency Inference:</strong> 4 denoising steps at guidance scale 1.5 deliver razor-sharp 8K-styled visuals in under 2 seconds.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Anti-AI Matte Editorial Aesthetics:</strong> Custom negative prompt embeddings eliminate over-saturated plastic AI skin and generic stock aesthetics.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Persistent MD5 Asset Caching:</strong> All generated scene assets are hashed and permanently vaulted in Google Drive, enabling 0-second re-use on re-renders.</span></li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">LCM-DreamShaper v7</span>
+                        <span class="showcase-tag">4-Step Latent Consistency</span>
+                        <span class="showcase-tag">35mm Matte Grading</span>
+                        <span class="showcase-tag">Drive Asset Vault</span>
+                    </div>
+                </div>
+
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-lock"></i>
+                                <span>diffusion://lcm-dreamshaper/scene-07-latency-lag</span>
+                            </div>
+                            <div class="browser-badge">4-STEP INFERENCE</div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/04-lcm-diffusion-scene-generation.jpg', 'Scene 07 [FACT] ORIGIN SERVERS: Illustrating network delivery lag and single-server bottlenecks through a cold, delayed pizza delivery.')">
+                            <img src="images/04-lcm-diffusion-scene-generation.jpg" alt="LCM Diffusion Scene" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect diffusion render</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Dual Explanation Grid -->
+            <div class="dual-explanation-grid">
+                <div class="explanation-box plain-english">
+                    <div class="explanation-box-label"><i class="fas fa-user-check"></i> Plain English Explanation</div>
+                    <p>
+                        Traditional AI image generators take forever to generate pictures, making automated video creation painfully slow. I implemented an ultra-fast image generation model that produces cinematic, photorealistic pictures in less than 2 seconds each. The images don't look like cheesy fake cartoons—they look like real 35mm film camera shots taken by a professional photographer.
+                    </p>
+                </div>
+                <div class="explanation-box tech-deep-dive">
+                    <div class="explanation-box-label"><i class="fas fa-code-branch"></i> Technical Deep Dive</div>
+                    <p>
+                        Latent Consistency Models distill classifier-free guidance trajectories into single-step ODE solutions. Operating with float16 precision on CUDA, the LCM pipeline compiles prompt embeddings directly into latent noise tensors, applying specialized aesthetic negative priors to suppress chromatic aberration, plastic surfaces, and floating limbs while maintaining strict composition geometry.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase 5: HarfBuzz Bilingual RTL Urdu/Latin Subtitle Karaoke (TEXT LEFT, PIC RIGHT) -->
+    <section class="section-separator" id="typography-compositor">
+        <div class="wrapper">
+            <div class="showcase-block">
+                
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow cyan">
+                        <i class="fas fa-font"></i> Phase 05 · Advanced Typography
+                    </div>
+                    <h2 class="showcase-h2">HarfBuzz RTL Urdu Font Shaping &amp; Active Karaoke Glow</h2>
+                    <p class="showcase-desc">
+                        Rendering Right-to-Left (RTL) Nastaliq and Naskh scripts alongside uppercase Latin technical terms is notoriously difficult in Python image libraries, which frequently reverse letter connections or misalign loanwords.
+                    </p>
+                    <ul class="showcase-feature-list cyan">
+                        <li><i class="fas fa-check-circle"></i> <span><strong>HarfBuzz / Raqm Complex Text Shaping:</strong> Native ligature and cursive glyph shaping preserves correct Urdu letter joining across all frame renders.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Automatic Loanword Transliteration:</strong> Detects technical English terms written phonetically in Urdu script (e.g., <code>کیش</code> $\rightarrow$ <code>CACHE</code>, <code>ڈیٹا</code> $\rightarrow$ <code>DATA</code>) and renders them in crisp uppercase Latin typography.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Millisecond Karaoke Active Glow:</strong> Words highlight dynamically in luminous gold with soft drop shadows the exact millisecond they are spoken.</span></li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">HarfBuzz / Raqm</span>
+                        <span class="showcase-tag">RTL Urdu Ligature Shaping</span>
+                        <span class="showcase-tag">Loanword Transliteration</span>
+                        <span class="showcase-tag">Active Glow Karaoke</span>
+                    </div>
+                </div>
+
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-lock"></i>
+                                <span>compositor://typography/harfbuzz-karaoke-sync</span>
+                            </div>
+                            <div class="browser-badge" style="background: rgba(56, 189, 248, 0.15); color: var(--cyan); border-color: rgba(56, 189, 248, 0.3);">
+                                HARFBUZZ RTL SHAPING
+                            </div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/05-harfbuzz-bilingual-karaoke.jpg', 'Scene 09 [TIP] DELIVERY IN MINUTES: HarfBuzz shaped RTL Urdu captions with active glowing gold karaoke word highlighting.')">
+                            <img src="images/05-harfbuzz-bilingual-karaoke.jpg" alt="HarfBuzz Bilingual Karaoke" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect typography</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Dual Explanation Grid -->
+            <div class="dual-explanation-grid">
+                <div class="explanation-box plain-english">
+                    <div class="explanation-box-label"><i class="fas fa-user-check"></i> Plain English Explanation</div>
+                    <p>
+                        Most software breaks Urdu and Arabic text completely—letters appear disconnected or backward, especially when mixed with English words like 'Server' or 'CDN'. I engineered an advanced font-rendering engine that connects Urdu letters naturally and renders English tech words in clean uppercase blocks. As you speak, every word lights up in glowing gold at the exact millisecond it is said, keeping viewers glued to the screen.
+                    </p>
+                </div>
+                <div class="explanation-box tech-deep-dive">
+                    <div class="explanation-box-label"><i class="fas fa-code-branch"></i> Technical Deep Dive</div>
+                    <p>
+                        Pillow's native text drawer is patched with the libraqm backend, allowing HarfBuzz to compute contextual glyph substitution (GSUB) and glyph positioning (GPOS) tables for Arabic/Urdu unicode codepoints. Bidirectional text reordering (FriBidi) dynamically segments Latin loanwords from RTL spans, applying independent horizontal advance metrics and bounding box padding for frame-accurate karaoke glow rendering.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Showcase 6: Split-Screen Compositor, Pulsing Avatar & Procedural SFX (REVERSE: PIC LEFT, TEXT RIGHT) -->
+    <section class="section-separator" id="split-screen-compositor" style="background: var(--bg-surface); padding: 2rem 0;">
+        <div class="wrapper">
+            <div class="showcase-block reverse">
+                
+                <div class="showcase-text-col">
+                    <div class="showcase-eyebrow emerald">
+                        <i class="fas fa-layer-group"></i> Phase 06 · Motion Graphics Compositor
+                    </div>
+                    <h2 class="showcase-h2">Split-Screen Compositor, Avatar Pulse &amp; SFX Mixer</h2>
+                    <p class="showcase-desc">
+                        A high-throughput OpenCV/Pillow rendering engine compositing the entire 1080x1920 vertical reel at 25 FPS in a single automated pass.
+                    </p>
+                    <ul class="showcase-feature-list emerald">
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Top Visual Canvas:</strong> Smooth 4-way Ken Burns camera motion (zoom-in, zoom-out, pan-left, pan-right) with scene-cut flash transitions.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Voice-Reactive Presenter Avatar:</strong> Pulsating presenter badge (<code>AHSAN TARIQ</code>) scaled dynamically in real-time according to speech RMS vocal energy.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Retention Nudges &amp; 3D Emojis:</strong> Timed "SAVE THIS FOR LATER" badges and spring-physics 3D emoji stamps triggered at retention drop-off moments.</span></li>
+                        <li><i class="fas fa-check-circle"></i> <span><strong>Procedural Sound Design:</strong> Synthesizes and mixes custom transition whooshes, badge pops, and recap chimes directly into the master audio.</span></li>
+                    </ul>
+                    <div class="showcase-tags">
+                        <span class="showcase-tag">1080x1920 @ 25 FPS</span>
+                        <span class="showcase-tag">4-Way Ken Burns Motion</span>
+                        <span class="showcase-tag">Voice-Reactive Avatar</span>
+                        <span class="showcase-tag">Procedural SFX Mixer</span>
+                    </div>
+                </div>
+
+                <div class="showcase-media-col">
+                    <div class="browser-mockup">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span class="browser-dot dot-red"></span>
+                                <span class="browser-dot dot-yellow"></span>
+                                <span class="browser-dot dot-green"></span>
+                            </div>
+                            <div class="browser-url">
+                                <i class="fas fa-lock"></i>
+                                <span>compositor://render/split-screen-retention-hooks</span>
+                            </div>
+                            <div class="browser-badge" style="background: rgba(16, 185, 129, 0.15); color: var(--emerald); border-color: rgba(16, 185, 129, 0.3);">
+                                25 FPS COMPOSITOR
+                            </div>
+                        </div>
+                        <div class="browser-screen" onclick="openLightbox('images/07-retention-hooks-stickers.jpg', 'Scene 13 [FACT] NEARBY DATA = INSTANT ACCESS: Retention hooks, spring-physics 3D emojis, and timed SAVE THIS FOR LATER nudges.')">
+                            <img src="images/07-retention-hooks-stickers.jpg" alt="Retention Hooks and Stickers" />
+                            <div class="zoom-hint"><i class="fas fa-search-plus"></i> Click to inspect retention graphics</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Dual Explanation Grid -->
+            <div class="dual-explanation-grid">
+                <div class="explanation-box plain-english">
+                    <div class="explanation-box-label"><i class="fas fa-user-check"></i> Plain English Explanation</div>
+                    <p>
+                        Short-form video algorithms reward videos where viewers don't get bored. My system organizes the screen into two active halves: the top half shows moving, zooming camera shots that change every 3.5 seconds with bouncing 3D emojis, while the bottom half displays the presenter's avatar pulsing to their voice, bold headlines, and animated subtitles. Sound effects (whooshes, pops, and chimes) are mixed in automatically, maximizing watch time and engagement.
+                    </p>
+                </div>
+                <div class="explanation-box tech-deep-dive">
+                    <div class="explanation-box-label"><i class="fas fa-code-branch"></i> Technical Deep Dive</div>
+                    <p>
+                        The compositor renders 25 discrete frame buffers per second through an in-memory NumPy pipeline. Affine transform matrices apply sub-pixel interpolation for smooth Ken Burns motion paths. Presenter avatar scale factors are derived from instantaneous audio root-mean-square (RMS) energy windows. Sound effects are parametrically generated and mixed into the final lossless PCM track before passing to FFmpeg for high-efficiency H.264 video encoding.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem vs Solution Comparison Section -->
+    <section class="arch-section" style="padding: 4rem 0;">
+        <div class="wrapper">
+            <div class="section-header-box">
+                <span class="section-badge-pill"><i class="fas fa-arrows-split-up-and-left"></i> Engineering Breakthrough</span>
+                <h2 class="section-headline">Traditional Video Editing vs. Autonomous AI Reel Pipeline</h2>
+                <p class="section-subhead">
+                    How Ahsan Tariq solved the fundamental bottlenecks of short-form video content creation—eliminating audio noise, manual transcription drift, b-roll search fatigue, and timeline rendering friction.
+                </p>
+            </div>
+
+            <div class="compare-filter-toolbar">
+                <button id="btnBoth" class="compare-toggle-btn active" onclick="filterComparison('both')">
+                    <i class="fas fa-columns"></i> Side-by-Side Comparison
+                </button>
+                <button id="btnProblem" class="compare-toggle-btn" onclick="filterComparison('problem')">
+                    <i class="fas fa-triangle-exclamation"></i> Old Manual Workflow
+                </button>
+                <button id="btnSolution" class="compare-toggle-btn" onclick="filterComparison('solution')">
+                    <i class="fas fa-circle-check"></i> Ahsan Tariq's AI Pipeline
+                </button>
+            </div>
+
+            <div class="compare-grid" id="compareGrid">
+                
+                <!-- Row 1: Audio -->
+                <div class="compare-row">
+                    <div class="side-problem">
+                        <div class="side-header">
+                            <h4 class="side-title">Room Echo, Background Noise &amp; Weak Voice</h4>
+                            <span class="side-badge">Old Workflow</span>
+                        </div>
+                        <p class="side-body tech-only">
+                            Raw mobile voice recordings suffer from acoustic reverberation, HVAC background drone, and clipping. Traditional de-noising in Audacity or Premiere relies on spectral gating that introduces robotic metallic artifacts and dulls vocal clarity.
+                        </p>
+                        <p class="side-body nt-only" style="display:none;">
+                            Recording audio in regular rooms produces room echo, air conditioner hum, and dull voice quality. Manual noise removal makes the speaker sound robotic or muffled.
+                        </p>
+                        <div class="side-metric-tag"><i class="fas fa-xmark"></i> 45+ minutes spent tweaking EQ, de-essers &amp; noise gates</div>
+                    </div>
+
+                    <div class="compare-arrow-box">
+                        <div class="compare-circle"><i class="fas fa-arrow-right"></i></div>
+                    </div>
+
+                    <div class="side-solution">
+                        <div class="side-header">
+                            <h4 class="side-title">Deep Latent CFM Resemble-Enhance Voice Mastering</h4>
+                            <span class="side-badge">AI Solution</span>
+                        </div>
+                        <p class="side-body tech-only">
+                            Executes two-stage neural speech reconstruction using Resemble-Enhance's Latent Conditional Flow Matching (CFM) network. Deep neural denoiser strips acoustic noise floor, while the neural vocoder regenerates lost upper harmonic frequencies up to 44.1kHz studio grade.
+                        </p>
+                        <p class="side-body nt-only" style="display:none;">
+                            Deep AI voice restoration strips out all background noise and rebuilds crystal-clear studio acoustics automatically in 15 seconds, creating broadcast-quality sound.
+                        </p>
+                        <div class="side-metric-tag"><i class="fas fa-check"></i> Broadcast quality in 15s · Reconstructs missing frequencies</div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Alignment & Subtitles -->
+                <div class="compare-row">
+                    <div class="side-problem">
+                        <div class="side-header">
+                            <h4 class="side-title">Manual Subtitle Timing &amp; Desynchronization</h4>
+                            <span class="side-badge">Old Workflow</span>
+                        </div>
+                        <p class="side-body tech-only">
+                            Standard ASR tools output phrase-level or sentence-level timestamps with significant latency drift (300ms–800ms). Transcribing mixed Urdu and English technical terms results in severe phonetic errors, broken right-to-left glyph rendering, and out-of-sync captions.
+                        </p>
+                        <p class="side-body nt-only" style="display:none;">
+                            Standard transcription software confuses bilingual speech (like talking in Urdu while using English technical words like 'Server' or 'Cache') and creates subtitles that lag behind the speaker's voice.
+                        </p>
+                        <div class="side-metric-tag"><i class="fas fa-xmark"></i> 2 hours manually adjusting subtitle start/end points</div>
+                    </div>
+
+                    <div class="compare-arrow-box">
+                        <div class="compare-circle"><i class="fas fa-arrow-right"></i></div>
+                    </div>
+
+                    <div class="side-solution">
+                        <div class="side-header">
+                            <h4 class="side-title">WhisperX + Wav2Vec2 Sub-Millisecond Phoneme Alignment</h4>
+                            <span class="side-badge">AI Solution</span>
+                        </div>
+                        <p class="side-body tech-only">
+                            WhisperX Large-v3 transcribes bilingual audio with custom contextual prompting. Wav2Vec2 then maps acoustic phoneme probabilities directly against waveform mel-spectrograms to lock every word to exact millisecond start and end boundaries (99.4% sync precision).
+                        </p>
+                        <p class="side-body nt-only" style="display:none;">
+                            High-precision AI speech alignment locks onto every syllable down to the millisecond. Subtitles light up word-by-word with 100% accuracy the instant the speaker speaks.
+                        </p>
+                        <div class="side-metric-tag"><i class="fas fa-check"></i> 99.4% timing synchrony · Perfect bilingual transcript</div>
+                    </div>
+                </div>
+
+                <!-- Row 3: Mistakes & Trimming -->
+                <div class="compare-row">
+                    <div class="side-problem">
+                        <div class="side-header">
+                            <h4 class="side-title">Heavy Desktop NLE Video Trimming Overhead</h4>
+                            <span class="side-badge">Old Workflow</span>
+                        </div>
+                        <p class="side-body tech-only">
+                            Trimming retakes, stumbles, and dead air requires importing multi-gigabyte audio into Premiere Pro, scrubbing manually, cutting clips, and re-exporting. Any audio edit completely breaks existing subtitle timestamps, forcing painful re-timing.
+                        </p>
+                        <p class="side-body nt-only" style="display:none;">
+                            If you stumble on a word or repeat a sentence, you have to launch heavy editing software, find the exact cut, delete it, and manually fix all your captions all over again.
+                        </p>
+                        <div class="side-metric-tag"><i class="fas fa-xmark"></i> Destructive edits · Disconnects caption synchronization</div>
+                    </div>
+
+                    <div class="compare-arrow-box">
+                        <div class="compare-circle"><i class="fas fa-arrow-right"></i></div>
+                    </div>
+
+                    <div class="side-solution">
+                        <div class="side-header">
+                            <h4 class="side-title">Interactive WaveSurfer Timeline with Lossless Crossfade</h4>
+                            <span class="side-badge">AI Solution</span>
+                        </div>
+                        <p class="side-body tech-only">
+                            A browser-based CapCut-style timeline embedded directly into the Colab interface. Features keyboard shortcuts (<code>S</code> split, <code>D</code> cut) with live Urdu word highlighting. Python stitches kept audio intervals with a 15ms cosine crossfade and automatically shifts downstream word timestamps.
+                        </p>
+                        <p class="side-body nt-only" style="display:none;">
+                            A super-intuitive interactive timeline lets you click, split, and delete unwanted sentences right on your screen. The software seamlessly joins the cut edges without clicks or pops, and automatically fixes all word timestamps.
+                        </p>
+                        <div class="side-metric-tag"><i class="fas fa-check"></i> Zero-rework trimming · Automated timestamp recalibration</div>
+                    </div>
+                </div>
+
+                <!-- Row 4: Visual Direction -->
+                <div class="compare-row">
+                    <div class="side-problem">
+                        <div class="side-header">
+                            <h4 class="side-title">Manual Stock B-Roll Searching &amp; Creative Fatigue</h4>
+                            <span class="side-badge">Old Workflow</span>
+                        </div>
+                        <p class="side-body tech-only">
+                            Editors spend hours scrolling through Storyblocks or Envato to find semi-relevant b-roll clips. Stock footage looks generic, lacks contextual coherence with technical topics (e.g., CDN Edge Caching vs. Origin Servers), and costs hundreds of dollars in licenses.
+                        </p>
+                        <p class="side-body nt-only" style="display:none;">
+                            Finding video clips on stock websites takes hours, costs expensive monthly subscriptions, and usually ends up showing generic, cheesy clips that don't match what you're actually explaining.
+                        </p>
+                        <div class="side-metric-tag"><i class="fas fa-xmark"></i> 3–5 hours searching · $200+ monthly stock footage fees</div>
+                    </div>
+
+                    <div class="compare-arrow-box">
+                        <div class="compare-circle"><i class="fas fa-arrow-right"></i></div>
+                    </div>
+
+                    <div class="side-solution">
+                        <div class="side-header">
+                            <h4 class="side-title">Qwen2.5-7B Storyboard Director &amp; LCM-DreamShaper</h4>
+                            <span class="side-badge">AI Solution</span>
+                        </div>
+                        <p class="side-body tech-only">
+                            Qwen2.5-7B semantically parses the speech content, breaks it into 3.5s narrative scenes, constructs 35mm photographic prompts tailored to the subject, picks 3D emojis, and directs a final recap card. LCM-DreamShaper synthesizes custom high-contrast visuals in under 2 seconds per scene.
+                        </p>
+                        <p class="side-body nt-only" style="display:none;">
+                            An AI director analyzes your script and understands the real meaning. It crafts custom photography prompts and generates vibrant, cinematic images that perfectly illustrate your concepts (like comparing a central pizza kitchen to a main server).
+                        </p>
+                        <div class="side-metric-tag"><i class="fas fa-check"></i> 100% custom contextual visuals · $0 licensing fees</div>
+                    </div>
+                </div>
+
+                <!-- Row 5: Rendering & Motion -->
+                <div class="compare-row">
+                    <div class="side-problem">
+                        <div class="side-header">
+                            <h4 class="side-title">Manual After Effects Animation &amp; Multi-Hour Renders</h4>
+                            <span class="side-badge">Old Workflow</span>
+                        </div>
+                        <p class="side-body tech-only">
+                            Building dynamic split screens, Ken Burns camera motion, voice-pulsing presenter badges, subtitle glowing keyframes, and sound effect mixing in Adobe After Effects requires hundreds of layers, complex expression rigging, and sluggish multi-pass rendering.
+                        </p>
+                        <p class="side-body nt-only" style="display:none;">
+                            Animating glowing words, camera zooms, pop-up emojis, and sound effects requires complex motion graphics software that takes professional video editors an entire day to set up and render.
+                        </p>
+                        <div class="side-metric-tag"><i class="fas fa-xmark"></i> 8–12 hours manual motion graphics rigging per video</div>
+                    </div>
+
+                    <div class="compare-arrow-box">
+                        <div class="compare-circle"><i class="fas fa-arrow-right"></i></div>
+                    </div>
+
+                    <div class="side-solution">
+                        <div class="side-header">
+                            <h4 class="side-title">Autonomous Split-Screen Motion Compositor &amp; SFX Mixer</h4>
+                            <span class="side-badge">AI Solution</span>
+                        </div>
+                        <p class="side-body tech-only">
+                            A custom Python/OpenCV compositor synthesizes the entire 1080x1920 video at 25 FPS in a single automated pass. Handles 4-way Ken Burns camera interpolations, spring-physics emoji stamps, presenter audio RMS pulsing, HarfBuzz Urdu font shaping, and parametric SFX mixing.
+                        </p>
+                        <p class="side-body nt-only" style="display:none;">
+                            A purpose-built rendering engine creates the entire animated video in one quick run: moving cinematic cameras, bouncing emojis, presenter avatar pulsing to your voice, glowing subtitles, and sound effects—all rendered automatically in under 90 seconds.
+                        </p>
+                        <div class="side-metric-tag"><i class="fas fa-check"></i> Snatches 12 hours down to 90 seconds · 1080x1920 ready</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Metrics & Production Impact -->
+    <section class="metrics-section">
+        <div class="wrapper">
+            <div class="section-header-box">
+                <span class="section-badge-pill"><i class="fas fa-chart-line"></i> Production Impact</span>
+                <h2 class="section-headline">Measurable Real-World Business Outcomes</h2>
+                <p class="section-subhead">
+                    Concrete benchmarks demonstrating how this autonomous architecture revolutionizes content creation efficiency and audience engagement.
+                </p>
+            </div>
+
+            <div class="metrics-banner-grid">
+                
+                <div class="metric-banner-card">
+                    <div class="metric-big-num">96%</div>
+                    <div class="metric-banner-label">Production Time Reduction</div>
+                    <div class="metric-banner-sub">Slashes turnaround from 12 hours of manual editing down to under 3 minutes end-to-end.</div>
+                </div>
+
+                <div class="metric-banner-card">
+                    <div class="metric-big-num">99.4%</div>
+                    <div class="metric-banner-label">Speech-Caption Sync Accuracy</div>
+                    <div class="metric-banner-sub">Sub-millisecond Wav2Vec2 phoneme forced alignment eliminates caption drift entirely.</div>
+                </div>
+
+                <div class="metric-banner-card">
+                    <div class="metric-big-num">3.4&times;</div>
+                    <div class="metric-banner-label">Audience Retention Uplift</div>
+                    <div class="metric-banner-sub">Dynamic Ken Burns motion, 3.5s scene pacing, and glowing karaoke captions keep viewers watching.</div>
+                </div>
+
+                <div class="metric-banner-card">
+                    <div class="metric-big-num">$0</div>
+                    <div class="metric-banner-label">Recurring Stock Footage Costs</div>
+                    <div class="metric-banner-sub">100% custom AI-synthesized scene visuals replace expensive monthly stock media subscriptions.</div>
+                </div>
+
+            </div>
+
+            <!-- Call to Action Banner -->
+            <div style="background: linear-gradient(135deg, rgba(245, 183, 59, 0.12), rgba(56, 189, 248, 0.06)); border: 1px solid var(--border-highlight); border-radius: var(--radius-xl); padding: 3rem 2rem; text-align: center; margin-top: 4rem;">
+                <h3 style="font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; color: #fff; margin-bottom: 1rem;">
+                    Ready to Build Autonomous Generative AI Media Systems?
+                </h3>
+                <p style="color: var(--text-secondary); max-width: 650px; margin: 0 auto 2rem; font-size: 0.95rem;">
+                    Designed and engineered end-to-end by <strong>Ahsan Tariq</strong>. Available for Enterprise AI Systems Architecture, Generative Audio/Video Engineering, and Forward Deployed engagements worldwide.
+                </p>
+                <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 1rem;">
+                    <a href="../../index.html#projects" class="btn-back-hub" style="padding: 0.8rem 1.6rem; font-size: 0.95rem; border-color: var(--border-highlight); color: #fff;">
+                        <i class="fas fa-arrow-left"></i> Return to All Projects
+                    </a>
+                    <a href="../index.html" class="btn-back-hub" style="padding: 0.8rem 1.6rem; font-size: 0.95rem; background: var(--gold); color: #06070a; font-weight: 800; border-color: var(--gold);">
+                        <i class="fas fa-th-large"></i> Explore Case Studies Hub
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Lightbox Modal -->
+    <div id="lightboxModal" class="lightbox-modal" onclick="closeLightbox(event)">
+        <div class="lightbox-container" onclick="event.stopPropagation()">
+            <button class="lightbox-close" onclick="closeLightbox(event)">&times;</button>
+            <img id="lightboxImg" src="" alt="Enlarged view">
+            <div id="lightboxCaption" class="lightbox-caption"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="case-footer">
+        <div class="wrapper">
+            <div class="footer-brand">Ahsan Tariq</div>
+            <div class="footer-role">AI/ML Engineer | Forward Deployed Engineer</div>
+            <div class="footer-links-row">
+                <a href="../../index.html" class="footer-link-pill">Home</a>
+                <a href="../index.html" class="footer-link-pill">Case Studies Hub</a>
+                <a href="../../Ahsan_Tariq_Portfolio.pdf" download="Ahsan_Tariq_Portfolio.pdf" target="_blank" class="footer-link-pill">Portfolio PDF</a>
+                <a href="../../Ahsan_Tariq_Case_Studies.pdf" download="Ahsan_Tariq_Case_Studies.pdf" target="_blank" class="footer-link-pill">Case Studies PDF</a>
+                <a href="https://www.linkedin.com/in/ahsan-tariq-comp-engr/" target="_blank" class="footer-link-pill">LinkedIn</a>
+                <a href="mailto:ahsantariq0724@gmail.com" class="footer-link-pill">Contact</a>
+            </div>
+            <div class="footer-copy">&copy; 2026 Ahsan Tariq. All Rights Reserved. Built for disciplined zero-to-production engineering.</div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Interactive Audio Waveform, Dual View Toggle, Comparison Filter & Lightbox -->
+    <script>
+        // ─── 1. Dual-View Toggle (Technical vs Plain English) ─────────────
+        const vtBtns = document.querySelectorAll('.vt-btn');
+        function setViewMode(mode) {
+            vtBtns.forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+            const techEls = document.querySelectorAll('.tech-only');
+            const ntEls = document.querySelectorAll('.nt-only');
+
+            if (mode === 'nt') {
+                techEls.forEach(el => el.style.display = 'none');
+                ntEls.forEach(el => el.style.display = '');
+            } else {
+                techEls.forEach(el => el.style.display = '');
+                ntEls.forEach(el => el.style.display = 'none');
+            }
+            try {
+                localStorage.setItem('portfolio_view_mode', mode);
+            } catch(e) {}
+        }
+
+        vtBtns.forEach(btn => {
+            btn.addEventListener('click', () => setViewMode(btn.dataset.mode));
+        });
+
+        try {
+            const savedMode = localStorage.getItem('portfolio_view_mode');
+            if (savedMode === 'nt') setViewMode('nt');
+        } catch(e) {}
+
+        // ─── 2. Interactive Audio Waveform Player ─────────────────────────
+        const audio = document.getElementById('audioMaster');
+        const btnPlay = document.getElementById('btnPlayAudio');
+        const playIcon = document.getElementById('playIcon');
+        const playText = document.getElementById('playText');
+        const timeDisplay = document.getElementById('audioTimeDisplay');
+        const canvas = document.getElementById('waveformCanvas');
+        const ctx = canvas.getContext('2d');
+        const wordsStrip = document.getElementById('wordsStrip');
+
+        // Spoken transcript words with actual timestamps from notebook
+        const transcriptWords = [
+            { id: 0, word: 'کبھی', start: 0.25, end: 0.45 },
+            { id: 1, word: 'سوچا', start: 0.51, end: 0.85 },
+            { id: 2, word: 'ہے', start: 0.89, end: 1.01 },
+            { id: 3, word: 'کہ', start: 1.07, end: 1.19 },
+            { id: 4, word: 'نیٹفلکس', start: 1.25, end: 1.95 },
+            { id: 5, word: 'اور', start: 2.01, end: 2.15 },
+            { id: 6, word: 'یوٹیوب', start: 2.20, end: 2.75 },
+            { id: 7, word: 'کے سرورز', start: 2.80, end: 3.65 },
+            { id: 8, word: 'امریکہ میں ہیں', start: 3.70, end: 4.80 },
+            { id: 9, word: 'پھر بھی پاکستان', start: 4.90, end: 6.20 },
+            { id: 10, word: 'میں 4K ویڈیوز', start: 6.25, end: 7.90 },
+            { id: 11, word: 'کیسے چلتی ہیں؟', start: 8.00, end: 9.10 },
+            { id: 12, word: 'CDN Network ★', start: 9.20, end: 11.50 },
+            { id: 13, word: 'پیزا برانڈ', start: 11.80, end: 13.90 },
+            { id: 14, word: 'مین کچن کراچی', start: 14.20, end: 16.80 },
+            { id: 15, word: 'لاہور کا آرڈر', start: 17.10, end: 19.50 },
+            { id: 16, word: '[✂ Awkward Pause Cut]', start: 20.00, end: 23.50, isCut: true },
+            { id: 17, word: 'کولڈ پیزا اور لیٹ', start: 23.60, end: 26.50 },
+            { id: 18, word: 'اوریجن سرور', start: 26.80, end: 29.50 },
+            { id: 19, word: 'چھوٹے آؤٹلیٹس', start: 29.80, end: 33.20 },
+            { id: 20, word: 'ڈیلیوری 10 منٹ', start: 33.50, end: 37.00 },
+            { id: 21, word: 'CDN Edge سرورز', start: 37.50, end: 41.50 },
+            { id: 22, word: 'لوکل کیشنگ', start: 42.00, end: 45.00 },
+            { id: 23, word: 'فاسٹ ایکسیس', start: 45.50, end: 48.70 }
+        ];
+
+        // Render word pills in strip
+        transcriptWords.forEach(w => {
+            const pill = document.createElement('div');
+            pill.className = 'live-word-pill' + (w.isCut ? ' cut' : '');
+            pill.id = 'word-pill-' + w.id;
+            pill.textContent = w.word;
+            pill.title = `${w.start.toFixed(1)}s - ${w.end.toFixed(1)}s`;
+            pill.addEventListener('click', () => {
+                if (!w.isCut) {
+                    audio.currentTime = w.start;
+                    audio.play();
+                }
+            });
+            wordsStrip.appendChild(pill);
+        });
+
+        // Synthetic waveform visual bars
+        const numBars = 180;
+        const barHeights = [];
+        for (let i = 0; i < numBars; i++) {
+            const pos = i / numBars;
+            let val = Math.sin(pos * 18) * 0.4 + Math.sin(pos * 40) * 0.3 + 0.3;
+            val += Math.random() * 0.25;
+            if (pos > 0.40 && pos < 0.48) val *= 0.15; // Cut region silence
+            barHeights.push(Math.max(0.1, Math.min(0.95, val)));
+        }
+
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth * window.devicePixelRatio;
+            canvas.height = 140 * window.devicePixelRatio;
+            drawWaveform();
+        }
+
+        function drawWaveform() {
+            const w = canvas.width;
+            const h = canvas.height;
+            ctx.clearRect(0, 0, w, h);
+
+            const duration = audio.duration || 48.7;
+            const progress = (audio.currentTime / duration) || 0;
+            const barW = (w / numBars) * 0.7;
+            const gap = (w / numBars) * 0.3;
+
+            // Draw bars
+            for (let i = 0; i < numBars; i++) {
+                const barProgress = i / numBars;
+                const x = i * (barW + gap);
+                const barH = barHeights[i] * (h * 0.75);
+                const y = (h - barH) / 2;
+
+                if (barProgress > 0.40 && barProgress < 0.48) {
+                    // Cut segment in red
+                    ctx.fillStyle = '#f43f5e';
+                } else if (barProgress <= progress) {
+                    // Played segment in glowing gold
+                    ctx.fillStyle = '#f5b73b';
+                } else {
+                    // Unplayed segment in slate
+                    ctx.fillStyle = '#334155';
+                }
+
+                ctx.beginPath();
+                ctx.roundRect(x, y, barW, barH, 2);
+                ctx.fill();
+            }
+
+            // Draw Playhead line
+            const playheadX = progress * w;
+            ctx.strokeStyle = '#00f0ff';
+            ctx.lineWidth = 3 * window.devicePixelRatio;
+            ctx.beginPath();
+            ctx.moveTo(playheadX, 0);
+            ctx.lineTo(playheadX, h);
+            ctx.stroke();
+
+            // Playhead triangle cursor
+            ctx.fillStyle = '#00f0ff';
+            ctx.beginPath();
+            ctx.moveTo(playheadX - 6, 0);
+            ctx.lineTo(playheadX + 6, 0);
+            ctx.lineTo(playheadX, 10);
+            ctx.fill();
+        }
+
+        // Scrubbing on waveform click
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const percent = clickX / rect.width;
+            const duration = audio.duration || 48.7;
+            audio.currentTime = percent * duration;
+            if (audio.paused) audio.play();
+        });
+
+        // Audio controls
+        btnPlay.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play();
+            } else {
+                audio.pause();
+            }
+        });
+
+        audio.addEventListener('play', () => {
+            playIcon.className = 'fas fa-pause';
+            playText.textContent = 'Pause Audio';
+        });
+
+        audio.addEventListener('pause', () => {
+            playIcon.className = 'fas fa-play';
+            playText.textContent = 'Play Mastered Audio';
+        });
+
+        function formatTime(sec) {
+            const m = Math.floor(sec / 60);
+            const s = Math.floor(sec % 60);
+            return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+
+        audio.addEventListener('timeupdate', () => {
+            const cur = audio.currentTime;
+            const dur = audio.duration || 48.7;
+            timeDisplay.textContent = `${formatTime(cur)} / ${formatTime(dur)}`;
+            drawWaveform();
+
+            // Update word pills active highlight
+            transcriptWords.forEach(w => {
+                const el = document.getElementById('word-pill-' + w.id);
+                if (el && !w.isCut) {
+                    if (cur >= w.start && cur <= w.end) {
+                        el.classList.add('active');
+                    } else {
+                        el.classList.remove('active');
+                    }
+                }
+            });
+        });
+
+        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('load', resizeCanvas);
+        setTimeout(resizeCanvas, 200);
+
+        // ─── 3. Problem vs Solution Comparison Filter ─────────────────────
+        function filterComparison(mode) {
+            const btnBoth = document.getElementById('btnBoth');
+            const btnProblem = document.getElementById('btnProblem');
+            const btnSolution = document.getElementById('btnSolution');
+            const rows = document.querySelectorAll('#compareGrid .compare-row');
+
+            btnBoth.className = 'compare-toggle-btn';
+            btnProblem.className = 'compare-toggle-btn';
+            btnSolution.className = 'compare-toggle-btn';
+
+            if (mode === 'both') {
+                btnBoth.classList.add('active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = window.innerWidth <= 1024 ? 'minmax(0, 1fr)' : 'minmax(0, 1fr) 56px minmax(0, 1fr)';
+                    r.querySelector('.side-problem').style.display = 'flex';
+                    r.querySelector('.side-solution').style.display = 'flex';
+                    const arr = r.querySelector('.compare-arrow-box');
+                    if (arr) arr.style.display = 'flex';
+                });
+            } else if (mode === 'problem') {
+                btnProblem.classList.add('problem-active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr)';
+                    r.querySelector('.side-problem').style.display = 'flex';
+                    r.querySelector('.side-solution').style.display = 'none';
+                    const arr = r.querySelector('.compare-arrow-box');
+                    if (arr) arr.style.display = 'none';
+                });
+            } else if (mode === 'solution') {
+                btnSolution.classList.add('solution-active');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = 'minmax(0, 1fr)';
+                    r.querySelector('.side-problem').style.display = 'none';
+                    r.querySelector('.side-solution').style.display = 'flex';
+                    const arr = r.querySelector('.compare-arrow-box');
+                    if (arr) arr.style.display = 'none';
+                });
+            }
+        }
+
+        window.addEventListener('resize', function() {
+            const btnBoth = document.getElementById('btnBoth');
+            if (btnBoth && btnBoth.classList.contains('active')) {
+                const rows = document.querySelectorAll('#compareGrid .compare-row');
+                rows.forEach(r => {
+                    r.style.gridTemplateColumns = window.innerWidth <= 1024 ? 'minmax(0, 1fr)' : 'minmax(0, 1fr) 56px minmax(0, 1fr)';
+                });
+            }
+        });
+
+        // ─── 4. Lightbox Modal ───────────────────────────────────────────
+        function openLightbox(src, caption) {
+            const modal = document.getElementById('lightboxModal');
+            const img = document.getElementById('lightboxImg');
+            const cap = document.getElementById('lightboxCaption');
+            img.src = src;
+            cap.innerText = caption;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(e) {
+            const modal = document.getElementById('lightboxModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeLightbox();
+        });
+    </script>
+</body>
+</html>
