@@ -49,26 +49,25 @@ case_studies = [
         "impact": "Completely eliminated office interruptions during patient treatment, guaranteed 100% HIPAA medical privacy compliance with zero patient data leaks, and automatically archives patients once their physical therapy program concludes."
     },
 
-    # ─── TRACK 2: FINANCIAL AUTOMATION & MULTI-LEDGER ACCOUNTING ─
+    # ─── TRACK 2: GENERATIVE AI VIDEO & MULTIMODAL MEDIA ─────────
     {
         "num": "03",
-        "title": "Volvexer — Global Multi-Ledger Accounting & Tax Reconciliation",
-        "category": "Global FinTech · Multi-Jurisdiction Ledgers",
-        "client": "Volvexer · Financial Services (USA, UK, Australia, Pakistan)",
-        "timeline": "2024 – Present",
-        "custom_url": "https://www.volvexer.com/",
-        "slug": "",
-        "badge": "Enterprise Platform",
+        "title": "Universal AI Reel Generator — Autonomous Audio-to-Video Editorial Pipeline",
+        "category": "Generative AI Video & LLMs · Autonomous Media Production",
+        "client": "Autonomous Content Production · Multimodal AI Studio",
+        "timeline": "2026",
+        "slug": "universal-ai-reel-generator",
+        "badge": "Generative AI Video",
         "badge_color": "#ffba49",
         "metrics": [
-            {"val": "75%", "lbl": "Faster Month-End Close"},
-            {"val": "4 Countries", "lbl": "Tax Rules Integrated"},
-            {"val": "0 Re-typing", "lbl": "Manual Data Entry"},
-            {"val": "100%", "lbl": "Audit-Ready Trail"}
+            {"val": "< 3 Min", "lbl": "End-to-End Render Time"},
+            {"val": "99.4%", "lbl": "Speech-Caption Sync"},
+            {"val": "96%", "lbl": "Editing Time Saved"},
+            {"val": "3.4x", "lbl": "Viewer Retention Uplift"}
         ],
-        "problem": "Multinational companies operating across the US, UK, Australia, and Pakistan were wasting hundreds of hours every month manually re-entering bank transactions, converting currencies, and matching invoices between different accounting software like QuickBooks, Xero, NetSuite, and Zoho Books.",
-        "solution": "Co-founded and engineered an automated financial platform that synchronizes bank transactions, automatically converts international exchange rates, reads messy receipts with AI, and prepares tax reconciliation reports tailored to US (GAAP/IRS), UK (HMRC), and Australian tax rules without manual entry.",
-        "impact": "Reduced month-end financial closing time by 75%, eliminated duplicate payments, and established an encrypted, tamper-proof audit trail that satisfies international corporate tax audits."
+        "problem": "Content creators, educators, and enterprise marketing teams spend 8 to 15 hours per short-form video: removing background microphone noise, cutting out verbal stumbles, finding matching b-roll, generating images, and manually keyframing word-by-word karaoke subtitles. Scaling high-retention vertical video is prohibitively slow and expensive.",
+        "solution": "Ahsan Tariq engineered an autonomous end-to-end AI Reel Generator that takes a single raw voice recording and outputs a broadcast-ready 1080x1920 vertical reel in under 3 minutes. The pipeline masters studio acoustics (Resemble-Enhance CFM), aligns speech down to the millisecond (WhisperX + Wav2Vec2), provides an in-browser CapCut-style timeline to trim mistakes (WaveSurfer.js), directs semantic visual scenes with an LLM (Qwen2.5-7B), generates 35mm photorealistic visuals (LCM-DreamShaper), and renders split-screen motion graphics with live gold-glowing HarfBuzz RTL Urdu/Latin karaoke captions.",
+        "impact": "Slashes video turnaround from 12 hours to under 3 minutes (96% time savings), eliminates monthly stock footage fees, achieves 99.4% speech-caption synchrony, and drives 3.4x higher viewer retention with multi-sensory split-screen graphics and dynamic pacing."
     },
     {
         "num": "04",

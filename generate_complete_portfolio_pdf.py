@@ -7,8 +7,8 @@ with open('prof.jpeg', 'rb') as f:
 TOTAL_PAGES = 12
 BASE_URL = "https://ahsantariq.ranbval.com"
 
-# The 23 Flagship Case Studies + Key Proprietary Systems
-# Structured across Pages 3 to 10 (2 to 3 projects per page)
+# The 24 Flagship Case Studies + Key Proprietary Systems
+# Structured across Pages 3 to 10 (3 projects per page)
 projects_pages = [
     # Page 3: Enterprise & Financial Logistics (Projects 01, 02, 03)
     {
@@ -382,10 +382,10 @@ projects_pages = [
         ]
     },
 
-    # Page 10: Autonomous Field Robotics & UAV Flight Systems (Projects 22, 23)
+    # Page 10: Robotics, UAV Flight Dynamics & Generative AI Video (Projects 22, 23, 24)
     {
-        "title": "Field Robotics & Autonomous UAV Flight Control",
-        "subtitle": "Rugged ground robot SLAM navigation, cascade PID drone flight dynamics, and smart wheelchair autonomy",
+        "title": "Autonomous Robotics, UAV Flight & Generative AI Media",
+        "subtitle": "Rugged ground UGV SLAM, cascade PID drone flight dynamics, and autonomous audio-to-video reel generation",
         "projects": [
             {
                 "num": "22",
@@ -415,6 +415,21 @@ projects_pages = [
                 "tech_bullets": [
                     "<strong>100 Hz Cascade Flight Controller:</strong> Inner-loop attitude rate PID coupled with outer-loop position guidance and automatic motor arming guard.",
                     "<strong>Assistive Corridor Trajectory:</strong> Dynamic laser scan envelope maintaining safe wall clearance in constrained indoor environments."
+                ]
+            },
+            {
+                "num": "24",
+                "title": "Universal AI Reel Generator — Autonomous Audio-to-Video Pipeline",
+                "slug": "universal-ai-reel-generator",
+                "org": "Generative Video & Audio AI · Autonomous Multi-Modal Compositing",
+                "date": "2026",
+                "badge": "Generative AI Video",
+                "badge_color": "#f5b73b",
+                "tags": "Qwen2.5-7B · LCM-DreamShaper · WhisperX Large-v3 · Resemble-Enhance · HarfBuzz RTL · WaveSurfer NLE",
+                "plain_english": "Content creators spend 10+ hours per video cleaning audio, cutting mistakes, and finding visuals. Built an autonomous AI pipeline that takes any voice recording, cleans room noise, directs visual scenes, generates cinematic pictures, adds glowing karaoke subtitles, and outputs a complete 1080x1920 vertical reel in 3 minutes.",
+                "tech_bullets": [
+                    "<strong>Sub-Millisecond Phoneme Alignment:</strong> Resemble-Enhance CFM audio mastering coupled with WhisperX + Wav2Vec2 forced alignment (99.4% accuracy).",
+                    "<strong>Cognitive Storyboard & Compositing:</strong> Qwen2.5-7B JSON director driving 4-step LCM-DreamShaper diffusion and split-screen 1080x1920 @ 25 FPS motion rendering."
                 ]
             }
         ]
@@ -1095,12 +1110,12 @@ html += f"""
             AI/ML Engineer <span>|</span> Forward Deployed Engineer
         </div>
         <p class="cover-summary">
-            Senior AI Systems Architect and Forward Deployed Engineer with an established track record of designing, building, and deploying <strong>23+ production systems</strong> across the United States, United Kingdom, and Europe. Specializing in autonomous multi-agent pipelines, multi-cloud GenAI ops, vector databases, zero-trust cryptographic vaults, and peer-reviewed deep learning research.
+            Senior AI Systems Architect and Forward Deployed Engineer with an established track record of designing, building, and deploying <strong>24+ production systems</strong> across the United States, United Kingdom, and Europe. Specializing in autonomous multi-agent pipelines, multi-cloud GenAI ops, vector databases, zero-trust cryptographic vaults, and peer-reviewed deep learning research.
         </p>
 
         <div class="cover-links">
             <a href="{BASE_URL}" target="_blank" class="cover-link-pill accent">🌐 Live Portfolio: ahsantariq.ranbval.com ↗</a>
-            <a href="{BASE_URL}/case-studies/" target="_blank" class="cover-link-pill accent">📁 Case Studies Hub (23 Projects) ↗</a>
+            <a href="{BASE_URL}/case-studies/" target="_blank" class="cover-link-pill accent">📁 Case Studies Hub (24 Projects) ↗</a>
             <a href="mailto:ahsantariq0724@gmail.com" class="cover-link-pill">📧 ahsantariq0724@gmail.com</a>
             <a href="https://www.linkedin.com/in/ahsan-tariq-comp-engr/" target="_blank" class="cover-link-pill">🔗 LinkedIn Profile ↗</a>
             <a href="https://github.com/ahsantariq7" target="_blank" class="cover-link-pill">💻 GitHub: ahsantariq7 ↗</a>
@@ -1108,7 +1123,7 @@ html += f"""
 
         <div class="cover-stats-grid">
             <div class="cover-stat-card">
-                <div class="cover-stat-val">23+</div>
+                <div class="cover-stat-val">24+</div>
                 <div class="cover-stat-lbl">Production Systems</div>
             </div>
             <div class="cover-stat-card">
@@ -1140,10 +1155,10 @@ html += f"""
                 <div class="cover-toc-item"><strong>06. Scalable Platforms, Clinical Data Lakes &amp; Legal Tech</strong> <span>PAGE 07</span></div>
                 <div class="cover-toc-item"><strong>07. Multi-Cloud Orchestration, Vector DBs &amp; Super-Systems</strong> <span>PAGE 08</span></div>
                 <div class="cover-toc-item"><strong>08. Peer-Reviewed AI Research &amp; High-Throughput Cybersecurity</strong> <span>PAGE 09</span></div>
-                <div class="cover-toc-item"><strong>09. Field Robotics SLAM Navigation &amp; UAV Flight Dynamics</strong> <span>PAGE 10</span></div>
+                <div class="cover-toc-item"><strong>09. Field Robotics, UAV Flight Dynamics &amp; Generative AI Video</strong> <span>PAGE 10</span></div>
                 <div class="cover-toc-item"><strong>10. Proprietary Products (Ranbval Ecosystem &amp; Volvexer)</strong> <span>PAGE 11</span></div>
                 <div class="cover-toc-item"><strong>11. Scientific Publications, Peer Reviewer &amp; Contact Dossier</strong> <span>PAGE 12</span></div>
-                <div class="cover-toc-item"><strong>Case Studies Directory (Clickable URLs for All 23 Projects)</strong> <span>ALL PAGES</span></div>
+                <div class="cover-toc-item"><strong>Case Studies Directory (Clickable URLs for All 24 Projects)</strong> <span>ALL PAGES</span></div>
             </div>
         </div>
     </div>
@@ -1272,7 +1287,7 @@ html += f"""
 </div>
 """
 
-# PAGES 3 to 10: THE 23 CASE STUDIES
+# PAGES 3 to 10: THE 24 CASE STUDIES
 page_num = 3
 for section in projects_pages:
     html += f"""

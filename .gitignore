@@ -53,7 +53,8 @@ ENV/
 env.bak/
 venv.bak/
 
-# Jupyter Notebook Caches
+# Jupyter Notebooks & Caches
+*.ipynb
 .ipynb_checkpoints
 
 # Logs & Temporary Files
@@ -63,6 +64,7 @@ venv.bak/
 *.pid
 tmp/
 temp/
+extracted_reel/
 
 # Node.js & Dependencies
 node_modules/
@@ -120,3 +122,5 @@ Research Projects/**
 case-studies/ambica-dovetail/video_frames/
 case-studies/ranbval-social/ranbval-demo.mp4
 case-studies/ranbval-social/video_frames/
+case-studies/universal-ai-reel-generator/Ahsan_Editorial_Reel_Pro.mp4
+case-studies/universal-ai-reel-generator/final_flawless_voice.wav
